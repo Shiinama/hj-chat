@@ -1,0 +1,65 @@
+package im.chat;
+syntax = "proto3";
+
+service ChatService {
+    rpc SendChatMsg(ChatMsgReq) returns (ChatMsgResp);
+}
+
+message ChatMsgReq {
+    ChatMsg msg = 1;
+}
+
+message ChatMsgResp {
+    ChatMsg msg = 1;
+}
+
+enum ReceiverType {
+    RECEIVER_INVALID = 0;
+    // 接收者为群组
+    GROUP = 1;
+    // 接收者为用户（ID）
+    USER = 2;
+}
+
+message ChatMsg {
+    enum SendType {
+        // 发送消息
+        NORMAL = 0;
+        // 加入房间
+        JOIN = 1;
+        // 离开房间
+        LEAVE = 2;
+    }
+
+    enum ContentType {
+        // 默认为 TEXT 类型
+        DEFAULT = 0;
+        TEXT = 1;
+        IMAGE = 2;
+        AUDIO = 3;
+        VIDEO = 4;
+    }
+
+    // 消息ID，发送消息时不传
+    optional string id = 1;
+
+    ChatMsg.SendType send_type = 2;
+
+    // 发送者标识。比如：发送者用户ID
+    string sender = 3;
+
+    ReceiverType receiver_type = 4;
+
+    // 接收者标识，需要指明 receiver_type。
+    string receiver = 5;
+
+    // 消息发送时间戳（epoch milliseconds）
+    int64 time = 6;
+
+    ContentType content_type = 7;
+
+    string content = 8;
+
+    // 当 receiver_type == GROUP 时，用于指定回复哪条消息
+    optional string reply_chat_msg_id = 9;
+}
