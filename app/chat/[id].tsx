@@ -68,7 +68,6 @@ const useWsService = () => {
   }
 
   const sendMessage = message => {
-    console.log(message, 'message')
     param.content = message
     wsRef.current.send(JSON.stringify({ msg: param }))
   }
@@ -83,7 +82,6 @@ export default function Chat({}) {
   const scrollViewRef = useRef<ScrollView>(null)
   const [value, onChangeText] = useState('')
   const [chatData, setChatData] = useState<ChatItem[]>([])
-  // console.log('chatData', chatData)
   const SendRef = useRef(false)
   const [currImageIndex, setCurrImageIndex] = useState(0) // 当前预览图片的索引
   const [showImagePreview, setShowImagePreview] = useState(false) // 图片预览与否
@@ -116,7 +114,6 @@ export default function Chat({}) {
     chatData?.forEach(ch => ch?.images?.forEach(img => urls.push({ url: img.url, id: img.imgId })))
     return urls
   }, [chatData])
-  // console.log('imgUrls', imgUrls)
 
   const scrollToEnd = useCallback(() => {
     scrollViewRef.current.scrollToEnd()
