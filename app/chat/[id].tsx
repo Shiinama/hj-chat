@@ -1,5 +1,5 @@
 import { ScrollView, Image, TouchableOpacity } from 'react-native'
-import { Button, TextInput, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { Button, TextInput } from '@fruits-chain/react-native-xiaoshu'
 
 import { useSearchParams, useNavigation } from 'expo-router'
 import { Text, View } from '../../components/Themed'
@@ -15,6 +15,8 @@ import { chatTimeFormat } from '../../utils/time'
 import ImagePreview from '../../components/full-image'
 import Shim from '../../components/full-image/shim'
 import { requestEncode, responseDecode } from '../../utils/protobuf'
+import ChatItem from '../../components/chat/chatItem'
+import FooterInput from '../../components/chat/footer'
 
 export type ChatItem = {
   /** @param
@@ -80,9 +82,7 @@ export default function Chat({}) {
   const { title, type } = useSearchParams()
   const isTextMode = type === 'text'
   const scrollViewRef = useRef<ScrollView>(null)
-  const [value, onChangeText] = useState('')
   const [chatData, setChatData] = useState<ChatItem[]>([])
-  const SendRef = useRef(false)
   const [currImageIndex, setCurrImageIndex] = useState(0) // 当前预览图片的索引
   const [showImagePreview, setShowImagePreview] = useState(false) // 图片预览与否
 
@@ -165,60 +165,6 @@ export default function Chat({}) {
     [imgUrls]
   )
 
-  const renderJSX = useMemo(
-    () =>
-      chatData?.map((data: ChatItem, index: number) => {
-        const timeRenderJSX =
-          index === 0 || (index !== 0 && data.time - chatData?.[index - 1]?.time > 1000 * 60 * 1) ? (
-            <Text style={styles.time}>{chatTimeFormat(data.time)}</Text>
-          ) : null
-        if (data.tag === 1) {
-          return isTextMode ? (
-            <View key={data.id}>
-              {timeRenderJSX}
-              <View focusable style={[styles.msgBox, styles.you]}>
-                <Image source={you} style={styles.avatar} />
-                <View style={[styles.contentBox, styles.youContent]}>
-                  <View style={styles.triangleLeft} />
-                  <Text style={styles.content}>{data.content}</Text>
-                </View>
-              </View>
-            </View>
-          ) : (
-            data.images?.map(img => (
-              <View key={img.imgId}>
-                {timeRenderJSX}
-                <TouchableOpacity
-                  style={[styles.msgBox, styles.you]}
-                  onPress={() => {
-                    onPressImg(img.imgId)
-                  }}
-                >
-                  <Image source={you} style={styles.avatar} />
-                  <AutoHeightImage width={200} source={{ uri: img.url }} style={styles.picture} />
-                </TouchableOpacity>
-              </View>
-            ))
-          )
-        } else if (data.tag === 99) {
-          return (
-            <View key={data.id}>
-              {timeRenderJSX}
-              <View focusable style={[styles.msgBox, styles.me]}>
-                <Image source={me} style={styles.avatar} />
-                <View style={[styles.contentBox, styles.meContent]}>
-                  <View style={styles.triangleRight} />
-                  <Text style={styles.content}>{data.content}</Text>
-                </View>
-              </View>
-            </View>
-          )
-        } else {
-          return null
-        }
-      }),
-    [chatData, isTextMode, onPressImg]
-  )
   // useEffect(() => {
   //   autoEntryRoom()
   // }, [])
@@ -231,29 +177,35 @@ export default function Chat({}) {
         style={styles.body}
         onContentSizeChange={() => {
           scrollViewRef.current.scrollToEnd({
-            animated: SendRef.current,
+            animated: true,
           })
-          SendRef.current = false
         }}
       >
-        <View style={styles.bodyInner}>{renderJSX}</View>
+        <View style={styles.bodyInner}>
+          {chatData?.map((item, index) => (
+            <View key={item.id}>
+              <ChatItem chatData={chatData} item={item} index={index}></ChatItem>
+            </View>
+          ))}
+        </View>
       </ScrollView>
 
       {/* footer 输入框 */}
-      <View style={styles.footer}>
-        <TextInput
-          autoFocus={false}
-          style={styles.input}
-          value={value}
-          onChangeText={text => onChangeText(text)}
-          onFocus={scrollToEnd}
-        />
-        <Button
-          style={styles.sendBtn}
-          textColor="black"
-          onPress={async () => {
-            SendRef.current = true
-            setChatData(
+      <FooterInput
+        sendMessage={async value => {
+          setChatData(
+            chatData.concat([
+              {
+                id: uuidv4(),
+                tag: 99,
+                content: value,
+                time: new Date().getTime(),
+              },
+            ])
+          )
+          await AsyncStorage.setItem(
+            String(type),
+            JSON.stringify(
               chatData.concat([
                 {
                   id: uuidv4(),
@@ -263,30 +215,10 @@ export default function Chat({}) {
                 },
               ])
             )
-
-            await AsyncStorage.setItem(
-              String(type),
-              JSON.stringify(
-                chatData.concat([
-                  {
-                    id: uuidv4(),
-                    tag: 99,
-                    content: value,
-                    time: new Date().getTime(),
-                  },
-                ])
-              )
-            )
-
-            // TODO Ning
-            sendMsg(value)
-            onChangeText('')
-          }}
-        >
-          Send
-        </Button>
-        {/* <Button onPress={() => joinRoom('group1')}>加入房间</Button> */}
-      </View>
+          )
+        }}
+        scrollToEnd={scrollToEnd}
+      />
 
       {/* 动态高度组件 */}
       <Shim />
