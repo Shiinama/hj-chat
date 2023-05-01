@@ -40,6 +40,17 @@ export default function TabOneScreen() {
         router.push({ pathname: 'chat/1', params: { title: '你画我说', type: 'pic' } })
       },
     },
+    {
+      id: uuidv4(),
+      avatar: {
+        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202107%2F19%2F20210719150601_4401e.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1681289485&t=b0285c95f1947f32b7b4863e53eb18c0',
+      },
+      name: '你说我画',
+      message: '123123',
+      onPress: () => {
+        router.push({ pathname: 'test', params: { title: '你画我说', type: 'pic' } })
+      },
+    },
   ]
   return (
     <View style={styles.container}>

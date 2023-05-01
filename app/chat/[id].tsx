@@ -1,22 +1,14 @@
-import { ScrollView, Image, TouchableOpacity } from 'react-native'
-import { Button, TextInput } from '@fruits-chain/react-native-xiaoshu'
-
-import { useSearchParams, useNavigation } from 'expo-router'
-import { Text, View } from '../../components/Themed'
-import AutoHeightImage from 'react-native-auto-height-image'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import me from '@/assets/images/me.jpg'
-import axios from 'axios'
-import you from '@/assets/images/you.gif'
-import { styles } from './style'
+import { View } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
+import { useSearchParams, useNavigation } from 'expo-router'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { chatTimeFormat } from '../../utils/time'
 import ImagePreview from '../../components/full-image'
-import Shim from '../../components/full-image/shim'
 import { requestEncode, responseDecode } from '../../utils/protobuf'
 import ChatItem from '../../components/chat/chatItem'
-import FooterInput from '../../components/chat/footer'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import Container from '../../components/chat/container'
+import { Button } from '@fruits-chain/react-native-xiaoshu'
 
 export type ChatItem = {
   /** @param
@@ -81,7 +73,6 @@ export default function Chat({}) {
   const navigation = useNavigation()
   const { title, type } = useSearchParams()
   const isTextMode = type === 'text'
-  const scrollViewRef = useRef<ScrollView>(null)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [currImageIndex, setCurrImageIndex] = useState(0) // 当前预览图片的索引
   const [showImagePreview, setShowImagePreview] = useState(false) // 图片预览与否
@@ -114,10 +105,6 @@ export default function Chat({}) {
     chatData?.forEach(ch => ch?.images?.forEach(img => urls.push({ url: img.url, id: img.imgId })))
     return urls
   }, [chatData])
-
-  const scrollToEnd = useCallback(() => {
-    scrollViewRef.current.scrollToEnd()
-  }, [])
 
   const sendMsg = useCallback(
     (m: string) => {
@@ -155,7 +142,7 @@ export default function Chat({}) {
     },
     [isTextMode]
   )
-
+  const [text, setText] = useState('')
   const onPressImg = useCallback(
     (id: string) => {
       const index = imgUrls.findIndex(img => img.id === id)
@@ -164,72 +151,65 @@ export default function Chat({}) {
     },
     [imgUrls]
   )
-
-  // useEffect(() => {
-  //   autoEntryRoom()
-  // }, [])
+  const containerRef = useRef(null)
   return (
     <>
-      {/* body 滚动区域 */}
-      <ScrollView
-        keyboardDismissMode="on-drag"
-        ref={scrollViewRef}
-        style={styles.body}
-        onContentSizeChange={() => {
-          scrollViewRef.current.scrollToEnd({
-            animated: true,
-          })
-        }}
-      >
-        <View style={styles.bodyInner}>
-          {chatData?.map((item, index) => (
-            <View key={item.id}>
-              <ChatItem chatData={chatData} item={item} index={index}></ChatItem>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-
-      {/* footer 输入框 */}
-      <FooterInput
-        sendMessage={async value => {
-          setChatData(
-            chatData.concat([
-              {
-                id: uuidv4(),
-                tag: 99,
-                content: value,
-                time: new Date().getTime(),
-              },
-            ])
-          )
-          await AsyncStorage.setItem(
-            String(type),
-            JSON.stringify(
+      <Container
+        inputTextProps={{
+          onChangeText: setText,
+          value: text,
+          onKeyPress: e => {
+            if (e.nativeEvent.key === 'Backspace') {
+              console.log(11)
+            }
+          },
+          onSubmitEditing: async e => {
+            const { nativeEvent } = e
+            setChatData(
               chatData.concat([
                 {
-                  id: uuidv4(),
+                  id: String(Math.random()),
                   tag: 99,
-                  content: value,
+                  content: nativeEvent.text,
                   time: new Date().getTime(),
                 },
               ])
             )
-          )
+            await AsyncStorage.setItem(
+              String(type),
+              JSON.stringify(
+                chatData.concat([
+                  {
+                    id: String(Math.random()),
+                    tag: 99,
+                    content: nativeEvent.text,
+                    time: new Date().getTime(),
+                  },
+                ])
+              )
+            )
+            setText('')
+          },
         }}
-        scrollToEnd={scrollToEnd}
-      />
-
-      {/* 动态高度组件 */}
-      <Shim />
-
-      {/* 图片预览组件 */}
+        flatListProps={{
+          data: chatData,
+          renderItem: ({ item, index }) => {
+            return (
+              <View>
+                <ChatItem chatData={chatData} item={item} index={index}></ChatItem>
+              </View>
+            )
+          },
+        }}
+      ></Container>
+      {/* <Button onPress={() => console.log(containerRef.current)}></Button> */}
       <ImagePreview
         index={currImageIndex}
         visible={showImagePreview}
         onVisibleChange={visible => setShowImagePreview(visible)}
         photos={imgUrls}
       />
+      {/* body 滚动区域 */}
     </>
   )
 }

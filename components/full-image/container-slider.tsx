@@ -1,14 +1,11 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Animated, Keyboard } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
+import { Dimensions } from 'react-native'
 /** 动态移动容器 */
-const ContainerSlider: React.FC<React.PropsWithChildren<{}>> = ({
-  children,
-}) => {
+const ContainerSlider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const insets = useSafeAreaInsets()
   const AnimatedValue = useRef(new Animated.Value(0)).current
-
   const setScrollY = useCallback(
     (toValue: number, duration: number) => {
       Animated.timing(AnimatedValue, {
@@ -17,9 +14,8 @@ const ContainerSlider: React.FC<React.PropsWithChildren<{}>> = ({
         useNativeDriver: true,
       }).start()
     },
-    [AnimatedValue],
+    [AnimatedValue]
   )
-
   useEffect(() => {
     const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
       setScrollY(-e.endCoordinates.height + insets.bottom, e.duration)
@@ -40,7 +36,8 @@ const ContainerSlider: React.FC<React.PropsWithChildren<{}>> = ({
         flex: 1,
         paddingBottom: insets.bottom,
         transform: [{ translateY: AnimatedValue }],
-      }}>
+      }}
+    >
       {children}
     </Animated.View>
   )

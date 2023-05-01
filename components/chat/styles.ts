@@ -1,9 +1,12 @@
 import { StyleSheet } from 'react-native'
 export default StyleSheet.create({
   avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    // borderRadius: 5,
   },
   msgBox: {
     width: '100%',
@@ -67,10 +70,8 @@ export default StyleSheet.create({
   footer: {
     backgroundColor: '#f5f5f5',
     display: 'flex',
-    flexDirection: 'row',
     paddingVertical: 6,
     paddingHorizontal: 12,
-    justifyContent: 'space-between',
   },
   input: {
     height: 30,

@@ -1,6 +1,6 @@
 import { Text, View } from '../../components/Themed'
-import { ScrollView, Image, TouchableOpacity } from 'react-native'
-import { FC, memo } from 'react'
+import { Image } from 'react-native'
+import { memo } from 'react'
 import styles from './styles'
 import you from '../../assets/images/you.gif'
 import me from '../../assets/images/me.jpg'
@@ -23,16 +23,16 @@ function chatItem({ chatData, item, index }: Props) {
 
   if (!item.tag) return null
   return (
-    <>
+    <View focusable>
       {timeRenderJSX}
-      <View focusable style={[styles.msgBox, tag === 1 ? styles.you : styles.me]}>
+      <View style={[styles.msgBox, tag === 1 ? styles.you : styles.me]}>
         <Image source={tag === 1 ? you : me} style={styles.avatar} />
         <View style={[styles.contentBox, tag === 1 ? styles.youContent : styles.meContent]}>
-          <View style={tag === 1 ? styles.triangleLeft : styles.triangleRight} />
+          {/* <View style={tag === 1 ? styles.triangleLeft : styles.triangleRight} /> */}
           <Text style={styles.content}>{item.content}</Text>
         </View>
       </View>
-    </>
+    </View>
   )
 }
 
@@ -52,4 +52,4 @@ function chatItem({ chatData, item, index }: Props) {
               </View> */
 }
 
-export default memo(chatItem)
+export default chatItem
