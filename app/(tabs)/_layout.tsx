@@ -1,64 +1,90 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable, useColorScheme } from "react-native";
-import Colors from "../../constants/Colors";
+import { Tabs } from 'expo-router'
+import { Image, View, useColorScheme, StyleSheet, Text } from 'react-native'
+import Colors from '../../constants/Colors'
+import images from '../../assets/images/tabbar'
+import ProgressBar from '../../components/ProgressBar'
+import flash from '../../assets/images/flash.jpg'
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+const styles = StyleSheet.create({
+  bottomIcon: {
+    position: 'relative',
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomIconImg: {
+    width: 23,
+    height: 27,
+  },
+})
+const imgRender = (key, focused) => {
+  return (
+    <View style={styles.bottomIcon}>
+      <Image source={images?.[`${key}${focused ? '_active' : ''}`]} style={styles.bottomIconImg} />
+    </View>
+  )
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarStyle: { height: 82 },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "消息",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="comments-o" color={color} />
+          tabBarShowLabel: false,
+          title: '',
+          tabBarIcon: ({ focused }) => imgRender('chat', focused),
+          headerLeft: () => (
+            <View style={{ marginLeft: 16 }}>
+              <Text style={{ fontSize: 18, lineHeight: 28 }}>MySheel</Text>
+            </View>
           ),
           headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="plus"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+            <View style={{ marginRight: 16, flexDirection: 'row', alignItems: 'center' }}>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: 28,
+                  height: 28,
+                  borderTopWidth: 1,
+                  borderBottomWidth: 1,
+                  borderLeftWidth: 2,
+                  borderColor: '#F6F6F6',
+                  borderRadius: 8,
+                }}
+              >
+                <Image style={{ width: 17, height: 19 }} source={flash}></Image>
+              </View>
+              <ProgressBar progressBarColor="#FFC03A" progressValue={50}></ProgressBar>
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="setting"
         options={{
-          title: "我",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user-o" color={color} />,
+          tabBarShowLabel: false,
+          title: '我',
+          tabBarIcon: ({ focused }) => imgRender('robot', focused),
         }}
       />
       <Tabs.Screen
         name="audio"
         options={{
-          title: "录音",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user-o" color={color} />,
+          tabBarShowLabel: false,
+          title: '录音',
+          tabBarIcon: ({ focused }) => imgRender('user', focused),
         }}
       />
     </Tabs>
-  );
+  )
 }

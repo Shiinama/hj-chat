@@ -1,11 +1,12 @@
-import { ImageSourcePropType, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
-import { Text, View } from '../../components/Themed'
 import { chatTimeFormat } from '../../utils/time'
 
 import RootStyles from '../../constants/RootStyles'
 import 'react-native-get-random-values'
 import { v4 as uuidv4 } from 'uuid'
+import { useEffect } from 'react'
+import request from '../../utils/request'
 
 type ListDataItem = {
   id: string
@@ -17,14 +18,17 @@ type ListDataItem = {
 
 export default function TabOneScreen() {
   const router = useRouter()
+  useEffect(() => {
+    request({ url: '/bot/list', method: 'get' }).then(res => console.log(res))
+  }, [])
   const listData: ListDataItem[] = [
     {
       id: uuidv4(),
       avatar: {
         uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202107%2F19%2F20210719150601_4401e.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1681289485&t=b0285c95f1947f32b7b4863e53eb18c0',
       },
-      name: '你问我答',
-      message: '123123',
+      name: 'Samatha',
+      message: 'We must continually strive to optimize user-centric experiences.',
       onPress: () => {
         router.push({ pathname: 'chat/2', params: { title: '你答我问', type: 'text' } })
       },
@@ -58,12 +62,15 @@ export default function TabOneScreen() {
         {listData?.map(ld => (
           <TouchableOpacity key={ld.id} style={styles.listItem} onPress={ld.onPress}>
             <Image source={ld.avatar} style={styles.avatar} />
-            <View style={styles.listItemRight}>
-              <View style={styles.listItemMid}>
+            <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
+              <View style={styles.listItemTop}>
                 <Text style={styles.name}>{ld.name}</Text>
+                <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text>
+                {/* <View style={styles.listItemMid}></View> */}
+              </View>
+              <View style={{ backgroundColor: '#F6F6F6', width: '100%' }}>
                 <Text style={styles.message}>{ld.message}</Text>
               </View>
-              <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -77,49 +84,64 @@ const styles = StyleSheet.create({
   listContainer: {
     width: '100%',
     height: '100%',
+    padding: 16,
   },
 
   listItem: {
-    width: '100%',
     display: 'flex',
+    alignItems: 'center',
+    padding: 12,
+    gap: 12,
+    borderRadius: 12,
+    // with: 343,
+    // height: 76,
+    marginBottom: 12,
+    backgroundColor: '#F6F6F6',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingLeft: 12,
   },
 
   avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 5,
-    marginVertical: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 99,
+    // borderWidth: 1,
+    // borderColor: '#CDCDCD',
+    marginHorizontal: 12,
   },
 
-  listItemRight: {
-    display: 'flex',
+  listItemTop: {
     flexDirection: 'row',
-    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#F6F6F6',
     borderColor: '#CDCDCD',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    padding: 12,
   },
 
   listItemMid: {
     flex: 1,
     display: 'flex',
     justifyContent: 'space-between',
+    backgroundColor: '#F6F6F6',
     paddingVertical: 2,
     marginRight: 12,
   },
 
-  name: {},
+  name: {
+    lineHeight: 26,
+    width: 231,
+    fontSize: 16,
+    color: '#1F1F1F',
+  },
 
   message: {
-    marginTop: 5,
-    color: 'rgba(0, 0, 0, 0.5)',
+    // width: 231,
+    // marginTop: 5,
+    color: '#B9B9B9',
   },
 
   time: {
-    color: 'rgba(0, 0, 0, 0.5)',
+    color: '#B9B9B9',
+    flex: 1,
+    lineHeight: 12,
     fontSize: 12,
   },
   separator: {

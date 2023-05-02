@@ -29,6 +29,21 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "flipper": true
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72"
+      }
     }
   }
 }

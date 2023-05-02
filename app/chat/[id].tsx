@@ -9,6 +9,7 @@ import ChatItem from '../../components/chat/chatItem'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Container from '../../components/chat/container'
 import { Button } from '@fruits-chain/react-native-xiaoshu'
+import axios from 'axios'
 
 export type ChatItem = {
   /** @param
@@ -96,7 +97,7 @@ export default function Chat({}) {
   }, [type])
   useEffect(() => {
     navigation.setOptions({
-      title,
+      title: 'Samatha',
     })
   }, [navigation, title])
   /** 图片集 */
@@ -109,36 +110,6 @@ export default function Chat({}) {
   const sendMsg = useCallback(
     (m: string) => {
       sendMessage(m)
-      // axios
-      //   .request<{ data: string | { url: string }[]; success: boolean }>({
-      //     url: isTextMode ? 'http://183.67.44.134:5000/findText' : 'http://183.67.44.134:5000/findImg',
-      //     method: 'post',
-      //     data: { prompt: m },
-      //     timeout: 10 * 60 * 1000,
-      //   })
-      //   .then(data => {
-      //     // console.log('data => ', data.data.data)
-      //     if (data.data.success) {
-      //       const resItem: ChatItem = {
-      //         id: uuidv4(),
-      //         tag: 1,
-      //         time: new Date().getTime(),
-      //       }
-
-      //       if (typeof data.data.data === 'string') {
-      //         resItem.content = data.data.data
-      //       } else {
-      //         resItem.images = data.data.data.map(item => ({
-      //           imgId: uuidv4(),
-      //           url: item.url,
-      //         }))
-      //       }
-
-      //       setChatData(cd => [...cd, resItem])
-      //     } else {
-      //       //
-      //     }
-      //   })
     },
     [isTextMode]
   )
@@ -189,6 +160,18 @@ export default function Chat({}) {
               )
             )
             setText('')
+            axios
+              .request<{ data: string | { url: string }[]; success: boolean }>({
+                url: isTextMode
+                  ? 'https://api-test.myshell.ai/auth/particleLogin'
+                  : 'https://api-test.myshell.ai/auth/particleLogin',
+                method: 'post',
+                data: { prompt: 'xxx' },
+                timeout: 10 * 60 * 1000,
+              })
+              .then(data => {
+                console.log('data => ', data)
+              })
           },
         }}
         flatListProps={{

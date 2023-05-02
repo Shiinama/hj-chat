@@ -1,7 +1,6 @@
-import { Text } from '../../components/Themed'
 import { Button } from '@fruits-chain/react-native-xiaoshu'
 import { memo, useEffect, useRef, useState } from 'react'
-import { Keyboard, TouchableWithoutFeedback, View, TextInput } from 'react-native'
+import { Keyboard, TouchableWithoutFeedback, View, TextInput, Text } from 'react-native'
 import styles from './styles'
 
 type Props = {}

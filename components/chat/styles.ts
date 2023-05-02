@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+import Colors from '../../constants/Colors'
 export default StyleSheet.create({
   avatar: {
     justifyContent: 'center',
@@ -6,13 +7,12 @@ export default StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    // borderRadius: 5,
   },
   msgBox: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'flex-start',
     marginBottom: 12,
+    justifyContent: 'center',
     position: 'relative',
   },
   you: {
@@ -23,19 +23,44 @@ export default StyleSheet.create({
   },
   contentBox: {
     borderRadius: 5,
-    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginLeft: 8,
     marginRight: 8,
+    width: 263,
+  },
+  button: {
+    borderRadius: 12,
+    flexDirection: 'row',
+    margin: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    alignItems: 'center',
+    backgroundColor: Colors.mainWhite,
+  },
+  active: {
+    backgroundColor: '#7A2EF6',
+    color: Colors.mainWhite,
   },
   content: {
+    padding: 16,
     lineHeight: 22,
     maxWidth: 265,
+    width: '100%',
+    borderTopWidth: 1,
+    color: '#141718',
+    fontSize: 14,
+    borderColor: '#E2E8F0',
+    borderBottomWidth: 1,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
   },
   youContent: {
-    backgroundColor: '#FFF8DC',
+    // backgroundColor: '#FFF8DC',
   },
   meContent: {
-    backgroundColor: '#95ec69',
+    backgroundColor: '#F6F6F6',
   },
   triangleLeft: {
     position: 'absolute',
