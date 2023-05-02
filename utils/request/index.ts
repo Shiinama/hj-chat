@@ -21,7 +21,6 @@ const _axios = axios.create()
  */
 _axios.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log(response)
     // TODO fix it
     const result: { errCode: number; errMsg: string; data: unknown } = response.data
     // 图片上传简易判断
@@ -40,11 +39,11 @@ _axios.interceptors.response.use(
     return response
   },
   error => {
-    console.log(error)
     const { response } = error
     // 请求有响应
     if (response) {
       const { status, data, config } = response
+      console.log(data)
       data.message = data.errMsg || MSG_LIST.unknownError
       if (status === 401) {
         // 状态码为401时，根据白名单来判断跳转与否
@@ -65,19 +64,18 @@ _axios.interceptors.response.use(
 )
 // TODO: 添加options 类型interface
 export default async function request<T>(options: RequestOptions) {
-  console.log(options)
   const { url } = options
   const opt: RequestOptions = options
   delete opt.url
   const Authorization =
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsU3RhZ2luZyIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsU3RhZ2luZyIsIm5iZiI6MCwiaWF0IjoxNjgzMDA0MzE2ODk4LCJqdGkiOiJiNDYxNDgyZWQ2M2Q0YmQyOTcyZjFkNzlmNjIxOTE3NyIsInNlY3VyaXR5U3RhbXAiOiJmOTRkMDE5OGY2OTA0ODUwODIwYjJjMDkxYTFiODQwNCIsImV4cCI6MTY4MzAwNjkwODg5OH0.QiJIpWoeL3KIzklo8d8IaXBCsaJUK45OuCvHQwFqZo4'
+    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMDMyMzc3Mjg1LCJqdGkiOiI5OWIzM2U2Zjk0MDg0OWY0ODVhN2M3ZjAyYTM3MGRhNiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzAzNDk2OTI4NX0.dkTLwDLtJdV186wZyEoQugSjFPZBPePGdWT8TrdarSk'
   let headers = {}
   if (options) {
     headers = options.headers || {}
   }
   const defaultOptions = {
     headers: {
-      [Authorization]: Authorization ? Authorization : null,
+      Authorization: Authorization ? Authorization : null,
       appversioncode: 3,
       ...headers,
     },
@@ -95,11 +93,11 @@ export default async function request<T>(options: RequestOptions) {
   newOptions.data = newOptions.body
   delete newOptions.body
   const newUrl = baseUrl + url
+
   return _axios
     .request<T>({
       ...newOptions,
-      url: 'https://api-test.myshell.ai/bot/list',
-      method: 'get',
+      url: newUrl,
     })
     .then(data => data.data)
 }

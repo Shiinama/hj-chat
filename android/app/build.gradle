@@ -113,9 +113,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.hyuxi.yuchat"
+    namespace "com.aimyshell"
     defaultConfig {
-        applicationId 'com.hyuxi.yuchat'
+        applicationId 'ai.myshell.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

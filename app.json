@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "yu-chat",
+    "name": "ai-myshell",
     "slug": "yu-chat",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,19 +12,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hyuxi.yu-chat"
+      "bundleIdentifier": "ai.myshell.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hyuxi.yuchat"
+      "package": "ai.myshell.app"
     },
     "web": {
       "bundler": "metro",

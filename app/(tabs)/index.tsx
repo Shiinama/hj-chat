@@ -3,65 +3,56 @@ import { useRouter } from 'expo-router'
 import { chatTimeFormat } from '../../utils/time'
 
 import RootStyles from '../../constants/RootStyles'
+import you from '../../assets/images/heidian.png'
 import 'react-native-get-random-values'
 import { v4 as uuidv4 } from 'uuid'
-import { useEffect } from 'react'
-import request from '../../utils/request'
-
+import { useEffect, useState } from 'react'
+import { botList } from '../../api/index'
 type ListDataItem = {
-  id: string
-  avatar: ImageSourcePropType
+  id: number
+  uid: string
   name: string
-  message: string
-  onPress: () => void
+  description: string
+  userId: number
+  logo: string
+  language: string
+  pinned: boolean
+  lastInteractionDate: string
 }
 
 export default function TabOneScreen() {
   const router = useRouter()
+  const [listData, setListData] = useState<ListDataItem[]>([])
   useEffect(() => {
-    request({ url: '/bot/list', method: 'get' }).then(res => console.log(res))
+    botList().then(res => setListData(res as ListDataItem[]))
   }, [])
-  const listData: ListDataItem[] = [
-    {
-      id: uuidv4(),
-      avatar: {
-        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202107%2F19%2F20210719150601_4401e.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1681289485&t=b0285c95f1947f32b7b4863e53eb18c0',
-      },
-      name: 'Samatha',
-      message: 'We must continually strive to optimize user-centric experiences.',
-      onPress: () => {
-        router.push({ pathname: 'chat/2', params: { title: '你答我问', type: 'text' } })
-      },
-    },
-    {
-      id: uuidv4(),
-      avatar: {
-        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202107%2F19%2F20210719150601_4401e.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1681289485&t=b0285c95f1947f32b7b4863e53eb18c0',
-      },
-      name: '你说我画',
-      message: '123123',
-      onPress: () => {
-        router.push({ pathname: 'chat/1', params: { title: '你画我说', type: 'pic' } })
-      },
-    },
-    {
-      id: uuidv4(),
-      avatar: {
-        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202107%2F19%2F20210719150601_4401e.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1681289485&t=b0285c95f1947f32b7b4863e53eb18c0',
-      },
-      name: '你说我画',
-      message: '123123',
-      onPress: () => {
-        router.push({ pathname: 'test', params: { title: '你画我说', type: 'pic' } })
-      },
-    },
-  ]
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.listContainer}>
         {listData?.map(ld => (
-          <TouchableOpacity key={ld.id} style={styles.listItem} onPress={ld.onPress}>
-            <Image source={ld.avatar} style={styles.avatar} />
+          <TouchableOpacity
+            key={ld.id}
+            style={styles.listItem}
+            onPress={() => {
+              const { id, userId, name, language, uid } = ld
+              router.push({
+                pathname: `chat/${ld.id}`,
+                params: {
+                  id,
+                  userId,
+                  name,
+                  language,
+                  uid,
+                },
+              })
+            }}
+          >
+            {ld.logo ? (
+              <Image source={{ uri: ld.logo }} style={styles.avatar} />
+            ) : (
+              <Image source={you} style={styles.avatar} />
+            )}
             <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
               <View style={styles.listItemTop}>
                 <Text style={styles.name}>{ld.name}</Text>
@@ -69,7 +60,7 @@ export default function TabOneScreen() {
                 {/* <View style={styles.listItemMid}></View> */}
               </View>
               <View style={{ backgroundColor: '#F6F6F6', width: '100%' }}>
-                <Text style={styles.message}>{ld.message}</Text>
+                <Text style={styles.message}>{ld.description}</Text>
               </View>
             </View>
           </TouchableOpacity>

@@ -38,7 +38,7 @@ elsif podfile_properties.key?('ios.flipper') then
   end
 end
 
-target 'yuchat' do
+target 'aimyshell' do
   use_expo_modules!
   config = use_native_modules!
 
@@ -81,11 +81,6 @@ target 'yuchat' do
   end
 
   post_integrate do |installer|
-    begin
-      expo_patch_react_imports!(installer)
-    rescue => e
-      Pod::UI.warn e
-    end
     begin
       expo_patch_react_imports!(installer)
     rescue => e

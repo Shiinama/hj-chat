@@ -10,6 +10,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Container from '../../components/chat/container'
 import { Button } from '@fruits-chain/react-native-xiaoshu'
 import axios from 'axios'
+import { chatHistory } from '../../api'
 
 export type ChatItem = {
   /** @param
@@ -72,12 +73,16 @@ const useWsService = () => {
 
 export default function Chat({}) {
   const navigation = useNavigation()
-  const { title, type } = useSearchParams()
+  const { name, type, uid, id } = useSearchParams()
   const isTextMode = type === 'text'
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [currImageIndex, setCurrImageIndex] = useState(0) // 当前预览图片的索引
   const [showImagePreview, setShowImagePreview] = useState(false) // 图片预览与否
-
+  useEffect(() => {
+    chatHistory(uid).then(({ data }) => {
+      console.log(data)
+    })
+  }, [])
   const { response, sendMessage, joinRoom } = useWsService()
   useEffect(() => {
     if (!response) return
@@ -97,9 +102,9 @@ export default function Chat({}) {
   }, [type])
   useEffect(() => {
     navigation.setOptions({
-      title: 'Samatha',
+      title: name,
     })
-  }, [navigation, title])
+  }, [navigation, name])
   /** 图片集 */
   const imgUrls = useMemo(() => {
     let urls = []
@@ -122,7 +127,6 @@ export default function Chat({}) {
     },
     [imgUrls]
   )
-  const containerRef = useRef(null)
   return (
     <>
       <Container
@@ -160,18 +164,6 @@ export default function Chat({}) {
               )
             )
             setText('')
-            axios
-              .request<{ data: string | { url: string }[]; success: boolean }>({
-                url: isTextMode
-                  ? 'https://api-test.myshell.ai/auth/particleLogin'
-                  : 'https://api-test.myshell.ai/auth/particleLogin',
-                method: 'post',
-                data: { prompt: 'xxx' },
-                timeout: 10 * 60 * 1000,
-              })
-              .then(data => {
-                console.log('data => ', data)
-              })
           },
         }}
         flatListProps={{

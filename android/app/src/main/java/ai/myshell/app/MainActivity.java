@@ -1,4 +1,4 @@
-package com.hyuxi.yuchat;
+package ai.myshell.app;
 
 import android.os.Build;
 import android.os.Bundle;
