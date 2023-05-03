@@ -1,39 +1,45 @@
 import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import you from '../assets/images/flash.jpg'
 import { useRouter } from 'expo-router'
-import { chatTimeFormat } from '../../utils/time'
+import { chatTimeFormat } from '../utils/time'
+import RootStyles from '../constants/RootStyles'
 
-import RootStyles from '../../constants/RootStyles'
-import you from '../../assets/images/flash.jpg'
-import 'react-native-get-random-values'
-import { useEffect, useState } from 'react'
-import { botList } from '../../api/index'
-import BotCard from '../../components/botCard'
-type ListDataItem = {
-  id: number
-  uid: string
-  name: string
-  description: string
-  userId: number
-  logo: string
-  language: string
-  pinned: boolean
-  lastInteractionDate: string
-}
-
-export default function TabOneScreen() {
-  const [listData, setListData] = useState<ListDataItem[]>([])
-  useEffect(() => {
-    botList().then(res => setListData(res as ListDataItem[]))
-  }, [])
-
+function BotCard({ ld }: any) {
+  const router = useRouter()
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.listContainer}>
-        {listData?.map(ld => (
-          <BotCard ld={ld}></BotCard>
-        ))}
-      </ScrollView>
-    </View>
+    <TouchableOpacity
+      key={ld.id}
+      style={styles.listItem}
+      onPress={() => {
+        const { id, userId, name, language, uid } = ld
+        router.push({
+          pathname: `chat/${ld.id}`,
+          params: {
+            id,
+            userId,
+            name,
+            language,
+            uid,
+          },
+        })
+      }}
+    >
+      {ld.logo ? (
+        <Image source={{ uri: ld.logo }} style={styles.avatar} />
+      ) : (
+        <Image source={you} style={styles.avatar} />
+      )}
+      <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
+        <View style={styles.listItemTop}>
+          <Text style={styles.name}>{ld.name}</Text>
+          <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text>
+          {/* <View style={styles.listItemMid}></View> */}
+        </View>
+        <View style={{ backgroundColor: '#F6F6F6', width: '100%' }}>
+          <Text style={styles.message}>{ld.description}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   )
 }
 
@@ -108,3 +114,5 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 })
+
+export default BotCard
