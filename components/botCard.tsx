@@ -3,23 +3,30 @@ import { useRouter } from 'expo-router'
 import { chatTimeFormat } from '../utils/time'
 import RootStyles from '../constants/RootStyles'
 
-function BotCard({ ld,  showTime }: any) {
+function BotCard({ ld,  showTime, onShowDetail }: any) {
   const router = useRouter()
   return (
     <TouchableOpacity
       style={styles.listItem}
       onPress={() => {
         const { id, userId, name, language, uid } = ld
-        router.push({
-          pathname: `chat/${ld.id}`,
-          params: {
-            id,
-            userId,
-            name,
-            language,
-            uid,
-          },
+        onShowDetail({
+          id,
+          userId,
+          name,
+          language,
+          uid,
         })
+        // router.push({
+        //   pathname: `chat/${ld.id}`,
+        //   params: {
+        //     id,
+        //     userId,
+        //     name,
+        //     language,
+        //     uid,
+        //   },
+        // })
       }}
     >
       {ld.logo ? (

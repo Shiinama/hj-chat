@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import BotCard from '../../components/botCard';
-import { botList } from '../../api/index'
+import { botList } from '../../api/index';
 import addIcon from '../../assets/images/add.png';
 type ListDataItem = {
   id: number
@@ -16,10 +17,27 @@ type ListDataItem = {
 }
 
 export default function TabTwoScreen() {
-  const [listData, setListData] = useState<ListDataItem[]>([])
+  const router = useRouter();
+  const [listData, setListData] = useState<ListDataItem[]>([]);
+
   useEffect(() => {
     botList().then(res => setListData(res as ListDataItem[]))
   }, [])
+
+  const onShowDetail = (event) => {
+    console.log('event', event)
+    router.push({
+      pathname: `chat/${event.id}`,
+      params: {
+        id: event.id,
+        userId: event.userId,
+        name: event.name,
+        language: event.language,
+        uid: event.uid,
+      },
+    })
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.action}>
@@ -32,7 +50,12 @@ export default function TabTwoScreen() {
       </View>
       <View style={styles.mt12}>
         {listData?.map(ld => (
-          <BotCard ld={ld} showTime={false}></BotCard>
+          <BotCard
+            onShowDetail={(e)=>{onShowDetail(e)}}
+            key={ld.id}
+            ld={ld}
+            showTime={false}
+          />
         ))}
       </View>
     </ScrollView>
