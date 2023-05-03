@@ -1,10 +1,8 @@
-import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
-import { useRouter } from 'expo-router'
-import { chatTimeFormat } from '../utils/time'
-import RootStyles from '../constants/RootStyles'
+import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { chatTimeFormat } from '../utils/time';
+import RootStyles from '../constants/RootStyles';
 
 function BotCard({ ld,  showTime, onShowDetail }: any) {
-  const router = useRouter()
   return (
     <TouchableOpacity
       style={styles.listItem}
@@ -17,16 +15,6 @@ function BotCard({ ld,  showTime, onShowDetail }: any) {
           language,
           uid,
         })
-        // router.push({
-        //   pathname: `chat/${ld.id}`,
-        //   params: {
-        //     id,
-        //     userId,
-        //     name,
-        //     language,
-        //     uid,
-        //   },
-        // })
       }}
     >
       {ld.logo ? (

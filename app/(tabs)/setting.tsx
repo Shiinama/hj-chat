@@ -27,7 +27,7 @@ export default function TabTwoScreen() {
   const onShowDetail = (event) => {
     console.log('event', event)
     router.push({
-      pathname: `chat/${event.id}`,
+      pathname: `robot/${event.id}`,
       params: {
         id: event.id,
         userId: event.userId,
