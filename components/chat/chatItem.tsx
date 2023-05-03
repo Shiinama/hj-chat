@@ -1,6 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import styles from './styles'
-import you from '../../assets/images/you.gif'
+import you from '../../assets/images/flash.jpg'
 import me from '../../assets/images/me.jpg'
 import { chatTimeFormat } from '../../utils/time'
 import { ChatItem } from '../../app/chat/[id]'
@@ -8,7 +8,8 @@ import AudioMessage from './audioMessage'
 import Blur from '../../assets/images/chat/blur.svg'
 import Svt from '../../assets/images/chat/svt.svg'
 import Translate from '../../assets/images/chat/translte.svg'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+
 type Props = {
   chatData: ChatItem[]
   item: ChatItem
@@ -32,8 +33,8 @@ function chatItem({ chatData, item, index }: Props) {
         <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
           {item.voiceUrl && <AudioMessage audioFileUri={item.voiceUrl} />}
           {item.text && (
-            <View style={styles.content}>
-              <Text>{item.text}</Text>
+            <View style={[styles.content]}>
+              <Text style={{ zIndex: 1 }}>{item.text}</Text>
             </View>
           )}
           {item.type === 'REPLY' && (
@@ -80,22 +81,6 @@ function chatItem({ chatData, item, index }: Props) {
       </View>
     </View>
   )
-}
-
-// TODO 小宁的图片有点问题
-{
-  /* <View key={img.imgId}>
-                {timeRenderJSX}
-                <TouchableOpacity
-                  style={[styles.msgBox, styles.you]}
-                  onPress={() => {
-                    onPressImg(img.imgId)
-                  }}
-                >
-                  <Image source={you} style={styles.avatar} />
-                  <AutoHeightImage width={200} source={{ uri: img.url }} style={styles.picture} />
-                </TouchableOpacity>
-              </View> */
 }
 
 export default chatItem

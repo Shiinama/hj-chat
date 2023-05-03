@@ -10,11 +10,7 @@ export default StyleSheet.create({
   },
   msgBox: {
     width: '100%',
-    // display: 'flex',
     marginBottom: 12,
-
-    // justifyContent: 'center',
-    position: 'relative',
   },
   you: {
     flexDirection: 'row',
@@ -28,7 +24,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     marginLeft: 8,
     marginRight: 8,
-    width: 263,
+    maxWidth: 263,
   },
   button: {
     borderRadius: 12,
@@ -45,11 +41,8 @@ export default StyleSheet.create({
   },
   content: {
     padding: 12,
-    // lineHeight: 22,
-    // maxWidth: 265,
-    width: '100%',
     borderTopWidth: 1,
-    color: '#141718',
+    fliter: 'white',
     fontSize: 14,
     borderColor: '#E2E8F0',
     borderBottomWidth: 1,

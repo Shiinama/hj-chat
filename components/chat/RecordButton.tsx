@@ -1,10 +1,10 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { StyleSheet, Animated, Easing, TouchableOpacity, Text } from 'react-native'
 import Huatong from '../../assets/images/chat/huatong.svg'
 
-const RecordButton = ({ isRecording, startRecording, stopRecording }) => {
+const RecordButton = ({ startRecording, stopRecording, setAudioFileUri }) => {
+  const [isRecording, setIsRecording] = useState(false)
   const recordButtonScale = useRef(new Animated.Value(1)).current
-
   function animateScaleOut() {
     Animated.timing(recordButtonScale, {
       toValue: 0.8,
@@ -23,20 +23,25 @@ const RecordButton = ({ isRecording, startRecording, stopRecording }) => {
     }).start()
   }
 
-  function handlePressIn() {
+  function handlePressIn(e) {
     // onPress()
+    setIsRecording(true)
     animateScaleOut()
     startRecording()
   }
 
-  function handlePressOut() {
+  async function handlePressOut(e) {
+    setIsRecording(false)
     // RecordButton()
     animateScaleIn()
-    stopRecording()
+    if (stopRecording) {
+      const uri = await stopRecording()
+      setAudioFileUri(uri)
+    }
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <TouchableOpacity style={styles.container} onLongPress={handlePressIn} onPressOut={handlePressOut}>
       <Animated.View
         style={[styles.recordButton, isRecording && styles.isRecording, { transform: [{ scale: recordButtonScale }] }]}
       >
