@@ -10,9 +10,10 @@ export default StyleSheet.create({
   },
   msgBox: {
     width: '100%',
-    display: 'flex',
+    // display: 'flex',
     marginBottom: 12,
-    justifyContent: 'center',
+
+    // justifyContent: 'center',
     position: 'relative',
   },
   you: {
@@ -43,9 +44,9 @@ export default StyleSheet.create({
     color: Colors.mainWhite,
   },
   content: {
-    padding: 16,
-    lineHeight: 22,
-    maxWidth: 265,
+    padding: 12,
+    // lineHeight: 22,
+    // maxWidth: 265,
     width: '100%',
     borderTopWidth: 1,
     color: '#141718',
@@ -57,10 +58,10 @@ export default StyleSheet.create({
     flexDirection: 'row',
   },
   youContent: {
-    // backgroundColor: '#FFF8DC',
+    backgroundColor: Colors.mainGrey,
   },
   meContent: {
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#F1EAFE',
   },
   triangleLeft: {
     position: 'absolute',

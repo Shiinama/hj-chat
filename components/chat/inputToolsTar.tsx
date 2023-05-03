@@ -8,23 +8,35 @@ import {
   TextInputContentSizeChangeEventData,
   Platform,
   Image,
+  Touchable,
+  TouchableOpacity,
+  Text,
+  Animated,
+  Easing,
 } from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import lines from '../../assets/images/lines.jpg'
-
+import Keyborad from '../../assets/images/chat/keyborad.svg'
+import Huatong from '../../assets/images/chat/huatong.svg'
+import RecordButton from './RecordButton'
 import { StyleSheet } from 'react-native'
 import { useCallbackOne } from 'use-memo-one'
 // import { Image } from 'react-native-svg'
 
 type Props = {
   minInputToolbarHeight: number
-  inputTextProps: TextInput['props']
+  inputTextProps: TextInput['props'] & {
+    startRecording: () => void
+    stopRecording: () => void
+    isRecording: any
+  }
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
 function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeight }: Props) {
-  const { value, onChangeText, ...inputProps } = inputTextProps
+  const { value, onChangeText, startRecording, stopRecording, isRecording, ...inputProps } = inputTextProps
   const [position, setPosition] = useState('absolute')
+  const [isShow, setIsShow] = useState(false)
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => setPosition('relative'))
     const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => setPosition('absolute'))
@@ -54,6 +66,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
     },
     [onInputSizeChanged]
   )
+
   const handleContentSizeChange = ({
     nativeEvent: { contentSize },
   }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => determineInputSizeChange(contentSize)
@@ -63,24 +76,39 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         <View style={styles.toolsIcon}>
           <Image style={styles.Icon} source={lines}></Image>
         </View>
-        <TextInput
-          returnKeyType="send"
-          blurOnSubmit={false}
-          // multiline={true}
-          placeholder="Wite a message"
-          style={styles.textInput}
-          enablesReturnKeyAutomatically
-          onChangeText={inputText => {
-            const newText = inputText.replace(/(.{30})/g, '$1\n')
-            onChangeText(newText)
+        {isShow ? (
+          <TextInput
+            returnKeyType="send"
+            blurOnSubmit={false}
+            // multiline={true}
+            placeholder="Wite a message"
+            style={styles.textInput}
+            enablesReturnKeyAutomatically
+            onChangeText={inputText => {
+              const newText = inputText.replace(/(.{30})/g, '$1\n')
+              onChangeText(newText)
+            }}
+            onContentSizeChange={handleContentSizeChange}
+            {...inputTextProps}
+            {...inputProps}
+          />
+        ) : (
+          <RecordButton
+            isRecording={isRecording}
+            startRecording={startRecording}
+            stopRecording={stopRecording}
+          ></RecordButton>
+        )}
+        <View style={styles.container}></View>
+
+        <TouchableOpacity
+          style={styles.toolsIcon}
+          onPress={() => {
+            setIsShow(pre => !pre)
           }}
-          onContentSizeChange={handleContentSizeChange}
-          {...inputTextProps}
-          {...inputProps}
-        />
-        <View style={styles.toolsIcon}>
-          <Image style={styles.Icon} source={audio}></Image>
-        </View>
+        >
+          {isShow ? <Image style={styles.Icon} source={audio}></Image> : <Keyborad fill={'#2D3748'}></Keyborad>}
+        </TouchableOpacity>
       </View>
       {/* <View style={styles.accessory}></View> */}
     </View>
@@ -113,6 +141,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  recordingIndicator: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: 'red',
+    position: 'absolute',
+    top: '-50%',
+    backgroundColor: 'red',
+    opacity: 0.5,
   },
   Icon: {
     // flex: 1,

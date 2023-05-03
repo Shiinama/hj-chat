@@ -3,9 +3,8 @@ import { useRouter } from 'expo-router'
 import { chatTimeFormat } from '../../utils/time'
 
 import RootStyles from '../../constants/RootStyles'
-import you from '../../assets/images/heidian.png'
+import you from '../../assets/images/flash.jpg'
 import 'react-native-get-random-values'
-import { v4 as uuidv4 } from 'uuid'
 import { useEffect, useState } from 'react'
 import { botList } from '../../api/index'
 type ListDataItem = {

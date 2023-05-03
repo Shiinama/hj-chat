@@ -8,19 +8,37 @@ const Player = ({ audioFileUri }: { audioFileUri: string }) => {
   const [currentPosition, setCurrentPosition] = useState<number>(0)
   const [duration, setDuration] = useState<number>(0)
   const [sound, setSound] = useState<Audio.Sound | null>(null)
-
   useEffect(() => {
+    console.log(audioFileUri)
+    Audio.getPermissionsAsync().then(res => {
+      if (!res.granted) {
+        alert('请允许访问麦克风以录制音频！')
+      }
+    })
+    if (!audioFileUri) return
     const loadSound = async () => {
+      console.log('Loading Sound')
       const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
+      console.log('112312')
       setSound(sound)
     }
     loadSound()
   }, [audioFileUri])
 
   useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound')
+          sound.unloadAsync()
+        }
+      : undefined
+  }, [sound])
+
+  useEffect(() => {
     let interval = setInterval(async () => {
       if (sound !== null) {
         const status: AVPlaybackStatus = await sound.getStatusAsync()
+        console.log('status', status)
         if (status.isLoaded) {
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)

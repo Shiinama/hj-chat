@@ -11,86 +11,101 @@ import Container from '../../components/chat/container'
 import { Button } from '@fruits-chain/react-native-xiaoshu'
 import axios from 'axios'
 import { chatHistory } from '../../api'
+import { Audio } from 'expo-av'
+import * as FileSystem from 'expo-file-system'
 
 export type ChatItem = {
-  /** @param
-   * tag：1对方，99我方
-   */
-  id: string
-  tag: number
-  time: number
-  avatar?: string
-  content?: string
-  images?: { imgId: string; url: string }[]
-}
-// 请将useWsService函数补充完整
-const useWsService = () => {
-  const wsRef = useRef<WebSocket>(new WebSocket('ws://127.0.0.1:8000/im'))
-  const [response, setResponse] = useState(null)
-  const wsRefisOpen = useRef(false)
-  wsRef.current.onopen = () => {
-    wsRefisOpen.current = true
-  }
-  wsRef.current.onmessage = e => {
-    const msg = JSON.parse(e.data)
-    if (msg?.msg.sender !== '111') return
-    const { msg: data } =
-      e.data instanceof ArrayBuffer ? responseDecode('im.chat.ChatMsgResp', new Uint8Array(e.data)) : JSON.parse(e.data)
-    setResponse(data)
-  }
-  wsRef.current.onclose = () => {
-    wsRefisOpen.current = false
-  }
-  wsRef.current.onerror = () => {
-    wsRefisOpen.current = false
-  }
-
-  const param = {
-    send_type: 0,
-    sender: 'yuyuyu',
-    receiver_type: 1,
-    receiver: 'group1',
-    time: new Date().getTime(),
-    content_type: 1,
-    content: '',
-  }
-
-  const joinRoom = room => {
-    param.send_type = 1
-    param.receiver = room
-    param.content = '加入房间'
-    const messageRequest = requestEncode('im.chat.ChatMsgReq', { msg: param }) as Uint8Array
-    wsRef.current.send(messageRequest)
-  }
-
-  const sendMessage = message => {
-    param.content = message
-    wsRef.current.send(JSON.stringify({ msg: param }))
-  }
-
-  return { wsRefisOpen, response, sendMessage, joinRoom }
+  id: number
+  uid: string
+  userId: number
+  userUid: string
+  status: string
+  type: string
+  replyUid: string | null
+  text: string
+  translation: string | null
+  voiceUrl: string | null
+  botId: number
+  createdDate: string
+  updatedDate: string
+  botUid: string
 }
 
 export default function Chat({}) {
   const navigation = useNavigation()
-  const { name, type, uid, id } = useSearchParams()
-  const isTextMode = type === 'text'
+  const { name, type, uid, userId } = useSearchParams()
+  const [recording, setRecording] = useState(null)
+  const [isRecording, setIsRecording] = useState(false)
+
   const [chatData, setChatData] = useState<ChatItem[]>([])
-  const [currImageIndex, setCurrImageIndex] = useState(0) // 当前预览图片的索引
-  const [showImagePreview, setShowImagePreview] = useState(false) // 图片预览与否
   useEffect(() => {
-    chatHistory(uid).then(({ data }) => {
-      console.log(data)
+    chatHistory(uid).then(({ data }: any) => {
+      setChatData(data)
     })
   }, [])
-  const { response, sendMessage, joinRoom } = useWsService()
   useEffect(() => {
-    if (!response) return
-    setChatData(preVal => [
-      ...preVal,
-      { content: response.sendType === 1 ? '进入房间' : response.content, id: response.id, tag: 1, time: Date.now() },
-    ])
-  }, [response])
+    try {
+      new Audio.Recording()
+      Audio.requestPermissionsAsync().then(({ granted }) => {
+        if (!granted) {
+          alert('请允许访问麦克风以录制音频！')
+        }
+      })
+      Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      })
+    } catch (err) {
+      console.error('Failed to start recording', err)
+    }
+  }, [])
+  async function startRecording() {
+    try {
+      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY)
+      setRecording(recording)
+      setIsRecording(true)
+    } catch (err) {
+      console.error('Failed to start recording', err)
+    }
+  }
+
+  async function stopRecording() {
+    try {
+      await recording.stopAndUnloadAsync()
+      const uri = recording.getURI()
+      setChatData(
+        chatData.concat([{ id: Math.random(), uid: '47ddd3ac0ca64f5ab6888b14dd9e4458', voiceUrl: uri } as any])
+      )
+      // const buffer = await FileSystem.readAsStringAsync(uri, {
+      //   encoding: FileSystem.EncodingType.Base64,
+      // })
+      // await uploadRecording(buffer)
+      setIsRecording(false)
+    } catch (err) {
+      console.error('Failed to stop recording', err)
+    }
+  }
+
+  async function uploadRecording(buffer) {
+    // console.log(buffer)
+    return
+    try {
+      const response = await axios.post('https://my-server.com/api/upload', {
+        data: buffer,
+      })
+      console.log('Upload success', response.data)
+    } catch (err) {
+      console.error('Upload failed', err)
+    }
+  }
+
+  // useEffect(() => {
+  //   if (!response) return
+  //   setChatData(preVal => [
+  //     ...preVal,
+  //     { content: response.sendType === 1 ? '进入房间' : response.content, id: response.id, tag: 1, time: Date.now() },
+  //   ])
+  // }, [response])
   useEffect(() => {
     const getStorageData = async () => {
       return JSON.parse(await AsyncStorage.getItem(String(type)))
@@ -105,34 +120,17 @@ export default function Chat({}) {
       title: name,
     })
   }, [navigation, name])
-  /** 图片集 */
-  const imgUrls = useMemo(() => {
-    let urls = []
-    chatData?.forEach(ch => ch?.images?.forEach(img => urls.push({ url: img.url, id: img.imgId })))
-    return urls
-  }, [chatData])
 
-  const sendMsg = useCallback(
-    (m: string) => {
-      sendMessage(m)
-    },
-    [isTextMode]
-  )
   const [text, setText] = useState('')
-  const onPressImg = useCallback(
-    (id: string) => {
-      const index = imgUrls.findIndex(img => img.id === id)
-      setCurrImageIndex(index)
-      setShowImagePreview(true)
-    },
-    [imgUrls]
-  )
   return (
     <>
       <Container
         inputTextProps={{
           onChangeText: setText,
           value: text,
+          isRecording,
+          startRecording,
+          stopRecording,
           onKeyPress: e => {
             if (e.nativeEvent.key === 'Backspace') {
               console.log(11)
@@ -140,29 +138,29 @@ export default function Chat({}) {
           },
           onSubmitEditing: async e => {
             const { nativeEvent } = e
-            setChatData(
-              chatData.concat([
-                {
-                  id: String(Math.random()),
-                  tag: 99,
-                  content: nativeEvent.text,
-                  time: new Date().getTime(),
-                },
-              ])
-            )
-            await AsyncStorage.setItem(
-              String(type),
-              JSON.stringify(
-                chatData.concat([
-                  {
-                    id: String(Math.random()),
-                    tag: 99,
-                    content: nativeEvent.text,
-                    time: new Date().getTime(),
-                  },
-                ])
-              )
-            )
+            // setChatData(
+            //   chatData.concat([
+            //     {
+            //       id: String(Math.random()),
+            //       tag: 99,
+            //       content: nativeEvent.text,
+            //       time: new Date().getTime(),
+            //     },
+            //   ])
+            // )
+            // await AsyncStorage.setItem(
+            //   String(type),
+            //   JSON.stringify(
+            //     chatData.concat([
+            //       {
+            //         id: String(Math.random()),
+            //         tag: 99,
+            //         content: nativeEvent.text,
+            //         time: new Date().getTime(),
+            //       },
+            //     ])
+            //   )
+            // )
             setText('')
           },
         }}
@@ -177,14 +175,6 @@ export default function Chat({}) {
           },
         }}
       ></Container>
-      {/* <Button onPress={() => console.log(containerRef.current)}></Button> */}
-      <ImagePreview
-        index={currImageIndex}
-        visible={showImagePreview}
-        onVisibleChange={visible => setShowImagePreview(visible)}
-        photos={imgUrls}
-      />
-      {/* body 滚动区域 */}
     </>
   )
 }
