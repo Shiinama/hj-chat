@@ -3,16 +3,11 @@ import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import ImagePreview from '../../components/full-image'
-import { requestEncode, responseDecode } from '../../utils/protobuf'
 import ChatItem from '../../components/chat/chatItem'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Container from '../../components/chat/container'
-import { Button } from '@fruits-chain/react-native-xiaoshu'
 import axios from 'axios'
 import { chatHistory } from '../../api'
 import { Audio } from 'expo-av'
-import * as FileSystem from 'expo-file-system'
 import ShellLoading from '../../components/loading'
 
 export type ChatItem = {
@@ -36,7 +31,7 @@ export default function Chat({}) {
   const navigation = useNavigation()
   const { name, type, uid, userId } = useSearchParams()
   const [recording, setRecording] = useState(null)
-  const [isRecording, setIsRecording] = useState(false)
+
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   useEffect(() => {
@@ -65,7 +60,6 @@ export default function Chat({}) {
     try {
       const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY)
       setRecording(recording)
-      setIsRecording(true)
     } catch (err) {
       console.error('Failed to start recording', err)
     }
@@ -75,17 +69,17 @@ export default function Chat({}) {
     try {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
-      setChatData(
-        chatData.concat([{ id: Math.random(), uid: '47ddd3ac0ca64f5ab6888b14dd9e4458', voiceUrl: uri } as any])
-      )
       // const buffer = await FileSystem.readAsStringAsync(uri, {
       //   encoding: FileSystem.EncodingType.Base64,
       // })
       // await uploadRecording(buffer)
-      setIsRecording(false)
+      return uri
     } catch (err) {
       console.error('Failed to stop recording', err)
     }
+  }
+  function setAuInfo(uri) {
+    setChatData(chatData.concat([{ id: Math.random(), uid: '47ddd3ac0ca64f5ab6888b14dd9e4458', voiceUrl: uri } as any]))
   }
 
   async function uploadRecording(buffer) {
@@ -124,7 +118,7 @@ export default function Chat({}) {
         inputTextProps={{
           onChangeText: setText,
           value: text,
-          isRecording,
+          setAuInfo,
           startRecording,
           stopRecording,
           onKeyPress: e => {
@@ -132,8 +126,8 @@ export default function Chat({}) {
               console.log(11)
             }
           },
-          onSubmitEditing: async e => {
-            const { nativeEvent } = e
+          onSubmitEditing: async (value: string) => {
+            console.log(value)
             // setChatData(
             //   chatData.concat([
             //     {
