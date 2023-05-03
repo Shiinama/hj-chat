@@ -31,7 +31,7 @@ export default function TabOneScreen() {
     <View style={styles.container}>
       <ScrollView style={styles.listContainer}>
         {listData?.map(ld => (
-          <BotCard ld={ld}></BotCard>
+          <BotCard ld={ld} showTime={true}></BotCard>
         ))}
       </ScrollView>
     </View>

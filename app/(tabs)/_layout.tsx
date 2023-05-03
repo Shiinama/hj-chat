@@ -73,7 +73,7 @@ export default function TabLayout() {
         name="setting"
         options={{
           tabBarShowLabel: false,
-          title: '我',
+          title: 'Robot Workshop',
           tabBarIcon: ({ focused }) => imgRender('robot', focused),
         }}
       />
