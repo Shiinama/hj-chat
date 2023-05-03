@@ -1,13 +1,10 @@
-import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
-import { useRouter } from 'expo-router'
-import { chatTimeFormat } from '../../utils/time'
-
+import { View, StyleSheet, ScrollView } from 'react-native'
 import RootStyles from '../../constants/RootStyles'
-import you from '../../assets/images/flash.jpg'
 import 'react-native-get-random-values'
 import { useEffect, useState } from 'react'
 import { botList } from '../../api/index'
 import BotCard from '../../components/botCard'
+import ShellLoading from '../../components/loading'
 type ListDataItem = {
   id: number
   uid: string
@@ -22,10 +19,14 @@ type ListDataItem = {
 
 export default function TabOneScreen() {
   const [listData, setListData] = useState<ListDataItem[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
-    botList().then(res => setListData(res as ListDataItem[]))
+    botList().then(res => {
+      setListData(res as ListDataItem[])
+      setLoading(false)
+    })
   }, [])
-
+  if (loading) return <ShellLoading></ShellLoading>
   return (
     <View style={styles.container}>
       <ScrollView style={styles.listContainer}>
