@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router'
 import { chatTimeFormat } from '../utils/time'
 import RootStyles from '../constants/RootStyles'
 
-function BotCard({ ld }: any) {
+function BotCard({ ld,  showTime }: any) {
   const router = useRouter()
   return (
     <TouchableOpacity
@@ -34,8 +34,14 @@ function BotCard({ ld }: any) {
       )}
       <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
         <View style={styles.listItemTop}>
-          <Text style={styles.name}>{ld.name}</Text>
-          <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text>
+          <View style={styles.listItemFlex}>
+            <Text style={styles.name}>{ld.name}</Text>
+          </View>
+          {
+            showTime ? (
+              <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text>
+            ) : null
+          }
           {/* <View style={styles.listItemMid}></View> */}
         </View>
         <View style={{ backgroundColor: '#F6F6F6', width: '100%' }}>
@@ -82,6 +88,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F6F6',
     borderColor: '#CDCDCD',
   },
+  listItemFlex: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 
   listItemMid: {
     flex: 1,
@@ -111,6 +122,7 @@ const styles = StyleSheet.create({
     lineHeight: 12,
     fontSize: 12,
   },
+
   separator: {
     marginVertical: 30,
     height: 1,
