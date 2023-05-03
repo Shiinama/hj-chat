@@ -71,7 +71,7 @@ export default function TabLayout() {
         options={{
           tabBarShowLabel: false,
           title: 'Robot Workshop',
-          tabBarIcon: ({ focused }) => (focused ? <ProfileAcitve /> : <Profile />),
+          tabBarIcon: ({ focused }) => (focused ? <BotAcitve /> : <Bot />),
         }}
       />
       <Tabs.Screen
@@ -79,7 +79,7 @@ export default function TabLayout() {
         options={{
           tabBarShowLabel: false,
           title: '录音',
-          tabBarIcon: ({ focused }) => (focused ? <BotAcitve /> : <Bot />),
+          tabBarIcon: ({ focused }) => (focused ? <ProfileAcitve /> : <Profile />),
         }}
       />
     </Tabs>
