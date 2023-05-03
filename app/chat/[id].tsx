@@ -13,6 +13,7 @@ import axios from 'axios'
 import { chatHistory } from '../../api'
 import { Audio } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
+import ShellLoading from '../../components/loading'
 
 export type ChatItem = {
   id: number
@@ -36,11 +37,12 @@ export default function Chat({}) {
   const { name, type, uid, userId } = useSearchParams()
   const [recording, setRecording] = useState(null)
   const [isRecording, setIsRecording] = useState(false)
-
+  const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   useEffect(() => {
     chatHistory(uid).then(({ data }: any) => {
       setChatData(data)
+      setLoading(false)
     })
   }, [])
   useEffect(() => {
@@ -99,13 +101,6 @@ export default function Chat({}) {
     }
   }
 
-  // useEffect(() => {
-  //   if (!response) return
-  //   setChatData(preVal => [
-  //     ...preVal,
-  //     { content: response.sendType === 1 ? '进入房间' : response.content, id: response.id, tag: 1, time: Date.now() },
-  //   ])
-  // }, [response])
   useEffect(() => {
     const getStorageData = async () => {
       return JSON.parse(await AsyncStorage.getItem(String(type)))
@@ -122,6 +117,7 @@ export default function Chat({}) {
   }, [navigation, name])
 
   const [text, setText] = useState('')
+  if (loading) return <ShellLoading></ShellLoading>
   return (
     <>
       <Container

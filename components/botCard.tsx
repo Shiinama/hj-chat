@@ -1,5 +1,4 @@
 import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
-import you from '../assets/images/flash.jpg'
 import { useRouter } from 'expo-router'
 import { chatTimeFormat } from '../utils/time'
 import RootStyles from '../constants/RootStyles'
@@ -8,7 +7,6 @@ function BotCard({ ld }: any) {
   const router = useRouter()
   return (
     <TouchableOpacity
-      key={ld.id}
       style={styles.listItem}
       onPress={() => {
         const { id, userId, name, language, uid } = ld
@@ -27,7 +25,12 @@ function BotCard({ ld }: any) {
       {ld.logo ? (
         <Image source={{ uri: ld.logo }} style={styles.avatar} />
       ) : (
-        <Image source={you} style={styles.avatar} />
+        <Image
+          source={{
+            uri: 'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5049cfd8aca04680b5d1acb9d8b32cc1~tplv-k3u1fbpfcp-watermark.image?)',
+          }}
+          style={styles.avatar}
+        />
       )}
       <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
         <View style={styles.listItemTop}>

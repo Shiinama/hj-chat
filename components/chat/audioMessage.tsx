@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Button, StyleSheet } from 'react-native'
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 import Slider from '@react-native-community/slider'
 import { Audio, AVPlaybackStatus } from 'expo-av'
 import heidian from '../../assets/images/heidian.png'
+import MessagePlay from '../../assets/images/chat/message_play.svg'
+import Messagepause from '../../assets/images/chat/message_pause.svg'
+
 const Player = ({ audioFileUri }: { audioFileUri: string }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const [currentPosition, setCurrentPosition] = useState<number>(0)
@@ -71,7 +74,9 @@ const Player = ({ audioFileUri }: { audioFileUri: string }) => {
 
   return (
     <View style={styles.container}>
-      <Button title={isPlaying ? 'Pause' : 'Play'} onPress={handlePlayPause} />
+      <TouchableOpacity onPress={handlePlayPause}>
+        {isPlaying ? <Messagepause height={18} width={18} /> : <MessagePlay height={18} width={18} />}
+      </TouchableOpacity>
       <Text style={styles.time}>{formatTime(currentPosition) + '/' + formatTime(duration)}</Text>
       <Slider
         style={styles.slider}

@@ -1,10 +1,13 @@
 import { Tabs } from 'expo-router'
 import { Image, View, useColorScheme, StyleSheet, Text } from 'react-native'
-import Colors from '../../constants/Colors'
-import images from '../../assets/images/tabbar'
 import ProgressBar from '../../components/ProgressBar'
-import flash from '../../assets/images/flash.jpg'
-
+import Flash from '../../assets/images/tabbar/flash.svg'
+import Chat from '../../assets/images/tabbar/chat.svg'
+import ChatAcitve from '../../assets/images/tabbar/chat_acitve.svg'
+import Profile from '../../assets/images/tabbar/profile.svg'
+import ProfileAcitve from '../../assets/images/tabbar/profile_acitve.svg'
+import Bot from '../../assets/images/tabbar/bot.svg'
+import BotAcitve from '../../assets/images/tabbar/bot_active.svg'
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -21,13 +24,6 @@ const styles = StyleSheet.create({
     height: 27,
   },
 })
-const imgRender = (key, focused) => {
-  return (
-    <View style={styles.bottomIcon}>
-      <Image source={images?.[`${key}${focused ? '_active' : ''}`]} style={styles.bottomIconImg} />
-    </View>
-  )
-}
 
 export default function TabLayout() {
   return (
@@ -41,7 +37,7 @@ export default function TabLayout() {
         options={{
           tabBarShowLabel: false,
           title: '',
-          tabBarIcon: ({ focused }) => imgRender('chat', focused),
+          tabBarIcon: ({ focused }) => (focused ? <ChatAcitve /> : <Chat />),
           headerLeft: () => (
             <View style={{ marginLeft: 16 }}>
               <Text style={{ fontSize: 18, lineHeight: 28 }}>MySheel</Text>
@@ -57,12 +53,13 @@ export default function TabLayout() {
                   height: 28,
                   borderTopWidth: 1,
                   borderBottomWidth: 1,
-                  borderLeftWidth: 2,
+                  borderLeftWidth: 1,
                   borderColor: '#F6F6F6',
                   borderRadius: 8,
                 }}
               >
-                <Image style={{ width: 17, height: 19 }} source={flash}></Image>
+                <Flash></Flash>
+                {/* <Image style={{ width: 17, height: 19 }} source={flash}></Image> */}
               </View>
               <ProgressBar progressBarColor="#FFC03A" progressValue={50}></ProgressBar>
             </View>
@@ -74,7 +71,7 @@ export default function TabLayout() {
         options={{
           tabBarShowLabel: false,
           title: '我',
-          tabBarIcon: ({ focused }) => imgRender('robot', focused),
+          tabBarIcon: ({ focused }) => (focused ? <ProfileAcitve /> : <Profile />),
         }}
       />
       <Tabs.Screen
@@ -82,7 +79,7 @@ export default function TabLayout() {
         options={{
           tabBarShowLabel: false,
           title: '录音',
-          tabBarIcon: ({ focused }) => imgRender('user', focused),
+          tabBarIcon: ({ focused }) => (focused ? <BotAcitve /> : <Bot />),
         }}
       />
     </Tabs>

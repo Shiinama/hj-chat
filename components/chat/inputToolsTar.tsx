@@ -37,6 +37,8 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const { value, onChangeText, startRecording, stopRecording, isRecording, ...inputProps } = inputTextProps
   const [position, setPosition] = useState('absolute')
   const [isShow, setIsShow] = useState(false)
+  const inputRef = useRef(null)
+
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => setPosition('relative'))
     const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => setPosition('absolute'))
@@ -46,6 +48,11 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
     }
   }, [])
   const dimensionsRef = useRef<{ width: number; height: number }>()
+  const handleButtonPress = () => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }
 
   const determineInputSizeChange = useCallbackOne(
     (dimensions: { width: number; height: number }) => {
@@ -78,6 +85,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         </View>
         {isShow ? (
           <TextInput
+            ref={inputRef}
             returnKeyType="send"
             blurOnSubmit={false}
             // multiline={true}
@@ -85,8 +93,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
             style={styles.textInput}
             enablesReturnKeyAutomatically
             onChangeText={inputText => {
-              const newText = inputText.replace(/(.{30})/g, '$1\n')
-              onChangeText(newText)
+              onChangeText(inputText)
             }}
             onContentSizeChange={handleContentSizeChange}
             {...inputTextProps}
@@ -104,7 +111,12 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         <TouchableOpacity
           style={styles.toolsIcon}
           onPress={() => {
-            setIsShow(pre => !pre)
+            setIsShow(pre => {
+              if (!pre) {
+                setTimeout(() => handleButtonPress())
+              }
+              return !pre
+            })
           }}
         >
           {isShow ? <Image style={styles.Icon} source={audio}></Image> : <Keyborad fill={'#2D3748'}></Keyborad>}
