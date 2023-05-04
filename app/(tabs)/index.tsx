@@ -27,12 +27,12 @@ export default function TabOneScreen() {
   useEffect(() => {
     botList().then(res => {
       setListData(res as ListDataItem[])
+      console.log(res)
       setLoading(false)
     })
   }, [])
 
   const onShowDetail = event => {
-    console.log('event', event)
     router.push({
       pathname: `chat/${event.id}`,
       params: {
@@ -55,6 +55,7 @@ export default function TabOneScreen() {
               onShowDetail(e)
             }}
             key={ld.id}
+            showPined={ld.pinned}
             ld={ld}
             showTime={true}
           />

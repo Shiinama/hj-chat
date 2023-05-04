@@ -11,6 +11,7 @@ import {
   Touchable,
   TouchableOpacity,
   Text,
+  Alert,
 } from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
@@ -31,12 +32,13 @@ type Props = {
     startRecording: () => void
     stopRecording: () => void
     setAuInfo: (audioFileUri: string) => void
+    uid: string
   }
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
 function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeight }: Props) {
-  const { value, onChangeText, startRecording, stopRecording, setAuInfo, onSubmitEditing, ...inputProps } =
+  const { value, onChangeText, startRecording, stopRecording, setAuInfo, onSubmitEditing, uid, ...inputProps } =
     inputTextProps
   const [position, setPosition] = useState('absolute')
   const [audioFileUri, setAudioFileUri] = useState('')
@@ -96,15 +98,15 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         {!audioFileUri ? (
           <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
             <TouchableOpacity
-              style={styles.toolsIcon}
               onPress={() => {
                 if (ToolsModalRef.current.opacity === 1) ToolsModalRef.current.setOpacity(0)
                 else ToolsModalRef.current.setOpacity(1)
               }}
+              style={styles.toolsIcon}
             >
-              <ToolsModal ref={ToolsModalRef}></ToolsModal>
               <Lines></Lines>
             </TouchableOpacity>
+            <ToolsModal uid={uid} ref={ToolsModalRef}></ToolsModal>
             {isShow ? (
               <TextInput
                 ref={inputRef}
@@ -143,7 +145,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                 showSend ? (
                   <Image style={styles.Icon} source={audio}></Image>
                 ) : (
-                  <TouchableOpacity onPress={() => onSubmitEditing(value)}>
+                  <TouchableOpacity onPress={() => onSubmitEditing(value as any)}>
                     <Send></Send>
                   </TouchableOpacity>
                 )
@@ -163,9 +165,9 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                   if (exists) {
                     try {
                       await FileSystem.deleteAsync(audioFileUri)
-                      console.log('Deleted recording file')
+                      Alert.prompt('Deleted recording file')
                     } catch (error) {
-                      console.error('Failed to delete recording file', error)
+                      Alert.alert('Failed to delete recording file')
                     }
                   }
                   setAudioFileUri('')
@@ -211,7 +213,7 @@ const styles = StyleSheet.create({
   primary: {
     flexDirection: 'row',
     marginTop: 10,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     paddingHorizontal: 20,
     height: 40,
   },

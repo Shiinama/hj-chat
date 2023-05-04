@@ -75,7 +75,6 @@ function MessagesContainer(props: MessagesContainerProps) {
     }
     return <Message></Message>
   }
-  const keyExtractor = item => `${item.id}`
   return (
     <View
       style={[
@@ -87,7 +86,6 @@ function MessagesContainer(props: MessagesContainerProps) {
     >
       <View style={styles.container}>
         <FlatList
-          keyExtractor={keyExtractor}
           ref={flatListRef}
           data={data.length ? data : [123]}
           onLayout={onLayoutList}

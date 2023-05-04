@@ -18,3 +18,10 @@ export const getUserEnergyInfo = () => {
     method: 'get',
   })
 }
+export const getUserEnergsetBotPinnedStatusyInfo = data => {
+  return request({
+    url: `/bot/setBotPinnedStatus`,
+    method: 'post',
+    data,
+  })
+}

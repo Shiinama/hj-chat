@@ -18,26 +18,28 @@ type Props = {
 }
 
 function chatItem({ chatData, item, index }: Props) {
-  const tag = item.replyUid
+  const tag = item?.replyUid
+  // console.log(tag, 12312)
   const [buttonIndex, setButtonIndex] = useState<number>(1)
-  const timeRenderJSX =
-    index === 0 || (index !== 0 && item.time - chatData?.[index - 1]?.time > 1000 * 60 * 1) ? (
-      <Text style={styles.time}>{chatTimeFormat(item.time)}</Text>
-    ) : null
+  // console.log(item, tag, 'ChatItem')
+  // const timeRenderJSX =
+  //   index === 0 || (index !== 0 && item.time - chatData?.[index - 1]?.time > 1000 * 60 * 1) ? (
+  //     <Text style={styles.time}>{chatTimeFormat(item.time)}</Text>
+  //   ) : null
 
   return (
     <View focusable>
-      {timeRenderJSX}
+      {/* {timeRenderJSX} */}
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
         <Image source={tag ? you : me} style={styles.avatar} />
         <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
-          {item.voiceUrl && <AudioMessage audioFileUri={item.voiceUrl} />}
-          {item.text && (
+          {item?.voiceUrl && <AudioMessage audioFileUri={item.voiceUrl} />}
+          {item?.text && (
             <View style={[styles.content]}>
-              <Text style={{ zIndex: 1 }}>{item.text}</Text>
+              <Text>{item.text}</Text>
             </View>
           )}
-          {item.type === 'REPLY' && (
+          {item?.type === 'REPLY' && (
             <View style={styles.buttonGroup}>
               <TouchableOpacity
                 style={[styles.button, buttonIndex === 1 && styles.active]}

@@ -1,8 +1,9 @@
-import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { chatTimeFormat } from '../utils/time';
-import RootStyles from '../constants/RootStyles';
+import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { chatTimeFormat } from '../utils/time'
+import RootStyles from '../constants/RootStyles'
+import Pined from '../assets/images/tabbar/pin.svg'
 
-function BotCard({ ld,  showTime, onShowDetail }: any) {
+function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   return (
     <TouchableOpacity
       style={styles.listItem}
@@ -29,18 +30,13 @@ function BotCard({ ld,  showTime, onShowDetail }: any) {
       )}
       <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
         <View style={styles.listItemTop}>
-          <View style={styles.listItemFlex}>
-            <Text style={styles.name}>{ld.name}</Text>
-          </View>
-          {
-            showTime ? (
-              <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text>
-            ) : null
-          }
+          <Text style={styles.name}>{ld.name}</Text>
+          {showTime ? <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text> : null}
           {/* <View style={styles.listItemMid}></View> */}
         </View>
-        <View style={{ backgroundColor: '#F6F6F6', width: '100%' }}>
+        <View style={{ flexDirection: 'row', backgroundColor: '#F6F6F6', width: '100%' }}>
           <Text style={styles.message}>{ld.description}</Text>
+          {showPined && <Pined></Pined>}
         </View>
       </View>
     </TouchableOpacity>
@@ -80,13 +76,9 @@ const styles = StyleSheet.create({
   listItemTop: {
     flexDirection: 'row',
     alignItems: 'center',
+    height: 45,
     backgroundColor: '#F6F6F6',
     borderColor: '#CDCDCD',
-  },
-  listItemFlex: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
   },
 
   listItemMid: {
@@ -106,7 +98,7 @@ const styles = StyleSheet.create({
   },
 
   message: {
-    // width: 231,
+    width: 240,
     // marginTop: 5,
     color: '#B9B9B9',
   },

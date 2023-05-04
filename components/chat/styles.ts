@@ -42,7 +42,6 @@ export default StyleSheet.create({
   content: {
     padding: 12,
     borderTopWidth: 1,
-    fliter: 'white',
     fontSize: 14,
     borderColor: '#E2E8F0',
     borderBottomWidth: 1,

@@ -36,6 +36,7 @@ export default function Chat({}) {
   const [message, resMessage, sendMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
+  const [id, setId] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   useEffect(() => {
@@ -102,11 +103,17 @@ export default function Chat({}) {
 
   useEffect(() => {
     if (!message) return
-    if (message.reqId === resMessage.reqId) {
-      setChatData(chatData.concat([message.data]))
-    }
-    setChatData(chatData.concat([resMessage.data]))
-  }, [message, resMessage])
+    console.log(chatData.length, 'Messages')
+    setChatData(chatData.concat(message.data))
+    console.log(chatData, 'Message1')
+  }, [message])
+
+  useEffect(() => {
+    if (!resMessage) return
+    console.log(resMessage, 1231)
+    setChatData(chatData.concat(resMessage.data))
+    console.log(chatData, 'resMessage2')
+  }, [resMessage])
 
   if (loading) return <ShellLoading></ShellLoading>
   return (
@@ -115,11 +122,13 @@ export default function Chat({}) {
         inputTextProps={{
           onChangeText: setText,
           value: text,
+          uid,
           setAuInfo,
           startRecording,
           stopRecording,
           onSubmitEditing: async (value: string) => {
             const reqId = uuidv4()
+            setId(reqId)
             sendMessage('text_chat', {
               reqId,
               botUid: uid,
