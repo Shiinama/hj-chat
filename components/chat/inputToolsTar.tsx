@@ -24,6 +24,7 @@ import { StyleSheet } from 'react-native'
 import { useCallbackOne } from 'use-memo-one'
 import AudioMessage from './audioMessage'
 import * as FileSystem from 'expo-file-system'
+import ToolsModal from './toolsModal'
 type Props = {
   minInputToolbarHeight: number
   inputTextProps: TextInput['props'] & {
@@ -44,6 +45,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const [showSend, setShowSend] = useState(false)
   const inputRef = useRef(null)
   const audioMessageRef = useRef(null)
+  const ToolsModalRef = useRef(null)
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
       setShowSend(false)
@@ -90,12 +92,19 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => determineInputSizeChange(contentSize)
   return (
     <View style={[styles.container, { position }] as ViewStyle}>
-      <View style={{ marginBottom: 10 }}>
+      <View>
         {!audioFileUri ? (
           <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
-            <View style={styles.toolsIcon}>
+            <TouchableOpacity
+              style={styles.toolsIcon}
+              onPress={() => {
+                if (ToolsModalRef.current.opacity === 1) ToolsModalRef.current.setOpacity(0)
+                else ToolsModalRef.current.setOpacity(1)
+              }}
+            >
+              <ToolsModal ref={ToolsModalRef}></ToolsModal>
               <Lines></Lines>
-            </View>
+            </TouchableOpacity>
             {isShow ? (
               <TextInput
                 ref={inputRef}
@@ -215,6 +224,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
+    position: 'relative',
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',

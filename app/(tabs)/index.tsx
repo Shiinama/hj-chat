@@ -1,11 +1,11 @@
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
-import RootStyles from '../../constants/RootStyles';
-import 'react-native-get-random-values';
-import { useEffect, useState } from 'react';
-import { botList } from '../../api/index';
-import BotCard from '../../components/botCard';
-import ShellLoading from '../../components/loading';
+import { View, StyleSheet, ScrollView } from 'react-native'
+import { useRouter } from 'expo-router'
+import RootStyles from '../../constants/RootStyles'
+import 'react-native-get-random-values'
+import { useEffect, useState } from 'react'
+import { botList, getUserEnergyInfo } from '../../api/index'
+import BotCard from '../../components/botCard'
+import ShellLoading from '../../components/loading'
 
 type ListDataItem = {
   id: number
@@ -20,18 +20,18 @@ type ListDataItem = {
 }
 
 export default function TabOneScreen() {
-  const router = useRouter();
-  const [listData, setListData] = useState<ListDataItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter()
+  const [listData, setListData] = useState<ListDataItem[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     botList().then(res => {
       setListData(res as ListDataItem[])
       setLoading(false)
     })
-  }, []);
+  }, [])
 
-  const onShowDetail = (event) => {
+  const onShowDetail = event => {
     console.log('event', event)
     router.push({
       pathname: `chat/${event.id}`,
@@ -51,7 +51,9 @@ export default function TabOneScreen() {
       <ScrollView style={styles.listContainer}>
         {listData?.map(ld => (
           <BotCard
-            onShowDetail={(e)=>{onShowDetail(e)}}
+            onShowDetail={e => {
+              onShowDetail(e)
+            }}
             key={ld.id}
             ld={ld}
             showTime={true}

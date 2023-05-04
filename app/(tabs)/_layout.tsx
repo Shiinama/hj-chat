@@ -8,6 +8,8 @@ import Profile from '../../assets/images/tabbar/profile.svg'
 import ProfileAcitve from '../../assets/images/tabbar/profile_acitve.svg'
 import Bot from '../../assets/images/tabbar/bot.svg'
 import BotAcitve from '../../assets/images/tabbar/bot_active.svg'
+import { useEffect, useState } from 'react'
+import { getUserEnergyInfo } from '../../api'
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -24,8 +26,17 @@ const styles = StyleSheet.create({
     height: 27,
   },
 })
-
+type EnergyType = {
+  energy: number
+  dailyEnergy: number
+}
 export default function TabLayout() {
+  const [energy, setEnergy] = useState<EnergyType>()
+  useEffect(() => {
+    getUserEnergyInfo().then(res => {
+      setEnergy(res as EnergyType)
+    })
+  }, [])
   return (
     <Tabs
       screenOptions={{
@@ -59,9 +70,14 @@ export default function TabLayout() {
                 }}
               >
                 <Flash></Flash>
-                {/* <Image style={{ width: 17, height: 19 }} source={flash}></Image> */}
               </View>
-              <ProgressBar progressBarColor="#FFC03A" progressValue={50}></ProgressBar>
+              {energy && (
+                <ProgressBar
+                  progressBarColor="#FFC03A"
+                  progressValue={energy.energy}
+                  maxRange={energy.dailyEnergy}
+                ></ProgressBar>
+              )}
             </View>
           ),
         }}

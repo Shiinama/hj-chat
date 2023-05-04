@@ -7,6 +7,7 @@ interface ProgressBarProps {
   duration?: number
   progressBarColor?: string
   style?: any
+  maxRange: number
 }
 
 const ProgressBar = ({
@@ -15,6 +16,7 @@ const ProgressBar = ({
   duration = 300,
   progressBarColor = '#00c',
   style,
+  maxRange = 100,
 }: ProgressBarProps) => {
   const [progressAnimation] = useState(new Animated.Value(progressStartValue))
 
@@ -34,14 +36,14 @@ const ProgressBar = ({
           { backgroundColor: progressBarColor },
           {
             width: progressAnimation.interpolate({
-              inputRange: [0, 100],
-              outputRange: ['0%', '100%'],
+              inputRange: [0, maxRange],
+              outputRange: ['0%', `${maxRange}%`],
               extrapolate: 'clamp',
             }),
           },
         ]}
       ></Animated.View>
-      <Text style={styles.progressText}>{progressValue + '/' + '100'}</Text>
+      <Text style={styles.progressText}>{progressValue + '/' + maxRange}</Text>
     </View>
   )
 }

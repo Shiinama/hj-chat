@@ -9,29 +9,33 @@ import axios from 'axios'
 import { chatHistory } from '../../api'
 import { Audio } from 'expo-av'
 import ShellLoading from '../../components/loading'
+import { useSocketIo } from '../../components/chat/socket'
+import * as FileSystem from 'expo-file-system'
 
 export type ChatItem = {
   id: number
-  uid: string
-  userId: number
-  userUid: string
-  status: string
-  type: string
-  replyUid: string | null
-  text: string
-  translation: string | null
-  voiceUrl: string | null
-  botId: number
-  createdDate: string
-  updatedDate: string
-  botUid: string
+  uid?: string
+  userId?: number
+  userUid?: string
+  status?: string
+  type?: string
+  replyUid?: string | null
+  text?: string
+  translation?: string | null
+  voiceUrl?: string | null
+  botId?: number
+  content?: string
+  createdDate?: string
+  updatedDate?: string
+  botUid?: string
 }
 
 export default function Chat({}) {
   const navigation = useNavigation()
-  const { name, type, uid, userId } = useSearchParams()
+  const { name, uid } = useSearchParams()
+  const [message, resMessage, sendMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
-
+  const [text, setText] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   useEffect(() => {
@@ -69,10 +73,9 @@ export default function Chat({}) {
     try {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
-      // const buffer = await FileSystem.readAsStringAsync(uri, {
-      //   encoding: FileSystem.EncodingType.Base64,
-      // })
-      // await uploadRecording(buffer)
+      const buffer = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      })
       return uri
     } catch (err) {
       console.error('Failed to stop recording', err)
@@ -82,35 +85,29 @@ export default function Chat({}) {
     setChatData(chatData.concat([{ id: Math.random(), uid: '47ddd3ac0ca64f5ab6888b14dd9e4458', voiceUrl: uri } as any]))
   }
 
-  async function uploadRecording(buffer) {
-    // console.log(buffer)
-    return
-    try {
-      const response = await axios.post('https://my-server.com/api/upload', {
-        data: buffer,
-      })
-      console.log('Upload success', response.data)
-    } catch (err) {
-      console.error('Upload failed', err)
-    }
+  const sendAudie = buffer => {
+    const reqId = uuidv4()
+    sendMessage('voice_chat', {
+      reqId,
+      botUid: uid,
+      voice: buffer,
+    })
   }
 
-  useEffect(() => {
-    const getStorageData = async () => {
-      return JSON.parse(await AsyncStorage.getItem(String(type)))
-    }
-
-    getStorageData().then(r => {
-      setChatData(r || [])
-    })
-  }, [type])
   useEffect(() => {
     navigation.setOptions({
       title: name,
     })
   }, [navigation, name])
 
-  const [text, setText] = useState('')
+  useEffect(() => {
+    if (!message) return
+    if (message.reqId === resMessage.reqId) {
+      setChatData(chatData.concat([message.data]))
+    }
+    setChatData(chatData.concat([resMessage.data]))
+  }, [message, resMessage])
+
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <>
@@ -121,36 +118,13 @@ export default function Chat({}) {
           setAuInfo,
           startRecording,
           stopRecording,
-          onKeyPress: e => {
-            if (e.nativeEvent.key === 'Backspace') {
-              console.log(11)
-            }
-          },
           onSubmitEditing: async (value: string) => {
-            console.log(value)
-            // setChatData(
-            //   chatData.concat([
-            //     {
-            //       id: String(Math.random()),
-            //       tag: 99,
-            //       content: nativeEvent.text,
-            //       time: new Date().getTime(),
-            //     },
-            //   ])
-            // )
-            // await AsyncStorage.setItem(
-            //   String(type),
-            //   JSON.stringify(
-            //     chatData.concat([
-            //       {
-            //         id: String(Math.random()),
-            //         tag: 99,
-            //         content: nativeEvent.text,
-            //         time: new Date().getTime(),
-            //       },
-            //     ])
-            //   )
-            // )
+            const reqId = uuidv4()
+            sendMessage('text_chat', {
+              reqId,
+              botUid: uid,
+              text: value,
+            })
             setText('')
           },
         }}

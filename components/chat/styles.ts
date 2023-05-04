@@ -10,7 +10,7 @@ export default StyleSheet.create({
   },
   msgBox: {
     width: '100%',
-    marginBottom: 12,
+    marginBottom: 24,
   },
   you: {
     flexDirection: 'row',

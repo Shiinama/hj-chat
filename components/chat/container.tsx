@@ -10,7 +10,7 @@ export interface FishChatProps {
   messagesContainerStyle?: StyleProp<ViewStyle>
 }
 // 工具栏高度
-const minInputToolbarHeight = 56
+const minInputToolbarHeight = 70
 
 //  一个自定义距离偏移距离
 const bottomOffset = 1
