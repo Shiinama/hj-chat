@@ -2,14 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Animated, Keyboard } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const ContainerResize: React.FC<React.PropsWithChildren<{}>> = ({
-  children,
-}) => {
+const ContainerResize: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const insets = useSafeAreaInsets()
   const [height, setHeight] = useState(0)
-  // console.log('height', height)
   const AnimatedHeight = useRef(new Animated.Value(height)).current
-  // console.log('AnimatedHeight', AnimatedHeight)
 
   const setAnimatedHight = useCallback(
     (toValue: number, duration: number) => {
@@ -19,7 +15,7 @@ const ContainerResize: React.FC<React.PropsWithChildren<{}>> = ({
         useNativeDriver: true,
       }).start()
     },
-    [AnimatedHeight],
+    [AnimatedHeight]
   )
 
   useEffect(() => {
@@ -45,7 +41,8 @@ const ContainerResize: React.FC<React.PropsWithChildren<{}>> = ({
       style={{
         paddingBottom: insets.bottom,
         height: AnimatedHeight,
-      }}>
+      }}
+    >
       {children}
     </Animated.View>
   )

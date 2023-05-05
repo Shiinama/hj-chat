@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import * as eva from '@eva-design/eva'
 import { Provider as XiaoshuProvider } from '@fruits-chain/react-native-xiaoshu'
 
-import { ApplicationProvider, Layout, Text } from '@ui-kitten/components'
+import { ApplicationProvider } from '@ui-kitten/components'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,

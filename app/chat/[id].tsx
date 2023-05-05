@@ -54,7 +54,6 @@ export default function Chat({}) {
   const [translationTextIndex, setTranslationTextIndex] = useState(null)
   useEffect(() => {
     chatHistory(uid).then(({ data }: any) => {
-      console.log(data)
       data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
       setChatData(data)
       setLoading(false)
@@ -91,6 +90,7 @@ export default function Chat({}) {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
       const mp3Uri = await convert4amToMp3(uri)
+      console.log(mp3Uri)
       const buffer = await FileSystem.readAsStringAsync(mp3Uri, {
         encoding: FileSystem.EncodingType.Base64,
       })

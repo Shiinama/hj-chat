@@ -8,13 +8,10 @@ import {
   TextInputContentSizeChangeEventData,
   Platform,
   Image,
-  Touchable,
   TouchableOpacity,
-  Text,
   Alert,
 } from 'react-native'
 import { Popover } from '@ui-kitten/components'
-
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -30,6 +27,7 @@ import * as FileSystem from 'expo-file-system'
 import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
 import { ChatContext } from '../../app/chat/chatContext'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
 type Props = {
   minInputToolbarHeight: number
   inputTextProps: TextInput['props'] & {
@@ -196,9 +194,9 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                   if (exists) {
                     try {
                       await FileSystem.deleteAsync(audioFileUri)
-                      Alert.prompt('Deleted recording file')
+                      Toast('Deleted recording file')
                     } catch (error) {
-                      Alert.alert('Failed to delete recording file')
+                      Toast('Failed to delete recording file')
                     }
                   }
                   setAudioFileUri('')

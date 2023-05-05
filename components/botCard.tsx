@@ -9,7 +9,6 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
       style={styles.listItem}
       onPress={() => {
         const { id, userId, name, language, logo, uid, energyPerChat } = ld
-        console.log(logo)
         onShowDetail({
           id,
           energyPerChat,
