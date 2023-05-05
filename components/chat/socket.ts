@@ -114,8 +114,9 @@ export const useSocketIo = () => {
   const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {
     console.log(reqId, data, 'onEnergyInfo')
   }
-  const onMessageUpdated = ({ reqId, data }: MesageSucessType) => {
-    console.log(reqId, data, 'onMessageUpdated')
+  const onMessageUpdated = (data: MesageSucessType) => {
+    console.log(data, 'onMessageUpdated')
+    // setMessage(data)
   }
 
   const sendMessage = (ChatEvent, data) => {

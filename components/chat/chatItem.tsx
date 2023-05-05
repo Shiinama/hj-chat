@@ -17,11 +17,11 @@ type Props = {
   item: ChatItem & number
   translationText
   children?: (() => React.ReactNode) | React.ReactNode
+  logo: string
 }
 
-function chatItem({ item, translationText }: Props) {
+function chatItem({ item, translationText, logo }: Props) {
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
-
   const [buttonIndex, setButtonIndex] = useState<number>(1)
   const isBlur = buttonIndex === 1
   if (item === 123) return null
@@ -30,7 +30,7 @@ function chatItem({ item, translationText }: Props) {
   const renderMessageText = () => {
     return (
       <View style={[styles.content]}>
-        {isBlur && (
+        {isBlur && item?.type === 'REPLY' && (
           <BlurView style={styles.absolute} blurType="light" blurAmount={2} reducedTransparencyFallbackColor="white" />
         )}
         {buttonIndex === 1 && <Text>{item.text}</Text>}
@@ -103,8 +103,16 @@ function chatItem({ item, translationText }: Props) {
   return (
     <View style={styles.itemWrap}>
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
-        <Image source={tag ? you : me} style={styles.avatar} />
+        <Image
+          source={{
+            uri: tag
+              ? logo
+              : 'https://www.bhmpics.com/downloads/isla-plastic-memories-Wallpapers/1.thumb-1920-657801.jpg',
+          }}
+          style={styles.avatar}
+        />
         <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
+          {/* {item.status === 'SENDING' ? <Loading color="#7A2EF6" /> : null} */}
           {item?.voiceUrl && renderMessageAudio()}
           {item?.text && renderMessageText()}
           {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}

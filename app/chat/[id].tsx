@@ -10,6 +10,7 @@ import { useSetState } from 'ahooks'
 import ShellLoading from '../../components/loading'
 import { useSocketIo } from '../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
+import { Buffer } from 'buffer'
 import Back from '../../assets/images/tabbar/back.svg'
 import Flash from '../../assets/images/tabbar/flash.svg'
 import { ChatContext, ChatPageState } from './chatContext'
@@ -35,6 +36,7 @@ export type ChatItem = {
 }
 
 export default function Chat({}) {
+  const botStorage = botStore.getState()
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
@@ -87,11 +89,11 @@ export default function Chat({}) {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
       const mp3Uri = await convert4amToMp3(uri)
-      console.log(mp3Uri)
       const buffer = await FileSystem.readAsStringAsync(mp3Uri, {
         encoding: FileSystem.EncodingType.Base64,
       })
-      setVoice(buffer)
+      const fileBuffer = Buffer.from(`data:audio/mpeg;base64,${buffer}`, 'base64')
+      setVoice(fileBuffer)
       return uri
     } catch (err) {
       console.error('Failed to stop recording', err)
@@ -214,7 +216,7 @@ export default function Chat({}) {
           renderItem: ({ item, index }) => {
             return (
               <View>
-                <ChatItem translationText={translationText} item={item}></ChatItem>
+                <ChatItem logo={botStorage.logo} translationText={translationText} item={item}></ChatItem>
               </View>
             )
           },
