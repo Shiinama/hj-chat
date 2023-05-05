@@ -1,17 +1,16 @@
-import { View } from 'react-native'
+import { Text, View, TouchableOpacity } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import ChatItem from '../../components/chat/chatItem'
 import Container from '../../components/chat/container'
-import axios from 'axios'
 import { chatHistory } from '../../api'
 import { Audio } from 'expo-av'
 import ShellLoading from '../../components/loading'
 import { useSocketIo } from '../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
-
+import Back from '../../assets/images/tabbar/back.svg'
+import Flash from '../../assets/images/tabbar/flash.svg'
 export type ChatItem = {
   id: number
   uid?: string
@@ -32,15 +31,18 @@ export type ChatItem = {
 
 export default function Chat({}) {
   const navigation = useNavigation()
-  const { name, uid } = useSearchParams()
+  const { name, uid, userId, energyPerChat } = useSearchParams()
   const [message, resMessage, sendMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
   const [id, setId] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
+  const [voice, setVoice] = useState(null)
   useEffect(() => {
     chatHistory(uid).then(({ data }: any) => {
+      console.log(data)
+      data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
       setChatData(data)
       setLoading(false)
     })
@@ -50,7 +52,7 @@ export default function Chat({}) {
       new Audio.Recording()
       Audio.requestPermissionsAsync().then(({ granted }) => {
         if (!granted) {
-          alert('请允许访问麦克风以录制音频！')
+          alert('请允许访问麦克风以录制音频！请到设置中')
         }
       })
       Audio.setAudioModeAsync({
@@ -63,7 +65,8 @@ export default function Chat({}) {
   }, [])
   async function startRecording() {
     try {
-      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY)
+      const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
+      const { recording } = await Audio.Recording.createAsync(defaultParam)
       setRecording(recording)
     } catch (err) {
       console.error('Failed to start recording', err)
@@ -74,69 +77,100 @@ export default function Chat({}) {
     try {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
+      console.log(uri)
       const buffer = await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
       })
+      setVoice(buffer)
       return uri
     } catch (err) {
       console.error('Failed to stop recording', err)
     }
   }
-  function setAuInfo(uri) {
-    setChatData(chatData.concat([{ id: Math.random(), uid: '47ddd3ac0ca64f5ab6888b14dd9e4458', voiceUrl: uri } as any]))
+  function setAuInfo() {
+    sendAudio()
   }
 
-  const sendAudie = buffer => {
+  const sendAudio = () => {
     const reqId = uuidv4()
     sendMessage('voice_chat', {
       reqId,
       botUid: uid,
-      voice: buffer,
+      voice,
     })
   }
 
   useEffect(() => {
     navigation.setOptions({
-      title: name,
+      headerTitle: () => (
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={{ fontSize: 18, fontWeight: '600' }}>{name}</Text>
+          <View
+            style={{
+              // paddingVertical: 2,
+              marginLeft: 5,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 2,
+              paddingVertical: 1,
+              borderRadius: 5,
+              borderWidth: 2,
+              borderColor: '#EDEDED',
+            }}
+          >
+            <Flash width={18} height={18}></Flash>
+            <Text style={{ fontSize: 16, fontWeight: '600', marginRight: 5 }}>{energyPerChat}</Text>
+          </View>
+        </View>
+      ),
+      headerLeft: () => {
+        return (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Back></Back>
+          </TouchableOpacity>
+        )
+      },
     })
   }, [navigation, name])
 
   useEffect(() => {
     if (!message) return
-    console.log(chatData.length, 'Messages')
+    console.log(message, 'Messages')
     setChatData(chatData.concat(message.data))
-    console.log(chatData, 'Message1')
   }, [message])
 
   useEffect(() => {
     if (!resMessage) return
-    console.log(resMessage, 1231)
-    setChatData(chatData.concat(resMessage.data))
-    console.log(chatData, 'resMessage2')
+    console.log(resMessage, 'resMeaage')
+    setChatData(chatData.concat(resMessage))
   }, [resMessage])
 
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <>
       <Container
-        inputTextProps={{
-          onChangeText: setText,
-          value: text,
-          uid,
-          setAuInfo,
-          startRecording,
-          stopRecording,
-          onSubmitEditing: async (value: string) => {
-            const reqId = uuidv4()
-            setId(reqId)
-            sendMessage('text_chat', {
-              reqId,
-              botUid: uid,
-              text: value,
-            })
-            setText('')
-          },
-        }}
+        inputTextProps={
+          {
+            onChangeText: setText,
+            value: text,
+            uid,
+            userId,
+            setAuInfo,
+            startRecording,
+            stopRecording,
+            onSubmitEditing: async (value: any) => {
+              const reqId = uuidv4()
+              setId(reqId)
+              sendMessage('text_chat', {
+                reqId,
+                botUid: uid,
+                text: value,
+              })
+              setText('')
+            },
+          } as any
+        }
         flatListProps={{
           data: chatData,
           renderItem: ({ item, index }) => {

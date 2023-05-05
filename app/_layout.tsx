@@ -1,10 +1,11 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
-import { useContext, useEffect, useRef } from 'react'
-import { useColorScheme } from 'react-native'
+import { useEffect } from 'react'
+import * as eva from '@eva-design/eva'
+import { Provider as XiaoshuProvider } from '@fruits-chain/react-native-xiaoshu'
 
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -37,10 +38,12 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </>
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <XiaoshuProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </XiaoshuProvider>
+    </ApplicationProvider>
   )
 }

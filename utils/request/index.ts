@@ -1,12 +1,11 @@
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
 
 import systemConfig from '../../constants/System'
 
 import MSG_LIST from './message'
-
+import debounce from 'lodash/debounce'
 export type RequestOptions = AxiosRequestConfig & {
   url: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,6 +13,15 @@ export type RequestOptions = AxiosRequestConfig & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headers?: any
 }
+
+const toastError = (msg: string) => {
+  Toast({
+    message: msg,
+    duration: 1500,
+  })
+}
+const errorTip = debounce(toastError, 500)
+
 const { baseUrl, authKey } = systemConfig
 const _axios = axios.create()
 /**
@@ -44,13 +52,13 @@ _axios.interceptors.response.use(
     if (response) {
       const { status, data, config } = response
       console.log(data)
-      data.message = data.errMsg || MSG_LIST.unknownError
       if (status === 401) {
         // 状态码为401时，根据白名单来判断跳转与否
-
+        errorTip(data.message || '')
         return Promise.reject(new Error(data.message))
       }
       // 404 502 ..
+      errorTip(data.message || '')
       return Promise.reject(data.message)
       // throw message;
     }
@@ -68,7 +76,7 @@ export default async function request<T>(options: RequestOptions) {
   const opt: RequestOptions = options
   delete opt.url
   const Authorization =
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMDMyMzc3Mjg1LCJqdGkiOiI5OWIzM2U2Zjk0MDg0OWY0ODVhN2M3ZjAyYTM3MGRhNiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzAzNDk2OTI4NX0.dkTLwDLtJdV186wZyEoQugSjFPZBPePGdWT8TrdarSk'
+    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsU3RhZ2luZyIsInN1YiI6MzExLCJhdWQiOiJNeVNoZWxsU3RhZ2luZyIsIm5iZiI6MCwiaWF0IjoxNjgzMTk4MjY3NzQ4LCJqdGkiOiJmMDEyYjE4NzdhZDc0MGI4OTVkNzZiMWE5ZGUxY2RiMiIsInNlY3VyaXR5U3RhbXAiOiJiZWFlYzA5Y2YwOTA0NjgyODk2NGU4N2JhYjcyZTBkZCIsImV4cCI6MTY4MzIwMDg1OTc0OH0.9cFaSIpmZt0Pw0A9sR9NNAPqKxr-_08JC4i5IvU0A2U'
   let headers = {}
   if (options) {
     headers = options.headers || {}

@@ -12,12 +12,13 @@ import { useState } from 'react'
 
 type Props = {
   chatData: ChatItem[]
-  item: ChatItem
+  item: ChatItem & number
   index: number
   children?: (() => React.ReactNode) | React.ReactNode
 }
 
 function chatItem({ chatData, item, index }: Props) {
+  if (item === 123) return null
   const tag = item?.replyUid
   // console.log(tag, 12312)
   const [buttonIndex, setButtonIndex] = useState<number>(1)

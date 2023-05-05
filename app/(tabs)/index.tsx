@@ -3,9 +3,10 @@ import { useRouter } from 'expo-router'
 import RootStyles from '../../constants/RootStyles'
 import 'react-native-get-random-values'
 import { useEffect, useState } from 'react'
-import { botList, getUserEnergyInfo } from '../../api/index'
+import { botList } from '../../api/index'
 import BotCard from '../../components/botCard'
 import ShellLoading from '../../components/loading'
+import botStore from '../../store/botStore'
 
 type ListDataItem = {
   id: number
@@ -26,17 +27,20 @@ export default function TabOneScreen() {
 
   useEffect(() => {
     botList().then(res => {
-      setListData(res as ListDataItem[])
       console.log(res)
+      setListData(res as ListDataItem[])
+      botStore.setState(res as any)
       setLoading(false)
     })
   }, [])
 
   const onShowDetail = event => {
+    console.log(event)
     router.push({
       pathname: `chat/${event.id}`,
       params: {
         id: event.id,
+        energyPerChat: event.energyPerChat,
         userId: event.userId,
         name: event.name,
         language: event.language,

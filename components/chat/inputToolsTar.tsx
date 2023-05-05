@@ -13,6 +13,8 @@ import {
   Text,
   Alert,
 } from 'react-native'
+import { Popover } from '@ui-kitten/components'
+
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -33,12 +35,13 @@ type Props = {
     stopRecording: () => void
     setAuInfo: (audioFileUri: string) => void
     uid: string
+    userId: number
   }
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
 function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeight }: Props) {
-  const { value, onChangeText, startRecording, stopRecording, setAuInfo, onSubmitEditing, uid, ...inputProps } =
+  const { value, onChangeText, startRecording, stopRecording, setAuInfo, onSubmitEditing, uid, userId, ...inputProps } =
     inputTextProps
   const [position, setPosition] = useState('absolute')
   const [audioFileUri, setAudioFileUri] = useState('')
@@ -88,6 +91,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
     },
     [onInputSizeChanged]
   )
+  const [visible, setVisible] = useState(false)
 
   const handleContentSizeChange = ({
     nativeEvent: { contentSize },
@@ -97,16 +101,26 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
       <View>
         {!audioFileUri ? (
           <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
-            <TouchableOpacity
-              onPress={() => {
-                if (ToolsModalRef.current.opacity === 1) ToolsModalRef.current.setOpacity(0)
-                else ToolsModalRef.current.setOpacity(1)
-              }}
-              style={styles.toolsIcon}
+            <Popover
+              visible={visible}
+              placement="top"
+              anchor={() => (
+                <TouchableOpacity
+                  onPress={() => {
+                    setVisible(true)
+                  }}
+                  style={styles.toolsIcon}
+                >
+                  <Lines></Lines>
+                </TouchableOpacity>
+              )}
+              onBackdropPress={() => setVisible(false)}
             >
-              <Lines></Lines>
-            </TouchableOpacity>
-            <ToolsModal uid={uid} ref={ToolsModalRef}></ToolsModal>
+              <View style={{ width: 200 }}>
+                <ToolsModal setVisible={setVisible} userId={userId} uid={uid} ref={ToolsModalRef}></ToolsModal>
+              </View>
+            </Popover>
+
             {isShow ? (
               <TextInput
                 ref={inputRef}

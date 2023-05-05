@@ -1,4 +1,3 @@
-import { Button } from '@fruits-chain/react-native-xiaoshu'
 import { memo, useEffect, useRef, useState } from 'react'
 import { Keyboard, TouchableWithoutFeedback, View, TextInput, Text } from 'react-native'
 import styles from './styles'

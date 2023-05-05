@@ -5,6 +5,7 @@ import Message from './message'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 15,
     backgroundColor: '#FFFFFF',
   },
   containerAlignTop: {
@@ -24,6 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listStyle: {
+    // paddingTop: 20,
     flex: 1,
   },
   scrollToBottomStyle: {

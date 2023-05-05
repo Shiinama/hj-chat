@@ -3,6 +3,7 @@ import { useState } from 'react'
 import MessagesContainer from './messagesContainer'
 import InputToolsTar from './inputToolsTar'
 import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
+
 export interface FishChatProps {
   inputTextProps: TextInput['props']
   flatListProps: FlatList['props']
@@ -69,7 +70,7 @@ function Container({
         </KeyboardAvoidingView>
         {/* inputToolbar下方输入框工具栏容器 */}
         <InputToolsTar
-          inputTextProps={inputTextProps}
+          inputTextProps={inputTextProps as any}
           minInputToolbarHeight={restProps.InputToolBarHeight || minInputToolbarHeight}
         ></InputToolsTar>
       </View>

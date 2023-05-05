@@ -18,9 +18,23 @@ export const getUserEnergyInfo = () => {
     method: 'get',
   })
 }
-export const getUserEnergsetBotPinnedStatusyInfo = data => {
+export const setBotPinnedStatus = data => {
   return request({
     url: `/bot/setBotPinnedStatus`,
+    method: 'post',
+    data,
+  })
+}
+export const removeBotFromChatList = data => {
+  return request({
+    url: `/bot/removeBotFromChatList`,
+    method: 'post',
+    data,
+  })
+}
+export const resetHistory = data => {
+  return request({
+    url: `/chat/resetHistory`,
     method: 'post',
     data,
   })
