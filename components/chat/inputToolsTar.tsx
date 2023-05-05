@@ -29,6 +29,7 @@ import AudioMessage from "./audioMessage";
 import * as FileSystem from "expo-file-system";
 import ToolsModal, { ActionType } from "./toolsModal";
 import { Popup } from "@fruits-chain/react-native-xiaoshu";
+import ShareToPopup from "./shareToPopup";
 type Props = {
   minInputToolbarHeight: number;
   inputTextProps: TextInput["props"] & {
@@ -159,31 +160,7 @@ function InputToolsTar({
                 ></ToolsModal>
               </View>
             </Popover>
-            <Popup
-              visible={popUpShow}
-              position={"bottom"}
-              overlay={false}
-              onPressOverlay={() => {
-                setPopUpShow(false);
-              }}
-              onRequestClose={() => {
-                setPopUpShow(false);
-                return true;
-              }}
-              round
-            >
-              <View
-                style={{ height: 200, width: 200, backgroundColor: "black" }}
-              >
-                <TouchableOpacity
-                  onPress={() => {
-                    setPopUpShow(false);
-                  }}
-                >
-                  <Text style={{ color: "#fff" }}>close</Text>
-                </TouchableOpacity>
-              </View>
-            </Popup>
+            <ShareToPopup visible={popUpShow} />
             {isShow ? (
               <TextInput
                 ref={inputRef}
