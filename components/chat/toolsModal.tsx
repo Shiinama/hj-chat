@@ -15,11 +15,6 @@ const ToolsModal = forwardRef(
       <View
         style={{
           width: 200,
-          // height: 150,
-          // zIndex: 99,
-          // position: 'absolute',
-          // left: 20,
-          // bottom: 82,
           justifyContent: 'center',
           borderRadius: 12,
           borderColor: Colors.mainGrey,
@@ -31,7 +26,6 @@ const ToolsModal = forwardRef(
             <TouchableOpacity
               style={styles.iconC}
               onPress={async () => {
-                // setVisible(false);
                 const { close } = Toast.loading('Pinned')
                 setBotPinnedStatus({ botUid: uid, pinned: true }).then(() => {
                   close()
@@ -44,7 +38,6 @@ const ToolsModal = forwardRef(
             <TouchableOpacity
               style={styles.iconC}
               onPress={async () => {
-                // setVisible(false);
                 const { close } = Toast.loading('Move...')
                 removeBotFromChatList({ botUid: uid }).then(() => {
                   close()
@@ -60,7 +53,6 @@ const ToolsModal = forwardRef(
         <TouchableOpacity
           style={styles.iconC}
           onPress={async () => {
-            // setVisible(false);
             const { close } = Toast.loading('Clear Contenxt')
             resetHistory({ botUid: uid }).then(() => {
               close()
@@ -74,8 +66,6 @@ const ToolsModal = forwardRef(
           style={styles.iconC}
           onPress={() => {
             onAction('ShareChatRecords')
-            // setVisible(false);
-            // setPopUpShow(true);
           }}
         >
           <Share></Share>
