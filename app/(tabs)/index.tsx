@@ -35,7 +35,6 @@ export default function TabOneScreen() {
   }, [])
 
   const onShowDetail = event => {
-    console.log(event)
     router.push({
       pathname: `chat/${event.id}`,
       params: {

@@ -42,7 +42,6 @@ export default function Chat({}) {
   const [translationTextIndex, setTranslationTextIndex] = useState(null)
   useEffect(() => {
     chatHistory(uid).then(({ data }: any) => {
-      console.log(data)
       data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
       setChatData(data)
       setLoading(false)

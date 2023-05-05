@@ -21,6 +21,7 @@ type Props = {
 function chatItem({ item, translationText }: Props) {
   if (item === 123) return null
   const tag = item?.replyUid
+  const [buttonIndex, setButtonIndex] = useState<number>(1)
   const renderMessageAudio = () => <AudioMessage audioFileUri={item.voiceUrl} />
   const renderMessageText = () => {
     return (
@@ -41,17 +42,17 @@ function chatItem({ item, translationText }: Props) {
       {
         id: 1,
         dText: 'Blur',
-        Icon: id => <Blur fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
+        Icon: id => <Blur fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
       },
       {
         id: 2,
         dText: 'Text',
-        Icon: id => <Svt fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
+        Icon: id => <Svt fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
       },
       {
         id: 3,
         dText: 'Translate',
-        Icon: id => <Translate fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
+        Icon: id => <Translate fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
       },
     ]
     return data.map(({ Icon, id, dText }) => (
@@ -70,7 +71,7 @@ function chatItem({ item, translationText }: Props) {
       </TouchableOpacity>
     ))
   }
-  const [buttonIndex, setButtonIndex] = useState<number>(1)
+
   return (
     <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
       <Image source={tag ? you : me} style={styles.avatar} />

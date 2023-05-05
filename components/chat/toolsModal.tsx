@@ -10,7 +10,6 @@ import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../a
 export type ActionType = 'ClearMemory' | 'ShareChatRecords'
 const ToolsModal = forwardRef(
   ({ uid, onAction, userId }: { uid: string; onAction: (key: ActionType) => void; userId: number }, ref) => {
-    console.log(userId, 123123)
     return (
       <View
         style={{

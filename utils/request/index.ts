@@ -51,7 +51,6 @@ _axios.interceptors.response.use(
     // 请求有响应
     if (response) {
       const { status, data, config } = response
-      console.log(data)
       if (status === 401) {
         // 状态码为401时，根据白名单来判断跳转与否
         errorTip(data.message || '')
