@@ -118,4 +118,12 @@ export default StyleSheet.create({
     marginTop: 4,
     marginLeft: 11,
   },
+  absolute: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    zIndex: 999,
+  },
 });
