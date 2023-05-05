@@ -91,10 +91,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="audio"
+        name="profile"
         options={{
           tabBarShowLabel: false,
-          title: '录音',
+          title: 'Profile',
           tabBarIcon: ({ focused }) => (focused ? <ProfileAcitve /> : <Profile />),
         }}
       />
