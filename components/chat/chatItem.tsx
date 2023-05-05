@@ -5,10 +5,13 @@ import me from '../../assets/images/me.jpg'
 import { ChatItem } from '../../app/chat/[id]'
 import AudioMessage from './audioMessage'
 import Blur from '../../assets/images/chat/blur.svg'
+import CheckIcon from '../../assets/images/chat/check.svg'
+import CheckedIcon from '../../assets/images/chat/checked.svg'
 import Svt from '../../assets/images/chat/svt.svg'
 import Translate from '../../assets/images/chat/translte.svg'
-import { useState } from 'react'
-import { Loading } from '@fruits-chain/react-native-xiaoshu'
+import { useContext, useState } from 'react'
+import { ChatContext } from '../../app/chat/chatContext'
+import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
 
 type Props = {
   item: ChatItem & number
@@ -17,9 +20,9 @@ type Props = {
 }
 
 function chatItem({ item, translationText }: Props) {
+  const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   if (item === 123) return null
   const tag = item?.replyUid
-  const [buttonIndex, setButtonIndex] = useState<number>(1)
   const renderMessageAudio = () => <AudioMessage audioFileUri={item.voiceUrl} />
   const renderMessageText = () => {
     return (
@@ -41,17 +44,17 @@ function chatItem({ item, translationText }: Props) {
       {
         id: 1,
         dText: 'Blur',
-        Icon: id => <Blur fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
+        Icon: id => <Blur fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
       },
       {
         id: 2,
         dText: 'Text',
-        Icon: id => <Svt fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
+        Icon: id => <Svt fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
       },
       {
         id: 3,
         dText: 'Translate',
-        Icon: id => <Translate fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
+        Icon: id => <Translate fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
       },
     ]
     return data.map(({ Icon, id, dText }) => (
@@ -70,15 +73,38 @@ function chatItem({ item, translationText }: Props) {
       </TouchableOpacity>
     ))
   }
-
+  const [buttonIndex, setButtonIndex] = useState<number>(1)
+  const checkboxJSX = chatValue.pageStatus === 'sharing' && (
+    <Checkbox
+      style={styles.checkbox}
+      value={chatValue?.selectedItems?.includes(item?.uid)}
+      onChange={val => {
+        if (val) {
+          setChatValue({
+            selectedItems: [...(chatValue?.selectedItems || []), item?.uid],
+          })
+        } else {
+          setChatValue({
+            selectedItems: chatValue?.selectedItems?.filter(v => v !== item.uid),
+          })
+        }
+      }}
+      renderIcon={({ active, onPress }) => {
+        return active ? <CheckedIcon onPress={onPress} /> : <CheckIcon onPress={onPress} />
+      }}
+    />
+  )
   return (
-    <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
-      <Image source={tag ? you : me} style={styles.avatar} />
-      <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
-        {item?.voiceUrl && renderMessageAudio()}
-        {item?.text && renderMessageText()}
-        {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
+    <View style={styles.itemWrap}>
+      <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
+        <Image source={tag ? you : me} style={styles.avatar} />
+        <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
+          {item?.voiceUrl && renderMessageAudio()}
+          {item?.text && renderMessageText()}
+          {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
+        </View>
       </View>
+      {checkboxJSX}
     </View>
   )
 }

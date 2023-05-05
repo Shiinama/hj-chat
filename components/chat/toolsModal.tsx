@@ -1,20 +1,32 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
-import Colors from '../../constants/Colors'
-import Clear from '../../assets/images/chat/clear.svg'
-import Share from '../../assets/images/chat/share.svg'
-import Pin from '../../assets/images/chat/pin.svg'
-import Remove from '../../assets/images/chat/remove.svg'
-import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
-export type ActionType = 'ClearMemory' | 'ShareChatRecords'
+import { forwardRef } from "react";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import Colors from "../../constants/Colors";
+import Clear from "../../assets/images/chat/clear.svg";
+import Share from "../../assets/images/chat/share.svg";
+import Pin from "../../assets/images/chat/pin.svg";
+import Remove from "../../assets/images/chat/remove.svg";
+import { Toast } from "@fruits-chain/react-native-xiaoshu";
+import {
+  removeBotFromChatList,
+  resetHistory,
+  setBotPinnedStatus,
+} from "../../api";
+export type ActionType = "ClearMemory" | "ShareChatRecords";
 const ToolsModal = forwardRef(
-  ({ uid, onAction, userId }: { uid: string; onAction: (key: ActionType) => void; userId: number }, ref) => {
+  (
+    {
+      uid,
+      onAction,
+      userId,
+    }: { uid: string; onAction: (key: ActionType) => void; userId: number },
+    ref
+  ) => {
+    console.log(userId, 123123);
     return (
       <View
         style={{
           width: 200,
-          justifyContent: 'center',
+          justifyContent: "center",
           borderRadius: 12,
           borderColor: Colors.mainGrey,
           backgroundColor: Colors.mainWhite,
@@ -25,10 +37,10 @@ const ToolsModal = forwardRef(
             <TouchableOpacity
               style={styles.iconC}
               onPress={async () => {
-                const { close } = Toast.loading('Pinned')
+                const { close } = Toast.loading("Pinned");
                 setBotPinnedStatus({ botUid: uid, pinned: true }).then(() => {
-                  close()
-                })
+                  close();
+                });
               }}
             >
               <Pin></Pin>
@@ -37,14 +49,16 @@ const ToolsModal = forwardRef(
             <TouchableOpacity
               style={styles.iconC}
               onPress={async () => {
-                const { close } = Toast.loading('Move...')
+                const { close } = Toast.loading("Move...");
                 removeBotFromChatList({ botUid: uid }).then(() => {
-                  close()
-                })
+                  close();
+                });
               }}
             >
               <Remove></Remove>
-              <Text style={{ marginLeft: 8, fontSize: 16 }}>Remove from list</Text>
+              <Text style={{ marginLeft: 8, fontSize: 16 }}>
+                Remove from list
+              </Text>
             </TouchableOpacity>
           </>
         )}
@@ -52,10 +66,10 @@ const ToolsModal = forwardRef(
         <TouchableOpacity
           style={styles.iconC}
           onPress={async () => {
-            const { close } = Toast.loading('Clear Contenxt')
+            const { close } = Toast.loading("Clear Contenxt");
             resetHistory({ botUid: uid }).then(() => {
-              close()
-            })
+              close();
+            });
           }}
         >
           <Clear></Clear>
@@ -64,23 +78,25 @@ const ToolsModal = forwardRef(
         <TouchableOpacity
           style={styles.iconC}
           onPress={() => {
-            onAction('ShareChatRecords')
+            onAction("ShareChatRecords");
           }}
         >
           <Share></Share>
-          <Text style={{ marginLeft: 8, fontSize: 16 }}>Share Chat Records</Text>
+          <Text style={{ marginLeft: 8, fontSize: 16 }}>
+            Share Chat Records
+          </Text>
         </TouchableOpacity>
       </View>
-    )
+    );
   }
-)
+);
 
 const styles = StyleSheet.create({
   iconC: {
     padding: 8,
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    flexDirection: "row",
   },
-})
+});
 
-export default ToolsModal
+export default ToolsModal;

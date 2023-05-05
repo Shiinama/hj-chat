@@ -1,16 +1,22 @@
+import { ChatContext } from "../../app/chat/chatContext";
 import { Popup } from "@fruits-chain/react-native-xiaoshu";
-import type { FC } from "react";
+import { FC, useContext } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 
 import CopyLinkIcon from "../../assets/images/chat/copy_link.svg";
 import SaveIcon from "../../assets/images/chat/save_img.svg";
 import TwitterIcon from "../../assets/images/chat/twitter.svg";
-export interface ShareToPopupProps {
-  visible: boolean;
-}
-const ShareToPopup: FC<ShareToPopupProps> = ({ visible }) => {
+export interface ShareToPopupProps {}
+const ShareToPopup: FC<ShareToPopupProps> = () => {
+  const { value } = useContext(ChatContext);
+  console.log(value.selectedItems);
+
   return (
-    <Popup visible={visible} position={"bottom"} overlay={false}>
+    <Popup
+      visible={value?.pageStatus === "sharing"}
+      position={"bottom"}
+      overlay={false}
+    >
       <View style={styles.sharePopup}>
         <View style={styles.title}>
           <Text style={styles.titleText}>Share to</Text>

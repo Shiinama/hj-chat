@@ -1,16 +1,19 @@
 import { Text, View, TouchableOpacity } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import ChatItem from '../../components/chat/chatItem'
 import Container from '../../components/chat/container'
 import { chatHistory } from '../../api'
 import { Audio } from 'expo-av'
+import { useSetState } from 'ahooks'
 import ShellLoading from '../../components/loading'
 import { useSocketIo } from '../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
 import Back from '../../assets/images/tabbar/back.svg'
 import Flash from '../../assets/images/tabbar/flash.svg'
+import { ChatContext, ChatPageState } from './chatContext'
+import { Button } from '@fruits-chain/react-native-xiaoshu'
 import { convert4amToMp3 } from '../../utils/convert'
 import botStore from '../../store/botStore'
 export type ChatItem = {
@@ -33,17 +36,25 @@ export type ChatItem = {
 
 export default function Chat({}) {
   console.log(botStore.getState(), '1231231')
+
+  /** 页面数据上下文 */
+  const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
+    pageStatus: 'normal',
+    selectedItems: [],
+  })
   const navigation = useNavigation()
   const { name, uid, userId, energyPerChat } = useSearchParams()
   const [message, resMessage, sendMessage, translationMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
+  const [id, setId] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [voice, setVoice] = useState(null)
   const [translationTextIndex, setTranslationTextIndex] = useState(null)
   useEffect(() => {
     chatHistory(uid).then(({ data }: any) => {
+      console.log(data)
       data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
       setChatData(data)
       setLoading(false)
@@ -142,8 +153,22 @@ export default function Chat({}) {
           </TouchableOpacity>
         )
       },
+      headerRight: () => {
+        return (
+          chatPageValue.pageStatus === 'sharing' && (
+            <Button
+              type="ghost"
+              text="Cancel"
+              color="#7A2EF6"
+              size="s"
+              style={{ borderRadius: 8 }}
+              onPress={() => setChatPageValue({ pageStatus: 'normal' })}
+            />
+          )
+        )
+      },
     })
-  }, [navigation, name])
+  }, [navigation, name, chatPageValue.pageStatus])
 
   useEffect(() => {
     if (!message) return
@@ -165,7 +190,7 @@ export default function Chat({}) {
 
   if (loading) return <ShellLoading></ShellLoading>
   return (
-    <>
+    <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
       <Container
         inputTextProps={
           {
@@ -198,6 +223,6 @@ export default function Chat({}) {
           },
         }}
       ></Container>
-    </>
+    </ChatContext.Provider>
   )
 }
