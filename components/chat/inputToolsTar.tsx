@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   View,
@@ -28,8 +28,8 @@ import { useCallbackOne } from "use-memo-one";
 import AudioMessage from "./audioMessage";
 import * as FileSystem from "expo-file-system";
 import ToolsModal, { ActionType } from "./toolsModal";
-import { Popup } from "@fruits-chain/react-native-xiaoshu";
 import ShareToPopup from "./shareToPopup";
+import { ChatContext } from "../../app/chat/chatContext";
 type Props = {
   minInputToolbarHeight: number;
   inputTextProps: TextInput["props"] & {
@@ -58,6 +58,9 @@ function InputToolsTar({
     userId,
     ...inputProps
   } = inputTextProps;
+
+  const { setValue: setChatValue } = useContext(ChatContext);
+
   const [position, setPosition] = useState("absolute");
   const [audioFileUri, setAudioFileUri] = useState("");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -115,12 +118,11 @@ function InputToolsTar({
   );
   const [visible, setVisible] = useState(false);
 
-  const [popUpShow, setPopUpShow] = useState(false);
   const toolsAction = (key: ActionType) => {
     switch (key) {
       case "ShareChatRecords":
         setVisible(false);
-        setPopUpShow(true);
+        setChatValue({ pageStatus: "sharing" });
         break;
 
       default:
@@ -160,7 +162,7 @@ function InputToolsTar({
                 ></ToolsModal>
               </View>
             </Popover>
-            <ShareToPopup visible={popUpShow} />
+            <ShareToPopup />
             {isShow ? (
               <TextInput
                 ref={inputRef}

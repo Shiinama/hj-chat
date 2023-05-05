@@ -1,135 +1,149 @@
-import { Text, View, TouchableOpacity } from 'react-native'
-import { v4 as uuidv4 } from 'uuid'
-import { useSearchParams, useNavigation } from 'expo-router'
-import { useEffect, useState } from 'react'
-import ChatItem from '../../components/chat/chatItem'
-import Container from '../../components/chat/container'
-import { chatHistory } from '../../api'
-import { Audio } from 'expo-av'
-import ShellLoading from '../../components/loading'
-import { useSocketIo } from '../../components/chat/socket'
-import * as FileSystem from 'expo-file-system'
-import Back from '../../assets/images/tabbar/back.svg'
-import Flash from '../../assets/images/tabbar/flash.svg'
+import { Text, View, TouchableOpacity } from "react-native";
+import { v4 as uuidv4 } from "uuid";
+import { useSearchParams, useNavigation } from "expo-router";
+import { createContext, useEffect, useState } from "react";
+import ChatItem from "../../components/chat/chatItem";
+import Container from "../../components/chat/container";
+import { chatHistory } from "../../api";
+import { Audio } from "expo-av";
+import { useSetState } from "ahooks";
+
+import ShellLoading from "../../components/loading";
+import { useSocketIo } from "../../components/chat/socket";
+import * as FileSystem from "expo-file-system";
+import Back from "../../assets/images/tabbar/back.svg";
+import Flash from "../../assets/images/tabbar/flash.svg";
+import { ChatContext, ChatPageState } from "./chatContext";
+import { Button } from "@fruits-chain/react-native-xiaoshu";
 export type ChatItem = {
-  id: number
-  uid?: string
-  userId?: number
-  userUid?: string
-  status?: string
-  type?: string
-  replyUid?: string | null
-  text?: string
-  translation?: string | null
-  voiceUrl?: string | null
-  botId?: number
-  content?: string
-  createdDate?: string
-  updatedDate?: string
-  botUid?: string
-}
+  id: number;
+  uid?: string;
+  userId?: number;
+  userUid?: string;
+  status?: string;
+  type?: string;
+  replyUid?: string | null;
+  text?: string;
+  translation?: string | null;
+  voiceUrl?: string | null;
+  botId?: number;
+  content?: string;
+  createdDate?: string;
+  updatedDate?: string;
+  botUid?: string;
+};
 
 export default function Chat({}) {
-  const navigation = useNavigation()
-  const { name, uid, userId, energyPerChat } = useSearchParams()
-  const [message, resMessage, sendMessage, translationMessage] = useSocketIo()
-  const [recording, setRecording] = useState(null)
-  const [text, setText] = useState('')
-  const [id, setId] = useState('')
-  const [loading, setLoading] = useState<boolean>(true)
-  const [chatData, setChatData] = useState<ChatItem[]>([])
-  const [voice, setVoice] = useState(null)
-  const [translationTextIndex, setTranslationTextIndex] = useState(null)
+  /** 页面数据上下文 */
+  const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
+    pageStatus: "normal",
+  });
+  const navigation = useNavigation();
+  const { name, uid, userId, energyPerChat } = useSearchParams();
+  const [message, resMessage, sendMessage, translationMessage] = useSocketIo();
+  const [recording, setRecording] = useState(null);
+  const [text, setText] = useState("");
+  const [id, setId] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [chatData, setChatData] = useState<ChatItem[]>([]);
+  const [voice, setVoice] = useState(null);
+  const [translationTextIndex, setTranslationTextIndex] = useState(null);
   useEffect(() => {
     chatHistory(uid).then(({ data }: any) => {
-      data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
-      setChatData(data)
-      setLoading(false)
-    })
-  }, [])
+      console.log(data);
+      data.sort(
+        (a, b) =>
+          new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      );
+      setChatData(data);
+      setLoading(false);
+    });
+  }, []);
   useEffect(() => {
     try {
-      new Audio.Recording()
+      new Audio.Recording();
       Audio.requestPermissionsAsync().then(({ granted }) => {
         if (!granted) {
-          alert('请允许访问麦克风以录制音频！请到设置中')
+          alert("请允许访问麦克风以录制音频！请到设置中");
         }
-      })
+      });
       Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
-      })
+      });
     } catch (err) {
-      console.error('Failed to start recording', err)
+      console.error("Failed to start recording", err);
     }
-  }, [])
+  }, []);
   async function startRecording() {
     try {
-      const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
-      const { recording } = await Audio.Recording.createAsync(defaultParam)
-      setRecording(recording)
+      const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY;
+      const { recording } = await Audio.Recording.createAsync(defaultParam);
+      setRecording(recording);
     } catch (err) {
-      console.error('Failed to start recording', err)
+      console.error("Failed to start recording", err);
     }
   }
 
   async function stopRecording() {
     try {
-      await recording.stopAndUnloadAsync()
-      const uri = recording.getURI()
-      console.log(uri)
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      console.log(uri);
       const buffer = await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
-      })
-      setVoice(buffer)
-      return uri
+      });
+      setVoice(buffer);
+      return uri;
     } catch (err) {
-      console.error('Failed to stop recording', err)
+      console.error("Failed to stop recording", err);
     }
   }
   function setAuInfo() {
-    sendAudio()
+    sendAudio();
   }
 
   const sendAudio = () => {
-    const reqId = uuidv4()
-    sendMessage('voice_chat', {
+    const reqId = uuidv4();
+    sendMessage("voice_chat", {
       reqId,
       botUid: uid,
       voice,
-    })
-  }
-  const translationText = messageUid => {
-    const Index = chatData.findIndex(item => item.uid === messageUid)
-    if (chatData[Index].translation) return
-    setTranslationTextIndex(Index)
-    const reqId = uuidv4()
-    sendMessage('translate_message', {
+    });
+  };
+  const translationText = (messageUid) => {
+    const Index = chatData.findIndex((item) => item.uid === messageUid);
+    if (chatData[Index].translation) return;
+    setTranslationTextIndex(Index);
+    const reqId = uuidv4();
+    sendMessage("translate_message", {
       reqId,
       messageUid,
-    })
-  }
+    });
+  };
   useEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={{ fontSize: 18, fontWeight: '600' }}>{name}</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ fontSize: 18, fontWeight: "600" }}>{name}</Text>
           <View
             style={{
               // paddingVertical: 2,
               marginLeft: 5,
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
               paddingHorizontal: 2,
               paddingVertical: 1,
               borderRadius: 5,
               borderWidth: 2,
-              borderColor: '#EDEDED',
+              borderColor: "#EDEDED",
             }}
           >
             <Flash width={18} height={18}></Flash>
-            <Text style={{ fontSize: 16, fontWeight: '600', marginRight: 5 }}>{energyPerChat}</Text>
+            <Text style={{ fontSize: 16, fontWeight: "600", marginRight: 5 }}>
+              {energyPerChat}
+            </Text>
           </View>
         </View>
       ),
@@ -138,35 +152,51 @@ export default function Chat({}) {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Back></Back>
           </TouchableOpacity>
-        )
+        );
       },
-    })
-  }, [navigation, name])
+      headerRight: () => {
+        return (
+          chatPageValue.pageStatus === "sharing" && (
+            <Button
+              type="ghost"
+              text="Cancel"
+              color="#7A2EF6"
+              size="s"
+              style={{ borderRadius: 8 }}
+              onPress={() => setChatPageValue({ pageStatus: "normal" })}
+            />
+          )
+        );
+      },
+    });
+  }, [navigation, name, chatPageValue.pageStatus]);
 
   useEffect(() => {
-    if (!message) return
-    console.log(message, 'message')
-    setChatData(chatData.concat(message.data))
-  }, [message])
+    if (!message) return;
+    console.log(message, "message");
+    setChatData(chatData.concat(message.data));
+  }, [message]);
 
   useEffect(() => {
-    if (!resMessage) return
-    console.log(resMessage, 'resMeaage')
-    setChatData(chatData.concat(resMessage))
-  }, [resMessage])
+    if (!resMessage) return;
+    console.log(resMessage, "resMeaage");
+    setChatData(chatData.concat(resMessage));
+  }, [resMessage]);
 
   useEffect(() => {
-    if (!translationMessage) return
-    console.log(translationMessage, 'translationMessage')
-    setChatData(pre => {
-      pre[translationTextIndex].translation = translationMessage.translation
-      return [...pre]
-    })
-  }, [translationMessage])
+    if (!translationMessage) return;
+    console.log(translationMessage, "translationMessage");
+    setChatData((pre) => {
+      pre[translationTextIndex].translation = translationMessage.translation;
+      return [...pre];
+    });
+  }, [translationMessage]);
 
-  if (loading) return <ShellLoading></ShellLoading>
+  if (loading) return <ShellLoading></ShellLoading>;
   return (
-    <>
+    <ChatContext.Provider
+      value={{ value: chatPageValue, setValue: setChatPageValue }}
+    >
       <Container
         inputTextProps={
           {
@@ -178,14 +208,14 @@ export default function Chat({}) {
             startRecording,
             stopRecording,
             onSubmitEditing: async (value: any) => {
-              const reqId = uuidv4()
-              setId(reqId)
-              sendMessage('text_chat', {
+              const reqId = uuidv4();
+              setId(reqId);
+              sendMessage("text_chat", {
                 reqId,
                 botUid: uid,
                 text: value,
-              })
-              setText('')
+              });
+              setText("");
             },
           } as any
         }
@@ -194,12 +224,17 @@ export default function Chat({}) {
           renderItem: ({ item, index }) => {
             return (
               <View>
-                <ChatItem translationText={translationText} chatData={chatData} item={item} index={index}></ChatItem>
+                <ChatItem
+                  translationText={translationText}
+                  chatData={chatData}
+                  item={item}
+                  index={index}
+                ></ChatItem>
               </View>
-            )
+            );
           },
         }}
       ></Container>
-    </>
-  )
+    </ChatContext.Provider>
+  );
 }
