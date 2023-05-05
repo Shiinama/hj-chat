@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import BotCard from '../../components/botCard';
-import { botList } from '../../api/index';
+import {
+  getUgcBotList,
+  queryCanCreateUgcBot
+} from '../../api/robot';
 import addIcon from '../../assets/images/add.png';
 type ListDataItem = {
-  id: number
-  uid: string
-  name: string
-  description: string
-  userId: number
-  logo: string
-  language: string
-  pinned: boolean
-  lastInteractionDate: string
+  id: string | number;
+  uid: string;
+  status: string;
+  name: string;
+  description: string;
+  userId: string | number;
+  logo: string;
+  language: string;
+  createdDate: any;
+  updatedDate: any;
+  energyPerChat: string | number;
 }
 
 export default function TabTwoScreen() {
@@ -21,11 +26,18 @@ export default function TabTwoScreen() {
   const [listData, setListData] = useState<ListDataItem[]>([]);
 
   useEffect(() => {
-    botList().then(res => setListData(res as ListDataItem[]))
+    loadData();
   }, [])
 
+  const loadData = () => {
+    getUgcBotList({})
+      .then(res=>{
+        console.log('res',res)
+        setListData(res as ListDataItem[]);
+      })
+  }
+
   const onShowDetail = (event) => {
-    console.log('event', event)
     router.push({
       pathname: `robot/${event.id}`,
       params: {
@@ -37,17 +49,26 @@ export default function TabTwoScreen() {
       },
     })
   }
+  
+  const onCreate = () => {
+    queryCanCreateUgcBot({})
+      .then(res => {
+        if (res) {
+
+        }
+      });
+  }
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.action}>
+      <TouchableOpacity style={styles.action} onPress={()=>{onCreate()}}>
         <Image
           source={addIcon}
           style={{width: 20,height: 20}}
         />
         <Text style={styles.title}>Creat a Robot</Text>
         <Text style={styles.desc}>Robot creator, expert in robotics</Text>
-      </View>
+      </TouchableOpacity>
       <View style={styles.mt12}>
         {listData?.map(ld => (
           <BotCard
