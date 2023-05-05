@@ -27,14 +27,13 @@ export default function TabOneScreen() {
 
   useEffect(() => {
     botList().then(res => {
-      console.log(res)
       setListData(res as ListDataItem[])
-      botStore.setState(res as any)
       setLoading(false)
     })
   }, [])
 
   const onShowDetail = event => {
+    botStore.setState(event)
     router.push({
       pathname: `chat/${event.id}`,
       params: {

@@ -36,6 +36,15 @@
             "flipper": true
           }
         }
+      ],
+      [
+        "@config-plugins/ffmpeg-kit-react-native",
+        {
+          "package": "min",
+          "ios": {
+            "package": "audio"
+          }
+        }
       ]
     ],
     "extra": {

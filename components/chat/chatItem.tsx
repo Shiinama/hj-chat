@@ -11,9 +11,7 @@ import { useState } from 'react'
 import { Loading } from '@fruits-chain/react-native-xiaoshu'
 
 type Props = {
-  chatData: ChatItem[]
   item: ChatItem & number
-  index: number
   translationText
   children?: (() => React.ReactNode) | React.ReactNode
 }
@@ -28,7 +26,8 @@ function chatItem({ item, translationText }: Props) {
       <View style={[styles.content]}>
         {buttonIndex === 1 && <Text>{item.text}</Text>}
         {buttonIndex === 2 && <Text>{item.text}</Text>}
-        {buttonIndex === 3 && (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6" />)}
+        {buttonIndex === 3 &&
+          (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
     )
   }

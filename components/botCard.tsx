@@ -8,7 +8,8 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
     <TouchableOpacity
       style={styles.listItem}
       onPress={() => {
-        const { id, userId, name, language, uid, energyPerChat } = ld
+        const { id, userId, name, language, logo, uid, energyPerChat } = ld
+        console.log(logo)
         onShowDetail({
           id,
           energyPerChat,

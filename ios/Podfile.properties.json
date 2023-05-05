@@ -1,4 +1,7 @@
 {
   "expo.jsEngine": "jsc",
+  "ffmpeg-kit-react-native.subspecs": [
+    "audio"
+  ],
   "ios.flipper": "true"
 }

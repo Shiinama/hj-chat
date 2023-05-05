@@ -11,6 +11,8 @@ import { useSocketIo } from '../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
 import Back from '../../assets/images/tabbar/back.svg'
 import Flash from '../../assets/images/tabbar/flash.svg'
+import { convert4amToMp3 } from '../../utils/convert'
+import botStore from '../../store/botStore'
 export type ChatItem = {
   id: number
   uid?: string
@@ -30,12 +32,12 @@ export type ChatItem = {
 }
 
 export default function Chat({}) {
+  console.log(botStore.getState(), '1231231')
   const navigation = useNavigation()
   const { name, uid, userId, energyPerChat } = useSearchParams()
   const [message, resMessage, sendMessage, translationMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
-  const [id, setId] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [voice, setVoice] = useState(null)
@@ -77,8 +79,8 @@ export default function Chat({}) {
     try {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
-      console.log(uri)
-      const buffer = await FileSystem.readAsStringAsync(uri, {
+      const mp3Uri = await convert4amToMp3(uri)
+      const buffer = await FileSystem.readAsStringAsync(mp3Uri, {
         encoding: FileSystem.EncodingType.Base64,
       })
       setVoice(buffer)
@@ -145,19 +147,16 @@ export default function Chat({}) {
 
   useEffect(() => {
     if (!message) return
-    console.log(message, 'message')
     setChatData(chatData.concat(message.data))
   }, [message])
 
   useEffect(() => {
     if (!resMessage) return
-    console.log(resMessage, 'resMeaage')
     setChatData(chatData.concat(resMessage))
   }, [resMessage])
 
   useEffect(() => {
     if (!translationMessage) return
-    console.log(translationMessage, 'translationMessage')
     setChatData(pre => {
       pre[translationTextIndex].translation = translationMessage.translation
       return [...pre]
@@ -179,7 +178,6 @@ export default function Chat({}) {
             stopRecording,
             onSubmitEditing: async (value: any) => {
               const reqId = uuidv4()
-              setId(reqId)
               sendMessage('text_chat', {
                 reqId,
                 botUid: uid,
@@ -194,7 +192,7 @@ export default function Chat({}) {
           renderItem: ({ item, index }) => {
             return (
               <View>
-                <ChatItem translationText={translationText} chatData={chatData} item={item} index={index}></ChatItem>
+                <ChatItem translationText={translationText} item={item}></ChatItem>
               </View>
             )
           },
