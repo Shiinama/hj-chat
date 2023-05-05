@@ -37,6 +37,7 @@ export default function Chat({}) {
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: "normal",
+    selectedItems: [],
   });
   const navigation = useNavigation();
   const { name, uid, userId, energyPerChat } = useSearchParams();

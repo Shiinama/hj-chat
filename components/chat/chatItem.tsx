@@ -1,87 +1,141 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native'
-import styles from './styles'
-import you from '../../assets/images/flash.jpg'
-import me from '../../assets/images/me.jpg'
-import { ChatItem } from '../../app/chat/[id]'
-import AudioMessage from './audioMessage'
-import Blur from '../../assets/images/chat/blur.svg'
-import Svt from '../../assets/images/chat/svt.svg'
-import Translate from '../../assets/images/chat/translte.svg'
-import { useState } from 'react'
-import { Loading } from '@fruits-chain/react-native-xiaoshu'
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import styles from "./styles";
+import you from "../../assets/images/flash.jpg";
+import me from "../../assets/images/me.jpg";
+import { ChatItem } from "../../app/chat/[id]";
+import AudioMessage from "./audioMessage";
+import Blur from "../../assets/images/chat/blur.svg";
+import CheckIcon from "../../assets/images/chat/check.svg";
+import CheckedIcon from "../../assets/images/chat/checked.svg";
+import Svt from "../../assets/images/chat/svt.svg";
+import Translate from "../../assets/images/chat/translte.svg";
+import { useContext, useState } from "react";
+import { ChatContext } from "../../app/chat/chatContext";
+import { Checkbox } from "@fruits-chain/react-native-xiaoshu";
 
 type Props = {
-  chatData: ChatItem[]
-  item: ChatItem & number
-  index: number
-  translationText
-  children?: (() => React.ReactNode) | React.ReactNode
-}
+  chatData: ChatItem[];
+  item: ChatItem & number;
+  index: number;
+  translationText;
+  children?: (() => React.ReactNode) | React.ReactNode;
+};
 
 function chatItem({ item, translationText }: Props) {
-  if (item === 123) return null
-  const tag = item?.replyUid
-  const [buttonIndex, setButtonIndex] = useState<number>(1)
-  const renderMessageAudio = () => <AudioMessage audioFileUri={item.voiceUrl} />
+  const { value: chatValue, setValue: setChatValue } = useContext(ChatContext);
+  if (item === 123) return null;
+  const tag = item?.replyUid;
+  const renderMessageAudio = () => (
+    <AudioMessage audioFileUri={item.voiceUrl} />
+  );
   const renderMessageText = () => {
     return (
       <View style={[styles.content]}>
         {buttonIndex === 1 && <Text>{item.text}</Text>}
         {buttonIndex === 2 && <Text>{item.text}</Text>}
-        {buttonIndex === 3 && (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6" />)}
+        {buttonIndex === 3 &&
+          (item.translation ? (
+            <Text>{item.translation}</Text>
+          ) : (
+            <Loading color="#7A2EF6" />
+          ))}
       </View>
-    )
-  }
+    );
+  };
   const renderReply = () => {
     const param = {
       style: { marginRight: 5 },
       width: 10,
       height: 10,
-    }
+    };
     const data = [
       {
         id: 1,
-        dText: 'Blur',
-        Icon: id => <Blur fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
+        dText: "Blur",
+        Icon: (id) => (
+          <Blur fill={id === 1 ? "#FFFFFF" : "#6C7275"} {...param} />
+        ),
       },
       {
         id: 2,
-        dText: 'Text',
-        Icon: id => <Svt fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
+        dText: "Text",
+        Icon: (id) => (
+          <Svt fill={id === 1 ? "#FFFFFF" : "#6C7275"} {...param} />
+        ),
       },
       {
         id: 3,
-        dText: 'Translate',
-        Icon: id => <Translate fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
+        dText: "Translate",
+        Icon: (id) => (
+          <Translate fill={id === 1 ? "#FFFFFF" : "#6C7275"} {...param} />
+        ),
       },
-    ]
+    ];
     return data.map(({ Icon, id, dText }) => (
       <TouchableOpacity
         key={dText}
         style={[styles.button, buttonIndex === id && styles.active]}
         onPress={() => {
-          setButtonIndex(id)
+          setButtonIndex(id);
           if (id === 3) {
-            translationText(item.uid)
+            translationText(item.uid);
           }
         }}
       >
         {Icon && Icon(id)}
-        <Text style={{ color: buttonIndex === id ? 'white' : 'black' }}>{dText}</Text>
+        <Text style={{ color: buttonIndex === id ? "white" : "black" }}>
+          {dText}
+        </Text>
       </TouchableOpacity>
-    ))
-  }
-
+    ));
+  };
+  const [buttonIndex, setButtonIndex] = useState<number>(1);
+  const checkboxJSX = chatValue.pageStatus === "sharing" && (
+    <Checkbox
+      style={styles.checkbox}
+      value={chatValue?.selectedItems?.includes(item?.uid)}
+      onChange={(val) => {
+        if (val) {
+          setChatValue({
+            selectedItems: [...(chatValue?.selectedItems || []), item?.uid],
+          });
+        } else {
+          setChatValue({
+            selectedItems: chatValue?.selectedItems?.filter(
+              (v) => v !== item.uid
+            ),
+          });
+        }
+      }}
+      renderIcon={({ active, onPress }) => {
+        return active ? (
+          <CheckedIcon onPress={onPress} />
+        ) : (
+          <CheckIcon onPress={onPress} />
+        );
+      }}
+    />
+  );
   return (
-    <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
-      <Image source={tag ? you : me} style={styles.avatar} />
-      <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
-        {item?.voiceUrl && renderMessageAudio()}
-        {item?.text && renderMessageText()}
-        {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
+    <View style={styles.itemWrap}>
+      <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
+        <Image source={tag ? you : me} style={styles.avatar} />
+        <View
+          style={[
+            styles.contentBox,
+            tag ? styles.youContent : styles.meContent,
+          ]}
+        >
+          {item?.voiceUrl && renderMessageAudio()}
+          {item?.text && renderMessageText()}
+          {item?.type === "REPLY" && (
+            <View style={styles.buttonGroup}>{renderReply()}</View>
+          )}
+        </View>
       </View>
+      {checkboxJSX}
     </View>
-  )
+  );
 }
 
-export default chatItem
+export default chatItem;

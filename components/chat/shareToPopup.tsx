@@ -8,8 +8,8 @@ import SaveIcon from "../../assets/images/chat/save_img.svg";
 import TwitterIcon from "../../assets/images/chat/twitter.svg";
 export interface ShareToPopupProps {}
 const ShareToPopup: FC<ShareToPopupProps> = () => {
-  const { value, setValue } = useContext(ChatContext);
-  console.log(value);
+  const { value } = useContext(ChatContext);
+  console.log(value.selectedItems);
 
   return (
     <Popup
