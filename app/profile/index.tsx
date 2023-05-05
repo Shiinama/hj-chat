@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useSearchParams, useNavigation } from 'expo-router'
 import { Text, View, Image, ScrollView } from 'react-native';
-import { styles } from './style';
+import { styles } from './style'
 import BotCard from '../../components/botCard';
 import { botList } from '../../api/index';
 import userLogo from '../../assets/images/userLogo.png';
@@ -22,7 +22,7 @@ type ListDataItem = {
   lastInteractionDate: string
 }
 
-export default function Passcard() {
+export default function Profile() {
   const router = useRouter();
   const navigation = useNavigation();
   const { name, type, uid, userId } = useSearchParams();
@@ -30,7 +30,7 @@ export default function Passcard() {
 
   useEffect(() => {
     navigation.setOptions({
-      title: 'Robot',
+      title: 'Edit Profile',
     });
     let list = [
       {

@@ -3,7 +3,18 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import BotCard from '../../components/botCard';
 import { botList } from '../../api/index';
-import addIcon from '../../assets/images/add.png';
+import ProfileIcon from '../../assets/images/profile/Profile.png';
+import arrowIcon from '../../assets/images/profile/arrow.png';
+import editIcon from '../../assets/images/profile/edit.png';
+import helpIcon from '../../assets/images/profile/help.png';
+import inviteIcon from '../../assets/images/profile/invite.png';
+import walletIcon from '../../assets/images/profile/wallet.png';
+import settingIcon from '../../assets/images/profile/setting.png';
+import passcardIcon from '../../assets/images/profile/passcard.png';
+import SocialIcon from '../../assets/images/profile/Social.png';
+import Social1Icon from '../../assets/images/profile/Social1.png';
+import Social2Icon from '../../assets/images/profile/Social2.png';
+
 type ListDataItem = {
   id: number
   uid: string
@@ -25,7 +36,6 @@ export default function TabThreeScreen() {
   }, [])
 
   const onShowDetail = (event) => {
-    console.log('event', event)
     router.push({
       pathname: `robot/${event.id}`,
       params: {
@@ -40,23 +50,21 @@ export default function TabThreeScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.action}>
-        <Image
-          source={addIcon}
-          style={{width: 20,height: 20}}
-        />
-        <Text style={styles.title}>Creat a Robot</Text>
-        <Text style={styles.desc}>Robot creator, expert in robotics</Text>
-      </View>
-      <View style={styles.mt12}>
-        {listData?.map(ld => (
-          <BotCard
-            onShowDetail={(e)=>{onShowDetail(e)}}
-            key={ld.id}
-            ld={ld}
-            showTime={false}
+      <View style={styles.profile}>
+        <View style={styles.profileInfo}>
+          <Image
+            source={ProfileIcon}
+            style={{width: 80,height: 80, borderRadius: 12}}
           />
-        ))}
+          <Image
+            source={editIcon}
+            style={{width: 30,height: 30, borderRadius: 4}}
+          />
+        </View>
+        <View style={styles.profileDetail}>
+          <Text style={styles.profileDesc}>Juiceboy999</Text>
+          <Text style={styles.profileBianhao}>#0871</Text>
+        </View>
       </View>
     </ScrollView>
   )
@@ -69,37 +77,49 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     width: '100%',
     height: '100%',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
-  action: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+  profile: {
+    padding: 16,
     width: '100%',
-    height: 132,
+    height: 240,
     backgroundColor: '#F6F6F6',
     borderRadius: 12,
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column'
   },
-  title: {
-    fontStyle: 'normal',
-    fontWeight: '600',
-    fontSize: 18,
-    lineHeight: 28,
-    marginTop: 20,
-    color: '#1F1F1F'
+  profileInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
-  desc: {
-    fontSize: 14,
-    fontStyle: 'normal',
-    fontWeight: '400',
-    lineHeight: 22,
-    color: '#797979'
+  profileInfoAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
   },
-  mt12: {
-    marginTop: 12
+  profileDetail: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30,
+    marginBottom: 10
+  },
+  profileDesc: {
+    fontSize: 20,
+    color: '#1F1F1F',
+    fontWeight: '700',
+    marginRight: 8
+  },
+  profileBianhao: {
+    fontSize: 20,
+    color: '#797979',
+    fontWeight: '500',
   }
+
 })
