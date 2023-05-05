@@ -1,11 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Modal, Text, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import * as FileSystem from 'expo-file-system'
-
-interface PopupProps {
-  title: string
-  content: string
-}
 
 const renameAudioFile = async () => {
   const cacheDirectory = `${FileSystem.cacheDirectory}AV/`

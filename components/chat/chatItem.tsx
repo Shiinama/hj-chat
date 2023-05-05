@@ -2,13 +2,13 @@ import { Image, Text, TouchableOpacity, View } from 'react-native'
 import styles from './styles'
 import you from '../../assets/images/flash.jpg'
 import me from '../../assets/images/me.jpg'
-import { chatTimeFormat } from '../../utils/time'
 import { ChatItem } from '../../app/chat/[id]'
 import AudioMessage from './audioMessage'
 import Blur from '../../assets/images/chat/blur.svg'
 import Svt from '../../assets/images/chat/svt.svg'
 import Translate from '../../assets/images/chat/translte.svg'
 import { useState } from 'react'
+import { Loading } from '@fruits-chain/react-native-xiaoshu'
 
 type Props = {
   chatData: ChatItem[]
@@ -28,7 +28,7 @@ function chatItem({ item, translationText }: Props) {
       <View style={[styles.content]}>
         {buttonIndex === 1 && <Text>{item.text}</Text>}
         {buttonIndex === 2 && <Text>{item.text}</Text>}
-        {buttonIndex === 3 && <Text>{item.translation}</Text>}
+        {buttonIndex === 3 && (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6" />)}
       </View>
     )
   }
