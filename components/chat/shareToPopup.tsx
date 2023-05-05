@@ -1,16 +1,54 @@
 import { ChatContext } from "../../app/chat/chatContext";
-import { Popup } from "@fruits-chain/react-native-xiaoshu";
+import { Popup, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { FC, useContext } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-
+import * as FileSystem from "expo-file-system";
+import systemConfig from "../../constants/System";
 import CopyLinkIcon from "../../assets/images/chat/copy_link.svg";
 import SaveIcon from "../../assets/images/chat/save_img.svg";
 import TwitterIcon from "../../assets/images/chat/twitter.svg";
-export interface ShareToPopupProps {}
-const ShareToPopup: FC<ShareToPopupProps> = () => {
-  const { value } = useContext(ChatContext);
-  console.log(value.selectedItems);
+import Clipboard from "@react-native-clipboard/clipboard";
 
+import { createSharedConversation } from "../../api";
+export interface ShareToPopupProps {}
+type shareAction = "save" | "link" | "twitter";
+const ShareToPopup: FC<ShareToPopupProps> = () => {
+  const { value, setValue } = useContext(ChatContext);
+  console.log(value.selectedItems);
+  const action = (key: shareAction) => {
+    if (value?.selectedItems?.length <= 0) {
+      Toast("Please select at least one chat!");
+      return false;
+    }
+    // https://share.vinstic.com/share/101952a812444b22a83fd4e4dcb99a46/download
+    createSharedConversation(value.selectedItems).then((res) => {
+      console.log({ res });
+      switch (key) {
+        case "save":
+          FileSystem.downloadAsync(
+            `${systemConfig.downloadHost}/${res}/download`,
+            FileSystem.documentDirectory + `${res}.png`
+          )
+            .then(({ uri }) => {
+              Toast("download successfully!");
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+          break;
+        case "link":
+          Clipboard.setString(`${systemConfig.shareLink}${res}`);
+          Toast("Copied!");
+          break;
+        case "twitter":
+          break;
+        default:
+          break;
+      }
+    });
+
+    setValue({ selectedItems: [], pageStatus: "normal" });
+  };
   return (
     <Popup
       visible={value?.pageStatus === "sharing"}
@@ -22,15 +60,30 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
           <Text style={styles.titleText}>Share to</Text>
         </View>
         <View style={styles.itemWrap}>
-          <TouchableOpacity style={styles.item}>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => {
+              action("save");
+            }}
+          >
             <SaveIcon />
             <Text style={styles.itemText}>Save Img</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.item}>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => {
+              action("link");
+            }}
+          >
             <CopyLinkIcon />
             <Text style={styles.itemText}>Copy Link</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.item}>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => {
+              action("twitter");
+            }}
+          >
             <TwitterIcon />
             <Text style={styles.itemText}>Twitter</Text>
           </TouchableOpacity>
