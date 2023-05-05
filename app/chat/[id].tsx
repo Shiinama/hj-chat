@@ -35,8 +35,6 @@ export type ChatItem = {
 }
 
 export default function Chat({}) {
-  console.log(botStore.getState(), '1231231')
-
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
@@ -47,7 +45,6 @@ export default function Chat({}) {
   const [message, resMessage, sendMessage, translationMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
-  const [id, setId] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [voice, setVoice] = useState(null)
