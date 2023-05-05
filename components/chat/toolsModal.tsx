@@ -14,11 +14,6 @@ const ToolsModal = forwardRef(({ uid, setVisible, userId }: { uid: string; setVi
     <View
       style={{
         width: 200,
-        // height: 150,
-        // zIndex: 99,
-        // position: 'absolute',
-        // left: 20,
-        // bottom: 82,
         justifyContent: 'center',
         borderRadius: 12,
         borderColor: Colors.mainGrey,
@@ -72,7 +67,6 @@ const ToolsModal = forwardRef(({ uid, setVisible, userId }: { uid: string; setVi
       <TouchableOpacity
         style={styles.iconC}
         onPress={() => {
-          setVisible(false)
           setPopUpShow(true)
         }}
       >
@@ -85,10 +79,6 @@ const ToolsModal = forwardRef(({ uid, setVisible, userId }: { uid: string; setVi
         overlay={false}
         onPressOverlay={() => {
           setPopUpShow(false)
-        }}
-        onRequestClose={() => {
-          setPopUpShow(false)
-          return true
         }}
         round
       >

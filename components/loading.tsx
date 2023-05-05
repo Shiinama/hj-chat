@@ -1,9 +1,10 @@
 import { View } from 'react-native'
-import { Spinner } from '@ui-kitten/components'
+import { Loading } from '@fruits-chain/react-native-xiaoshu'
+
 function ShellLoading() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Spinner size="large" />
+      <Loading color="#7A2EF6" type="spinner" />
     </View>
   )
 }

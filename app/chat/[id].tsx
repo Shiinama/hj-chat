@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation } from 'expo-router'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChatItem from '../../components/chat/chatItem'
 import Container from '../../components/chat/container'
 import { chatHistory } from '../../api'
@@ -32,13 +32,14 @@ export type ChatItem = {
 export default function Chat({}) {
   const navigation = useNavigation()
   const { name, uid, userId, energyPerChat } = useSearchParams()
-  const [message, resMessage, sendMessage] = useSocketIo()
+  const [message, resMessage, sendMessage, translationMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
   const [id, setId] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [voice, setVoice] = useState(null)
+  const [translationTextIndex, setTranslationTextIndex] = useState(null)
   useEffect(() => {
     chatHistory(uid).then(({ data }: any) => {
       console.log(data)
@@ -99,7 +100,16 @@ export default function Chat({}) {
       voice,
     })
   }
-
+  const translationText = messageUid => {
+    const Index = chatData.findIndex(item => item.uid === messageUid)
+    if (chatData[Index].translation) return
+    setTranslationTextIndex(Index)
+    const reqId = uuidv4()
+    sendMessage('translate_message', {
+      reqId,
+      messageUid,
+    })
+  }
   useEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
@@ -136,7 +146,7 @@ export default function Chat({}) {
 
   useEffect(() => {
     if (!message) return
-    console.log(message, 'Messages')
+    console.log(message, 'message')
     setChatData(chatData.concat(message.data))
   }, [message])
 
@@ -145,6 +155,15 @@ export default function Chat({}) {
     console.log(resMessage, 'resMeaage')
     setChatData(chatData.concat(resMessage))
   }, [resMessage])
+
+  useEffect(() => {
+    if (!translationMessage) return
+    console.log(translationMessage, 'translationMessage')
+    setChatData(pre => {
+      pre[translationTextIndex].translation = translationMessage.translation
+      return [...pre]
+    })
+  }, [translationMessage])
 
   if (loading) return <ShellLoading></ShellLoading>
   return (
@@ -176,7 +195,7 @@ export default function Chat({}) {
           renderItem: ({ item, index }) => {
             return (
               <View>
-                <ChatItem chatData={chatData} item={item} index={index}></ChatItem>
+                <ChatItem translationText={translationText} chatData={chatData} item={item} index={index}></ChatItem>
               </View>
             )
           },

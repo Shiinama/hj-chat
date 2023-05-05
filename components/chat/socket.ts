@@ -59,6 +59,7 @@ export const useSocketIo = () => {
   const SocketIoRef = useRef(null)
   const [message, setMessage] = useState<any>()
   const [resMessage, setResMessage] = useState<any>()
+  const [translationMessage, setTranslation] = useState<any>()
   const ready = (): boolean => {
     return SocketIoRef.current && SocketIoRef.current.connected
   }
@@ -86,7 +87,7 @@ export const useSocketIo = () => {
 
   const onMessageError = ({ message }: MeaageErrorType) => {
     console.log(message, 'onMessageError')
-    Alert.alert(message)
+    // Alert.alert(message)
   }
 
   const onException = ({ message }: MeaageErrorType) => {
@@ -108,6 +109,7 @@ export const useSocketIo = () => {
   }
   const onMessageTranslated = ({ reqId, data }: MesageSucessType) => {
     console.log(reqId, data, 'onMessageTranslated')
+    setTranslation(data)
   }
   const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {
     console.log(reqId, data, 'onEnergyInfo')
@@ -128,6 +130,7 @@ export const useSocketIo = () => {
     message,
     resMessage,
     sendMessage,
+    translationMessage,
     onMessageUpdated,
     onEnergyInfo,
     onMessageTranslated,

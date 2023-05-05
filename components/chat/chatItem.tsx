@@ -14,73 +14,70 @@ type Props = {
   chatData: ChatItem[]
   item: ChatItem & number
   index: number
+  translationText
   children?: (() => React.ReactNode) | React.ReactNode
 }
 
-function chatItem({ chatData, item, index }: Props) {
+function chatItem({ item, translationText }: Props) {
   if (item === 123) return null
   const tag = item?.replyUid
-  // console.log(tag, 12312)
+  const renderMessageAudio = () => <AudioMessage audioFileUri={item.voiceUrl} />
+  const renderMessageText = () => {
+    return (
+      <View style={[styles.content]}>
+        {buttonIndex === 1 && <Text>{item.text}</Text>}
+        {buttonIndex === 2 && <Text>{item.text}</Text>}
+        {buttonIndex === 3 && <Text>{item.translation}</Text>}
+      </View>
+    )
+  }
+  const renderReply = () => {
+    const param = {
+      style: { marginRight: 5 },
+      width: 10,
+      height: 10,
+    }
+    const data = [
+      {
+        id: 1,
+        dText: 'Blur',
+        Icon: id => <Blur fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
+      },
+      {
+        id: 2,
+        dText: 'Text',
+        Icon: id => <Svt fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
+      },
+      {
+        id: 3,
+        dText: 'Translate',
+        Icon: id => <Translate fill={id === 1 ? '#FFFFFF' : '#6C7275'} {...param} />,
+      },
+    ]
+    return data.map(({ Icon, id, dText }) => (
+      <TouchableOpacity
+        key={dText}
+        style={[styles.button, buttonIndex === id && styles.active]}
+        onPress={() => {
+          setButtonIndex(id)
+          if (id === 3) {
+            translationText(item.uid)
+          }
+        }}
+      >
+        {Icon && Icon(id)}
+        <Text style={{ color: buttonIndex === id ? 'white' : 'black' }}>{dText}</Text>
+      </TouchableOpacity>
+    ))
+  }
   const [buttonIndex, setButtonIndex] = useState<number>(1)
-  // console.log(item, tag, 'ChatItem')
-  // const timeRenderJSX =
-  //   index === 0 || (index !== 0 && item.time - chatData?.[index - 1]?.time > 1000 * 60 * 1) ? (
-  //     <Text style={styles.time}>{chatTimeFormat(item.time)}</Text>
-  //   ) : null
-
   return (
-    <View focusable>
-      {/* {timeRenderJSX} */}
-      <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
-        <Image source={tag ? you : me} style={styles.avatar} />
-        <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
-          {item?.voiceUrl && <AudioMessage audioFileUri={item.voiceUrl} />}
-          {item?.text && (
-            <View style={[styles.content]}>
-              <Text>{item.text}</Text>
-            </View>
-          )}
-          {item?.type === 'REPLY' && (
-            <View style={styles.buttonGroup}>
-              <TouchableOpacity
-                style={[styles.button, buttonIndex === 1 && styles.active]}
-                onPress={() => setButtonIndex(1)}
-              >
-                <Blur
-                  style={{ marginRight: 5 }}
-                  width={10}
-                  height={10}
-                  fill={buttonIndex === 1 ? '#FFFFFF' : '#6C7275'}
-                ></Blur>
-                <Text style={{ color: buttonIndex === 1 ? 'white' : 'black' }}>Blur</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, buttonIndex === 2 && styles.active]}
-                onPress={() => setButtonIndex(2)}
-              >
-                <Svt
-                  style={{ marginRight: 5 }}
-                  width={10}
-                  height={10}
-                  fill={buttonIndex === 2 ? '#FFFFFF' : '#6C7275'}
-                ></Svt>
-                <Text style={{ color: buttonIndex === 2 ? 'white' : 'black' }}>Text</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, buttonIndex === 3 && styles.active]}
-                onPress={() => setButtonIndex(3)}
-              >
-                <Translate
-                  style={{ marginRight: 5 }}
-                  width={10}
-                  height={10}
-                  fill={buttonIndex === 2 ? '#FFFFFF' : '#6C7275'}
-                ></Translate>
-                <Text style={{ color: buttonIndex === 3 ? 'white' : 'black' }}>Translate</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+    <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
+      <Image source={tag ? you : me} style={styles.avatar} />
+      <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
+        {item?.voiceUrl && renderMessageAudio()}
+        {item?.text && renderMessageText()}
+        {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
       </View>
     </View>
   )
