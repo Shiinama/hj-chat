@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { useRouter, Link } from 'expo-router';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import BotCard from '../../components/botCard';
+import {
+  Progress
+} from '@fruits-chain/react-native-xiaoshu'
 import { botList } from '../../api/index';
 import ProfileIcon from '../../assets/images/profile/Profile.png';
 import arrowIcon from '../../assets/images/profile/arrow.png';
@@ -14,6 +17,9 @@ import passcardIcon from '../../assets/images/profile/passcard.png';
 import SocialIcon from '../../assets/images/profile/Social.png';
 import Social1Icon from '../../assets/images/profile/Social1.png';
 import Social2Icon from '../../assets/images/profile/Social2.png';
+import ThunderIcon from '../../assets/images/profile/Thunder.png';
+import CommunityIcon from '../../assets/images/profile/community.png';
+
 
 type ListDataItem = {
   id: number
@@ -35,16 +41,9 @@ export default function TabThreeScreen() {
     botList().then(res => setListData(res as ListDataItem[]))
   }, [])
 
-  const onShowDetail = (event) => {
+  const onEdit = () => {
     router.push({
-      pathname: `robot/${event.id}`,
-      params: {
-        id: event.id,
-        userId: event.userId,
-        name: event.name,
-        language: event.language,
-        uid: event.uid,
-      },
+      pathname: '/profileInfo',
     })
   }
 
@@ -56,15 +55,124 @@ export default function TabThreeScreen() {
             source={ProfileIcon}
             style={{width: 80,height: 80, borderRadius: 12}}
           />
-          <Image
-            source={editIcon}
-            style={{width: 30,height: 30, borderRadius: 4}}
-          />
+          <TouchableOpacity onPress={()=>{onEdit()}}>
+            <Image
+              source={editIcon}
+              style={{width: 30,height: 30, borderRadius: 4}}
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.profileDetail}>
           <Text style={styles.profileDesc}>Juiceboy999</Text>
           <Text style={styles.profileBianhao}>#0871</Text>
         </View>
+        <View style={styles.flex}>
+          <Text style={{...styles.flextag, ...styles.pink}}>Basic</Text>
+          <Text style={{...styles.flextag, ...styles.green}}>Lv.1</Text>
+          <Image
+            source={SocialIcon}
+            style={{width: 24, height: 24}}
+          />
+          <Image
+            source={Social1Icon}
+            style={{width: 24, height: 24}}
+          />
+          <Image
+            source={Social2Icon}
+            style={{width: 24, height: 24}}
+          />
+        </View>
+        <View style={{...styles.flexMain}}>
+          <Image
+            source={ThunderIcon}
+            style={{width: 24, height: 24, position: 'absolute', left: 0, top: 0}}
+          />
+          <Progress
+            strokeWidth={24}
+            percentage={80}
+            showPivot={false}
+            trackColor='#694802'
+            color='#FFC03A'
+          />
+        </View>
+      </View>
+      <View style={styles.actionItem}>
+        <View style={styles.actionItemInfo}>
+          <Image
+            source={passcardIcon}
+            style={{width: 30, height: 30,marginRight: 6}}
+          />
+          <Text style={styles.actionItemInfoText}>Passcard</Text>
+        </View>
+        <Image
+          source={arrowIcon}
+          style={{width: 24, height: 24}}
+        />
+      </View>
+      <View style={styles.actionItem}>
+        <View style={styles.actionItemInfo}>
+          <Image
+            source={walletIcon}
+            style={{width: 30, height: 30,marginRight: 6}}
+          />
+          <Text style={styles.actionItemInfoText}>Wallet</Text>
+        </View>
+        <Image
+          source={arrowIcon}
+          style={{width: 24, height: 24}}
+        />
+      </View>
+      <View style={styles.actionItem}>
+        <View style={styles.actionItemInfo}>
+          <Image
+            source={inviteIcon}
+            style={{width: 30, height: 30,marginRight: 6}}
+          />
+          <Text style={styles.actionItemInfoText}>Invite to Earn</Text>
+        </View>
+        <Image
+          source={arrowIcon}
+          style={{width: 24, height: 24}}
+        />
+      </View>
+      <View style={styles.actionItem}>
+        <View style={styles.actionItemInfo}>
+          <Image
+            source={CommunityIcon}
+            style={{width: 30, height: 30,marginRight: 6}}
+          />
+          <Text style={styles.actionItemInfoText}>Community</Text>
+        </View>
+        <Image
+          source={arrowIcon}
+          style={{width: 24, height: 24}}
+        />
+      </View>
+      <View style={styles.actionItem}>
+        <View style={styles.actionItemInfo}>
+          <Image
+            source={helpIcon}
+            style={{width: 30, height: 30,marginRight: 6}}
+          />
+          <Text style={styles.actionItemInfoText}>Help</Text>
+        </View>
+        <Image
+          source={arrowIcon}
+          style={{width: 24, height: 24}}
+        />
+      </View>
+      <View style={styles.actionItem}>
+        <View style={styles.actionItemInfo}>
+          <Image
+            source={settingIcon}
+            style={{width: 30, height: 30,marginRight: 6}}
+          />
+          <Text style={styles.actionItemInfoText}>Settings</Text>
+        </View>
+        <Image
+          source={arrowIcon}
+          style={{width: 24, height: 24}}
+        />
       </View>
     </ScrollView>
   )
@@ -90,7 +198,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     boxSizing: 'border-box',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    marginBottom: 20
   },
   profileInfo: {
     display: 'flex',
@@ -120,6 +229,55 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#797979',
     fontWeight: '500',
-  }
-
+  },
+  flex: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 20
+  },
+  flextag: {
+    height: 24,
+    lineHeight: 24,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 8,
+    fontStyle: 'normal',
+    fontWeight: '700',
+    fontSize: 12,
+    color: '#FFFFFF'
+  },
+  pink: {
+    backgroundColor: '#F62EE2',
+  },
+  green: {
+    backgroundColor: '#10CE84'
+  },
+  flexMain: {
+    position: 'relative',
+    paddingLeft: 30,
+  },
+  actionItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 56,
+    paddingLeft: 15,
+    paddingRight: 12,
+    marginBottom: 20,
+    backgroundColor: '#F6F6F6',
+    borderRadius: 12
+  },
+  actionItemInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30
+  },
+  actionItemInfoText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1F1F1F'
+  },
 })

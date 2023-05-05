@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
-import { useSearchParams, useNavigation } from 'expo-router'
-import { Text, View, Image, ScrollView } from 'react-native';
+import { useSearchParams, useNavigation } from 'expo-router';
+import { Text, View, Image, TouchableOpacity } from 'react-native';
+import { Dialog } from '@fruits-chain/react-native-xiaoshu';
+import {
+  getUgcBotDetail
+} from '../../api/robot';
 import { styles } from './style';
 import userLogo from '../../assets/images/userLogo.png';
 import thunder from '../../assets/images/thunder.png';
@@ -26,10 +30,14 @@ export default function Robot() {
   const { name, type, uid, userId } = useSearchParams();
   const [tagList, setTagList] = useState([]);
 
-  useEffect(() => {
+  useEffect(()=>{
     navigation.setOptions({
       title: 'Robot',
     });
+    loadData();
+  }, []);
+
+  useEffect(() => {
     let list = [
       {
         id: 0,
@@ -76,6 +84,27 @@ export default function Robot() {
     ]
     setTagList(list);
   }, [navigation, name]);
+
+  const loadData = () => {
+    getUgcBotDetail({botUid: uid})
+      .then(res=>{
+        console.log('res', res);
+      })
+  }
+
+  const showView = () => {
+    Dialog({
+      title: 'Publish',
+      message: 'A robot named "Robot Name" already exists. Are you sure you want to overwrite it?',
+      width: 327,
+      confirmButtonColor: '#7A2EF6',
+      confirmButtonText: 'Confirm',
+      cancelButtonColor: '#ffffff',
+      cancelButtonText: 'Cancel',
+    }).then(action => {
+      console.log('提示弹窗：', action)
+    })
+  }
   
   return (
     <View style={styles.container}>
@@ -151,11 +180,11 @@ export default function Robot() {
           </Text>
         </View>
       </View>
-      <View style={styles.action}>
+      <TouchableOpacity style={styles.action} onPress={()=>{showView()}}>
         <View style={styles.actionMain}>
           <Text style={styles.actionChat}>Chat</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   )
 }
