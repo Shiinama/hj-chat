@@ -3,8 +3,6 @@ import { useRouter } from 'expo-router';
 import { useSearchParams, useNavigation } from 'expo-router'
 import { Text, View, Image, ScrollView } from 'react-native';
 import { styles } from './style';
-import BotCard from '../../components/botCard';
-import { botList } from '../../api/index';
 import userLogo from '../../assets/images/userLogo.png';
 import thunder from '../../assets/images/thunder.png';
 import editIcon from '../../assets/images/edit.png';
@@ -22,7 +20,7 @@ type ListDataItem = {
   lastInteractionDate: string
 }
 
-export default function TabTwoScreen() {
+export default function Robot() {
   const router = useRouter();
   const navigation = useNavigation();
   const { name, type, uid, userId } = useSearchParams();
