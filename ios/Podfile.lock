@@ -406,6 +406,8 @@ PODS:
   - React-jsinspector (0.71.7)
   - React-logger (0.71.7):
     - glog
+  - react-native-blur (4.3.2):
+    - React-Core
   - react-native-get-random-values (1.8.0):
     - React-Core
   - react-native-image-filter-kit (0.8.0):
@@ -540,7 +542,7 @@ DEPENDENCIES:
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
-  - ffmpeg-kit-react-native/audio (from `/Users/weishunyu/chatgpt/yu-chat/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec`)
+  - ffmpeg-kit-react-native/audio (from `/Users/ming/projects/yuc/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec`)
   - Flipper (= 0.125.0)
   - Flipper-Boost-iOSX (= 1.76.0.1.11)
   - Flipper-DoubleConversion (= 3.2.0.1)
@@ -580,6 +582,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-image-filter-kit (from `../node_modules/react-native-image-filter-kit`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -672,7 +675,7 @@ EXTERNAL SOURCES:
   FBReactNativeSpec:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   ffmpeg-kit-react-native:
-    :podspec: "/Users/weishunyu/chatgpt/yu-chat/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec"
+    :podspec: "/Users/ming/projects/yuc/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   RCT-Folly:
@@ -703,6 +706,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
   react-native-image-filter-kit:
@@ -805,6 +810,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: e722e6f755992c2c33ff8a4eb6833e5a55cd8296
   React-jsinspector: 9885f6f94d231b95a739ef7bb50536fb87ce7539
   React-logger: 3f8ebad1be1bf3299d1ab6d7f971802d7395c7ef
+  react-native-blur: cfdad7b3c01d725ab62a8a729f42ea463998afa2
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-image-filter-kit: d79137549eb44f8215b7f2be5e77213f605e2c92
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
@@ -833,4 +839,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: aa1636c885e584f03ba8cf3c5c33630e6ae70a81
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1
