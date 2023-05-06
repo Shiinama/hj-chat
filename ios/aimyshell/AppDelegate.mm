@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-
+#import <react_native_particle_auth/react_native_particle_auth-Swift.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 
@@ -42,8 +42,13 @@
 
 // Universal Links
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
-  BOOL result = [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
-  return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler] || result;
+  if ([ParticleAuthSchemeManager handleUrl:url] == YES) {
+    return YES;
+  } else {
+    // other methods
+    BOOL result = [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+    return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler] || result;
+  }
 }
 
 // Explicitly define remote notification delegates to ensure compatibility with some third-party libraries
