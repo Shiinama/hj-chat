@@ -24,14 +24,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 34
+    height: 34,
   },
   userName: {
     fontSize: 24,
     fontStyle: 'normal',
     fontWeight: '700',
-    background: 'linear-gradient(133.04deg, #7A2EF6 11.45%, #F62EE2 146.07%)',
-    backgroundClip: 'text',
   },
   userTag: {
     display: 'flex',
@@ -44,10 +42,10 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     borderRadius: 8,
     border: '1px solid #EDEDED',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
   userTagText: {
-    marginLeft: 2
+    marginLeft: 2,
   },
   tagList: {
     marginTop: 16,
@@ -56,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexWrap: 'wrap',
-    gap: 6
+    gap: 6,
   },
   tagListItem: {
     display: 'flex',
@@ -68,19 +66,19 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     borderRadius: 6,
-    flexShrink: 1
+    flexShrink: 1,
   },
   tagListItemTip: {
     width: 10,
     height: 10,
     borderRadius: 100,
-    marginRight: 6
+    marginRight: 6,
   },
   tagListItemText: {
     fontWeight: '500',
     fontSize: 12,
     lineHeight: 14,
-    color: '#3A0D84'
+    color: '#3A0D84',
   },
   actions: {
     width: '100%',
@@ -88,7 +86,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 32
+    marginTop: 32,
   },
   actionsItem: {
     display: 'flex',
@@ -98,7 +96,7 @@ const styles = StyleSheet.create({
     width: 161.5,
     height: 88,
     backgroundColor: '#F6F6F6',
-    borderRadius: 12
+    borderRadius: 12,
   },
   actionsItemText: {
     marginTop: 6,
@@ -113,21 +111,21 @@ const styles = StyleSheet.create({
     padding: 12,
     boxSizing: 'border-box',
     backgroundColor: '#F6F6F6',
-    borderRadius: 12
+    borderRadius: 12,
   },
   descriptionTitle: {
     lineHeight: 22,
     fontWeight: '700',
     fontSize: 14,
     marginBottom: 5,
-    color: '#1F1F1F'
+    color: '#1F1F1F',
   },
   descriptionValue: {
     lineHeight: 22,
     fontSize: 14,
     fontWeight: '400',
     fontStyle: 'normal',
-    color: '#1F1F1F'
+    color: '#1F1F1F',
   },
   action: {
     position: 'absolute',
@@ -156,8 +154,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontStyle: 'normal',
-    fontWeight: '700'
-  }
+    fontWeight: '700',
+  },
 })
 
 export { styles }

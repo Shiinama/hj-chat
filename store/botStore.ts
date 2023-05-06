@@ -15,7 +15,7 @@ type ListDataItem = {
 const name = 'bot-store'
 
 const botStore = create(
-  persist<ListDataItem[]>(() => [], {
+  persist<ListDataItem>(() => ({} as any), {
     storage: createJSONStorage(() => AsyncStorage),
     name: name,
   })

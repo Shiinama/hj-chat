@@ -117,6 +117,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
           <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
             <Popover
               visible={visible}
+              fullWidth={true}
               placement="top"
               anchor={() => (
                 <TouchableOpacity
@@ -130,9 +131,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
               )}
               onBackdropPress={() => setVisible(false)}
             >
-              <View style={{ width: 200 }}>
-                <ToolsModal onAction={toolsAction} userId={userId} uid={uid} ref={ToolsModalRef}></ToolsModal>
-              </View>
+              <ToolsModal onAction={toolsAction} userId={userId} uid={uid} ref={ToolsModalRef}></ToolsModal>
             </Popover>
             <ShareToPopup />
             {isShow ? (

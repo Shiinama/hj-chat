@@ -12,11 +12,11 @@ import { useSocketIo } from '../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
 import { Buffer } from 'buffer'
 import Back from '../../assets/images/tabbar/back.svg'
-import Flash from '../../assets/images/tabbar/flash.svg'
 import { ChatContext, ChatPageState } from './chatContext'
 import { Button } from '@fruits-chain/react-native-xiaoshu'
 import { convert4amToMp3 } from '../../utils/convert'
 import botStore from '../../store/botStore'
+import FlashIcon from '../../components/flashIcon'
 export type ChatItem = {
   id: number
   uid?: string
@@ -52,13 +52,6 @@ export default function Chat({}) {
   const [voice, setVoice] = useState(null)
   const [translationTextIndex, setTranslationTextIndex] = useState(null)
   useEffect(() => {
-    chatHistory(uid).then(({ data }: any) => {
-      data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
-      setChatData(data)
-      setLoading(false)
-    })
-  }, [])
-  useEffect(() => {
     try {
       new Audio.Recording()
       Audio.requestPermissionsAsync().then(({ granted }) => {
@@ -73,6 +66,11 @@ export default function Chat({}) {
     } catch (err) {
       console.error('Failed to start recording', err)
     }
+    chatHistory(uid).then(({ data }: any) => {
+      data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
+      setChatData(data)
+      setLoading(false)
+    })
   }, [])
   async function startRecording() {
     try {
@@ -126,23 +124,7 @@ export default function Chat({}) {
       headerTitle: () => (
         <View style={{ flexDirection: 'row' }}>
           <Text style={{ fontSize: 18, fontWeight: '600' }}>{name}</Text>
-          <View
-            style={{
-              // paddingVertical: 2,
-              marginLeft: 5,
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 2,
-              paddingVertical: 1,
-              borderRadius: 5,
-              borderWidth: 2,
-              borderColor: '#EDEDED',
-            }}
-          >
-            <Flash width={18} height={18}></Flash>
-            <Text style={{ fontSize: 16, fontWeight: '600', marginRight: 5 }}>{energyPerChat}</Text>
-          </View>
+          <FlashIcon energyPerChat={energyPerChat} />
         </View>
       ),
       headerLeft: () => {

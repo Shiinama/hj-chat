@@ -1,78 +1,80 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
-import BotCard from '../../components/botCard';
-import {
-  getUgcBotList,
-  queryCanCreateUgcBot
-} from '../../api/robot';
-import addIcon from '../../assets/images/add.png';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'expo-router'
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
+import BotCard from '../../components/botCard'
+import { getUgcBotList, queryCanCreateUgcBot } from '../../api/robot'
+import addIcon from '../../assets/images/add.png'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import ugcStore from '../../store/ugcBotstroe'
 type ListDataItem = {
-  id: string | number;
-  uid: string;
-  status: string;
-  name: string;
-  description: string;
-  userId: string | number;
-  logo: string;
-  language: string;
-  createdDate: any;
-  updatedDate: any;
-  energyPerChat: string | number;
+  id: string | number
+  uid: string
+  status: string
+  name: string
+  description: string
+  userId: string | number
+  logo: string
+  language: string
+  createdDate: any
+  updatedDate: any
+  energyPerChat: string | number
 }
 
 export default function TabTwoScreen() {
-  const router = useRouter();
-  const [listData, setListData] = useState<ListDataItem[]>([]);
+  const router = useRouter()
+  const [listData, setListData] = useState<ListDataItem[]>([])
 
   useEffect(() => {
-    loadData();
+    loadData()
   }, [])
 
   const loadData = () => {
-    getUgcBotList({})
-      .then(res=>{
-        console.log('res',res)
-        setListData(res as ListDataItem[]);
-      })
+    getUgcBotList({}).then(res => {
+      console.log('res', res)
+      setListData(res as ListDataItem[])
+    })
   }
 
-  const onShowDetail = (event) => {
+  const onShowDetail = event => {
+    console.log(event)
+    ugcStore.setState(event)
     router.push({
       pathname: `robot/${event.id}`,
       params: {
         id: event.id,
         userId: event.userId,
+        status: event.status,
         name: event.name,
         language: event.language,
         uid: event.uid,
       },
     })
   }
-  
-  const onCreate = () => {
-    queryCanCreateUgcBot({})
-      .then(res => {
-        if (res) {
 
-        }
-      });
+  const onCreate = () => {
+    queryCanCreateUgcBot({}).then(() => {
+      Toast('Please use a desktop browser to create a robot')
+    })
   }
 
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.action} onPress={()=>{onCreate()}}>
-        <Image
-          source={addIcon}
-          style={{width: 20,height: 20}}
-        />
+      <TouchableOpacity
+        style={styles.action}
+        onPress={() => {
+          onCreate()
+        }}
+      >
+        <Image source={addIcon} style={{ width: 20, height: 20 }} />
         <Text style={styles.title}>Creat a Robot</Text>
         <Text style={styles.desc}>Robot creator, expert in robotics</Text>
       </TouchableOpacity>
       <View style={styles.mt12}>
         {listData?.map(ld => (
           <BotCard
-            onShowDetail={(e)=>{onShowDetail(e)}}
+            onShowDetail={e => {
+              onShowDetail(e)
+            }}
             key={ld.id}
             ld={ld}
             showTime={false}
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     width: '100%',
     height: '100%',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
   action: {
     display: 'flex',
@@ -111,16 +113,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 28,
     marginTop: 20,
-    color: '#1F1F1F'
+    color: '#1F1F1F',
   },
   desc: {
     fontSize: 14,
     fontStyle: 'normal',
     fontWeight: '400',
     lineHeight: 22,
-    color: '#797979'
+    color: '#797979',
   },
   mt12: {
-    marginTop: 12
-  }
+    marginTop: 12,
+  },
 })
