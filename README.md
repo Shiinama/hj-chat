@@ -8,6 +8,14 @@
 
 `expo install`
 
+# 现在目前开始项目
+
+`expo build:ios`
+
+`expo build:android`
+
+`expo start`
+
 # 开始项目
 
 清除缓存的开始项目
