@@ -42,13 +42,8 @@
 
 // Universal Links
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
-  if ([ParticleAuthSchemeManager handleUrl:url] == YES) {
-    return YES;
-  } else {
-    // other methods
-    BOOL result = [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
-    return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler] || result;
-  }
+  BOOL result = [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+  return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler] || result;
 }
 
 // Explicitly define remote notification delegates to ensure compatibility with some third-party libraries
