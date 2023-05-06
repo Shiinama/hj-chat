@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter, Link } from 'expo-router'
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
-import BotCard from '../../components/botCard'
 import { Progress } from '@fruits-chain/react-native-xiaoshu'
 import { botList } from '../../api/index'
 import ProfileIcon from '../../assets/images/profile/Profile.png'
@@ -17,6 +16,7 @@ import Social1Icon from '../../assets/images/profile/Social1.png'
 import Social2Icon from '../../assets/images/profile/Social2.png'
 import ThunderIcon from '../../assets/images/profile/Thunder.png'
 import CommunityIcon from '../../assets/images/profile/community.png'
+import * as WebBrowser from 'expo-web-browser'
 
 type ListDataItem = {
   id: number
@@ -87,34 +87,46 @@ export default function TabThreeScreen() {
         </View>
         <Image source={arrowIcon} style={{ width: 24, height: 24 }} />
       </View>
-      <View style={styles.actionItem}>
+      <TouchableOpacity style={styles.actionItem} onPress={() => router.push({ pathname: 'invite' })}>
         <View style={styles.actionItemInfo}>
           <Image source={inviteIcon} style={{ width: 30, height: 30, marginRight: 6 }} />
           <Text style={styles.actionItemInfoText}>Invite to Earn</Text>
         </View>
         <Image source={arrowIcon} style={{ width: 24, height: 24 }} />
-      </View>
-      <View style={styles.actionItem}>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={e => {
+          e.preventDefault()
+          WebBrowser.openBrowserAsync('https://discord.com/invite/myshell')
+        }}
+        style={styles.actionItem}
+      >
         <View style={styles.actionItemInfo}>
           <Image source={CommunityIcon} style={{ width: 30, height: 30, marginRight: 6 }} />
           <Text style={styles.actionItemInfoText}>Community</Text>
         </View>
         <Image source={arrowIcon} style={{ width: 24, height: 24 }} />
-      </View>
-      <View style={styles.actionItem}>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.actionItem}
+        onPress={e => {
+          e.preventDefault()
+          WebBrowser.openBrowserAsync('https://docs.myshell.ai/')
+        }}
+      >
         <View style={styles.actionItemInfo}>
           <Image source={helpIcon} style={{ width: 30, height: 30, marginRight: 6 }} />
           <Text style={styles.actionItemInfoText}>Help</Text>
         </View>
         <Image source={arrowIcon} style={{ width: 24, height: 24 }} />
-      </View>
-      <View style={styles.actionItem}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.actionItem} onPress={() => router.push({ pathname: 'settings' })}>
         <View style={styles.actionItemInfo}>
           <Image source={settingIcon} style={{ width: 30, height: 30, marginRight: 6 }} />
           <Text style={styles.actionItemInfoText}>Settings</Text>
         </View>
         <Image source={arrowIcon} style={{ width: 24, height: 24 }} />
-      </View>
+      </TouchableOpacity>
     </ScrollView>
   )
 }
@@ -218,6 +230,7 @@ const styles = StyleSheet.create({
   },
   actionItemInfoText: {
     fontSize: 16,
+    // flex: 1,
     fontWeight: '500',
     color: '#1F1F1F',
   },

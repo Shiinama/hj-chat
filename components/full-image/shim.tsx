@@ -3,7 +3,7 @@ import { Keyboard, Animated } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /** 动态高度组件 */
-const Shim: React.FC<{}> = ({}) => {
+const Shim: React.FC = () => {
   const insets = useSafeAreaInsets()
 
   // 1 height 动态变化  键盘收起的时候是 insets.bottom  键盘弹出的时候是键盘的高度

@@ -70,6 +70,7 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: RootStyles.flexCenter,
   listContainer: {
+    backgroundColor: 'white',
     width: '100%',
     height: '100%',
     padding: 16,
