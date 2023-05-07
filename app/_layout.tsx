@@ -16,8 +16,7 @@ export {
 } from 'expo-router'
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: '(auth)',
 }
 
 export default function RootLayout() {
@@ -57,6 +56,12 @@ function RootLayoutNav() {
             },
           }}
         >
+          <Stack.Screen
+            name="login"
+            options={{
+              headerShown: false,
+            }}
+          />
           <Stack.Screen
             name="(tabs)"
             options={{
