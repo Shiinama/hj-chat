@@ -1,14 +1,26 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useSearchParams, useNavigation } from "expo-router";
-import { Text, View, Image, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
+
 import { styles } from "./style";
 import BotCard from "../../components/botCard";
-import { botList } from "../../api/index";
-import userLogo from "../../assets/images/userLogo.png";
-import thunder from "../../assets/images/thunder.png";
-import editIcon from "../../assets/images/edit.png";
-import publishIcon from "../../assets/images/publish.png";
+import { profile as getProfile } from "../../api/index";
+import Camera from "../../assets/images/profile/camera.svg";
+import ActiveIcon from "../../assets/images/profile/activeIcon.svg";
+import Discord from "../../assets/images/profile/discord.svg";
+import Telegram from "../../assets/images/profile/telegram.svg";
+import Twitter from "../../assets/images/profile/twitter.svg";
+import useUserStore, { UserEnergyInfo } from "../../store/userStore";
+import { Button } from "@fruits-chain/react-native-xiaoshu";
+import { useDeepCompareEffect } from "ahooks";
 
 type ListDataItem = {
   id: number;
@@ -23,143 +35,84 @@ type ListDataItem = {
 };
 
 export default function Profile() {
-  const router = useRouter();
   const navigation = useNavigation();
-  const { name, type, uid, userId } = useSearchParams();
-  const [tagList, setTagList] = useState([]);
-
+  const { profile } = useUserStore();
+  const [name, setName] = useState(profile?.name);
+  const btnDisabled = name === profile?.name;
+  useDeepCompareEffect(() => {
+    setName(profile?.name);
+  }, [profile?.name]);
+  useFocusEffect(
+    useCallback(() => {
+      getProfile().then((res: any) => {
+        useUserStore.setState({ profile: res });
+      });
+    }, [])
+  );
   useEffect(() => {
     navigation.setOptions({
-      title: "Edit Profile1",
+      title: "Edit Profile",
     });
-    let list = [
-      {
-        id: 0,
-        bgColor: "#F1EAFE",
-        tagColor: "#7A2EF6",
-        name: "Mine",
-      },
-      {
-        id: 1,
-        bgColor: "#FAF4E1",
-        tagColor: "#F6CA2E",
-        name: "Testnet",
-      },
-      {
-        id: 2,
-        bgColor: "#F5E1EF",
-        tagColor: "#DD0EA3",
-        name: "en_US",
-      },
-      {
-        id: 3,
-        bgColor: "#F5E1EF",
-        tagColor: "#DD0EA3",
-        name: "US",
-      },
-      {
-        id: 4,
-        bgColor: "#E2F2F6",
-        tagColor: "#2ED2F6",
-        name: "Game",
-      },
-      {
-        id: 5,
-        bgColor: "#E2F2F6",
-        tagColor: "#2ED2F6",
-        name: "Cartoon",
-      },
-      {
-        id: 6,
-        bgColor: "#E4E6F7",
-        tagColor: "#1A2FE8",
-        name: "Tool",
-      },
-    ];
-    setTagList(list);
-  }, [navigation, name]);
-
+  }, [navigation]);
+  const connectionsList = [
+    { name: "Twitter", icon: <Twitter />, isAcitve: true },
+    { name: "Discord", icon: <Discord />, isAcitve: false },
+    { name: "Telegram", icon: <Telegram />, isAcitve: false },
+  ];
   return (
     <View style={styles.container}>
-      <View style={styles.main}>
-        <Image
-          source={userLogo}
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 100,
-          }}
-        />
-        <View style={styles.user}>
-          <Text style={styles.userName}>Kanye West</Text>
-          <View style={styles.userTag}>
-            <Image
-              source={thunder}
-              style={{
-                width: 16,
-                height: 16,
-              }}
-            />
-            <Text style={styles.userTagText}>1</Text>
+      <ScrollView bounces={false}>
+        <View style={styles.main}>
+          <TouchableOpacity style={styles.avatar}>
+            <Image source={{ uri: profile?.avatar }} style={styles.avatarImg} />
+            <View style={styles.mask}>
+              <Camera />
+            </View>
+          </TouchableOpacity>
+          <View style={styles.contentWrap}>
+            <View>
+              <Text style={styles.label}>Name</Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={(nextValue) => setName(nextValue)}
+              />
+            </View>
+            <View style={styles.br} />
+            <View>
+              <Text style={styles.label}>Connections</Text>
+              <Text style={styles.tips}>
+                Add accounts to your profile to make more friends
+              </Text>
+              {connectionsList?.map((v, i) => {
+                return (
+                  <View
+                    style={{
+                      ...styles.connectionsItem,
+                      ...(v?.isAcitve ? styles.connectionsActiveItem : {}),
+                    }}
+                    key={i}
+                  >
+                    <View style={styles.itemBody}>
+                      {v?.isAcitve ? (
+                        <ActiveIcon style={styles.activeIcon} />
+                      ) : null}
+                      <Text style={styles.connectionsItemText}>
+                        {v?.isAcitve ? v?.name : `Connect with ${v?.name}`}
+                      </Text>
+                    </View>
+                    {v?.icon}
+                  </View>
+                );
+              })}
+            </View>
           </View>
         </View>
-        <View style={styles.tagList}>
-          {tagList &&
-            tagList.map((item) => (
-              <View
-                key={item?.id}
-                style={{
-                  ...styles.tagListItem,
-                  backgroundColor: item?.bgColor,
-                }}
-              >
-                <View
-                  style={{
-                    ...styles.tagListItemTip,
-                    backgroundColor: item?.tagColor,
-                  }}
-                ></View>
-                <Text style={styles.tagListItemText}>{item?.name}</Text>
-              </View>
-            ))}
-        </View>
-        <View style={styles.actions}>
-          <View style={styles.actionsItem}>
-            <Image
-              source={editIcon}
-              style={{
-                width: 30,
-                height: 30,
-              }}
-            />
-            <Text style={styles.actionsItemText}>Edit</Text>
-          </View>
-          <View style={styles.actionsItem}>
-            <Image
-              source={publishIcon}
-              style={{
-                width: 30,
-                height: 30,
-              }}
-            />
-            <Text style={styles.actionsItemText}>Publish</Text>
-          </View>
-        </View>
-        <View style={styles.description}>
-          <Text style={styles.descriptionTitle}>Description</Text>
-          <Text style={styles.descriptionValue}>
-            "Her" is a futuristic romantic drama movie that takes place in a
-            world where technology has advanced to the point where people form
-            relationships with AI operating systems. I will provide my answer,
-            but we will need to improve it through continual iterations by going
-            through the next steps.
-          </Text>
-        </View>
-      </View>
+      </ScrollView>
       <View style={styles.action}>
-        <View style={styles.actionMain}>
-          <Text style={styles.actionChat}>Chat</Text>
-        </View>
+        <Button style={styles.actionMain} disabled={btnDisabled}>
+          Save Changes
+        </Button>
       </View>
     </View>
   );
