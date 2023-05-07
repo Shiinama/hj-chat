@@ -26,6 +26,7 @@ import {
   postUpdateUserName,
   UserConnectedAccounts,
 } from "../../api/proofile";
+import EditAvatarModal from "../../components/profileInfo/EditAvatarModal";
 
 export default function Profile() {
   const navigation = useNavigation();
@@ -58,13 +59,13 @@ export default function Profile() {
   }, [navigation]);
   const connectionsList = useMemo(() => {
     return [
-      { name: "Twitter", icon: <Twitter />, isAcitve: false },
-      { name: "Discord", icon: <Discord />, isAcitve: false },
+      // { name: "Twitter", icon: <Twitter />, isAcitve: false },
+      // { name: "Discord", icon: <Discord />, isAcitve: false },
       {
         name: "Telegram",
         icon: <Telegram />,
         isAcitve: userConnected?.telegram?.id,
-        userName: userConnected?.telegram?.username,
+        userName: userConnected?.telegram?.firstName,
       },
     ];
   }, [userConnected]);
@@ -90,6 +91,7 @@ export default function Profile() {
               <Camera />
             </View>
           </TouchableOpacity>
+          <EditAvatarModal />
           <View style={styles.contentWrap}>
             <View>
               <Text style={styles.label}>Name</Text>
