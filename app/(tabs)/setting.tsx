@@ -6,6 +6,7 @@ import { getUgcBotList, queryCanCreateUgcBot } from '../../api/robot'
 import addIcon from '../../assets/images/add.png'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import ugcStore from '../../store/ugcBotstroe'
+import ShellLoading from '../../components/loading'
 type ListDataItem = {
   id: string | number
   uid: string
@@ -23,14 +24,15 @@ type ListDataItem = {
 export default function TabTwoScreen() {
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
-
+  const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
     loadData()
   }, [])
 
   const loadData = () => {
+    setLoading(true)
     getUgcBotList({}).then(res => {
-      console.log('res', res)
+      setLoading(false)
       setListData(res as ListDataItem[])
     })
   }
@@ -56,7 +58,7 @@ export default function TabTwoScreen() {
       Toast('Please use a desktop browser to create a robot')
     })
   }
-
+  if (loading) return <ShellLoading></ShellLoading>
   return (
     <ScrollView style={styles.container}>
       <TouchableOpacity

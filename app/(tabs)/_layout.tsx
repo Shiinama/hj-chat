@@ -8,6 +8,7 @@ import Profile from '../../assets/images/tabbar/profile.svg'
 import ProfileAcitve from '../../assets/images/tabbar/profile_acitve.svg'
 import Bot from '../../assets/images/tabbar/bot.svg'
 import BotAcitve from '../../assets/images/tabbar/bot_active.svg'
+import Myshell from '../../assets/images/tabbar/myshell.svg'
 import { useEffect, useState } from 'react'
 import { getUserEnergyInfo } from '../../api'
 /**
@@ -50,8 +51,9 @@ export default function TabLayout() {
           title: '',
           tabBarIcon: ({ focused }) => (focused ? <ChatAcitve /> : <Chat />),
           headerLeft: () => (
-            <View style={{ marginLeft: 16 }}>
-              <Text style={{ fontSize: 18, lineHeight: 28 }}>MySheel</Text>
+            <View style={{ marginLeft: 16, flexDirection: 'row', alignItems: 'center' }}>
+              <Myshell></Myshell>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 8 }}>MySheel</Text>
             </View>
           ),
           headerRight: () => (

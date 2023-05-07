@@ -121,8 +121,9 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
               placement="top"
               anchor={() => (
                 <TouchableOpacity
-                  onPress={() => {
+                  onPress={e => {
                     setVisible(true)
+                    e.preventDefault()
                   }}
                   style={styles.toolsIcon}
                 >

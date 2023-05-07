@@ -6,7 +6,6 @@ import { Dialog, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { postPublishBot } from '../../api/robot'
 import { styles } from './style'
 import userLogo from '../../assets/images/userLogo.png'
-import thunder from '../../assets/images/thunder.png'
 import editIcon from '../../assets/images/edit.png'
 import publishIcon from '../../assets/images/publish.png'
 import ugcStore from '../../store/ugcBotstroe'
@@ -15,7 +14,7 @@ import FlashIcon from '../../components/flashIcon'
 export default function Robot() {
   const router = useRouter()
   const navigation = useNavigation()
-  const { name, type, uid, userId } = useSearchParams()
+  const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
   const botStore = ugcStore.getState()
   useEffect(() => {

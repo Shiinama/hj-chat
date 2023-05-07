@@ -1,9 +1,11 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { useFonts } from 'expo-font'
-import { SplashScreen, Stack } from 'expo-router'
+import { Slot, SplashScreen, Stack } from 'expo-router'
 import { useEffect } from 'react'
 import * as eva from '@eva-design/eva'
+
 import { Provider as XiaoshuProvider } from '@fruits-chain/react-native-xiaoshu'
+import { Provider as AuthProvider } from '../context/auth'
 
 import { ApplicationProvider } from '@ui-kitten/components'
 export {
@@ -38,6 +40,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
+    // <AuthProvider>
     <ApplicationProvider {...eva} theme={eva.light}>
       <XiaoshuProvider>
         <Stack>
@@ -45,5 +48,6 @@ function RootLayoutNav() {
         </Stack>
       </XiaoshuProvider>
     </ApplicationProvider>
+    // </AuthProvider>
   )
 }

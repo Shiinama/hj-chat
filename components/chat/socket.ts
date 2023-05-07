@@ -60,6 +60,7 @@ export const useSocketIo = () => {
   const [message, setMessage] = useState<any>()
   const [resMessage, setResMessage] = useState<any>()
   const [translationMessage, setTranslation] = useState<any>()
+  const [updateMessage, setUpdateMessage] = useState<any>()
   const ready = (): boolean => {
     return SocketIoRef.current && SocketIoRef.current.connected
   }
@@ -114,9 +115,9 @@ export const useSocketIo = () => {
   const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {
     console.log(reqId, data, 'onEnergyInfo')
   }
-  const onMessageUpdated = (data: MesageSucessType) => {
+  const onMessageUpdated = ({ data }: MesageSucessType) => {
     console.log(data, 'onMessageUpdated')
-    // setMessage(data)
+    setUpdateMessage(data)
   }
 
   const sendMessage = (ChatEvent, data) => {
@@ -132,6 +133,7 @@ export const useSocketIo = () => {
     resMessage,
     sendMessage,
     translationMessage,
+    updateMessage,
     onMessageUpdated,
     onEnergyInfo,
     onMessageTranslated,

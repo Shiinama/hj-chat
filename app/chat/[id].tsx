@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
-import { useSearchParams, useNavigation } from 'expo-router'
+import { useSearchParams, useNavigation, useRouter } from 'expo-router'
 import { createContext, useEffect, useState } from 'react'
 import ChatItem from '../../components/chat/chatItem'
 import Container from '../../components/chat/container'
@@ -37,6 +37,7 @@ export type ChatItem = {
 
 export default function Chat({}) {
   const botStorage = botStore.getState()
+  const router = useRouter()
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
@@ -44,7 +45,7 @@ export default function Chat({}) {
   })
   const navigation = useNavigation()
   const { name, uid, userId, energyPerChat } = useSearchParams()
-  const [message, resMessage, sendMessage, translationMessage] = useSocketIo()
+  const [message, resMessage, sendMessage, translationMessage, updateMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
@@ -129,7 +130,7 @@ export default function Chat({}) {
       ),
       headerLeft: () => {
         return (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => router.replace({ pathname: '/(tabs)' })}>
             <Back></Back>
           </TouchableOpacity>
         )
@@ -160,6 +161,16 @@ export default function Chat({}) {
     if (!resMessage) return
     setChatData(chatData.concat(resMessage))
   }, [resMessage])
+
+  useEffect(() => {
+    if (!updateMessage) return
+    const index = chatData.findIndex(item => item.uid === updateMessage.uid)
+    console.log(index)
+    setChatData(pre => {
+      pre[index].text = updateMessage.text
+      return [...pre]
+    })
+  }, [updateMessage])
 
   useEffect(() => {
     if (!translationMessage) return

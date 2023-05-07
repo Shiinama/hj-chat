@@ -5,8 +5,10 @@ import { Audio, AVPlaybackStatus } from 'expo-av'
 import heidian from '../../assets/images/heidian.png'
 import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
+import ShellLoading from '../loading'
 const Player = forwardRef(
   ({ audioFileUri, showControl = true }: { audioFileUri: string; showControl?: boolean }, ref) => {
+    const [loading, setLoading] = useState<boolean>(false)
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [currentPosition, setCurrentPosition] = useState<number>(0)
     const [duration, setDuration] = useState<number>(0)
@@ -17,8 +19,10 @@ const Player = forwardRef(
     useEffect(() => {
       if (!audioFileUri) return
       const loadSound = async () => {
+        setLoading(true)
         const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
         setSound(sound)
+        setLoading(false)
       }
       loadSound()
     }, [audioFileUri])
@@ -73,7 +77,7 @@ const Player = forwardRef(
       const seconds: number = ((ms % 60000) / 1000).toFixed(0)
       return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
     }
-
+    if (loading) return <ShellLoading></ShellLoading>
     return (
       <View style={styles.container}>
         {showControl && (
