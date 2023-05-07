@@ -1,33 +1,33 @@
-import { useRouter, useSegments } from 'expo-router'
-import { useEffect, useContext, createContext, useState } from 'react'
-import { useAsyncStorage } from '@react-native-async-storage/async-storage'
+import { useRouter, useSegments } from "expo-router";
+import { useEffect, useContext, createContext, useState } from "react";
+import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
-const AuthContext = createContext(null)
+const AuthContext = createContext(null);
 
 export function useAuth() {
-  return useContext(AuthContext)
+  return useContext(AuthContext);
 }
 
 function useProtectedRoute(user) {
-  const rootSegment = useSegments()[0]
-  const router = useRouter()
+  const rootSegment = useSegments()[0];
+  const router = useRouter();
   useEffect(() => {
-    console.log(rootSegment, user)
+    console.log(rootSegment, user);
     // if (user === undefined) {
     //   return
     // }
-    if (!user && rootSegment !== '(auth)') {
-      router.replace('/(auth)/sign-in')
-    } else if (user && rootSegment !== '(tabs)') {
+    if (!user && rootSegment !== "(auth)") {
+      router.replace("/(auth)/sign-in");
+    } else if (user && rootSegment !== "(tabs)") {
       // Redirect away from the sign-in page.
-      router.replace('/')
+      router.replace("/");
     }
-  }, [user, rootSegment])
+  }, [user, rootSegment]);
 }
 
 export function Provider(props) {
-  const { getItem, setItem, removeItem } = useAsyncStorage('USER')
-  const [user, setAuth] = useState(undefined)
+  const { getItem, setItem, removeItem } = useAsyncStorage("USER");
+  const [user, setAuth] = useState(undefined);
 
   // useEffect(() => {
   //   getItem().then(json => {
@@ -40,23 +40,23 @@ export function Provider(props) {
   //   })
   // }, [])
 
-  useProtectedRoute(user)
+  // useProtectedRoute(user)
 
   return (
     <AuthContext.Provider
       value={{
         signIn: () => {
-          setAuth({})
-          setItem(JSON.stringify({}))
+          setAuth({});
+          setItem(JSON.stringify({}));
         },
         signOut: () => {
-          setAuth(null)
-          removeItem()
+          setAuth(null);
+          removeItem();
         },
         user,
       }}
     >
       {props.children}
     </AuthContext.Provider>
-  )
+  );
 }

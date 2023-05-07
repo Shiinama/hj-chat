@@ -18,21 +18,10 @@ import ActiveIcon from "../../assets/images/profile/activeIcon.svg";
 import Discord from "../../assets/images/profile/discord.svg";
 import Telegram from "../../assets/images/profile/telegram.svg";
 import Twitter from "../../assets/images/profile/twitter.svg";
-import useUserStore, { UserEnergyInfo } from "../../store/userStore";
-import { Button } from "@fruits-chain/react-native-xiaoshu";
+import useUserStore from "../../store/userStore";
+import { Button, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { useDeepCompareEffect } from "ahooks";
-
-type ListDataItem = {
-  id: number;
-  uid: string;
-  name: string;
-  description: string;
-  userId: number;
-  logo: string;
-  language: string;
-  pinned: boolean;
-  lastInteractionDate: string;
-};
+import { getIsUserNameAvailable, postUpdateUserName } from "../../api/proofile";
 
 export default function Profile() {
   const navigation = useNavigation();
@@ -42,13 +31,12 @@ export default function Profile() {
   useDeepCompareEffect(() => {
     setName(profile?.name);
   }, [profile?.name]);
-  useFocusEffect(
-    useCallback(() => {
-      getProfile().then((res: any) => {
-        useUserStore.setState({ profile: res });
-      });
-    }, [])
-  );
+  const getPageInfo = useCallback(() => {
+    getProfile().then((res: any) => {
+      useUserStore.setState({ profile: res });
+    });
+  }, []);
+  useFocusEffect(getPageInfo);
   useEffect(() => {
     navigation.setOptions({
       title: "Edit Profile",
@@ -59,6 +47,18 @@ export default function Profile() {
     { name: "Discord", icon: <Discord />, isAcitve: false },
     { name: "Telegram", icon: <Telegram />, isAcitve: false },
   ];
+  const saveAction = () => {
+    console.log(name);
+
+    getIsUserNameAvailable({ name }).then((res) => {
+      if (res) {
+        postUpdateUserName({ name }).then((res) => {
+          Toast("update successfully!");
+          getPageInfo();
+        });
+      }
+    });
+  };
   return (
     <View style={styles.container}>
       <ScrollView bounces={false}>
@@ -110,7 +110,11 @@ export default function Profile() {
         </View>
       </ScrollView>
       <View style={styles.action}>
-        <Button style={styles.actionMain} disabled={btnDisabled}>
+        <Button
+          style={styles.actionMain}
+          disabled={btnDisabled}
+          onPress={saveAction}
+        >
           Save Changes
         </Button>
       </View>

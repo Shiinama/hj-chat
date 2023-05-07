@@ -1,89 +1,89 @@
-import request from '../utils/request'
+import request from "../utils/request";
 
 /**
  * 工坊列表
  */
-export const queryUserProfile = params => {
+export const queryUserProfile = (params) => {
   return request({
     url: `/user/profile`,
-    method: 'get',
+    method: "get",
     params,
-  })
-}
+  });
+};
 
 /**
  * 工坊详情
  */
-export const getUserEnergyInfo = params => {
+export const getUserEnergyInfo = (params) => {
   return request({
     url: `/user/getUserEnergyInfo`,
-    method: 'get',
+    method: "get",
     params,
-  })
-}
+  });
+};
 
 /**
- * 工坊详情
+ * 用户名是否合法
  */
-export const getIsUserNameAvailable = params => {
+export const getIsUserNameAvailable = (params) => {
   return request({
     url: `/user/isUserNameAvailable`,
-    method: 'get',
+    method: "get",
     params,
-  })
-}
+  });
+};
 
 /**
- * 工坊详情
+ * 修改用户名
  */
-export const postUpdateUserName = data => {
+export const postUpdateUserName = (data) => {
   return request({
     url: `/user/updateUserName`,
-    method: 'post',
+    method: "post",
     data: data,
-  })
-}
+  });
+};
 
 /**
  * 工坊详情
  */
-export const getUserConnectedAccounts = params => {
+export const getUserConnectedAccounts = (params) => {
   return request({
     url: `/user/getUserConnectedAccounts`,
-    method: 'get',
+    method: "get",
     params,
-  })
-}
+  });
+};
 
 /**
  * 工坊详情
  */
-export const postConnectToTelegram = data => {
+export const postConnectToTelegram = (data) => {
   return request({
     url: `/user/connectToTelegram`,
-    method: 'post',
+    method: "post",
     data: data,
-  })
-}
+  });
+};
 
 /**
  * 工坊详情
  */
-export const postUploadAvatar = data => {
+export const postUploadAvatar = (data) => {
   return request({
     url: `/user/uploadAvatar`,
-    method: 'post',
+    method: "post",
     data: data,
-  })
-}
+  });
+};
 
 /**
  * 工坊详情
  */
-export const getInvitation = params => {
+export const getInvitation = (params) => {
   return request({
     url: `/user/getInvitation`,
-    method: 'get',
+    method: "get",
     params,
-  })
-}
+  });
+};
