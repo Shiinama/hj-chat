@@ -19,7 +19,7 @@ import Telegram from "../../assets/images/profile/telegram.svg";
 import Twitter from "../../assets/images/profile/twitter.svg";
 import useUserStore from "../../store/userStore";
 import { Button, Toast } from "@fruits-chain/react-native-xiaoshu";
-import { useDeepCompareEffect } from "ahooks";
+import { useBoolean, useDeepCompareEffect } from "ahooks";
 import {
   getIsUserNameAvailable,
   getUserConnectedAccounts,
@@ -32,6 +32,7 @@ export default function Profile() {
   const navigation = useNavigation();
   const { profile } = useUserStore();
   const [name, setName] = useState(profile?.name);
+  const [visible, { set: setVisible }] = useBoolean(false);
   const [userConnected, setUserConnected] =
     useState<UserConnectedAccounts>(null);
   const btnDisabled = name === profile?.name;
@@ -85,13 +86,23 @@ export default function Profile() {
     <View style={styles.container}>
       <ScrollView bounces={false}>
         <View style={styles.main}>
-          <TouchableOpacity style={styles.avatar}>
+          <TouchableOpacity
+            style={styles.avatar}
+            onPress={() => {
+              setVisible(true);
+            }}
+          >
             <Image source={{ uri: profile?.avatar }} style={styles.avatarImg} />
             <View style={styles.mask}>
               <Camera />
             </View>
           </TouchableOpacity>
-          <EditAvatarModal />
+          {/* 编辑头像modal */}
+          <EditAvatarModal
+            visible={visible}
+            setVisible={setVisible}
+            profile={profile}
+          />
           <View style={styles.contentWrap}>
             <View>
               <Text style={styles.label}>Name</Text>
