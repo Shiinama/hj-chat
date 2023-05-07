@@ -42,29 +42,29 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const navigation = useNavigation()
   return (
-    <AuthProvider>
-      <ApplicationProvider {...eva} theme={eva.light}>
-        <XiaoshuProvider>
-          <Stack
-            screenOptions={{
-              headerLeft: () => {
-                return (
-                  <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Back></Back>
-                  </TouchableOpacity>
-                )
-              },
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <XiaoshuProvider>
+        <Stack
+          screenOptions={{
+            headerLeft: () => {
+              return (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Back></Back>
+                </TouchableOpacity>
+              )
+            },
+          }}
+        >
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
             }}
-          >
-            <Stack.Screen
-              name="(tabs)"
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack>
-        </XiaoshuProvider>
-      </ApplicationProvider>
-    </AuthProvider>
+          />
+        </Stack>
+      </XiaoshuProvider>
+    </ApplicationProvider>
+    // <AuthProvider>
+    // </AuthProvider>
   )
 }

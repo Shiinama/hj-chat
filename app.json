@@ -41,7 +41,8 @@
             "package": "audio"
           }
         }
-      ]
+      ],
+      ["./plugins/withAndroidNamespace.ts"]
     ],
     "extra": {
       "eas": {

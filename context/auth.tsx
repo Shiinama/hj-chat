@@ -29,16 +29,16 @@ export function Provider(props) {
   const { getItem, setItem, removeItem } = useAsyncStorage('USER')
   const [user, setAuth] = useState(undefined)
 
-  // useEffect(() => {
-  //   getItem().then(json => {
-  //     console.log(json)
-  //     if (json != null) {
-  //       setAuth(JSON.parse(json))
-  //     } else {
-  //       setAuth(null)
-  //     }
-  //   })
-  // }, [])
+  useEffect(() => {
+    getItem().then(json => {
+      console.log(json)
+      if (json != null) {
+        setAuth(JSON.parse(json))
+      } else {
+        setAuth(null)
+      }
+    })
+  }, [])
 
   useProtectedRoute(user)
 
