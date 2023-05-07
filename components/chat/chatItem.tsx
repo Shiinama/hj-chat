@@ -111,8 +111,9 @@ function chatItem({ item, translationText, logo }: Props) {
           }}
           style={styles.avatar}
         />
-        <View style={[styles.contentBox, tag ? styles.youContent : styles.meContent]}>
-          {/* {item.status === 'SENDING' ? <Loading color="#7A2EF6" /> : null} */}
+        <View
+          style={[styles.contentBox, tag ? styles.youContent : { ...styles.meContent, width: item?.voiceUrl && 243 }]}
+        >
           {item?.voiceUrl && renderMessageAudio()}
           {item?.text && renderMessageText()}
           {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
