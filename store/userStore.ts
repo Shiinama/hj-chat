@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-type UserProfile = {
+export type UserProfile = {
   id: number;
   uid: string;
   source: string;
@@ -16,11 +16,11 @@ type UserProfile = {
   isPasscard: boolean;
   isGenesisPasscard: boolean;
 };
-type UserEnergyInfo = {
+export type UserEnergyInfo = {
   energy: number;
   dailyEnergy: number;
 };
-type UserStore = {
+export type UserStore = {
   profile: UserProfile;
   userEnergyInfo: UserEnergyInfo;
 };

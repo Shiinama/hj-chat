@@ -28,7 +28,7 @@ import Social2Icon from "../../assets/images/profile/Social2.png";
 import ThunderIcon from "../../assets/images/profile/Thunder.png";
 import CommunityIcon from "../../assets/images/profile/community.png";
 import * as WebBrowser from "expo-web-browser";
-import useUserStore from "../../store/userStore";
+import useUserStore, { UserEnergyInfo } from "../../store/userStore";
 import ProgressBar from "../../components/profile/ProgressBar";
 
 type ListDataItem = {
@@ -52,8 +52,8 @@ export default function TabThreeScreen() {
     getProfile().then((res: any) => {
       useUserStore.setState({ profile: res });
     });
-    getUserEnergyInfo().then((res: any) => {
-      useUserStore.setState({ userEnergyInfo: res });
+    getUserEnergyInfo().then((res) => {
+      useUserStore.setState({ userEnergyInfo: res as UserEnergyInfo });
     });
   }, []);
 
