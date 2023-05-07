@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ArrowLeft from "../../assets/images/profile/arrow-left.svg";
 import request from "../../utils/request";
+import CustomSlider from "./Slider";
 
 export interface EditAvatarModalProps {
   visible: boolean;
@@ -17,6 +18,7 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
   profile,
 }) => {
   const [imgSize, setImgSize] = useState(0);
+  const [zoom, setZoom] = useState(1);
   const [zoomSize, setZoomSize] = useState(0);
   useEffect(() => {
     setZoomSize(imgSize);
@@ -68,6 +70,8 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
       console.log({ error });
     }
   };
+  console.log(zoom);
+
   return (
     <Overlay
       visible={visible}
@@ -125,10 +129,17 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
                   style={{
                     width: zoomSize,
                     height: zoomSize,
+                    transform: [{ scale: zoom }],
                   }}
                 />
               </View>
             </TouchableOpacity>
+            <CustomSlider
+              value={zoom}
+              onValueChange={setZoom}
+              maximumValue={2}
+              minimumValue={1}
+            />
           </View>
         </View>
       </View>
