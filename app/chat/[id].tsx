@@ -11,7 +11,6 @@ import ShellLoading from '../../components/loading'
 import { useSocketIo } from '../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
 import { Buffer } from 'buffer'
-import Back from '../../assets/images/tabbar/back.svg'
 import { ChatContext, ChatPageState } from './chatContext'
 import { Button } from '@fruits-chain/react-native-xiaoshu'
 import { convert4amToMp3 } from '../../utils/convert'
@@ -128,13 +127,6 @@ export default function Chat({}) {
           <FlashIcon energyPerChat={energyPerChat} />
         </View>
       ),
-      headerLeft: () => {
-        return (
-          <TouchableOpacity onPress={() => router.replace({ pathname: '/(tabs)' })}>
-            <Back></Back>
-          </TouchableOpacity>
-        )
-      },
       headerRight: () => {
         return (
           chatPageValue.pageStatus === 'sharing' && (

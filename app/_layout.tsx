@@ -9,7 +9,7 @@ import { Provider as AuthProvider } from '../context/auth'
 
 import Back from '../assets/images/tabbar/back.svg'
 import { ApplicationProvider } from '@ui-kitten/components'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, Platform } from 'react-native'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -47,6 +47,7 @@ function RootLayoutNav() {
         <Stack
           screenOptions={{
             headerLeft: () => {
+              if (Platform.OS === 'android') return null
               return (
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                   <Back></Back>

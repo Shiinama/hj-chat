@@ -26,7 +26,7 @@ function chatItem({ item, translationText, logo }: Props) {
   const isBlur = buttonIndex === 1
   if (item === 123) return null
   const tag = item?.replyUid
-  const renderMessageAudio = () => <AudioMessage audioFileUri={item.voiceUrl} />
+  const renderMessageAudio = () => <AudioMessage audioFileUri={item?.voiceUrl} />
   const renderMessageText = () => {
     return (
       <View style={[styles.content]}>

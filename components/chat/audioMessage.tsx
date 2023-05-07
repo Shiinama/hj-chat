@@ -6,7 +6,7 @@ import heidian from '../../assets/images/heidian.png'
 import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
-const Player = forwardRef(
+const AudioMessage = forwardRef(
   ({ audioFileUri, showControl = true }: { audioFileUri: string; showControl?: boolean }, ref) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -25,7 +25,7 @@ const Player = forwardRef(
         setLoading(false)
       }
       loadSound()
-    }, [audioFileUri])
+    }, [])
 
     useEffect(() => {
       return sound
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Player
+export default AudioMessage

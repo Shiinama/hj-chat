@@ -42,7 +42,8 @@
           }
         }
       ],
-      ["./plugins/withAndroidNamespace.ts"]
+      ["./plugins/withAndroidNamespace.ts"],
+      ["./plugins/withAndroidGradeModifed.ts"]
     ],
     "extra": {
       "eas": {
