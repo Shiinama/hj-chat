@@ -4,6 +4,8 @@ import { FC, useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ArrowLeft from "../../assets/images/profile/arrow-left.svg";
+import request from "../../utils/request";
+
 export interface EditAvatarModalProps {
   visible: boolean;
   setVisible: (val: boolean) => void;
@@ -20,7 +22,8 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
     setZoomSize(imgSize);
   }, [imgSize]);
   console.log(imgSize);
-  const [inputImage, setInputImage] = useState(null);
+  const [inputImage, setInputImage] =
+    useState<ImagePicker.ImagePickerAsset>(null);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -33,10 +36,38 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
     console.log(result);
 
     if (!result.canceled) {
-      setInputImage(result.assets[0].uri);
+      setInputImage(result.assets[0]);
     }
   };
 
+  const updateAvatar = async () => {
+    const data = new FormData();
+
+    try {
+      const fetchResponse = await fetch(inputImage?.uri);
+      console.log("fetchResponse", fetchResponse);
+      const blob = await fetchResponse.blob();
+      console.log("blob", blob);
+
+      data.append("file", blob);
+      request({
+        url: "/user/uploadAvatar",
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: data,
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log({ err });
+        });
+    } catch (error) {
+      console.log({ error });
+    }
+  };
   return (
     <Overlay
       visible={visible}
@@ -59,6 +90,9 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
               color="#1F1F1F"
               size="s"
               style={{ borderRadius: 12, paddingHorizontal: 14 }}
+              onPress={() => {
+                updateAvatar();
+              }}
             >
               Confirm
             </Button>
@@ -86,7 +120,7 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
               >
                 <Image
                   source={{
-                    uri: inputImage ? inputImage : profile?.avatar,
+                    uri: inputImage?.uri ? inputImage?.uri : profile?.avatar,
                   }}
                   style={{
                     width: zoomSize,
