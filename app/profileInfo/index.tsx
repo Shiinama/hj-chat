@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useSearchParams, useNavigation } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useNavigation } from "expo-router";
 import {
   Text,
   View,
@@ -11,7 +11,6 @@ import {
 } from "react-native";
 
 import { styles } from "./style";
-import BotCard from "../../components/botCard";
 import { profile as getProfile } from "../../api/index";
 import Camera from "../../assets/images/profile/camera.svg";
 import ActiveIcon from "../../assets/images/profile/activeIcon.svg";
@@ -21,32 +20,55 @@ import Twitter from "../../assets/images/profile/twitter.svg";
 import useUserStore from "../../store/userStore";
 import { Button, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { useDeepCompareEffect } from "ahooks";
-import { getIsUserNameAvailable, postUpdateUserName } from "../../api/proofile";
+import {
+  getIsUserNameAvailable,
+  getUserConnectedAccounts,
+  postUpdateUserName,
+  UserConnectedAccounts,
+} from "../../api/proofile";
+import EditAvatarModal from "../../components/profileInfo/EditAvatarModal";
 
 export default function Profile() {
   const navigation = useNavigation();
   const { profile } = useUserStore();
   const [name, setName] = useState(profile?.name);
+  const [userConnected, setUserConnected] =
+    useState<UserConnectedAccounts>(null);
   const btnDisabled = name === profile?.name;
   useDeepCompareEffect(() => {
     setName(profile?.name);
   }, [profile?.name]);
-  const getPageInfo = useCallback(() => {
+  const getPageInfo = () => {
     getProfile().then((res: any) => {
       useUserStore.setState({ profile: res });
     });
-  }, []);
-  useFocusEffect(getPageInfo);
+  };
+  const getConnections = () => {
+    getUserConnectedAccounts().then((res) => setUserConnected(res));
+  };
+  useFocusEffect(
+    useCallback(() => {
+      getPageInfo();
+      getConnections();
+    }, [])
+  );
   useEffect(() => {
     navigation.setOptions({
       title: "Edit Profile",
     });
   }, [navigation]);
-  const connectionsList = [
-    { name: "Twitter", icon: <Twitter />, isAcitve: true },
-    { name: "Discord", icon: <Discord />, isAcitve: false },
-    { name: "Telegram", icon: <Telegram />, isAcitve: false },
-  ];
+  const connectionsList = useMemo(() => {
+    return [
+      // { name: "Twitter", icon: <Twitter />, isAcitve: false },
+      // { name: "Discord", icon: <Discord />, isAcitve: false },
+      {
+        name: "Telegram",
+        icon: <Telegram />,
+        isAcitve: userConnected?.telegram?.id,
+        userName: userConnected?.telegram?.firstName,
+      },
+    ];
+  }, [userConnected]);
   const saveAction = () => {
     console.log(name);
 
@@ -69,6 +91,7 @@ export default function Profile() {
               <Camera />
             </View>
           </TouchableOpacity>
+          <EditAvatarModal />
           <View style={styles.contentWrap}>
             <View>
               <Text style={styles.label}>Name</Text>

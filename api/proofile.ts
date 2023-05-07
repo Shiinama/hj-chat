@@ -44,14 +44,27 @@ export const postUpdateUserName = (data) => {
   });
 };
 
+export type UserConnectedAccounts = {
+  telegram: {
+    id: number;
+    userId: number;
+    tgId: number;
+    firstName: string;
+    lastName?: string;
+    username?: string;
+    photoUrl?: string;
+    connectedUserId: number;
+    currentBotId: number;
+    createdDate: string;
+  };
+};
 /**
- * 工坊详情
+ * 获取用户已连接的内容
  */
-export const getUserConnectedAccounts = (params) => {
-  return request({
+export const getUserConnectedAccounts = () => {
+  return request<UserConnectedAccounts>({
     url: `/user/getUserConnectedAccounts`,
     method: "get",
-    params,
   });
 };
 
