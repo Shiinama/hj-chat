@@ -70,7 +70,6 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
       console.log({ error });
     }
   };
-  console.log(zoom);
 
   return (
     <Overlay
