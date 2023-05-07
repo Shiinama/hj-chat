@@ -12,6 +12,12 @@ export const chatHistory = (id) => {
     method: "get",
   });
 };
+export const profile = () => {
+  return request({
+    url: `/user/profile`,
+    method: "get",
+  });
+};
 export const getUserEnergyInfo = () => {
   return request({
     url: `/user/getUserEnergyInfo`,
