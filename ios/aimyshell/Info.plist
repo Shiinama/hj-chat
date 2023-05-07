@@ -87,5 +87,11 @@
 	<string>Automatic</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>PROJECT_UUID</key>
+	<string>c135c555-a871-4ec2-ac8c-5209ded4bfd1</string>
+	<key>PROJECT_CLIENT_KEY</key>
+	<string>clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI</string>
+	<key>PROJECT_APP_UUID</key>
+	<string>d56de0f8-82c5-42ae-ac90-1b702f7c80e0</string>
 </dict>
 </plist>

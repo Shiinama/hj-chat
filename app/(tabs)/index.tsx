@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native'
 import { useRouter } from 'expo-router'
 import RootStyles from '../../constants/RootStyles'
 import 'react-native-get-random-values'
@@ -7,7 +7,14 @@ import { botList } from '../../api/index'
 import BotCard from '../../components/botCard'
 import ShellLoading from '../../components/loading'
 import botStore from '../../store/botStore'
-
+import {
+  ChainInfo,
+  LoginType,
+  SupportAuthType,
+  iOSModalPresentStyle,
+  Env
+} from 'react-native-particle-auth';
+import * as particleAuth from 'react-native-particle-auth';
 type ListDataItem = {
   id: number
   uid: string
@@ -19,6 +26,10 @@ type ListDataItem = {
   pinned: boolean
   lastInteractionDate: string
 }
+
+import { createWeb3 } from '../../tmp/web3Demo';
+
+const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI');
 
 export default function TabOneScreen() {
   const router = useRouter()
@@ -47,6 +58,23 @@ export default function TabOneScreen() {
     })
   }
 
+
+
+  const login = async () => {
+    const type = LoginType.Email;
+    const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Apple, SupportAuthType.Discord];
+    console.log(_supportAuthType)
+    const result = await particleAuth.login(type, '', _supportAuthType, undefined);
+    if (result.status) {
+      const userInfo = result.data;
+      console.log(userInfo);
+    } else {
+      const error = result.data;
+      console.log(error);
+    }
+
+  };
+
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <View style={styles.container}>
@@ -62,6 +90,9 @@ export default function TabOneScreen() {
             showTime={true}
           />
         ))}
+        <Pressable onPress={login}>
+          <Text style={{ color: 'blue', textAlign: 'center', marginVertical: 20 }}>Test Login </Text>
+        </Pressable>
       </ScrollView>
     </View>
   )
