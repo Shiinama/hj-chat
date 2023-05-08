@@ -47,6 +47,7 @@ _axios.interceptors.response.use(
     return response
   },
   error => {
+    console.log(error, 'error')
     const { response } = error
     // 请求有响应
     if (response) {
@@ -82,7 +83,7 @@ export default async function request<T>(options: RequestOptions) {
   }
   const defaultOptions = {
     headers: {
-      // Authorization: Authorization ? Authorization : null,
+      Authorization: Authorization ? Authorization : null,
       appversioncode: 3,
       ...headers,
     },

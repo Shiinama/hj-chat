@@ -8,7 +8,6 @@ export default function AppLayout() {
     <Stack
       screenOptions={{
         headerLeft: () => {
-          if (Platform.OS === 'android') return null
           return (
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Back></Back>
