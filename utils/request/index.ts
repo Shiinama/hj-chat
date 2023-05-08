@@ -49,6 +49,7 @@ _axios.interceptors.response.use(
   error => {
     console.log(error, 'error')
     const { response } = error
+    console.log(response, 'error')
     // 请求有响应
     if (response) {
       const { status, data, config } = response
