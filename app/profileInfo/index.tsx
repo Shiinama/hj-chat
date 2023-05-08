@@ -27,6 +27,7 @@ import {
   UserConnectedAccounts,
 } from "../../api/proofile";
 import EditAvatarModal from "../../components/profileInfo/EditAvatarModal";
+import { genAvatarUrl } from "@/../components/profileInfo/helper";
 
 export default function Profile() {
   const navigation = useNavigation();
@@ -92,7 +93,10 @@ export default function Profile() {
               setVisible(true);
             }}
           >
-            <Image source={{ uri: profile?.avatar }} style={styles.avatarImg} />
+            <Image
+              source={{ uri: genAvatarUrl(profile?.avatar) }}
+              style={styles.avatarImg}
+            />
             <View style={styles.mask}>
               <Camera />
             </View>

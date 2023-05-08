@@ -1,11 +1,12 @@
 import { UserProfile } from "@/../store/userStore";
 import { Button, Overlay } from "@fruits-chain/react-native-xiaoshu";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ArrowLeft from "../../assets/images/profile/arrow-left.svg";
 import request from "../../utils/request";
 import CustomSlider from "./Slider";
+import { genAvatarUrl } from "./helper";
 
 export interface EditAvatarModalProps {
   visible: boolean;
@@ -123,7 +124,9 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
               >
                 <Image
                   source={{
-                    uri: inputImage?.uri ? inputImage?.uri : profile?.avatar,
+                    uri: genAvatarUrl(
+                      inputImage?.uri ? inputImage?.uri : profile?.avatar
+                    ),
                   }}
                   style={{
                     width: zoomSize,

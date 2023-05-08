@@ -28,6 +28,7 @@ import CommunityIcon from "../../assets/images/profile/community.png";
 import * as WebBrowser from "expo-web-browser";
 import useUserStore, { UserEnergyInfo } from "../../store/userStore";
 import ProgressBar from "../../components/profile/ProgressBar";
+import { genAvatarUrl } from "@/../components/profileInfo/helper";
 
 type ListDataItem = {
   id: number;
@@ -70,7 +71,7 @@ export default function TabThreeScreen() {
       <View style={styles.profile}>
         <View style={styles.profileInfo}>
           <Image
-            source={{ uri: profile?.avatar }}
+            source={{ uri: genAvatarUrl(profile?.avatar) }}
             style={{ width: 80, height: 80, borderRadius: 12 }}
           />
           <TouchableOpacity
