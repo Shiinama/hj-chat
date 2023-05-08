@@ -1,25 +1,23 @@
-const withMySDK = (config) => {
-    // Ensure the objects exist
-    if (!config.ios) {
-        config.ios = {};
-    }
-    if (!config.ios.infoPlist) {
-        config.ios.infoPlist = {};
-    }
+const withMySDK = config => {
+  // Ensure the objects exist
+  if (!config.ios) {
+    config.ios = {}
+  }
+  if (!config.ios.infoPlist) {
+    config.ios.infoPlist = {}
+  }
 
+  config.ios.infoPlist['PROJECT_UUID'] = 'c9aa126d-8db2-45cc-8898-60e3a69d5050'
+  config.ios.infoPlist['PROJECT_CLIENT_KEY'] = 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk'
+  config.ios.infoPlist['PROJECT_APP_UUID'] = '6b6a232e-973a-405c-969a-a546189fda16'
 
-    config.ios.infoPlist['PROJECT_UUID'] = 'c135c555-a871-4ec2-ac8c-5209ded4bfd1';
-    config.ios.infoPlist['PROJECT_CLIENT_KEY'] = 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI'
-    config.ios.infoPlist['PROJECT_APP_UUID'] = '564dc005-2f20-40a1-8082-c8634cdafd0b'
-
-    return config;
-};
+  return config
+}
 
 /// Create a config
 const config = {
-    name: 'my app',
-};
+  name: 'my app',
+}
 
 /// Use the plugin
-module.exports = withMySDK;
-
+module.exports = withMySDK

@@ -47,8 +47,8 @@ export function Provider(props) {
             token: value.uuid,
           })
           const info = await particleLogin({
-            uuid: value.token,
-            token: value.uuid,
+            uuid: value.uuid,
+            token: value.token,
           })
           console.log(info)
           setAuth(info)
