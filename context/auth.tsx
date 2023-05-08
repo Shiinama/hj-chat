@@ -16,15 +16,16 @@ function useProtectedRoute(user) {
     if (user === undefined) {
       return
     }
-    // if (!user && rootSegment !== '(auth)/sign-in') {
-    //   router.replace('(auth)/sign-in')
-    // }
+    if (!user && rootSegment !== '(auth)/sign-in') {
+      router.replace('(auth)/sign-in')
+    }
   }, [user, rootSegment])
 }
 
 export function Provider(props) {
   const { getItem, setItem, removeItem } = useAsyncStorage('USER')
   const [user, setAuth] = useState(undefined)
+  console.log(user)
   useEffect(() => {
     getItem().then(json => {
       if (json != null) {

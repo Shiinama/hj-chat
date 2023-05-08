@@ -16,7 +16,7 @@
     "ios": {
       "associatedDomains": ["pn564dc005-2f20-40a1-8082-c8634cdafd0b"],
       "supportsTablet": true,
-      "bundleIdentifier": "ai.myshell.app2",
+      "bundleIdentifier": "ai.myshell.app",
       "infoPlist": {
         "PROJECT_UUID": "c135c555-a871-4ec2-ac8c-5209ded4bfd1",
         "PROJECT_CLIENT_KEY": "clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI",
@@ -79,7 +79,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "76605ade-0cad-4002-a878-350ea09f7d7b"
+        "projectId": "1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72"
       }
     }
   }

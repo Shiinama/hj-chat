@@ -25,11 +25,11 @@ const Shim: React.FC<{ offsetHeight?: number }> = ({ offsetHeight }) => {
       setHeight(0, e.duration)
     })
 
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', e => {
-      console.log(e, 111)
-    })
+    // const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', e => {
+    //   console.log(e, 111)
+    // })
     return () => {
-      keyboardDidShowListener.remove()
+      // keyboardDidShowListener.remove()
       keyboardWillShow.remove()
       keyboardWillHide.remove()
     }
