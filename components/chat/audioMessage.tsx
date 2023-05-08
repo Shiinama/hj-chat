@@ -43,7 +43,7 @@ const AudioMessage = forwardRef(
             setCurrentPosition(status.positionMillis || 0)
             setDuration(status.durationMillis || 0)
           }
-          if (status.isLoaded && status.isPlaying && currentPosition >= duration) {
+          if (status.isLoaded && status.isPlaying && currentPosition >= duration - 50) {
             await sound.stopAsync()
             setCurrentPosition(0)
             setIsPlaying(false)

@@ -6,10 +6,7 @@ import dayjs from 'dayjs'
  * @param format 转换格式
  * @returns 转换后的时间字符串
  */
-export const timestamp2time = (
-  timestamp: number,
-  format = 'YYYY-MM-DD HH:mm',
-) => {
+export const timestamp2time = (timestamp: number, format = 'YYYY-MM-DD HH:mm') => {
   if (timestamp) {
     return dayjs(timestamp).format(format)
   }
@@ -59,9 +56,7 @@ export const formatRangeTime = (timeStr1: number, timeStr2: number) => {
   if (time2.isAfter(time1, 'date')) {
     return `${time1.format(format)}~${time2.format(format)}`
   }
-  return `${time1.format('YYYY-MM-DD')} ${time1.format('HH:mm')}~${time2.format(
-    'HH:mm',
-  )}`
+  return `${time1.format('YYYY-MM-DD')} ${time1.format('HH:mm')}~${time2.format('HH:mm')}`
 }
 
 /**
@@ -98,30 +93,47 @@ export const chatTimeFormat = (timeStamp: number) => {
   if (new Date().getFullYear() === new Date(timeStamp).getFullYear()) {
     // 今年之内的
     // 今天
-    if (durationTime <= 1000 * 60 * 60 * 24)
-      return dayjs(timeStamp).format('HH:mm')
+    if (durationTime <= 1000 * 60 * 60 * 24) return dayjs(timeStamp).format('HH:mm')
 
     // 昨天
-    if (
-      durationTime > 1000 * 60 * 60 * 24 &&
-      durationTime <= 1000 * 60 * 60 * 24 * 2
-    )
+    if (durationTime > 1000 * 60 * 60 * 24 && durationTime <= 1000 * 60 * 60 * 24 * 2)
       return `昨天 ${dayjs(timeStamp).format('HH:mm')}`
 
     // 昨天之前 ~ 一周内
-    if (
-      durationTime > 1000 * 60 * 60 * 24 * 2 &&
-      durationTime <= 1000 * 60 * 60 * 24 * 7
-    )
-      return `${CNDay[dayjs(timeStamp).day()]} ${dayjs(timeStamp).format(
-        'HH:mm',
-      )}`
+    if (durationTime > 1000 * 60 * 60 * 24 * 2 && durationTime <= 1000 * 60 * 60 * 24 * 7)
+      return `${CNDay[dayjs(timeStamp).day()]} ${dayjs(timeStamp).format('HH:mm')}`
 
     // 一周开外
-    if (durationTime > 1000 * 60 * 60 * 24 * 7)
-      return `${dayjs(timeStamp).format('M月D日 HH:mm')}`
+    if (durationTime > 1000 * 60 * 60 * 24 * 7) return `${dayjs(timeStamp).format('M月D日 HH:mm')}`
   } else {
     // 今年以前的
     return `${dayjs(timeStamp).format('YYYY年M月D日 HH:mm')}`
+  }
+}
+
+// 音乐时间转换
+export const convertTime = minutes => {
+  if (minutes) {
+    const hrs = minutes / 60
+    const minute = hrs.toString().split('.')[0]
+    const percent = parseInt(hrs.toString().split('.')[1].slice(0, 2))
+    const sec = Math.ceil((60 * percent) / 100)
+    if (parseInt(minute) < 10 && sec < 10) {
+      return `0${minute}:0${sec}`
+    }
+
+    if (sec == 60) {
+      return `${minute + 1}:00`
+    }
+
+    if (parseInt(minute) < 10) {
+      return `0${minute}:${sec}`
+    }
+
+    if (sec < 10) {
+      return `${minute}:0${sec}`
+    }
+
+    return `${minute}:${sec}`
   }
 }
