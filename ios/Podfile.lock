@@ -576,7 +576,7 @@ DEPENDENCIES:
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
-  - ffmpeg-kit-react-native/audio (from `/Users/yfd/Documents/GitHub/yuc/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec`)
+  - ffmpeg-kit-react-native/audio (from `/Users/weishunyu/chatgpt/yu-chat/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec`)
   - Flipper (= 0.125.0)
   - Flipper-Boost-iOSX (= 1.76.0.1.11)
   - Flipper-DoubleConversion (= 3.2.0.1)
@@ -723,7 +723,7 @@ EXTERNAL SOURCES:
   FBReactNativeSpec:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   ffmpeg-kit-react-native:
-    :podspec: "/Users/yfd/Documents/GitHub/yuc/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec"
+    :podspec: "/Users/weishunyu/chatgpt/yu-chat/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   RCT-Folly:
