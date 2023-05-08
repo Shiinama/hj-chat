@@ -240,3 +240,5 @@ apply from: new File(["node", "--print", "require.resolve('@react-native-communi
 applyNativeModulesAppBuildGradle(project)
 
 android.packagingOptions.jniLibs.useLegacyPackaging = true
+
+android.packagingOptions.jniLibs.useLegacyPackaging = true

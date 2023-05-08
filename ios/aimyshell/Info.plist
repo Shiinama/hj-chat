@@ -26,7 +26,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>myapp</string>
-          <string>ai.myshell.app</string>
+          <string>ai.myshell.app2</string>
         </array>
       </dict>
       <dict>

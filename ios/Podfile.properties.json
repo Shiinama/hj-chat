@@ -1,6 +1,8 @@
 {
   "expo.jsEngine": "jsc",
-  "ffmpeg-kit-react-native.subspecs": ["audio"],
+  "ffmpeg-kit-react-native.subspecs": [
+    "audio"
+  ],
   "ios.deploymentTarget": "13.0",
   "ios.useFrameworks": "static"
 }

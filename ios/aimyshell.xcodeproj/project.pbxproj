@@ -27,7 +27,6 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = aimyshell/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = aimyshell/main.m; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-aimyshell.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-aimyshell.debug.xcconfig"; path = "Target Support Files/Pods-aimyshell/Pods-aimyshell.debug.xcconfig"; sourceTree = "<group>"; };
-		704864E52A06C87C0067589D /* libCryptoSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCryptoSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A4D352CD337FB3A3BF06240 /* Pods-aimyshell.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-aimyshell.release.xcconfig"; path = "Target Support Files/Pods-aimyshell/Pods-aimyshell.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = aimyshell/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B43871562A08E84A00961012 /* libCryptoSwift-library.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libCryptoSwift-library.a"; sourceTree = BUILT_PRODUCTS_DIR; };
