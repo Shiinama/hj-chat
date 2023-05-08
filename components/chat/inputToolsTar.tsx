@@ -26,7 +26,7 @@ import AudioMessage from './audioMessage'
 import * as FileSystem from 'expo-file-system'
 import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
-import { ChatContext } from '../../app/chat/chatContext'
+import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 type Props = {
   minInputToolbarHeight: number

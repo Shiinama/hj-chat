@@ -82,7 +82,7 @@ export default async function request<T>(options: RequestOptions) {
   }
   const defaultOptions = {
     headers: {
-      Authorization: Authorization ? Authorization : null,
+      // Authorization: Authorization ? Authorization : null,
       appversioncode: 3,
       ...headers,
     },

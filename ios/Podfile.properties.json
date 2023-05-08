@@ -3,5 +3,7 @@
   "ffmpeg-kit-react-native.subspecs": [
     "audio"
   ],
-  "ios.flipper": "true"
+  "ios.flipper": "true",
+  "ios.deploymentTarget": "13.0",
+  "ios.useFrameworks": "static"
 }

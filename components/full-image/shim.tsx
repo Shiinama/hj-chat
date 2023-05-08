@@ -1,16 +1,10 @@
 import React, { useEffect, useRef, useCallback } from 'react'
-import { Keyboard, Animated } from 'react-native'
+import { Keyboard, Animated, View, Text } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /** 动态高度组件 */
-const Shim: React.FC = () => {
-  const insets = useSafeAreaInsets()
-
-  // 1 height 动态变化  键盘收起的时候是 insets.bottom  键盘弹出的时候是键盘的高度
-  // 2 View 动画的方式高度变化
-  // 3 调试：键盘和主体部分的推动丝滑，避免生硬
-
-  const AnimatedValue = useRef(new Animated.Value(insets.bottom)).current
+const Shim: React.FC<{ offsetHeight?: number }> = ({ offsetHeight }) => {
+  const AnimatedValue = useRef(new Animated.Value(0)).current
 
   const setHeight = useCallback(
     (toValue: number, duration: number) => {
@@ -25,16 +19,21 @@ const Shim: React.FC = () => {
 
   useEffect(() => {
     const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
-      setHeight(e.endCoordinates.height, e.duration)
+      setHeight(e.endCoordinates.height + offsetHeight, e.duration)
     })
     const keyboardWillHide = Keyboard.addListener('keyboardWillHide', e => {
-      setHeight(insets.bottom, e.duration)
+      setHeight(0, e.duration)
+    })
+
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      console.log(e, 111)
     })
     return () => {
+      keyboardDidShowListener.remove()
       keyboardWillShow.remove()
       keyboardWillHide.remove()
     }
-  }, [AnimatedValue, insets.bottom, setHeight])
+  }, [AnimatedValue, setHeight])
 
   return (
     <Animated.View

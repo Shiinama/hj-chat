@@ -1,37 +1,32 @@
-import { useRouter, useSegments } from "expo-router";
-import { useEffect, useContext, createContext, useState } from "react";
-import { useAsyncStorage } from "@react-native-async-storage/async-storage";
+import { useRouter, useSegments } from 'expo-router'
+import { useEffect, useContext, createContext, useState } from 'react'
+import { useAsyncStorage } from '@react-native-async-storage/async-storage'
+import { particleLogin } from '../api/auth'
 
-const AuthContext = createContext(null);
+const AuthContext = createContext(null)
 
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }
 
 function useProtectedRoute(user) {
-  const rootSegment = useSegments()[0];
-  const router = useRouter();
+  const rootSegment = useSegments()[0]
+  const router = useRouter()
   useEffect(() => {
-    console.log(rootSegment, user);
-    // if (user === undefined) {
-    //   return
-    // }
-    if (!user && rootSegment !== "(auth)") {
-      router.replace("/(auth)/sign-in");
-    } else if (user && rootSegment !== "(tabs)") {
-      // Redirect away from the sign-in page.
-      router.replace("/");
+    if (user === undefined) {
+      return
     }
-  }, [user, rootSegment]);
+    if (!user && rootSegment !== '(auth)/sign-in') {
+      router.replace('(auth)/sign-in')
+    }
+  }, [user, rootSegment])
 }
 
 export function Provider(props) {
-  const { getItem, setItem, removeItem } = useAsyncStorage("USER");
-  const [user, setAuth] = useState(undefined);
-
+  const { getItem, setItem, removeItem } = useAsyncStorage('USER')
+  const [user, setAuth] = useState(undefined)
   useEffect(() => {
     getItem().then(json => {
-      console.log(json)
       if (json != null) {
         setAuth(JSON.parse(json))
       } else {
@@ -40,23 +35,32 @@ export function Provider(props) {
     })
   }, [])
 
-  // useProtectedRoute(user)
+  useProtectedRoute(user)
 
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => {
-          setAuth({});
-          setItem(JSON.stringify({}));
+        signIn: async value => {
+          console.log({
+            uuid: value.token,
+            token: value.uuid,
+          })
+          const info = await particleLogin({
+            uuid: value.token,
+            token: value.uuid,
+          })
+          console.log(info)
+          setAuth(info)
+          setItem(JSON.stringify(info))
         },
         signOut: () => {
-          setAuth(null);
-          removeItem();
+          setAuth(null)
+          removeItem()
         },
         user,
       }}
     >
       {props.children}
     </AuthContext.Provider>
-  );
+  )
 }

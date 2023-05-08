@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { Text, View, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
 
 import Carousel from 'react-native-snap-carousel' // Version can be specified in package.json
-import PassCardItem from '../../components/pass-card'
+import PassCardItem from '../../../components/pass-card'
 import { Button } from '@ui-kitten/components'
 
 const SLIDER_WIDTH = Dimensions.get('window').width
