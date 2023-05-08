@@ -1,86 +1,95 @@
-import { forwardRef } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
-import Colors from '../../constants/Colors'
-import Clear from '../../assets/images/chat/clear.svg'
-import Share from '../../assets/images/chat/share.svg'
-import Pin from '../../assets/images/chat/pin.svg'
-import Remove from '../../assets/images/chat/remove.svg'
-import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
-export type ActionType = 'ClearMemory' | 'ShareChatRecords'
+import { forwardRef, useMemo } from "react";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import Clear from "../../assets/images/chat/clear.svg";
+import Share from "../../assets/images/chat/share.svg";
+import Pin from "../../assets/images/chat/pin.svg";
+import Remove from "../../assets/images/chat/remove.svg";
+
+export type ActionType =
+  | "ClearMemory"
+  | "ShareChatRecords"
+  | "Pin"
+  | "RemoveFromList";
+
 const ToolsModal = forwardRef(
-  ({ uid, onAction, userId }: { uid: string; onAction: (key: ActionType) => void; userId: number }, ref) => {
+  (
+    {
+      userId,
+      toolsAction,
+      closePopover,
+    }: {
+      userId: number;
+      toolsAction: (val: ActionType) => void;
+      closePopover?: () => void;
+    },
+    ref
+  ) => {
+    const actionList = useMemo(() => {
+      return [
+        ...(userId
+          ? [
+              { name: "Pin", icon: <Pin />, key: "Pin" },
+              {
+                name: "Remove from list",
+                icon: <Remove />,
+                key: "RemoveFromList",
+              },
+            ]
+          : []),
+
+        { name: "Clear Memory", icon: <Clear />, key: "ClearMemory" },
+        {
+          name: "Share Chat Records",
+          icon: <Share />,
+          key: "ShareChatRecords",
+        },
+      ];
+    }, [userId]);
     return (
       <View
         style={{
-          width: 200,
-          justifyContent: 'center',
-          borderRadius: 12,
-          borderColor: Colors.mainGrey,
-          backgroundColor: Colors.mainWhite,
+          width: "100%",
         }}
       >
-        {userId && (
-          <>
-            <TouchableOpacity
-              style={styles.iconC}
-              onPress={async () => {
-                const { close } = Toast.loading('Pinned')
-                setBotPinnedStatus({ botUid: uid, pinned: true }).then(() => {
-                  close()
-                })
-              }}
-            >
-              <Pin></Pin>
-              <Text style={{ marginLeft: 8, fontSize: 16 }}>pin</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.iconC}
-              onPress={async () => {
-                const { close } = Toast.loading('Move...')
-                removeBotFromChatList({ botUid: uid }).then(() => {
-                  close()
-                })
-              }}
-            >
-              <Remove></Remove>
-              <Text style={{ marginLeft: 8, fontSize: 16 }}>Remove from list</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        <TouchableOpacity
-          style={styles.iconC}
-          onPress={async () => {
-            const { close } = Toast.loading('Clear Contenxt')
-            resetHistory({ botUid: uid }).then(() => {
-              close()
-            })
-          }}
-        >
-          <Clear></Clear>
-          <Text style={{ marginLeft: 8, fontSize: 16 }}>Clear Memory</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconC}
-          onPress={() => {
-            onAction('ShareChatRecords')
-          }}
-        >
-          <Share></Share>
-          <Text style={{ marginLeft: 8, fontSize: 16 }}>Share Chat Records</Text>
-        </TouchableOpacity>
+        <View style={styles.popupBody}>
+          {actionList?.map((v) => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  toolsAction(v?.key as ActionType);
+                  closePopover();
+                }}
+                style={styles.iconC}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  {v.icon}
+                  <Text style={{ marginLeft: 4, fontSize: 16 }}>{v?.name}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+        <View style={{ height: 22 }} />
       </View>
-    )
+    );
   }
-)
+);
 
 const styles = StyleSheet.create({
   iconC: {
     padding: 8,
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    marginBottom: 5,
   },
-})
+  popupBody: {
+    backgroundColor: "#F6F6F6",
+    borderRadius: 12,
+    borderColor: "#EDEDED",
+    borderWidth: 1,
+    padding: 8,
+  },
+});
 
-export default ToolsModal
+export default ToolsModal;

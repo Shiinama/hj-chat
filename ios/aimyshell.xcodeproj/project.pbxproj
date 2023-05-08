@@ -31,7 +31,7 @@
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = aimyshell/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B43871562A08E84A00961012 /* libCryptoSwift-library.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libCryptoSwift-library.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B43871582A08E8B500961012 /* CryptoSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B43871612A08FBEE00961012 /* ParticleNetwork-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "ParticleNetwork-Info.plist"; path = "../../../../Desktop/ParticleNetwork-Info.plist"; sourceTree = "<group>"; };
+		B43871612A08FBEE00961012 /* ParticleNetwork-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ParticleNetwork-Info.plist"; sourceTree = SOURCE_ROOT; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		CC26587A19258685A5C78DD2 /* Pods_aimyshell.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_aimyshell.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9614A35A6EF4A21B5E13A8B /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "aimyshell/noop-file.swift"; sourceTree = "<group>"; };
