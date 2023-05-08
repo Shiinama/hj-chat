@@ -1,5 +1,5 @@
 import { UserProfile } from "@/../store/userStore";
-import { Button, Overlay } from "@fruits-chain/react-native-xiaoshu";
+import { Button, Overlay, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { FC, useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
@@ -7,6 +7,27 @@ import ArrowLeft from "../../assets/images/profile/arrow-left.svg";
 import request from "../../utils/request";
 import CustomSlider from "./Slider";
 import { genAvatarUrl } from "./helper";
+import { getPageInfo } from "../../app/profileInfo";
+
+const uploadFile = async (uri) => {
+  const filePath = uri;
+  const formData = new FormData();
+  formData.append("file", {
+    uri: filePath,
+    type: "application/octet-stream",
+    name: "file",
+  });
+
+  const boundary = "----WebKitFormBoundaryKuaSUT6xPZeD4B8b";
+  return await request({
+    url: "/user/uploadAvatar",
+    method: "post",
+    data: formData,
+    headers: {
+      "Content-Type": `multipart/form-data; boundary=${boundary}`,
+    },
+  });
+};
 
 export interface EditAvatarModalProps {
   visible: boolean;
@@ -24,7 +45,6 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
   useEffect(() => {
     setZoomSize(imgSize);
   }, [imgSize]);
-  console.log(imgSize);
   const [inputImage, setInputImage] =
     useState<ImagePicker.ImagePickerAsset>(null);
   const pickImage = async () => {
@@ -36,37 +56,21 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setInputImage(result.assets[0]);
     }
   };
 
   const updateAvatar = async () => {
-    const data = new FormData();
-
     try {
-      const fetchResponse = await fetch(inputImage?.uri);
-      console.log("fetchResponse", fetchResponse);
-      const blob = await fetchResponse.blob();
-      console.log("blob", blob);
-
-      data.append("file", blob);
-      request({
-        url: "/user/uploadAvatar",
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: data,
-      })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log({ err });
-        });
+      if (inputImage?.fileSize > 1048576) {
+        Toast("The image size cannot exceed 1M");
+        return false;
+      }
+      const res = await uploadFile(inputImage?.uri);
+      Toast("update successfully!");
+      setVisible(false);
+      getPageInfo();
     } catch (error) {
       console.log({ error });
     }

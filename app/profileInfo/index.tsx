@@ -28,7 +28,11 @@ import {
 } from "../../api/proofile";
 import EditAvatarModal from "../../components/profileInfo/EditAvatarModal";
 import { genAvatarUrl } from "../../components/profileInfo/helper";
-
+export const getPageInfo = () => {
+  getProfile().then((res: any) => {
+    useUserStore.setState({ profile: res });
+  });
+};
 export default function Profile() {
   const navigation = useNavigation();
   const { profile } = useUserStore();
@@ -40,11 +44,7 @@ export default function Profile() {
   useDeepCompareEffect(() => {
     setName(profile?.name);
   }, [profile?.name]);
-  const getPageInfo = () => {
-    getProfile().then((res: any) => {
-      useUserStore.setState({ profile: res });
-    });
-  };
+
   const getConnections = () => {
     getUserConnectedAccounts().then((res) => setUserConnected(res));
   };
