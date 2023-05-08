@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native'
 import { useRouter } from 'expo-router'
 import RootStyles from '../../constants/RootStyles'
 import 'react-native-get-random-values'
@@ -7,7 +7,7 @@ import { botList } from '../../api/index'
 import BotCard from '../../components/botCard'
 import ShellLoading from '../../components/loading'
 import botStore from '../../store/botStore'
-
+import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
 type ListDataItem = {
   id: number
   uid: string
@@ -19,6 +19,8 @@ type ListDataItem = {
   pinned: boolean
   lastInteractionDate: string
 }
+
+import { createWeb3 } from '../../tmp/web3Demo'
 
 export default function TabOneScreen() {
   const router = useRouter()

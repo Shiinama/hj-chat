@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-
+#import <react_native_particle_auth/react_native_particle_auth-Swift.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 
@@ -37,7 +37,14 @@
 
 // Linking API
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-  return [super application:application openURL:url options:options] || [RCTLinkingManager application:application openURL:url options:options];
+  
+  if ([ParticleAuthSchemeManager handleUrl:url] == YES) {
+      return YES;
+    } else {
+      return [super application:application openURL:url options:options] || [RCTLinkingManager application:application openURL:url options:options];
+    }
+  return YES;
+  
 }
 
 // Universal Links

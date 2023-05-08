@@ -63,8 +63,6 @@ export default function TabThreeScreen() {
       pathname: "/profileInfo",
     });
   };
-  console.log(profile);
-  console.log(userEnergyInfo);
 
   return (
     <ScrollView style={styles.container}>

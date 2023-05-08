@@ -14,22 +14,36 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "associatedDomains": ["pn564dc005-2f20-40a1-8082-c8634cdafd0b"],
       "supportsTablet": true,
-      "bundleIdentifier": "ai.myshell.app"
+      "bundleIdentifier": "ai.myshell.app",
+      "infoPlist": {
+        "PROJECT_UUID": "c135c555-a871-4ec2-ac8c-5209ded4bfd1",
+        "PROJECT_CLIENT_KEY": "clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI",
+        "PROJECT_APP_UUID": "564dc005-2f20-40a1-8082-c8634cdafd0b"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "ai.myshell.app"
+      "package": "ai.myshell.app",
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "plugins": [
       [
         "expo-build-properties",
         {
+          "android": {
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 31,
+            "minSdkVersion": 23,
+            "buildToolsVersion": "31.0.0"
+          },
           "ios": {
-            "flipper": true
+            "useFrameworks": "static",
+            "deploymentTarget": "13.0"
           }
         }
       ],
@@ -52,7 +66,16 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ]
+      ],
+      [
+        "./plugins/withAndroidMainActivityAttributes",
+        {
+          "android:PN_PROJECT_ID": "c135c555-a871-4ec2-ac8c-5209ded4bfd1",
+          "android:PN_PROJECT_CLIENT_KEY": "clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI",
+          "android:PN_APP_ID": "bacfc13f-3b63-4d50-bb7a-2465999b8f7a"
+        }
+      ],
+      ["./plugins/withiOSInfo"]
     ],
     "extra": {
       "eas": {

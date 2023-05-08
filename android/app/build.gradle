@@ -120,6 +120,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
+        manifestPlaceholders["PN_PROJECT_ID"] = "c135c555-a871-4ec2-ac8c-5209ded4bfd1"
+        manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] = "clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI"
+        manifestPlaceholders["PN_APP_ID"] = "bacfc13f-3b63-4d50-bb7a-2465999b8f7a"
     }
 
     splits {
@@ -235,5 +238,9 @@ dependencies {
 
 apply from: new File(["node", "--print", "require.resolve('@react-native-community/cli-platform-android/package.json')"].execute(null, rootDir).text.trim(), "../native_modules.gradle");
 applyNativeModulesAppBuildGradle(project)
+
+android.packagingOptions.jniLibs.useLegacyPackaging = true
+
+android.packagingOptions.jniLibs.useLegacyPackaging = true
 
 android.packagingOptions.jniLibs.useLegacyPackaging = true

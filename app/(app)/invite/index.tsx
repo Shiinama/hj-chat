@@ -1,11 +1,11 @@
 import { Text, View, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { useEffect, useState } from 'react'
 import { TextInput } from '@fruits-chain/react-native-xiaoshu'
-import Copy from '../../assets/images/profile/copy.svg'
-import Shim from '../../components/full-image/shim'
-import { getInvitation } from '../../api/proofile'
-import System from '../../constants/System'
-import ShellLoading from '../../components/loading'
+import Copy from '../../../assets/images/profile/copy.svg'
+import Shim from '../../../components/full-image/shim'
+import { getInvitation } from '../../../api/proofile'
+import System from '../../../constants/System'
+import ShellLoading from '../../../components/loading'
 export default function Invite() {
   const [loading, setLoading] = useState(false)
   useEffect(() => {
