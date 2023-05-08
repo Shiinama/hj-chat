@@ -26,7 +26,7 @@ const CustomSlider: FC<CustomSliderProps> = (props) => {
   return (
     <View style={styles.wrap}>
       <TouchableOpacity onPress={minusStep}>
-        <Shrink />
+        <Enlarge />
       </TouchableOpacity>
       <Slider
         ref={ref}
@@ -41,7 +41,7 @@ const CustomSlider: FC<CustomSliderProps> = (props) => {
         {...props}
       />
       <TouchableOpacity onPress={addStep}>
-        <Enlarge />
+        <Shrink />
       </TouchableOpacity>
     </View>
   );

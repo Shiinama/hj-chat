@@ -1,6 +1,6 @@
 import { UserProfile } from "@/../store/userStore";
 import { Button, Overlay, Toast } from "@fruits-chain/react-native-xiaoshu";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ArrowLeft from "../../assets/images/profile/arrow-left.svg";
@@ -8,7 +8,7 @@ import request from "../../utils/request";
 import CustomSlider from "./Slider";
 import { genAvatarUrl } from "./helper";
 import { getPageInfo } from "../../app/profileInfo";
-
+import ViewShot, { captureRef } from "react-native-view-shot";
 const uploadFile = async (uri) => {
   const filePath = uri;
   const formData = new FormData();
@@ -39,12 +39,18 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
   setVisible,
   profile,
 }) => {
+  const viewRef = useRef();
   const [imgSize, setImgSize] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [zoomSize, setZoomSize] = useState(0);
   useEffect(() => {
     setZoomSize(imgSize);
   }, [imgSize]);
+  useEffect(() => {
+    if (visible) {
+      setInputImage(null);
+    }
+  }, [visible]);
   const [inputImage, setInputImage] =
     useState<ImagePicker.ImagePickerAsset>(null);
   const pickImage = async () => {
@@ -63,14 +69,23 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
 
   const updateAvatar = async () => {
     try {
-      if (inputImage?.fileSize > 1048576) {
-        Toast("The image size cannot exceed 1M");
-        return false;
-      }
-      const res = await uploadFile(inputImage?.uri);
-      Toast("update successfully!");
-      setVisible(false);
-      getPageInfo();
+      captureRef(viewRef, {
+        format: "png",
+        quality: 1,
+      }).then(
+        (uri) => {
+          uploadFile(uri).then(() => {
+            Toast("update successfully!");
+            setVisible(false);
+            getPageInfo();
+          });
+        },
+        (error) => console.error("Oops, snapshot failed", error)
+      );
+      // if (inputImage?.fileSize > 1048576) {
+      //   Toast("The image size cannot exceed 1M");
+      //   return false;
+      // }
     } catch (error) {
       console.log({ error });
     }
@@ -126,18 +141,26 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
                   overflow: "hidden",
                 }}
               >
-                <Image
-                  source={{
-                    uri: genAvatarUrl(
-                      inputImage?.uri ? inputImage?.uri : profile?.avatar
-                    ),
-                  }}
+                <View
                   style={{
-                    width: zoomSize,
-                    height: zoomSize,
-                    transform: [{ scale: zoom }],
+                    width: "100%",
+                    height: "100%",
                   }}
-                />
+                  ref={viewRef}
+                >
+                  <Image
+                    source={{
+                      uri: genAvatarUrl(
+                        inputImage?.uri ? inputImage?.uri : profile?.avatar
+                      ),
+                    }}
+                    style={{
+                      width: zoomSize,
+                      height: zoomSize,
+                      transform: [{ scale: zoom }],
+                    }}
+                  />
+                </View>
               </View>
             </TouchableOpacity>
             <CustomSlider
