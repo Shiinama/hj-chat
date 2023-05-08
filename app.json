@@ -39,6 +39,9 @@
           "package": "min",
           "ios": {
             "package": "audio"
+          },
+          "android": {
+            "package": "audio"
           }
         }
       ],

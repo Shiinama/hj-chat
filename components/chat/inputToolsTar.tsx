@@ -9,7 +9,6 @@ import {
   Platform,
   Image,
   TouchableOpacity,
-  Alert,
 } from 'react-native'
 import { Popover } from '@ui-kitten/components'
 import audio from '../../assets/images/audio.jpg'
@@ -247,7 +246,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   accessory: {
-    height: 40,
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
