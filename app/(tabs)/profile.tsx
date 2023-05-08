@@ -28,7 +28,7 @@ import CommunityIcon from "../../assets/images/profile/community.png";
 import * as WebBrowser from "expo-web-browser";
 import useUserStore, { UserEnergyInfo } from "../../store/userStore";
 import ProgressBar from "../../components/profile/ProgressBar";
-import { genAvatarUrl } from "@/../components/profileInfo/helper";
+import { genAvatarUrl } from "../../components/profileInfo/helper";
 
 type ListDataItem = {
   id: number;

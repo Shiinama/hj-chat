@@ -27,7 +27,7 @@ import {
   UserConnectedAccounts,
 } from "../../api/proofile";
 import EditAvatarModal from "../../components/profileInfo/EditAvatarModal";
-import { genAvatarUrl } from "@/../components/profileInfo/helper";
+import { genAvatarUrl } from "../../components/profileInfo/helper";
 
 export default function Profile() {
   const navigation = useNavigation();
