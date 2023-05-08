@@ -44,14 +44,7 @@ function RootLayoutNav() {
     <AuthProvider>
       <ApplicationProvider {...eva} theme={eva.light}>
         <XiaoshuProvider>
-          <Stack>
-            <Stack.Screen
-              name="(auth)/sign-in"
-              options={{
-                title: 'Login',
-              }}
-            />
-          </Stack>
+          <Slot></Slot>
         </XiaoshuProvider>
       </ApplicationProvider>
     </AuthProvider>
