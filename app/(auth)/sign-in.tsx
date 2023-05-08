@@ -43,8 +43,8 @@ type ListDataItem = {
 
 export default function SignIn() {
   const navigation = useNavigation()
-  const { name } = useSearchParams()
   const { signIn } = useAuth()
+  const [code, setCode] = useState('')
   const login = async loginType => {
     const type = loginType
     const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
@@ -164,6 +164,8 @@ export default function SignIn() {
               }}
             >
               <TextInput
+                value={code}
+                onChangeText={setCode}
                 placeholder="Email Address"
                 placeholderTextColor="#cccccc"
                 style={{ paddingLeft: 20 }}
@@ -179,7 +181,7 @@ export default function SignIn() {
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-      <Shim />
+      {/* <Shim /> */}
     </>
   )
 }
