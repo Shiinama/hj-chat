@@ -144,21 +144,21 @@ export default function SignIn() {
                 display: 'flex',
                 flexDirection: 'row',
                 marginTop: 20,
-                height: 35,
-                borderColor: 'gray',
-                borderWidth: 1,
-                borderRadius: 20,
-                width: '80%',
+                justifyContent: 'center',
               }}
             >
-              <TextInput
-                value={code}
-                onChangeText={setCode}
-                placeholder="Email Address"
-                placeholderTextColor="#cccccc"
-                style={{ paddingLeft: 20 }}
-              ></TextInput>
-              <Button color="#f8fafc" text="Send" textColor="gray" style={{ marginEnd: 20, height: 30 }}></Button>
+              <Button
+                style={{
+                  width: 200,
+                  borderRadius: 20,
+                  borderColor: '#000000',
+                  borderWidth: 1,
+                  backgroundColor: 'white',
+                }}
+                onPress={() => login('Emial')}
+              >
+                <Text style={{ color: 'black', fontSize: 18, fontWeight: 500 }}>Email Login</Text>
+              </Button>
             </View>
 
             <View style={{ width: '80%', marginTop: 20 }}>
