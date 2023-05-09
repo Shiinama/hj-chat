@@ -140,24 +140,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        config {
-            // 其它的组织名称都是aishell
-            keyAlias 'aishell'
-            keyPassword 'aishell'
-            storeFile file('../ai.jks')
-            storePassword 'aishell'
-            //去掉7.0系统v2模式的签名方式
-            v2SigningEnabled false
-        }
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.debug
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.debug
             shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
@@ -250,18 +241,3 @@ applyNativeModulesAppBuildGradle(project)
 
 android.packagingOptions.jniLibs.useLegacyPackaging = true
 
-android.packagingOptions.jniLibs.useLegacyPackaging = true
-
-android.packagingOptions.jniLibs.useLegacyPackaging = true
-
-android.packagingOptions.jniLibs.useLegacyPackaging = true
-
-android.packagingOptions.jniLibs.useLegacyPackaging = true
-
-android.packagingOptions.jniLibs.useLegacyPackaging = true
-
-android.packagingOptions.jniLibs.useLegacyPackaging = true
-
-android.packagingOptions.jniLibs.useLegacyPackaging = true
-
-android.packagingOptions.jniLibs.useLegacyPackaging = true

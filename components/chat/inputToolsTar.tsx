@@ -65,16 +65,32 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const [showSend, setShowSend] = useState(false)
   const inputRef = useRef(null)
   const audioMessageRef = useRef(null)
+
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
+      if (Platform.OS === 'android') return
       setShowSend(false)
       setPosition('relative')
     })
     const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      if (Platform.OS === 'android') return
+      setShowSend(true)
+      setPosition('absolute')
+    })
+
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      if (Platform.OS === 'ios') return
+      setShowSend(false)
+      setPosition('relative')
+    })
+    const KeyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      if (Platform.OS === 'ios') return
       setShowSend(true)
       setPosition('absolute')
     })
     return () => {
+      keyboardDidShowListener?.remove()
+      KeyboardDidHideListener?.remove()
       keyboardWillShowListener?.remove()
       keyboardWillHideListener?.remove()
     }
@@ -189,7 +205,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
               onPress={() => {
                 setIsShow(pre => {
                   if (!pre) {
-                    setTimeout(() => handleButtonPress())
+                    handleButtonPress()
                   }
                   return !pre
                 })
@@ -214,7 +230,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
               ref={audioMessageRef}
               showControl={false}
               audioFileUri={audioFileUri}
-              onPlay={(playing)=>{
+              onPlay={playing => {
                 setIsPlaying(playing)
               }}
             ></AudioMessage>
