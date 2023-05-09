@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useRouter, useFocusEffect } from "expo-router";
 import {
   StyleSheet,
@@ -8,7 +8,6 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { botList } from "../../api/index";
 import arrowIcon from "../../assets/images/profile/arrow.png";
 import editIcon from "../../assets/images/profile/edit.png";
 import helpIcon from "../../assets/images/profile/help.png";
@@ -29,25 +28,11 @@ import useUserStore, {
 import ProgressBar from "../../components/profile/ProgressBar";
 import { genAvatarUrl } from "../../components/profileInfo/helper";
 
-type ListDataItem = {
-  id: number;
-  uid: string;
-  name: string;
-  description: string;
-  userId: number;
-  logo: string;
-  language: string;
-  pinned: boolean;
-  lastInteractionDate: string;
-};
-
 export default function TabThreeScreen() {
   const router = useRouter();
-  const [listData, setListData] = useState<ListDataItem[]>([]);
   const { profile, userEnergyInfo } = useUserStore();
   useFocusEffect(
     useCallback(() => {
-      botList().then((res) => setListData(res as ListDataItem[]));
       getProfile();
       getUserEnergyInfo();
     }, [])
