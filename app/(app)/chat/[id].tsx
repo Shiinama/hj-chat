@@ -85,7 +85,6 @@ export default function Chat({}) {
     try {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
-      console.log(uri)
       const mp3Uri = await convert4amToMp3(uri)
       const buffer = await FileSystem.readAsStringAsync(mp3Uri, {
         encoding: FileSystem.EncodingType.Base64,

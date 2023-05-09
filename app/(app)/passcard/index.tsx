@@ -139,7 +139,6 @@ export default function Passcard() {
   }, [])
   const [tab, setTab] = useState(1)
   const botStore = useUserStore().profile
-  console.log(botStore, 1231)
   const _renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <PassCardItem {...item} level={botStore.level}></PassCardItem>

@@ -5,7 +5,8 @@
     "start": "expo start --dev-client -c",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "postinstall": "npx patch-package"
   },
   "jest": {
     "preset": "jest-expo"
@@ -72,8 +73,6 @@
     "react-native-soundcloud-waveform": "^1.0.3",
     "react-native-svg": "13.4.0",
     "react-native-svg-transformer": "^1.0.0",
-    "react-native-tcp": "^3.2.1",
-    "react-native-udp": "^2.1.0",
     "react-native-view-shot": "^3.6.0",
     "readable-stream": "1.0.33",
     "socket.io-client": "^4.6.1",
