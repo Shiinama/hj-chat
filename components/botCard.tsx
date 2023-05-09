@@ -25,10 +25,11 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
         <View style={styles.listItemTop}>
           <Text style={styles.name}>{ld.name}</Text>
           {showTime ? <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text> : null}
-          {/* <View style={styles.listItemMid}></View> */}
         </View>
         <View style={{ flexDirection: 'row', backgroundColor: '#F6F6F6', width: '100%' }}>
-          <Text style={styles.message}>{ld.description}</Text>
+          <Text numberOfLines={2} ellipsizeMode="tail" style={styles.message}>
+            {ld.description}
+          </Text>
           {showPined && <Pined></Pined>}
         </View>
       </View>

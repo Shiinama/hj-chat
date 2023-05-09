@@ -1,12 +1,21 @@
+import { Button } from '@ui-kitten/components'
 import { View, Text, StyleSheet } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import { getInvitation } from '../../api/proofile'
+import * as WebBrowser from 'expo-web-browser'
+
 type Iprops = {
   title: number
+  level: number
+  id: number
+  Sea?: boolean
   subView: {
     subTitle: string
     subText: string
   }[]
 }
-export default function PassCardItem({ title, subView }: Iprops) {
+export default function PassCardItem({ title, subView, level, id, Sea }: Iprops) {
   const cardTitle = () => {
     return (
       <View style={styles.viewItem}>
@@ -45,10 +54,57 @@ export default function PassCardItem({ title, subView }: Iprops) {
       </View>
     )
   }
+
+  const buttonGroupRender = () => {
+    if (Sea) {
+      return (
+        <Button
+          onPress={e => {
+            e.preventDefault()
+            WebBrowser.openBrowserAsync('https://opensea.io/collection/myshellgenesispass')
+          }}
+          style={styles.bottomButton}
+        >
+          OpenSea
+        </Button>
+      )
+    }
+
+    if (id === level) {
+      return (
+        <Button disabled={true} style={styles.bottomButton}>
+          Current Level
+        </Button>
+      )
+    }
+    if (id === level + 1) {
+      return (
+        <Button
+          onPress={() => {
+            getInvitation({}).then(({ code }: any) => {
+              Clipboard.setString(code)
+              Toast('Copied!')
+            })
+          }}
+          style={styles.bottomButton}
+        >
+          Invite
+        </Button>
+      )
+    }
+
+    return (
+      <Button onPress={() => {}} disabled={true} style={styles.bottomButton}>
+        Coming Soon
+      </Button>
+    )
+  }
+
   return (
     <View style={styles.container}>
       {cardTitle()}
       {subView.map((i, index) => subViewRender(i, index))}
+      {buttonGroupRender()}
     </View>
   )
 }
@@ -57,6 +113,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    position: 'relative',
+  },
+  bottomButton: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 30,
+    backgroundColor: '#7A2EF6',
+    borderColor: '#7A2EF6',
   },
   viewItem: {
     flexDirection: 'row',

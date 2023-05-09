@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'expo-router'
-import { useSearchParams, useNavigation } from 'expo-router'
+import { useState } from 'react'
 import {
   Text,
   View,
@@ -8,8 +6,6 @@ import {
   TouchableHighlight,
   Keyboard,
   TouchableWithoutFeedback,
-  Touchable,
-  Pressable,
   TouchableOpacity,
   ScrollView,
 } from 'react-native'
@@ -23,35 +19,27 @@ import { Button, TextInput, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useAuth } from '../../context/auth'
 import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
 import * as particleAuth from 'react-native-particle-auth'
+import useUserStore from '../../store/userStore'
 
 import { createWeb3 } from '../../tmp/web3Demo'
-import Shim from '../../components/full-image/shim'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { particleLogin } from '../../api/auth'
 const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
 
-type ListDataItem = {
-  id: number
-  uid: string
-  name: string
-  description: string
-  userId: number
-  logo: string
-  language: string
-  pinned: boolean
-  lastInteractionDate: string
-}
-
 export default function SignIn() {
-  const navigation = useNavigation()
   const { signIn } = useAuth()
   const [code, setCode] = useState('')
   const login = async loginType => {
     const type = loginType
     const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
-    const result = await particleAuth.login(type, '', _supportAuthType, undefined)
+    const result = await particleAuth.login(type, '', _supportAuthType as any, undefined)
     if (result.status) {
       const userInfo = result.data
-      signIn(userInfo)
+      useUserStore.setState({ particleInfo: userInfo })
+      const info = await particleLogin({
+        uuid: userInfo.uuid,
+        token: userInfo.token,
+      })
+      signIn(info)
     } else {
       const error = result.data
       Toast(error)

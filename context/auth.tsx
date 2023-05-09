@@ -1,8 +1,6 @@
 import { useRouter, useSegments } from 'expo-router'
 import { useEffect, useContext, createContext, useState } from 'react'
-import { useAsyncStorage } from '@react-native-async-storage/async-storage'
-import { particleLogin } from '../api/auth'
-
+import useUserStore from '../store/userStore'
 const AuthContext = createContext(null)
 
 export function useAuth() {
@@ -23,17 +21,15 @@ function useProtectedRoute(user) {
 }
 
 export function Provider(props) {
-  const { getItem, setItem, removeItem } = useAsyncStorage('USER')
+  const router = useRouter()
   const [user, setAuth] = useState(undefined)
-  console.log(user)
   useEffect(() => {
-    getItem().then(json => {
-      if (json != null) {
-        setAuth(JSON.parse(json))
-      } else {
-        setAuth(null)
-      }
-    })
+    const userInfo = useUserStore.getState()?.userBaseInfo
+    if (userInfo != null) {
+      setAuth(userInfo)
+    } else {
+      setAuth(null)
+    }
   }, [])
 
   useProtectedRoute(user)
@@ -42,21 +38,13 @@ export function Provider(props) {
     <AuthContext.Provider
       value={{
         signIn: async value => {
-          console.log({
-            uuid: value.token,
-            token: value.uuid,
-          })
-          const info = await particleLogin({
-            uuid: value.uuid,
-            token: value.token,
-          })
-          console.log(info)
-          setAuth(info)
-          setItem(JSON.stringify(info))
+          setAuth(value)
+          useUserStore.setState({ userBaseInfo: value })
+          router.replace('(tabs)')
         },
         signOut: () => {
           setAuth(null)
-          removeItem()
+          useUserStore.setState({ userBaseInfo: null })
         },
         user,
       }}

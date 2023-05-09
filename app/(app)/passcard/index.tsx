@@ -1,15 +1,17 @@
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Text, View, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
-
+import useUserStore from '../../../store/userStore'
 import Carousel from 'react-native-snap-carousel' // Version can be specified in package.json
 import PassCardItem from '../../../components/pass-card'
-import { Button } from '@ui-kitten/components'
+import { useNavigation } from 'expo-router'
 
 const SLIDER_WIDTH = Dimensions.get('window').width
+const ITEM_HEIGHT = Dimensions.get('window').height
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
 const DATA = [
   {
+    id: 1,
     title: 'Lv.1',
     subView: [
       {
@@ -18,68 +20,63 @@ const DATA = [
       },
       {
         subTitle: 'Level benefits:',
-        subText: 'Restores 30 energy daily',
+        subText: '40 ⚡️ Per Day.',
       },
     ],
   },
   {
+    id: 2,
     title: 'Lv.2',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Invite three valid users, or register yourself as an invited user',
+        subText: 'Invite three valid users or signup with invitation link.',
       },
       {
         subTitle: 'Level benefits:',
-        subText: 'Recharge 60 units of electricity daily',
+        subText: '60 ⚡️ Per Day',
       },
     ],
   },
   {
+    id: 3,
     title: 'Lv.3',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Invite ten active users',
+        subText: 'Purchase MyShell Pass',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recovery of 100 energy',
-          'You can create a private robot ',
-          'Pay 100U to publish it publicly',
-        ],
+        subTextArray: ['120 ⚡️ Per Day', 'One Private Bot'],
       },
     ],
   },
   {
+    id: 4,
     title: 'Lv.4',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 50U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recharge of 200 units of electricity',
-          'You can create a private robot ',
-          'Knowledge base integration (one update opportunity per day)',
-          'More benefits are being planned...',
-        ],
+        subTextArray: ['200 ⚡️ Per Day', 'One Public Bot'],
       },
     ],
   },
   {
+    id: 5,
     title: 'Lv.5',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 100U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: ['Daily recovery of 300 electricity', 'More benefits are being planned...'],
+        subTextArray: ['300 ⚡️ Per Day', 'Bots with External Knowledge and Docs', 'More Benefits Coming…'],
       },
     ],
   },
@@ -87,19 +84,15 @@ const DATA = [
 const DATA1 = [
   {
     title: 'Lv.3',
+    Sea: true,
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Buy Genesis NFT',
+        subText: 'Holder of MyShell Genesis Pass',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Recover 200 electricity per day',
-          'Can create a private robot',
-          'Free public release',
-          'Priority review at high speed',
-        ],
+        subTextArray: ['200 ⚡️ Per Day', 'One Public Bot', 'Beta Feature Preview'],
       },
     ],
   },
@@ -108,16 +101,11 @@ const DATA1 = [
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 50U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recharge of 300 power.',
-          'Access to knowledge base (one update opportunity per day).',
-          'More privileges are being planned…',
-          '(Adding an additional private robot.)',
-        ],
+        subTextArray: ['300 ⚡️ Per Day', 'Bots with External Knowledge and Docs', 'One More Pubic Bot'],
       },
     ],
   },
@@ -126,60 +114,35 @@ const DATA1 = [
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 100U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
         subTextArray: [
-          'Daily recharge of 600 units of electricity',
-          'Personalized TTS',
-          'More benefits are under development...',
-          '(Draw a Genesis passcard)',
-          '(Add an extra public robot)',
+          '600 ⚡️ Per Day',
+          'Bots with External Knowledge and Docs',
+          'One More Pubic Bot',
+          'Bots with Personalized Voice and Coming Advanced Features',
         ],
-      },
-    ],
-  },
-  {
-    title: 'Lv.4',
-    subView: [
-      {
-        subTitle: 'Achievement conditions:',
-        subText: 'Payment of 50U',
-      },
-      {
-        subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recharge of 200 units of electricity',
-          'You can create a private robot ',
-          'Knowledge base integration (one update opportunity per day)',
-          'More benefits are being planned...',
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Lv.5',
-    subView: [
-      {
-        subTitle: 'Achievement conditions:',
-        subText: 'Payment of 100U',
-      },
-      {
-        subTitle: 'Level benefits:',
-        subTextArray: ['Daily recovery of 300 electricity', 'More benefits are being planned...'],
       },
     ],
   },
 ]
 
 export default function Passcard() {
-  const carouselRef = useRef(null)
+  const navigation = useNavigation()
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Passcard',
+      headerTitleAlign: 'center',
+    })
+  }, [])
   const [tab, setTab] = useState(1)
-  const astyles = {}
+  const botStore = useUserStore().profile
+  console.log(botStore, 1231)
   const _renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <PassCardItem {...item}></PassCardItem>
+      <PassCardItem {...item} level={botStore.level}></PassCardItem>
     </View>
   )
   return (
@@ -245,7 +208,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: ITEM_WIDTH,
-    height: 600,
+    height: ITEM_HEIGHT - 200,
     boderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
