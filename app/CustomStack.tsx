@@ -7,8 +7,8 @@ import {
 
 import { withLayoutContext } from "expo-router";
 
-const { Navigator } = createStackNavigator();
-
+export const Stack = createStackNavigator();
+const { Navigator } = Stack;
 // This can be used like `<CustomStack />`
 export const CustomStack = withLayoutContext<
   StackNavigationOptions,
