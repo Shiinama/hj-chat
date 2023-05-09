@@ -5,7 +5,7 @@ import {
   persist,
 } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import systemConfig from "../constants/System";
 import {
   profile,
   getUserEnergyInfo as queryUserEnergyInfo,
@@ -64,6 +64,8 @@ const useUserStore = create(
 useUserStore.subscribe(
   (state) => state?.userBaseInfo?.token,
   (val) => {
+    // 同步token到本地存储
+    AsyncStorage.setItem(systemConfig.authKey, val || "");
     if (val) {
       getProfile();
       getUserEnergyInfo();

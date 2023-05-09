@@ -6,6 +6,7 @@ import useUserStore from '../../store/userStore'
 import systemConfig from '../../constants/System'
 import MSG_LIST from './message'
 import debounce from 'lodash/debounce'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 export type RequestOptions = AxiosRequestConfig & {
   url: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,13 +76,13 @@ export default async function request<T>(options: RequestOptions) {
   const { url } = options
   const opt: RequestOptions = options
   delete opt.url
-  // const token = useUserStore.getState().userBaseInfo?.token
-  // if (!token && url !== '/auth/particleLogin') {
-  //   return
-  // }
-  // const Authorization = token ? `Bearer ${token}` : ''
-  const Authorization =
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMzM5OTY1MDczLCJqdGkiOiI2MTc1ZDNhMmNjYmE0NWFjYTc2NDc0MDhmYzY1MjllZiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzM0MjU1NzA3M30.C79OLS9eWvDLiEv9ZqDbeoDmJs7AhmnrijHnAnunzx8'
+  const token = useUserStore.getState().userBaseInfo?.token
+  if (!token && url !== '/auth/particleLogin') {
+    return
+  }
+  const Authorization = token ? `Bearer ${token}` : ''
+  // const Authorization =
+  //   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMzM5OTY1MDczLCJqdGkiOiI2MTc1ZDNhMmNjYmE0NWFjYTc2NDc0MDhmYzY1MjllZiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzM0MjU1NzA3M30.C79OLS9eWvDLiEv9ZqDbeoDmJs7AhmnrijHnAnunzx8'
   let headers = {}
   if (options) {
     headers = options.headers || {}
