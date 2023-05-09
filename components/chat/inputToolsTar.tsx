@@ -234,6 +234,9 @@ function InputToolsTar({
               ref={audioMessageRef}
               showControl={false}
               audioFileUri={audioFileUri}
+              onPlay={(playing)=>{
+                setIsPlaying(playing)
+              }}
             ></AudioMessage>
             <View style={styles.accessory}>
               <TouchableOpacity

@@ -9,7 +9,7 @@ import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
 
 const AudioMessage = forwardRef(
-  ({ audioFileUri, showControl = true }: { audioFileUri: string; showControl?: boolean }, ref) => {
+  ({ audioFileUri, showControl = true, onPlay }: { audioFileUri: string; showControl?: boolean; onPlay?: (playing: boolean)=> void }, ref) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [currentPosition, setCurrentPosition] = useState<number>(0)
@@ -70,6 +70,10 @@ const AudioMessage = forwardRef(
         setIsPlaying(!isPlaying)
       }
     }
+
+    useEffect(()=>{
+      onPlay?.(isPlaying)
+    }, [isPlaying])
 
     const handleChange = async (value: number) => {
       if (sound !== null) {
