@@ -8,7 +8,8 @@ import { Provider as XiaoshuProvider } from '@fruits-chain/react-native-xiaoshu'
 import { Provider as AuthProvider } from '../context/auth'
 
 import { ApplicationProvider } from '@ui-kitten/components'
-import { TouchableOpacity, Platform } from 'react-native'
+import { TouchableOpacity, Platform, StatusBar } from 'react-native'
+import { CustomStack } from './CustomStack'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -44,7 +45,14 @@ function RootLayoutNav() {
     <AuthProvider>
       <ApplicationProvider {...eva} theme={eva.light}>
         <XiaoshuProvider>
-          <Slot></Slot>
+          <CustomStack
+            screenOptions={{
+              header: () => null,
+              headerShown: false,
+            }}
+          >
+            <Slot></Slot>
+          </CustomStack>
         </XiaoshuProvider>
       </ApplicationProvider>
     </AuthProvider>

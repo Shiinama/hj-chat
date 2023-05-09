@@ -5,7 +5,8 @@
     "start": "expo start --dev-client -c",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "postinstall": "npx patch-package"
   },
   "jest": {
     "preset": "jest-expo"
@@ -22,6 +23,8 @@
     "@react-native-community/blur": "^4.3.2",
     "@react-native-community/slider": "4.4.2",
     "@react-navigation/native": "^6.0.2",
+    "@react-navigation/stack": "^6.3.16",
+    "react-native-gesture-handler": "~2.9.0",
     "@shopify/flash-list": "1.4.0",
     "@tradle/react-native-http": "^2.0.0",
     "@types/react-native-snap-carousel": "^3.8.5",

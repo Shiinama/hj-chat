@@ -1,21 +1,32 @@
 import { Text, View, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { useEffect, useState } from 'react'
-import { TextInput } from '@fruits-chain/react-native-xiaoshu'
+import { TextInput, Toast } from '@fruits-chain/react-native-xiaoshu'
 import Copy from '../../../assets/images/profile/copy.svg'
 import Shim from '../../../components/full-image/shim'
 import { getInvitation } from '../../../api/proofile'
 import System from '../../../constants/System'
 import ShellLoading from '../../../components/loading'
+import { useNavigation } from 'expo-router'
+import Clipboard from '@react-native-clipboard/clipboard'
+
 export default function Invite() {
+  const navigation = useNavigation()
   const [loading, setLoading] = useState(false)
+  const [validInvitationCount, setValidInvitationCount] = useState(false)
   useEffect(() => {
+    navigation.setOptions({
+      title: 'Invite To Earn',
+      headerTitleAlign: 'center',
+    })
     setLoading(true)
-    getInvitation({}).then(({ code }: any) => {
+    getInvitation({}).then(({ code, validInvitationCount }: any) => {
       setCode(code)
       setLink(`${System.baseUrl}/${code}`)
+      setValidInvitationCount(validInvitationCount)
       setLoading(false)
     })
   }, [])
+
   const [link, setLink] = useState('')
   const [code, setCode] = useState('')
   if (loading) {
@@ -28,7 +39,7 @@ export default function Invite() {
           <View>
             <View style={styles.inviteConut}>
               <Text style={{ fontSize: 16, fontWeight: '700' }}>Your valid invite</Text>
-              <Text style={{ fontSize: 24, fontWeight: '800', color: '#7A2EF6' }}>Your valid invite</Text>
+              <Text style={{ fontSize: 34, fontWeight: '800', color: '#7A2EF6' }}>{validInvitationCount || 0}</Text>
               <Text style={{ fontSize: 16, width: 263, color: '#797979' }}>
                 Share Myshell with Friends and instantly enjoy high rebate benefits.
               </Text>
@@ -36,7 +47,14 @@ export default function Invite() {
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight: '700' }}>Invite Link</Text>
               <TextInput
-                suffix={<Copy />}
+                suffix={
+                  <Copy
+                    onPress={() => {
+                      Clipboard.setString(link)
+                      Toast('copied')
+                    }}
+                  />
+                }
                 fixGroupStyle={{ backgroundColor: '#EDEDED', marginTop: 10, height: 40, borderRadius: 4 }}
                 value={link}
                 onChangeText={nextValue => setLink(nextValue)}
@@ -45,7 +63,14 @@ export default function Invite() {
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight: '700' }}>Invite Code</Text>
               <TextInput
-                suffix={<Copy />}
+                suffix={
+                  <Copy
+                    onPress={() => {
+                      Clipboard.setString(code)
+                      Toast('copied')
+                    }}
+                  />
+                }
                 fixGroupStyle={{ backgroundColor: '#EDEDED', marginTop: 10, height: 40, borderRadius: 4 }}
                 value={code}
                 onChangeText={nextValue => setCode(nextValue)}

@@ -10,6 +10,7 @@ import editIcon from '../../../assets/images/edit.png'
 import publishIcon from '../../../assets/images/publish.png'
 import ugcStore from '../../../store/ugcBotstroe'
 import FlashIcon from '../../../components/flashIcon'
+import useUserStore from '../../../store/userStore'
 
 export default function Robot() {
   const router = useRouter()
@@ -17,6 +18,7 @@ export default function Robot() {
   const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
   const botStore = ugcStore.getState()
+  const userStore = useUserStore.getState().userBaseInfo
   useEffect(() => {
     navigation.setOptions({
       title: 'Robot',
@@ -130,31 +132,33 @@ export default function Robot() {
               </View>
             ))}
         </View>
-        <View style={styles.actions}>
-          <TouchableOpacity
-            onPress={() => Toast('Please use a desktop browser to create a robot')}
-            style={styles.actionsItem}
-          >
-            <Image
-              source={editIcon}
-              style={{
-                width: 30,
-                height: 30,
-              }}
-            />
-            <Text style={styles.actionsItemText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => showView()} style={styles.actionsItem}>
-            <Image
-              source={publishIcon}
-              style={{
-                width: 30,
-                height: 30,
-              }}
-            />
-            <Text style={styles.actionsItemText}>Publish</Text>
-          </TouchableOpacity>
-        </View>
+        {userStore.userId === botStore.userId && (
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={() => Toast('Please use a desktop browser to create a robot')}
+              style={styles.actionsItem}
+            >
+              <Image
+                source={editIcon}
+                style={{
+                  width: 30,
+                  height: 30,
+                }}
+              />
+              <Text style={styles.actionsItemText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => showView()} style={styles.actionsItem}>
+              <Image
+                source={publishIcon}
+                style={{
+                  width: 30,
+                  height: 30,
+                }}
+              />
+              <Text style={styles.actionsItemText}>Publish</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <View style={styles.description}>
           <Text style={styles.descriptionTitle}>Description</Text>
           <Text style={styles.descriptionValue}>
