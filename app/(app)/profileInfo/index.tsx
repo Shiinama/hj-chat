@@ -11,13 +11,12 @@ import {
 } from "react-native";
 
 import { styles } from "./style";
-import { profile as getProfile } from "../../../api/index";
 import Camera from "../../../assets/images/profile/camera.svg";
 import ActiveIcon from "../../../assets/images/profile/activeIcon.svg";
 import Discord from "../../../assets/images/profile/discord.svg";
 import Telegram from "../../../assets/images/profile/telegram.svg";
 import Twitter from "../../../assets/images/profile/twitter.svg";
-import useUserStore from "../../../store/userStore";
+import useUserStore, { getProfile } from "../../../store/userStore";
 import { Button, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { useBoolean, useDeepCompareEffect } from "ahooks";
 import {
@@ -28,11 +27,7 @@ import {
 } from "../../../api/proofile";
 import EditAvatarModal from "../../../components/profileInfo/EditAvatarModal";
 import { genAvatarUrl } from "../../../components/profileInfo/helper";
-export const getPageInfo = () => {
-  getProfile().then((res: any) => {
-    useUserStore.setState({ profile: res });
-  });
-};
+
 export default function Profile() {
   const navigation = useNavigation();
   const { profile } = useUserStore();
@@ -51,7 +46,7 @@ export default function Profile() {
   };
   useFocusEffect(
     useCallback(() => {
-      getPageInfo();
+      getProfile();
       getConnections();
     }, [])
   );
@@ -79,7 +74,7 @@ export default function Profile() {
         postUpdateUserName({ name }).then((res) => {
           Toast("update successfully!");
           setSaveLoading(false);
-          getPageInfo();
+          getProfile();
         });
       }
     });

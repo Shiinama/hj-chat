@@ -1,4 +1,4 @@
-import { UserProfile } from "@/../store/userStore";
+import { getProfile, UserProfile } from "../../store/userStore";
 import { Button, Overlay, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { FC, useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -8,7 +8,6 @@ import request from "../../utils/request";
 import CustomSlider from "./Slider";
 import { genAvatarUrl } from "./helper";
 import ViewShot, { captureRef } from "react-native-view-shot";
-import { getPageInfo } from "../../app/(app)/profileInfo";
 import { useBoolean } from "ahooks";
 const uploadFile = async (uri) => {
   const filePath = uri;
@@ -81,7 +80,7 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
             .then(() => {
               Toast("update successfully!");
               setVisible(false);
-              getPageInfo();
+              getProfile();
             })
             .finally(() => {
               setUpdateLoading(false);
