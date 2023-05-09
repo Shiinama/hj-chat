@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react'
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 import Slider from '@react-native-community/slider'
 import { Audio, AVPlaybackStatus } from 'expo-av'
@@ -6,6 +6,8 @@ import heidian from '../../assets/images/heidian.png'
 import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
+import AudioPayManagerSingle from './audioPlayManager'
+
 const AudioMessage = forwardRef(
   ({ audioFileUri, showControl = true }: { audioFileUri: string; showControl?: boolean }, ref) => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -13,6 +15,8 @@ const AudioMessage = forwardRef(
     const [currentPosition, setCurrentPosition] = useState<number>(0)
     const [duration, setDuration] = useState<number>(0)
     const [sound, setSound] = useState<Audio.Sound | null>(null)
+    // 全局录音单点播放控制
+    const soundManager = useRef(AudioPayManagerSingle())
     useImperativeHandle(ref, () => ({
       handlePlayPause,
     }))
@@ -43,7 +47,7 @@ const AudioMessage = forwardRef(
             setCurrentPosition(status.positionMillis || 0)
             setDuration(status.durationMillis || 0)
           }
-          if (status.isLoaded && status.isPlaying && currentPosition >= duration - 50) {
+          if (status.isLoaded && isPlaying && (status.positionMillis - status.durationMillis >= 0)) {
             await sound.stopAsync()
             setCurrentPosition(0)
             setIsPlaying(false)
@@ -56,9 +60,12 @@ const AudioMessage = forwardRef(
     const handlePlayPause = async () => {
       if (sound !== null) {
         if (isPlaying) {
-          await sound.pauseAsync()
+          soundManager.current.pause()
         } else {
-          await sound.playAsync()
+          // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
+          soundManager.current.play(sound, function(){
+            setIsPlaying(false)
+          })
         }
         setIsPlaying(!isPlaying)
       }
