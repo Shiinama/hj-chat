@@ -210,7 +210,14 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
           </View>
         ) : (
           <View>
-            <AudioMessage ref={audioMessageRef} showControl={false} audioFileUri={audioFileUri}></AudioMessage>
+            <AudioMessage
+              ref={audioMessageRef}
+              showControl={false}
+              audioFileUri={audioFileUri}
+              onPlay={(playing)=>{
+                setIsPlaying(playing)
+              }}
+            ></AudioMessage>
             <View style={styles.accessory}>
               <TouchableOpacity
                 onPress={async () => {
