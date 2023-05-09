@@ -1,34 +1,41 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { useFonts } from 'expo-font'
-import { Slot, SplashScreen, Stack, useNavigation, useSegments } from 'expo-router'
-import { useEffect } from 'react'
-import * as eva from '@eva-design/eva'
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useFonts } from "expo-font";
+import {
+  Slot,
+  SplashScreen,
+  Stack,
+  useNavigation,
+  useSegments,
+} from "expo-router";
+import { useEffect } from "react";
+import * as eva from "@eva-design/eva";
 
-import { Provider as XiaoshuProvider } from '@fruits-chain/react-native-xiaoshu'
-import { Provider as AuthProvider } from '../context/auth'
+import { Provider as XiaoshuProvider } from "@fruits-chain/react-native-xiaoshu";
+import { Provider as AuthProvider } from "../context/auth";
 
-import { ApplicationProvider } from '@ui-kitten/components'
-import { TouchableOpacity, Platform } from 'react-native'
+import { ApplicationProvider } from "@ui-kitten/components";
+import { TouchableOpacity, Platform, StatusBar } from "react-native";
+import { CustomStack } from "./CustomStack";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
-} from 'expo-router'
+} from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: '(auth)',
-}
+  initialRouteName: "(auth)",
+};
 
 export default function RootLayout() {
-  console.log(useSegments())
+  console.log(useSegments());
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
-  })
+  });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    if (error) throw error
-  }, [error])
+    if (error) throw error;
+  }, [error]);
 
   return (
     <>
@@ -36,7 +43,7 @@ export default function RootLayout() {
       {!loaded && <SplashScreen />}
       {loaded && <RootLayoutNav />}
     </>
-  )
+  );
 }
 
 function RootLayoutNav() {
@@ -44,9 +51,16 @@ function RootLayoutNav() {
     <AuthProvider>
       <ApplicationProvider {...eva} theme={eva.light}>
         <XiaoshuProvider>
-          <Slot></Slot>
+          <CustomStack
+            screenOptions={{
+              header: () => null,
+              headerShown: false,
+            }}
+          >
+            <Slot></Slot>
+          </CustomStack>
         </XiaoshuProvider>
       </ApplicationProvider>
     </AuthProvider>
-  )
+  );
 }
