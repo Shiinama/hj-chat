@@ -15,7 +15,8 @@ import userLogo from '../../assets/images/login_icon.png'
 import walletLogo from '../../assets/images/wallet_icon.png'
 import facebookLogo from '../../assets/images/facebook_icon.png'
 import googleLogo from '../../assets/images/google_icon.png'
-import { Button, TextInput, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { Button, TextInput } from '@fruits-chain/react-native-xiaoshu'
+import { Toast } from '../../utils/toast'
 import { useAuth } from '../../context/auth'
 import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
 import * as particleAuth from 'react-native-particle-auth'
@@ -27,6 +28,7 @@ const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWH
 
 export default function SignIn() {
   const { signIn } = useAuth()
+  const [code, setCode] = useState('')
   const login = async loginType => {
     const type = loginType
     const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]

@@ -1,5 +1,6 @@
 import { getProfile, UserProfile } from '../../store/userStore'
-import { Button, Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { Button, Overlay } from '@fruits-chain/react-native-xiaoshu'
+import { Toast } from '../../utils/toast'
 import { FC, useEffect, useRef, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'

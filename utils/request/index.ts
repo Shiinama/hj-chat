@@ -1,4 +1,4 @@
-import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import { Toast } from '../toast'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
 import useUserStore from '../../store/userStore'
