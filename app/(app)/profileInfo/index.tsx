@@ -2,18 +2,18 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFocusEffect } from 'expo-router'
 import { useNavigation } from 'expo-router'
 import { Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native'
+import { WebView } from 'react-native-webview'
 
 import { Image } from 'expo-image'
 import { styles } from './style'
 import Camera from '../../../assets/images/profile/camera.svg'
-import * as WebBrowser from 'expo-web-browser'
 import ActiveIcon from '../../../assets/images/profile/activeIcon.svg'
 import Discord from '../../../assets/images/profile/discord.svg'
 import Telegram from '../../../assets/images/profile/telegram.svg'
 import Twitter from '../../../assets/images/profile/twitter.svg'
 import ImgPlaceholder from '../../../assets/images/img_placeholder.png'
 import useUserStore, { getProfile } from '../../../store/userStore'
-import { Button, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { Button, Popup, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useBoolean, useDeepCompareEffect } from 'ahooks'
 import {
   getIsUserNameAvailable,
@@ -27,6 +27,7 @@ import { genAvatarUrl } from '../../../components/profileInfo/helper'
 export default function Profile() {
   const navigation = useNavigation()
   const { profile } = useUserStore()
+  const [pageVisible, setPageVisible] = useState(false)
   const [name, setName] = useState(profile?.name)
   const [visible, { set: setVisible }] = useBoolean(false)
   const [saveLoading, { set: setSaveLoading }] = useBoolean(false)
@@ -37,7 +38,10 @@ export default function Profile() {
   }, [profile?.name])
 
   const getConnections = () => {
-    getUserConnectedAccounts().then(res => setUserConnected(res))
+    getUserConnectedAccounts().then(res => {
+      console.log(res)
+      setUserConnected(res)
+    })
   }
   useFocusEffect(
     useCallback(() => {
@@ -60,8 +64,7 @@ export default function Profile() {
         isAcitve: userConnected?.telegram?.id,
         userName: userConnected?.telegram?.firstName,
         onPress: e => {
-          e.preventDefault()
-          WebBrowser.openBrowserAsync('https://telegram.org/js/telegram-widget.js?19')
+          setPageVisible(true)
         },
       },
     ]
@@ -139,6 +142,22 @@ export default function Profile() {
           Save Changes
         </Button>
       </View>
+      <Popup.Page visible={pageVisible}>
+        <Popup.Header
+          title="telegram"
+          onClose={() => {
+            setPageVisible(false)
+          }}
+        />
+        <WebView
+          source={{
+            uri: 'https://oauth.telegram.org/embed/MyShellBotTestBot?origin=https%3A%2F%2Fapp-test.myshell.ai',
+          }}
+          onTelegramLoginWidgetCb={e => {
+            console.log(e)
+          }}
+        />
+      </Popup.Page>
     </View>
   )
 }

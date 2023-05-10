@@ -75,6 +75,7 @@
     "react-native-svg": "13.4.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-native-view-shot": "^3.6.0",
+    "react-native-webview": "11.26.0",
     "readable-stream": "1.0.33",
     "socket.io-client": "^4.6.1",
     "stream-browserify": "^1.0.0",
