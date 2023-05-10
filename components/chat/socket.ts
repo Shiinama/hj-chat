@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import SysConfig from '../../constants/System'
 import { Alert } from 'react-native'
+import useUserStore from '../../store/userStore'
 
 export enum MsgEvents {
   AUTH_FAIL = 'auth_fail',
@@ -61,6 +62,8 @@ export const useSocketIo = () => {
   const [resMessage, setResMessage] = useState<any>()
   const [translationMessage, setTranslation] = useState<any>()
   const [updateMessage, setUpdateMessage] = useState<any>()
+  const { userBaseInfo } = useUserStore.getState()
+  console.log('userBaseInfo', userBaseInfo)
   const ready = (): boolean => {
     return SocketIoRef.current && SocketIoRef.current.connected
   }
