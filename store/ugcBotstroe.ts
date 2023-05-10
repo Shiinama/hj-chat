@@ -9,6 +9,7 @@ type ListDataItem = {
   userId: number
   language: string
   status: string
+  logo?: string
   energyPerChat: number
 }
 const name = 'ugc-bot-store'

@@ -2,6 +2,7 @@ import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, S
 import { chatTimeFormat } from '../utils/time'
 import RootStyles from '../constants/RootStyles'
 import Pined from '../assets/images/tabbar/pin.svg'
+import { genBotUrl } from './profileInfo/helper'
 
 function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   return (
@@ -12,7 +13,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
       }}
     >
       {ld.logo ? (
-        <Image source={{ uri: ld.logo }} style={styles.avatar} />
+        <Image source={{ uri: genBotUrl(ld.logo) }} style={styles.avatar} />
       ) : (
         <Image
           source={{
