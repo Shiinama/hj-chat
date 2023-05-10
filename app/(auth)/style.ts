@@ -2,9 +2,9 @@ import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 32,
     paddingLeft: 16,
     paddingRight: 16,
+    marginTop: 150,
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#ffffff',
@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     backgroundColor: '#ffffff',
-    // justifyContent: 'center',
     // ,
   },
   user: {

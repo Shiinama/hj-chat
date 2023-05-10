@@ -47,18 +47,6 @@ export default function SignIn() {
     }
   }
 
-  // const chainInfo = ChainInfo.EthereumGoerli;
-  // const env = Env.Production;
-  // particleAuth.init(chainInfo, env);
-
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     title: 'Login',
-  //   })
-  // }, [navigation, name])
-
-  function walletClick() {}
-
   return (
     <>
       <ScrollView style={styles.main}>
@@ -85,38 +73,6 @@ export default function SignIn() {
               </Text>
             </View>
 
-            <TouchableHighlight
-              onPress={walletClick}
-              style={{
-                marginTop: 20,
-                borderColor: '#000000',
-                borderWidth: 1,
-                borderRadius: 20,
-                height: 35,
-                width: '80%',
-              }}
-            >
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Image source={walletLogo} style={{ width: 40, height: 32 }}></Image>
-                <Text
-                  style={{
-                    fontWeight: '600',
-                    fontSize: 18,
-                    marginHorizontal: 10,
-                  }}
-                >
-                  Wallet Connect
-                </Text>
-              </View>
-            </TouchableHighlight>
-
             <View style={{ marginTop: 30, width: '80%' }}>
               <View style={{ backgroundColor: '#cccccc', height: 0.5 }}></View>
               <View
@@ -134,7 +90,7 @@ export default function SignIn() {
                     textAlign: 'center',
                   }}
                 >
-                  Or connect using
+                  connect using
                 </Text>
               </View>
             </View>
