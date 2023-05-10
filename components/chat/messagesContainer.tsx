@@ -88,6 +88,7 @@ function MessagesContainer(props: MessagesContainerProps) {
     >
       <View style={styles.container}>
         <FlatList
+          initialNumToRender={5}
           ref={flatListRef}
           data={data.length ? data : [123]}
           onLayout={onLayoutList}

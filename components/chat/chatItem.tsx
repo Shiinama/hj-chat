@@ -1,6 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import styles from './styles'
-import { genAvatarUrl } from '../../components/profileInfo/helper'
+import { genAvatarUrl, genBotUrl } from '../../components/profileInfo/helper'
 
 import { ChatItem } from '../../app/(app)/chat/[id]'
 import AudioMessage from './audioMessage'
@@ -24,10 +24,10 @@ type Props = {
 function chatItem({ item, translationText, me, logo }: Props) {
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   const [buttonIndex, setButtonIndex] = useState<number>(1)
+  console.log(logo)
   const isBlur = buttonIndex === 1
   if (item === 123) return null
   const tag = item?.replyUid
-  console.log(genAvatarUrl(me), logo)
   const renderMessageAudio = () => <AudioMessage audioFileUri={item?.voiceUrl} />
   const renderMessageText = () => {
     return (
@@ -107,9 +107,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
         <Image
           source={{
-            uri:
-              (tag ? logo : genAvatarUrl(me)) ||
-              'https://pics1.baidu.com/feed/55e736d12f2eb938661c830c4aa69e39e4dd6f28.jpeg@f_auto?token=b6ef42f11710ef742c703790f2a85d2b',
+            uri: tag ? genBotUrl(logo) : genAvatarUrl(me),
           }}
           style={styles.avatar}
         />
