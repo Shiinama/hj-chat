@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { StyleSheet, Animated, Easing, TouchableOpacity, Text } from 'react-native'
 import Huatong from '../../assets/images/chat/huatong.svg'
+import { Audio } from 'expo-av'
 
 const RecordButton = ({ startRecording, stopRecording, setAudioFileUri }) => {
   const [isRecording, setIsRecording] = useState(false)
@@ -24,9 +25,16 @@ const RecordButton = ({ startRecording, stopRecording, setAudioFileUri }) => {
   }
 
   function handlePressIn() {
-    setIsRecording(true)
-    animateScaleOut()
-    startRecording()
+    Audio.requestPermissionsAsync().then(({ granted }) => {
+      if (!granted) {
+        alert('请允许访问麦克风以录制音频！请到设置中')
+      } else {
+        setIsRecording(true)
+        animateScaleOut()
+        startRecording()
+      }
+    })
+   
   }
 
   async function handlePressOut() {

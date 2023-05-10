@@ -7,120 +7,128 @@ import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
+type AudioType = {
+  audioFileUri: string
+  slideWidth?: number
+  showControl?: boolean
+  onPlay?: (playing: boolean) => void
+}
 
-const AudioMessage = forwardRef(
-  ({ audioFileUri, showControl = true, onPlay }: { audioFileUri: string; showControl?: boolean; onPlay?: (playing: boolean)=> void }, ref) => {
-    const [loading, setLoading] = useState<boolean>(false)
-    const [isPlaying, setIsPlaying] = useState<boolean>(false)
-    const [currentPosition, setCurrentPosition] = useState<number>(0)
-    const [duration, setDuration] = useState<number>(0)
-    const [sound, setSound] = useState<Audio.Sound | null>(null)
-    // 全局录音单点播放控制
-    const soundManager = useRef(AudioPayManagerSingle())
-    useImperativeHandle(ref, () => ({
-      handlePlayPause,
-    }))
-    useEffect(() => {
-      if (!audioFileUri) return
-      const loadSound = async () => {
-        setLoading(true)
-        const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
-        setSound(sound)
-        setLoading(false)
-      }
-      loadSound()
-    }, [])
+const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, slideWidth = 240 }: AudioType, ref) => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  const [currentPosition, setCurrentPosition] = useState<number>(0)
+  const [duration, setDuration] = useState<number>(0)
+  const [sound, setSound] = useState<Audio.Sound | null>(null)
+  // 全局录音单点播放控制
+  const soundManager = useRef(AudioPayManagerSingle())
+  useImperativeHandle(ref, () => ({
+    handlePlayPause,
+  }))
+  useEffect(() => {
+    if (!audioFileUri) return
+    const loadSound = async () => {
+      setLoading(true)
+      const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
+      setSound(sound)
+      setLoading(false)
+    }
+    loadSound()
+  }, [])
 
-    useEffect(() => {
-      return sound
-        ? () => {
-            sound.unloadAsync()
-          }
-        : undefined
-    }, [sound])
-
-    useEffect(() => {
-      let interval = setInterval(async () => {
-        if (sound !== null) {
-          const status: AVPlaybackStatus = await sound.getStatusAsync()
-          if (status.isLoaded) {
-            setCurrentPosition(status.positionMillis || 0)
-            setDuration(status.durationMillis || 0)
-          }
-          if (status.isLoaded && isPlaying && (status.positionMillis - status.durationMillis >= 0)) {
-            await sound.stopAsync()
-            setCurrentPosition(0)
-            setIsPlaying(false)
-          }
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync()
         }
-      })
-      return () => clearInterval(interval)
-    }, [sound, currentPosition, duration])
+      : undefined
+  }, [sound])
 
-    const handlePlayPause = async () => {
+  useEffect(() => {
+    let interval = setInterval(async () => {
       if (sound !== null) {
-        if (isPlaying) {
-          soundManager.current.pause()
-        } else {
-          // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
-          soundManager.current.play(sound, function(){
-            setIsPlaying(false)
-          })
+        const status: AVPlaybackStatus = await sound.getStatusAsync()
+        if (status.isLoaded) {
+          setCurrentPosition(status.positionMillis || 0)
+          setDuration(status.durationMillis || 0)
         }
-        setIsPlaying(!isPlaying)
+        if (status.isLoaded && isPlaying && status.positionMillis - status.durationMillis >= 0) {
+          await sound.stopAsync()
+          setCurrentPosition(0)
+          setIsPlaying(false)
+        }
       }
-    }
+    })
+    return () => clearInterval(interval)
+  }, [sound, currentPosition, duration])
 
-    useEffect(()=>{
-      onPlay?.(isPlaying)
-    }, [isPlaying])
-
-    const handleChange = async (value: number) => {
-      if (sound !== null) {
-        await sound.setPositionAsync(value)
-        setCurrentPosition(value)
+  const handlePlayPause = async () => {
+    if (sound !== null) {
+      if (isPlaying) {
+        soundManager.current.pause()
+      } else {
+        // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
+        soundManager.current.play(sound, function () {
+          setIsPlaying(false)
+        })
       }
+      setIsPlaying(!isPlaying)
     }
+  }
 
-    const formatTime = (ms: number): string => {
-      const minutes: number = Math.floor(ms / 60000)
-      // @ts-ignore
-      const seconds: number = ((ms % 60000) / 1000).toFixed(0)
-      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+  useEffect(() => {
+    onPlay?.(isPlaying)
+  }, [isPlaying])
+
+  const handleChange = async (value: number) => {
+    if (sound !== null) {
+      await sound.setPositionAsync(value)
+      setCurrentPosition(value)
     }
-    if (loading) return <ShellLoading></ShellLoading>
-    return (
-      <View style={styles.container}>
+  }
+
+  const formatTime = (ms: number): string => {
+    const minutes: number = Math.floor(ms / 60000)
+    // @ts-ignore
+    const seconds: number = ((ms % 60000) / 1000).toFixed(0)
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+  }
+  if (loading) return <ShellLoading></ShellLoading>
+  return (
+    <View style={styles.container}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {showControl && (
           <TouchableOpacity onPress={handlePlayPause}>
             {isPlaying ? <Messagepause height={20} width={20} /> : <MessagePlay height={20} width={20} />}
           </TouchableOpacity>
         )}
         <Text style={styles.time}>{formatTime(currentPosition) + '/' + formatTime(duration)}</Text>
+      </View>
+      <View style={{ transform: [{ scale: 0.5 }], position: 'relative', left: slideWidth > 300 ? -120 : -60 }}>
         <Slider
-          style={styles.slider}
+          style={{ ...styles.slider, width: slideWidth }}
           minimumValue={0}
           minimumTrackTintColor={'black'}
+          thumbTintColor={'black'}
           maximumValue={duration}
           value={currentPosition}
-          thumbImage={heidian}
           onValueChange={handleChange}
         />
       </View>
-    )
-  }
-)
+    </View>
+  )
+})
 
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center',
+    position: 'relative',
     flexDirection: 'row',
     paddingHorizontal: 20,
   },
   slider: {
-    flex: 1,
-    height: 5,
+    height: 10,
+    fontSize: 8,
   },
   time: {
     marginHorizontal: 8,

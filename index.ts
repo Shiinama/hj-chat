@@ -10,7 +10,6 @@ import { ParticleInfo } from './tmp/NetService/ParticleInfo'
 import * as particleAuth from 'react-native-particle-auth'
 import { ChainInfo, Env } from 'react-native-particle-auth'
 
-console.log('particle test init...')
 // PARTICLE_PROJECT_ID=c9aa126d-8db2-45cc-8898-60e3a69d5050
 // PARTICLE_CLIENT_ID=cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk
 // PARTICLE_APP_ID=6b6a232e-973a-405c-969a-a546189fda16
@@ -24,14 +23,12 @@ const init = async () => {
     throw new Error('You need set project info')
   }
 
-  console.log('sdk init...')
   const chainInfo = ChainInfo.EthereumGoerli
   // const chainInfo = EvmService.currentChainInfo;
   const env = Env.Production
   particleAuth.init(chainInfo, env)
 }
 
-console.log('3s 后test sdk init结果')
 setTimeout(() => {
   init()
 }, 3000)

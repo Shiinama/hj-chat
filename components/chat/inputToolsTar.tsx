@@ -9,9 +9,7 @@ import {
   Platform,
   Image,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native'
-import { MenuItem, OverflowMenu } from '@ui-kitten/components'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -27,8 +25,9 @@ import * as FileSystem from 'expo-file-system'
 import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
-import { Popover, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
+import { useBoolean, useClickAway } from 'ahooks'
 type Props = {
   minInputToolbarHeight: number
   inputTextProps: TextInput['props'] & {
@@ -59,9 +58,11 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const { setValue: setChatValue } = useContext(ChatContext)
 
   const [position, setPosition] = useState('absolute')
+  const [barHeight, setBarHeight] = useState(0)
+  const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(true)
   const [showSend, setShowSend] = useState(false)
   const inputRef = useRef(null)
   const audioMessageRef = useRef(null)
@@ -95,32 +96,11 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
       keyboardWillHideListener?.remove()
     }
   }, [])
-  const dimensionsRef = useRef<{ width: number; height: number }>()
   const handleButtonPress = () => {
     if (inputRef.current) {
       inputRef.current.focus()
     }
   }
-
-  const determineInputSizeChange = useCallbackOne(
-    (dimensions: { width: number; height: number }) => {
-      if (!onInputSizeChanged) return
-      if (!dimensions) {
-        return
-      }
-
-      if (
-        !dimensionsRef ||
-        !dimensionsRef.current ||
-        (dimensionsRef.current &&
-          (dimensionsRef.current.width !== dimensions.width || dimensionsRef.current.height !== dimensions.height))
-      ) {
-        dimensionsRef.current = dimensions
-        onInputSizeChanged(dimensions)
-      }
-    },
-    [onInputSizeChanged]
-  )
 
   const toolsAction = (key: ActionType) => {
     switch (key) {
@@ -149,32 +129,36 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
       default:
         break
     }
+    setToolsVisible(false)
   }
-  const handleContentSizeChange = ({
-    nativeEvent: { contentSize },
-  }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => determineInputSizeChange(contentSize)
+
   return (
-    <View style={[styles.container, { position }] as ViewStyle}>
+    <View
+      style={[styles.container, { position }] as ViewStyle}
+      onLayout={e => {
+        setBarHeight(e.nativeEvent.layout.height)
+      }}
+    >
       <View>
         {!audioFileUri ? (
           <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
-            <Popover
-              arrow={false}
-              popoverStyle={{
-                backgroundColor: 'transparent',
-                width: Dimensions.get('window').width,
+            <Overlay
+              visible={toolsVisible}
+              backgroundColor="transparent"
+              onPress={() => {
+                setToolsVisible(false)
               }}
-              renderContentComponent={(node, closePopover) => {
-                return (
-                  <ToolsModal userId={userId} pinned={pinned} toolsAction={toolsAction} closePopover={closePopover} />
-                )
-              }}
-              content={null}
             >
-              <View style={styles.toolsIcon}>
-                <Lines></Lines>
-              </View>
-            </Popover>
+              <ToolsModal bottom={barHeight} userId={userId} pinned={pinned} toolsAction={toolsAction} />
+            </Overlay>
+            <TouchableOpacity
+              style={styles.toolsIcon}
+              onPress={() => {
+                setToolsVisible(true)
+              }}
+            >
+              <Lines></Lines>
+            </TouchableOpacity>
             <ShareToPopup />
             {isShow ? (
               <TextInput
@@ -189,7 +173,6 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                 onChangeText={inputText => {
                   onChangeText(inputText)
                 }}
-                onContentSizeChange={handleContentSizeChange}
                 {...inputTextProps}
                 {...inputProps}
               />
@@ -229,6 +212,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
             <AudioMessage
               ref={audioMessageRef}
               showControl={false}
+              slideWidth={500}
               audioFileUri={audioFileUri}
               onPlay={playing => {
                 setIsPlaying(playing)
@@ -320,6 +304,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#FFFFFF',
     lineHeight: 26,
+    paddingHorizontal: 12,
+    borderRadius: 12,
     height: Platform.select({
       ios: 40,
       android: 40,

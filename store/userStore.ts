@@ -1,47 +1,42 @@
-import { create } from "zustand";
-import {
-  createJSONStorage,
-  subscribeWithSelector,
-  persist,
-} from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import systemConfig from "../constants/System";
-import {
-  profile,
-  getUserEnergyInfo as queryUserEnergyInfo,
-} from "../api/index";
+import { create } from 'zustand'
+import { createJSONStorage, subscribeWithSelector, persist } from 'zustand/middleware'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Image } from 'expo-image'
+import systemConfig from '../constants/System'
+import { profile, getUserEnergyInfo as queryUserEnergyInfo } from '../api/index'
+import { genAvatarUrl } from '../components/profileInfo/helper'
 export type UserProfile = {
-  id: number;
-  uid: string;
-  source: string;
-  name?: string;
-  nameTag: string;
-  email?: string;
-  publicAddress?: string;
-  avatar?: string;
-  isNftAvatar: boolean;
-  default: false;
-  level: number;
-  isPasscard: boolean;
-  isGenesisPasscard: boolean;
-};
+  id: number
+  uid: string
+  source: string
+  name?: string
+  nameTag: string
+  email?: string
+  publicAddress?: string
+  avatar?: string
+  isNftAvatar: boolean
+  default: false
+  level: number
+  isPasscard: boolean
+  isGenesisPasscard: boolean
+}
 export type UserBaseInfo = {
-  token: string;
-  expiration: number;
-  userId: number;
-  userUid: string;
-};
+  token: string
+  expiration: number
+  userId: number
+  userUid: string
+}
 export type UserEnergyInfo = {
-  energy: number;
-  dailyEnergy: number;
-};
+  energy: number
+  dailyEnergy: number
+}
 export type UserStore = {
-  profile: UserProfile;
-  userEnergyInfo: UserEnergyInfo;
-  userBaseInfo: UserBaseInfo;
-  particleInfo: any;
-};
-const name = "user-store";
+  profile: UserProfile
+  userEnergyInfo: UserEnergyInfo
+  userBaseInfo: UserBaseInfo
+  particleInfo: any
+}
+const name = 'user-store'
 
 const useUserStore = create(
   subscribeWithSelector(
@@ -58,34 +53,37 @@ const useUserStore = create(
       }
     )
   )
-);
+)
 
 /** 监听token改变，改变获取用户相关信息 */
 useUserStore.subscribe(
-  (state) => state?.userBaseInfo?.token,
-  (val) => {
+  state => state?.userBaseInfo?.token,
+  val => {
     // 同步token到本地存储
-    AsyncStorage.setItem(systemConfig.authKey, val || "");
+    AsyncStorage.setItem(systemConfig.authKey, val || '')
     if (val) {
-      getProfile();
-      getUserEnergyInfo();
+      getProfile()
+      getUserEnergyInfo()
     }
   },
   {
     fireImmediately: true,
   }
-);
+)
 /** 获取用户信息 */
 export const getProfile = () => {
   return profile().then((res: any) => {
-    useUserStore.setState({ profile: res });
-  });
-};
+    if (res?.avatar) {
+      Image.prefetch(genAvatarUrl(res?.avatar))
+    }
+    useUserStore.setState({ profile: res })
+  })
+}
 /** 获取用户电力值 */
 export const getUserEnergyInfo = () => {
   return queryUserEnergyInfo().then((res: any) => {
-    useUserStore.setState({ userEnergyInfo: res as UserEnergyInfo });
-  });
-};
+    useUserStore.setState({ userEnergyInfo: res as UserEnergyInfo })
+  })
+}
 
-export default useUserStore;
+export default useUserStore

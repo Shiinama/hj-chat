@@ -47,11 +47,12 @@ export default function Invite() {
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight: '700' }}>Invite Link</Text>
               <TextInput
+                editable={false}
                 suffix={
                   <Copy
                     onPress={() => {
                       Clipboard.setString(link)
-                      Toast('copied')
+                      Toast('Copied')
                     }}
                   />
                 }
@@ -63,11 +64,12 @@ export default function Invite() {
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight: '700' }}>Invite Code</Text>
               <TextInput
+                editable={false}
                 suffix={
                   <Copy
                     onPress={() => {
                       Clipboard.setString(code)
-                      Toast('copied')
+                      Toast('Copied')
                     }}
                   />
                 }

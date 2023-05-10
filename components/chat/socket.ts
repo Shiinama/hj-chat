@@ -87,36 +87,27 @@ export const useSocketIo = () => {
   }
 
   const onMessageError = ({ message }: MeaageErrorType) => {
-    console.log(message, 'onMessageError')
-    // Alert.alert(message)
+    Alert.alert(message)
   }
 
   const onException = ({ message }: MeaageErrorType) => {
-    console.log(message, 'onException')
     Alert.alert(message)
   }
   const onNoEnoughEnergy = ({ message }: MeaageErrorType) => {
-    console.log(message, 'onNoEnoughEnergy')
     Alert.alert(message)
   }
 
   const onMessageSent = (data: MesageSucessType) => {
-    console.log(data, 'onMessageSent')
     setMessage(data)
   }
   const onMessageReplied = ({ reqId, data }: MesageSucessType) => {
-    console.log(reqId, data, 'onMessageReplied')
     setResMessage(data)
   }
   const onMessageTranslated = ({ reqId, data }: MesageSucessType) => {
-    console.log(reqId, data, 'onMessageTranslated')
     setTranslation(data)
   }
-  const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {
-    console.log(reqId, data, 'onEnergyInfo')
-  }
+  const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {}
   const onMessageUpdated = ({ data }: MesageSucessType) => {
-    console.log(data, 'onMessageUpdated')
     setUpdateMessage(data)
   }
 

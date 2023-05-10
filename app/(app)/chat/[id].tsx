@@ -1,7 +1,7 @@
-import { Text, View, TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity, AppState } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ChatItem from '../../../components/chat/chatItem'
 import Container from '../../../components/chat/container'
 import { chatHistory } from '../../../api'
@@ -12,10 +12,14 @@ import { useSocketIo } from '../../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
 import { Buffer } from 'buffer'
 import { ChatContext, ChatPageState } from './chatContext'
-import { Button } from '@fruits-chain/react-native-xiaoshu'
+import { Button, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { convert4amToMp3 } from '../../../utils/convert'
 import botStore from '../../../store/botStore'
 import FlashIcon from '../../../components/flashIcon'
+import useUserStore from '../../../store/userStore'
+import AudioPayManagerSingle, { AudioPayManager } from '../../../components/chat/audioPlayManager'
+import { NativeEventSubscription } from 'react-native'
+
 export type ChatItem = {
   id: number
   uid?: string
@@ -36,6 +40,16 @@ export type ChatItem = {
 
 export default function Chat({}) {
   const botStorage = botStore.getState()
+  const { profile } = useUserStore()
+
+  const eventAppState = useRef<{
+    appState?: NativeEventSubscription
+    audioManager: AudioPayManager
+    prev?: string
+  }>({
+    audioManager: AudioPayManagerSingle(),
+  })
+
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
@@ -53,17 +67,13 @@ export default function Chat({}) {
   useEffect(() => {
     try {
       new Audio.Recording()
-      Audio.requestPermissionsAsync().then(({ granted }) => {
-        if (!granted) {
-          alert('请允许访问麦克风以录制音频！请到设置中')
-        }
-      })
+
       Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       })
     } catch (err) {
-      console.error('Failed to start recording', err)
+      Toast('Failed to start recording')
     }
     chatHistory(uid).then(({ data }: any) => {
       data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
@@ -77,7 +87,7 @@ export default function Chat({}) {
       const { recording } = await Audio.Recording.createAsync(defaultParam)
       setRecording(recording)
     } catch (err) {
-      console.error('Failed to start recording', err)
+      Toast('Failed to start recording')
     }
   }
 
@@ -156,7 +166,6 @@ export default function Chat({}) {
   useEffect(() => {
     if (!updateMessage) return
     const index = chatData.findIndex(item => item.uid === updateMessage.uid)
-    console.log(index)
     setChatData(pre => {
       pre[index].text = updateMessage.text
       return [...pre]
@@ -166,10 +175,33 @@ export default function Chat({}) {
   useEffect(() => {
     if (!translationMessage) return
     setChatData(pre => {
-      pre[translationTextIndex].translation = translationMessage.translation
+      // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
+      if (pre[translationTextIndex]) {
+        pre[translationTextIndex].translation = translationMessage.translation
+      }
+
       return [...pre]
     })
   }, [translationMessage])
+
+  // 处理播放录音退到后台的问题
+  useEffect(() => {
+    if (eventAppState.current.appState) {
+      eventAppState.current.appState.remove()
+    }
+    eventAppState.current.appState = AppState.addEventListener('change', state => {
+      // 如果进入后台或者重新进入就停止播放
+      if (state === 'background') {
+        eventAppState.current.audioManager.pause(true)
+      }
+      eventAppState.current.prev = state
+    })
+    return () => {
+      if (eventAppState.current.appState) {
+        eventAppState.current.appState.remove()
+      }
+    }
+  }, [])
 
   if (loading) return <ShellLoading></ShellLoading>
   return (
@@ -201,7 +233,12 @@ export default function Chat({}) {
           renderItem: ({ item, index }) => {
             return (
               <View>
-                <ChatItem logo={botStorage.logo} translationText={translationText} item={item}></ChatItem>
+                <ChatItem
+                  me={profile?.avatar}
+                  logo={botStorage.logo}
+                  translationText={translationText}
+                  item={item}
+                ></ChatItem>
               </View>
             )
           },
