@@ -23,6 +23,7 @@ import ThunderIcon from "../../assets/images/profile/Thunder.png";
 import CommunityIcon from "../../assets/images/profile/community.png";
 import * as WebBrowser from "expo-web-browser";
 import useUserStore, {
+  getConnections,
   getProfile,
   getUserEnergyInfo,
 } from "../../store/userStore";
@@ -31,11 +32,12 @@ import { genAvatarUrl } from "../../components/profileInfo/helper";
 
 export default function TabThreeScreen() {
   const router = useRouter();
-  const { profile, userEnergyInfo } = useUserStore();
+  const { profile, userEnergyInfo, userConnectedAccounts } = useUserStore();
   useFocusEffect(
     useCallback(() => {
       getProfile();
       getUserEnergyInfo();
+      getConnections();
     }, [])
   );
 
@@ -76,9 +78,12 @@ export default function TabThreeScreen() {
             <Text style={{ ...styles.flextag, ...styles.green }}>
               Lv.{profile?.level}
             </Text>
-            <Image source={SocialIcon} style={{ width: 24, height: 24 }} />
-            <Image source={Social1Icon} style={{ width: 24, height: 24 }} />
-            <Image source={Social2Icon} style={{ width: 24, height: 24 }} />
+            {userConnectedAccounts?.telegram?.id && (
+              <Image source={SocialIcon} style={{ width: 24, height: 24 }} />
+            )}
+
+            {/* <Image source={Social1Icon} style={{ width: 24, height: 24 }} />
+            <Image source={Social2Icon} style={{ width: 24, height: 24 }} /> */}
           </View>
           <View style={{ ...styles.flexMain }}>
             <Image
