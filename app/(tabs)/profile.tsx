@@ -4,10 +4,11 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import ImgPlaceholder from "../../assets/images/img_placeholder.png";
+import { Image } from "expo-image";
 import arrowIcon from "../../assets/images/profile/arrow.png";
 import editIcon from "../../assets/images/profile/edit.png";
 import helpIcon from "../../assets/images/profile/help.png";
@@ -49,6 +50,9 @@ export default function TabThreeScreen() {
       <View style={styles.profile}>
         <View style={styles.profileInfo}>
           <Image
+            cachePolicy="disk"
+            placeholderContentFit="cover"
+            placeholder={ImgPlaceholder}
             source={{ uri: genAvatarUrl(profile?.avatar) }}
             style={{ width: 80, height: 80, borderRadius: 12 }}
           />
@@ -91,13 +95,6 @@ export default function TabThreeScreen() {
             maxRange={userEnergyInfo?.dailyEnergy}
             progressValue={userEnergyInfo?.energy}
           />
-          {/* <Progress
-            strokeWidth={24}
-            percentage={80}
-            showPivot={false}
-            trackColor="#694802"
-            color="#FFC03A"
-          /> */}
         </View>
       </View>
       <TouchableOpacity
