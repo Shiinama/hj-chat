@@ -1,12 +1,13 @@
 import { Audio } from "expo-av";
 
-class AudioPayManager {
+export class AudioPayManager {
   private currentSound: Audio.Sound;
   private currentSoundStopMethod;
 
-  async pause() {
+  async pause(isCallBack?: boolean) {
     if (this.currentSound) {
       try {
+        isCallBack && this.currentSoundStopMethod?.()
         await this.currentSound.pauseAsync()
       } catch (error) {
         
