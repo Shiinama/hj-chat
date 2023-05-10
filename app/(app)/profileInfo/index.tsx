@@ -18,6 +18,7 @@ import { useBoolean, useDeepCompareEffect } from 'ahooks'
 import {
   getIsUserNameAvailable,
   getUserConnectedAccounts,
+  postConnectToTelegram,
   postUpdateUserName,
   UserConnectedAccounts,
 } from '../../../api/proofile'
@@ -36,10 +37,8 @@ export default function Profile() {
   useDeepCompareEffect(() => {
     setName(profile?.name)
   }, [profile?.name])
-
   const getConnections = () => {
     getUserConnectedAccounts().then(res => {
-      console.log(res)
       setUserConnected(res)
     })
   }
@@ -63,7 +62,7 @@ export default function Profile() {
         icon: <Telegram />,
         isAcitve: userConnected?.telegram?.id,
         userName: userConnected?.telegram?.firstName,
-        onPress: e => {
+        onPress: () => {
           setPageVisible(true)
         },
       },
@@ -151,10 +150,11 @@ export default function Profile() {
         />
         <WebView
           source={{
-            uri: 'https://oauth.telegram.org/embed/MyShellBotTestBot?origin=https%3A%2F%2Fapp-test.myshell.ai',
+            uri: 'https://ecba092a.my-shell-h5.pages.dev/',
           }}
-          onTelegramLoginWidgetCb={e => {
-            console.log(e)
+          onMessage={e => {
+            setPageVisible(false)
+            postConnectToTelegram(JSON.parse(e.nativeEvent.data))
           }}
         />
       </Popup.Page>

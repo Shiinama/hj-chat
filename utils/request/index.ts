@@ -48,8 +48,8 @@ _axios.interceptors.response.use(
     return response
   },
   error => {
-    console.log(error, 'error')
     const { response } = error
+    console.log(response.data, 'error')
     // 请求有响应
     if (response) {
       const { status, data, config } = response
@@ -105,6 +105,7 @@ export default async function request<T>(options: RequestOptions) {
   }
   const newOptions: RequestOptions = { ...defaultOptions, ...options }
   const newUrl = baseUrl + url
+  console.log(newUrl)
   return _axios
     .request<T>({
       ...newOptions,

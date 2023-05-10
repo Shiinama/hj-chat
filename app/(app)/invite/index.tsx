@@ -47,6 +47,7 @@ export default function Invite() {
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight: '700' }}>Invite Link</Text>
               <TextInput
+                editable={false}
                 suffix={
                   <Copy
                     onPress={() => {
@@ -63,6 +64,7 @@ export default function Invite() {
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight: '700' }}>Invite Code</Text>
               <TextInput
+                editable={false}
                 suffix={
                   <Copy
                     onPress={() => {
