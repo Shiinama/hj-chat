@@ -34,7 +34,6 @@ const RecordButton = ({ startRecording, stopRecording, setAudioFileUri }) => {
         startRecording()
       }
     })
-   
   }
 
   async function handlePressOut() {
@@ -43,10 +42,10 @@ const RecordButton = ({ startRecording, stopRecording, setAudioFileUri }) => {
       animateScaleIn()
       if (stopRecording) {
         const uri = await stopRecording()
+        console.log(uri)
         setAudioFileUri(uri)
       }
     }
-    
   }
 
   return (

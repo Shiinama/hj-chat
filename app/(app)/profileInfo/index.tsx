@@ -18,7 +18,10 @@ import Discord from "../../../assets/images/profile/discord.svg";
 import Telegram from "../../../assets/images/profile/telegram.svg";
 import Twitter from "../../../assets/images/profile/twitter.svg";
 import ImgPlaceholder from "../../../assets/images/img_placeholder.png";
-import useUserStore, { getProfile } from "../../../store/userStore";
+import useUserStore, {
+  getConnections,
+  getProfile,
+} from "../../../store/userStore";
 import { Button, Popup } from "@fruits-chain/react-native-xiaoshu";
 import { useBoolean, useDeepCompareEffect } from "ahooks";
 import {
@@ -34,22 +37,17 @@ import { Toast } from "../../../utils/toast";
 
 export default function Profile() {
   const navigation = useNavigation();
-  const { profile } = useUserStore();
+  const { profile, userConnectedAccounts } = useUserStore();
   const [pageVisible, setPageVisible] = useState(false);
   const [name, setName] = useState(profile?.name);
   const [visible, { set: setVisible }] = useBoolean(false);
   const [saveLoading, { set: setSaveLoading }] = useBoolean(false);
-  const [userConnected, setUserConnected] =
-    useState<UserConnectedAccounts>(null);
+
   const btnDisabled = name === profile?.name;
   useDeepCompareEffect(() => {
     setName(profile?.name);
   }, [profile?.name]);
-  const getConnections = () => {
-    getUserConnectedAccounts().then((res) => {
-      setUserConnected(res);
-    });
-  };
+
   useFocusEffect(
     useCallback(() => {
       getProfile();
@@ -68,14 +66,14 @@ export default function Profile() {
       {
         name: "Telegram",
         icon: <Telegram />,
-        isAcitve: userConnected?.telegram?.id,
-        userName: userConnected?.telegram?.firstName,
+        isAcitve: userConnectedAccounts?.telegram?.id,
+        userName: userConnectedAccounts?.telegram?.firstName,
         onPress: () => {
           setPageVisible(true);
         },
       },
     ];
-  }, [userConnected]);
+  }, [userConnectedAccounts]);
   const saveAction = () => {
     setSaveLoading(true);
     getIsUserNameAvailable({ name }).then((res) => {
