@@ -360,6 +360,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: "#FFFFFF",
     lineHeight: 26,
+    paddingHorizontal: 12,
+    borderRadius: 12,
     height: Platform.select({
       ios: 40,
       android: 40,
