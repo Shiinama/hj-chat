@@ -5,11 +5,13 @@ import {
   persist,
 } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Image } from "expo-image";
 import systemConfig from "../constants/System";
 import {
   profile,
   getUserEnergyInfo as queryUserEnergyInfo,
 } from "../api/index";
+import { genAvatarUrl } from "../components/profileInfo/helper";
 export type UserProfile = {
   id: number;
   uid: string;
@@ -78,6 +80,11 @@ useUserStore.subscribe(
 /** 获取用户信息 */
 export const getProfile = () => {
   return profile().then((res: any) => {
+    if (res?.avatar) {
+      console.log(res?.avatar);
+
+      Image.prefetch(genAvatarUrl(res?.avatar));
+    }
     useUserStore.setState({ profile: res });
   });
 };
