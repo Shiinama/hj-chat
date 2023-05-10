@@ -61,14 +61,14 @@ function MessagesContainer(props: MessagesContainerProps) {
   const { data, renderItem: propsRenderItem, ...flatRest } = flatListProps
   const flatListRef = useRef<FlatList>(null)
   const scrollToEnd = useCallback(() => {
-    flatListRef?.current?.scrollToEnd({ animated: false })
+    flatListRef?.current?.scrollToEnd({ animated: true })
   }, [])
   const onLayoutList = () => {
     // 因为有可能太快了还没渲染完（薛定谔的渲染？）就开始滚，会滚不到最下面去，所以这里延迟一下，暂时没有特别好的方案
     if (data?.length) {
       setTimeout(() => {
         scrollToEnd()
-      }, data?.length * 10)
+      }, data?.length * 5)
     }
   }
   const renderItem = ({ item, index, separators }: { item: any; index: number; separators: any }) => {
@@ -95,6 +95,7 @@ function MessagesContainer(props: MessagesContainerProps) {
           onLayout={onLayoutList}
           style={styles.listStyle}
           renderItem={renderItem}
+          onContentSizeChange={scrollToEnd}
           contentContainerStyle={styles.contentContainerStyle}
           keyboardDismissMode="on-drag"
           {...InternalProps}
