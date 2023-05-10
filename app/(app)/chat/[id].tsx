@@ -41,7 +41,6 @@ export type ChatItem = {
 
 export default function Chat({}) {
   const { pinned, logo, name, uid, userId, energyPerChat } = botStore.getState()
-  console.log(name)
   const { profile } = useUserStore()
 
   const eventAppState = useRef<{
