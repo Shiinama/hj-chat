@@ -51,7 +51,7 @@ export default function Invite() {
                   <Copy
                     onPress={() => {
                       Clipboard.setString(link)
-                      Toast('copied')
+                      Toast('Copied')
                     }}
                   />
                 }
@@ -67,7 +67,7 @@ export default function Invite() {
                   <Copy
                     onPress={() => {
                       Clipboard.setString(code)
-                      Toast('copied')
+                      Toast('Copied')
                     }}
                   />
                 }

@@ -132,7 +132,7 @@ export default function Robot() {
               </View>
             ))}
         </View>
-        {userStore.userId === botStore.userId && (
+        {userStore?.userId === botStore?.userId && (
           <View style={styles.actions}>
             <TouchableOpacity
               onPress={() => Toast('Please use a desktop browser to create a robot')}

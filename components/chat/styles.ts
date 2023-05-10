@@ -27,8 +27,6 @@ export default StyleSheet.create({
   },
   contentBox: {
     borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginLeft: 8,
     marginRight: 8,
     maxWidth: 263,
@@ -48,6 +46,7 @@ export default StyleSheet.create({
   },
   content: {
     padding: 12,
+    width: '100%',
     borderTopWidth: 1,
     fontSize: 14,
     borderColor: '#E2E8F0',
@@ -61,36 +60,6 @@ export default StyleSheet.create({
   },
   meContent: {
     backgroundColor: '#F1EAFE',
-  },
-  triangleLeft: {
-    position: 'absolute',
-    left: -5,
-    top: 14,
-    zIndex: 666,
-    borderTopWidth: 5,
-    borderBottomWidth: 5,
-    borderRightWidth: 6,
-    borderColor: '#FFF8DC',
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-  },
-  triangleRight: {
-    position: 'absolute',
-    right: -5,
-    top: 14,
-    zIndex: 666,
-    borderTopWidth: 5,
-    borderBottomWidth: 5,
-    borderLeftWidth: 6,
-    borderColor: '#9F9F5F',
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-  },
-  time: {
-    textAlign: 'center',
-    color: 'rgba(0,0,0,.5)',
-    fontSize: 12,
-    margin: 10,
   },
   footer: {
     backgroundColor: '#f5f5f5',

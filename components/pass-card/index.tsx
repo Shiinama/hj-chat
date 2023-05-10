@@ -44,7 +44,7 @@ export default function PassCardItem({ title, subView, level, id, Sea }: Iprops)
             i.subTextArray.map(i => (
               <View
                 key={i}
-                style={{ marginTop: 8, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'grey' }}
+                style={{ marginTop: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#EDEDED' }}
               >
                 <Text style={{ fontSize: 14, lineHeight: 24 }}>{i}</Text>
               </View>
@@ -72,7 +72,7 @@ export default function PassCardItem({ title, subView, level, id, Sea }: Iprops)
 
     if (id === level) {
       return (
-        <Button disabled={true} style={styles.bottomButton}>
+        <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
           Current Level
         </Button>
       )
@@ -94,7 +94,7 @@ export default function PassCardItem({ title, subView, level, id, Sea }: Iprops)
     }
 
     return (
-      <Button onPress={() => {}} disabled={true} style={styles.bottomButton}>
+      <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
         Coming Soon
       </Button>
     )
@@ -118,9 +118,14 @@ const styles = StyleSheet.create({
   bottomButton: {
     width: '100%',
     position: 'absolute',
+    left: '4%',
     bottom: 30,
     backgroundColor: '#7A2EF6',
     borderColor: '#7A2EF6',
+  },
+  greyColor: {
+    backgroundColor: '#E0E0E0',
+    borderColor: '#E0E0E0',
   },
   viewItem: {
     flexDirection: 'row',

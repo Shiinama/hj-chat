@@ -1,41 +1,49 @@
-import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native'
-import { useRouter } from 'expo-router'
-import RootStyles from '../../constants/RootStyles'
-import 'react-native-get-random-values'
-import { useEffect, useState } from 'react'
-import { botList } from '../../api/index'
-import BotCard from '../../components/botCard'
-import ShellLoading from '../../components/loading'
-import botStore from '../../store/botStore'
-import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
+import { View, StyleSheet, ScrollView, Pressable, Text } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import RootStyles from "../../constants/RootStyles";
+import "react-native-get-random-values";
+import { useCallback, useEffect, useState } from "react";
+import { botList } from "../../api/index";
+import BotCard from "../../components/botCard";
+import ShellLoading from "../../components/loading";
+import botStore from "../../store/botStore";
+import {
+  ChainInfo,
+  LoginType,
+  SupportAuthType,
+  iOSModalPresentStyle,
+  Env,
+} from "react-native-particle-auth";
 type ListDataItem = {
-  id: number
-  uid: string
-  name: string
-  description: string
-  userId: number
-  logo: string
-  language: string
-  pinned: boolean
-  lastInteractionDate: string
-}
+  id: number;
+  uid: string;
+  name: string;
+  description: string;
+  userId: number;
+  logo: string;
+  language: string;
+  pinned: boolean;
+  lastInteractionDate: string;
+};
 
-import { createWeb3 } from '../../tmp/web3Demo'
+import { createWeb3 } from "../../tmp/web3Demo";
 
 export default function TabOneScreen() {
-  const router = useRouter()
-  const [listData, setListData] = useState<ListDataItem[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter();
+  const [listData, setListData] = useState<ListDataItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    botList().then(res => {
-      setListData(res as ListDataItem[])
-      setLoading(false)
-    })
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      botList().then((res) => {
+        setListData(res as ListDataItem[]);
+        setLoading(false);
+      });
+    }, [])
+  );
 
-  const onShowDetail = event => {
-    botStore.setState(event)
+  const onShowDetail = (event) => {
+    botStore.setState(event);
     router.push({
       pathname: `chat/${event.id}`,
       params: {
@@ -46,17 +54,17 @@ export default function TabOneScreen() {
         language: event.language,
         uid: event.uid,
       },
-    })
-  }
+    });
+  };
 
-  if (loading) return <ShellLoading></ShellLoading>
+  if (loading) return <ShellLoading></ShellLoading>;
   return (
     <View style={styles.container}>
       <ScrollView style={styles.listContainer}>
-        {listData?.map(ld => (
+        {listData?.map((ld) => (
           <BotCard
-            onShowDetail={e => {
-              onShowDetail(e)
+            onShowDetail={(e) => {
+              onShowDetail(e);
             }}
             key={ld.id}
             showPined={ld.pinned}
@@ -66,29 +74,29 @@ export default function TabOneScreen() {
         ))}
       </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: RootStyles.flexCenter,
   listContainer: {
-    backgroundColor: 'white',
-    width: '100%',
-    height: '100%',
+    backgroundColor: "white",
+    width: "100%",
+    height: "100%",
     padding: 16,
   },
 
   listItem: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     padding: 12,
     gap: 12,
     borderRadius: 12,
     // with: 343,
     // height: 76,
     marginBottom: 12,
-    backgroundColor: '#F6F6F6',
-    flexDirection: 'row',
+    backgroundColor: "#F6F6F6",
+    flexDirection: "row",
   },
 
   avatar: {
@@ -101,17 +109,17 @@ const styles = StyleSheet.create({
   },
 
   listItemTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F6F6F6',
-    borderColor: '#CDCDCD',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F6F6F6",
+    borderColor: "#CDCDCD",
   },
 
   listItemMid: {
     flex: 1,
-    display: 'flex',
-    justifyContent: 'space-between',
-    backgroundColor: '#F6F6F6',
+    display: "flex",
+    justifyContent: "space-between",
+    backgroundColor: "#F6F6F6",
     paddingVertical: 2,
     marginRight: 12,
   },
@@ -120,17 +128,17 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     width: 231,
     fontSize: 16,
-    color: '#1F1F1F',
+    color: "#1F1F1F",
   },
 
   message: {
     // width: 231,
     // marginTop: 5,
-    color: '#B9B9B9',
+    color: "#B9B9B9",
   },
 
   time: {
-    color: '#B9B9B9',
+    color: "#B9B9B9",
     flex: 1,
     lineHeight: 12,
     fontSize: 12,
@@ -138,6 +146,6 @@ const styles = StyleSheet.create({
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%',
+    width: "80%",
   },
-})
+});

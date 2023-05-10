@@ -4,18 +4,19 @@ import { useNavigation } from "expo-router";
 import {
   Text,
   View,
-  Image,
   ScrollView,
   TouchableOpacity,
   TextInput,
 } from "react-native";
 
+import { Image } from "expo-image";
 import { styles } from "./style";
 import Camera from "../../../assets/images/profile/camera.svg";
 import ActiveIcon from "../../../assets/images/profile/activeIcon.svg";
 import Discord from "../../../assets/images/profile/discord.svg";
 import Telegram from "../../../assets/images/profile/telegram.svg";
 import Twitter from "../../../assets/images/profile/twitter.svg";
+import ImgPlaceholder from "../../../assets/images/img_placeholder.png";
 import useUserStore, { getProfile } from "../../../store/userStore";
 import { Button, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { useBoolean, useDeepCompareEffect } from "ahooks";
@@ -72,7 +73,7 @@ export default function Profile() {
     getIsUserNameAvailable({ name }).then((res) => {
       if (res) {
         postUpdateUserName({ name }).then((res) => {
-          Toast("update successfully!");
+          Toast("Update successfully!");
           setSaveLoading(false);
           getProfile();
         });
@@ -90,6 +91,9 @@ export default function Profile() {
             }}
           >
             <Image
+              cachePolicy="disk"
+              placeholderContentFit="cover"
+              placeholder={ImgPlaceholder}
               source={{ uri: genAvatarUrl(profile?.avatar) }}
               style={styles.avatarImg}
             />
