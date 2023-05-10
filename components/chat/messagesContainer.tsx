@@ -63,14 +63,14 @@ function MessagesContainer(props: MessagesContainerProps) {
   const scrollToEnd = useCallback(() => {
     flatListRef?.current?.scrollToEnd({ animated: false })
   }, [])
-  // const onLayoutList = () => {
-  //   // 因为有可能太快了还没渲染完（薛定谔的渲染？）就开始滚，会滚不到最下面去，所以这里延迟一下，暂时没有特别好的方案
-  //   if (data?.length) {
-  //     setTimeout(() => {
-  //       scrollToEnd()
-  //     }, data?.length * 10)
-  //   }
-  // }
+  const onLayoutList = () => {
+    // 因为有可能太快了还没渲染完（薛定谔的渲染？）就开始滚，会滚不到最下面去，所以这里延迟一下，暂时没有特别好的方案
+    if (data?.length) {
+      setTimeout(() => {
+        scrollToEnd()
+      }, data?.length * 10)
+    }
+  }
   const renderItem = ({ item, index, separators }: { item: any; index: number; separators: any }) => {
     if (propsRenderItem) {
       return propsRenderItem({ item, index, separators })
@@ -92,10 +92,9 @@ function MessagesContainer(props: MessagesContainerProps) {
           ref={flatListRef}
           keyExtractor={item => item.uid}
           data={data.length ? data : [{ uid: '1231' }]}
-          // onLayout={onLayoutList}
+          onLayout={onLayoutList}
           style={styles.listStyle}
           renderItem={renderItem}
-          // onContentSizeChange={scrollToEnd}
           contentContainerStyle={styles.contentContainerStyle}
           keyboardDismissMode="on-drag"
           {...InternalProps}

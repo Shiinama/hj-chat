@@ -3,7 +3,6 @@ import { useState } from 'react'
 import MessagesContainer from './messagesContainer'
 import InputToolsTar from './inputToolsTar'
 import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
-
 export interface FishChatProps {
   inputTextProps: TextInput['props']
   flatListProps: FlatList['props']
