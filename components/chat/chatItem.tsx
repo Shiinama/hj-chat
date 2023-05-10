@@ -1,10 +1,11 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import styles from './styles'
 import { genAvatarUrl, genBotUrl } from '../../components/profileInfo/helper'
-
+import { Image } from 'expo-image'
 import { ChatItem } from '../../app/(app)/chat/[id]'
 import AudioMessage from './audioMessage'
 import Blur from '../../assets/images/chat/blur.svg'
+import imgPlaceholder from '../../assets/images/img_placeholder.png'
 import CheckIcon from '../../assets/images/chat/check.svg'
 import CheckedIcon from '../../assets/images/chat/checked.svg'
 import Svt from '../../assets/images/chat/svt.svg'
@@ -24,7 +25,6 @@ type Props = {
 function chatItem({ item, translationText, me, logo }: Props) {
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   const [buttonIndex, setButtonIndex] = useState<number>(1)
-  console.log(logo)
   const isBlur = buttonIndex === 1
   if (item === 123) return null
   const tag = item?.replyUid
@@ -106,6 +106,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
     <View style={styles.itemWrap}>
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
         <Image
+          placeholder={imgPlaceholder}
           source={{
             uri: tag ? genBotUrl(logo) : genAvatarUrl(me),
           }}

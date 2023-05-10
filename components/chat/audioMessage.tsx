@@ -98,21 +98,25 @@ const AudioMessage = forwardRef(
     if (loading) return <ShellLoading></ShellLoading>
     return (
       <View style={styles.container}>
-        {showControl && (
-          <TouchableOpacity onPress={handlePlayPause}>
-            {isPlaying ? <Messagepause height={20} width={20} /> : <MessagePlay height={20} width={20} />}
-          </TouchableOpacity>
-        )}
-        <Text style={styles.time}>{formatTime(currentPosition) + '/' + formatTime(duration)}</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={0}
-          minimumTrackTintColor={'black'}
-          maximumValue={duration}
-          value={currentPosition}
-          thumbImage={heidian}
-          onValueChange={handleChange}
-        />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {showControl && (
+            <TouchableOpacity onPress={handlePlayPause}>
+              {isPlaying ? <Messagepause height={20} width={20} /> : <MessagePlay height={20} width={20} />}
+            </TouchableOpacity>
+          )}
+          <Text style={styles.time}>{formatTime(currentPosition) + '/' + formatTime(duration)}</Text>
+        </View>
+        <View style={{ transform: [{ scale: 0.5 }], position: 'relative', left: -60 }}>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            minimumTrackTintColor={'black'}
+            thumbTintColor={'black'}
+            maximumValue={duration}
+            value={currentPosition}
+            onValueChange={handleChange}
+          />
+        </View>
       </View>
     )
   }
@@ -121,13 +125,14 @@ const AudioMessage = forwardRef(
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center',
+    position: 'relative',
     flexDirection: 'row',
     paddingHorizontal: 20,
   },
   slider: {
-    flex: 1,
-    height: 5,
+    height: 10,
+    width: 240,
+    fontSize: 8,
   },
   time: {
     marginHorizontal: 8,
