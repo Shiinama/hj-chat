@@ -177,7 +177,11 @@ export default function Chat({}) {
   useEffect(() => {
     if (!translationMessage) return
     setChatData(pre => {
-      pre[translationTextIndex].translation = translationMessage.translation
+      // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
+      if (pre[translationTextIndex]) {
+        pre[translationTextIndex].translation = translationMessage.translation
+      }
+      
       return [...pre]
     })
   }, [translationMessage])
@@ -232,7 +236,7 @@ export default function Chat({}) {
             return (
               <View>
                 <ChatItem
-                  me={profile.avatar}
+                  me={profile?.avatar}
                   logo={botStorage.logo}
                   translationText={translationText}
                   item={item}
