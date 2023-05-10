@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import SysConfig from '../../constants/System'
 import { Alert } from 'react-native'
+import useUserStore from '../../store/userStore'
 
 export enum MsgEvents {
   AUTH_FAIL = 'auth_fail',
@@ -61,6 +62,8 @@ export const useSocketIo = () => {
   const [resMessage, setResMessage] = useState<any>()
   const [translationMessage, setTranslation] = useState<any>()
   const [updateMessage, setUpdateMessage] = useState<any>()
+  const { userBaseInfo } = useUserStore.getState()
+  const token = userBaseInfo.token
   const ready = (): boolean => {
     return SocketIoRef.current && SocketIoRef.current.connected
   }
@@ -70,8 +73,7 @@ export const useSocketIo = () => {
       path: '/ws',
       transports: ['websocket'],
       auth: {
-        token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMzM5OTY1MDczLCJqdGkiOiI2MTc1ZDNhMmNjYmE0NWFjYTc2NDc0MDhmYzY1MjllZiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzM0MjU1NzA3M30.C79OLS9eWvDLiEv9ZqDbeoDmJs7AhmnrijHnAnunzx8',
+        token,
       },
     })
     SocketIoRef.current.on(MsgEvents.MSG_ERROR, onMessageError)
