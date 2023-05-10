@@ -9,6 +9,7 @@ type ListDataItem = {
   userId: number
   logo: string
   language: string
+  energyPerChat: number
   pinned: boolean
   lastInteractionDate: string
 }

@@ -14,9 +14,9 @@ function useProtectedRoute(user) {
     if (user === undefined) {
       return
     }
-    if (!user && rootSegment !== '(auth)/sign-in') {
-      router.replace('(auth)/sign-in')
-    }
+    // if (!user && rootSegment !== "(auth)/sign-in") {
+    //   router.replace("(auth)/sign-in");
+    // }
   }, [user, rootSegment])
 }
 
