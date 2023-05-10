@@ -9,7 +9,7 @@ import { styles } from './style'
 import userLogo from '../../../assets/images/userLogo.png'
 import editIcon from '../../../assets/images/edit.png'
 import publishIcon from '../../../assets/images/publish.png'
-import ugcStore from '../../../store/ugcBotstroe'
+import cbotStore from '../../../store/botStore'
 import FlashIcon from '../../../components/flashIcon'
 import useUserStore from '../../../store/userStore'
 import { genBotLogo, genBotUrl } from '../../../components/profileInfo/helper'
@@ -19,9 +19,8 @@ export default function Robot() {
   const navigation = useNavigation()
   const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
-  const botStore = ugcStore.getState()
+  const botStore = cbotStore.getState()
   const userStore = useUserStore.getState().userBaseInfo
-  console.log(botStore, 'botStore')
   useEffect(() => {
     navigation.setOptions({
       title: 'Robot',
@@ -174,14 +173,6 @@ export default function Robot() {
         onPress={() => {
           router.push({
             pathname: `chat/${botStore.id}`,
-            params: {
-              id: botStore.id,
-              energyPerChat: botStore.energyPerChat,
-              userId: botStore.userId,
-              name: botStore.name,
-              language: botStore.language,
-              uid: botStore.uid,
-            },
           })
         }}
       >

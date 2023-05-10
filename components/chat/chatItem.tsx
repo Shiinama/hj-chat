@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
 import styles from './styles'
 import { genAvatarUrl, genBotUrl } from '../../components/profileInfo/helper'
 import { Image } from 'expo-image'
@@ -37,7 +37,14 @@ function chatItem({ item, translationText, me, logo }: Props) {
     return (
       <View style={[styles.content]}>
         {isBlur && item?.type === 'REPLY' && (
-          <BlurView style={styles.absolute} blurType="light" blurAmount={2} reducedTransparencyFallbackColor="white" />
+          <TouchableWithoutFeedback onPress={() => setButtonIndex(2)}>
+            <BlurView
+              style={styles.absolute}
+              blurType="light"
+              blurAmount={2}
+              reducedTransparencyFallbackColor="white"
+            />
+          </TouchableWithoutFeedback>
         )}
         {buttonIndex === 1 && <Text>{item.text}</Text>}
         {buttonIndex === 2 && <Text>{item.text}</Text>}

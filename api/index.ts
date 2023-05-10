@@ -6,7 +6,7 @@ export const botList = () => {
     method: 'get',
   })
 }
-export const chatHistory = id => {
+export const chatHistory = (id: string) => {
   return request({
     url: `/chat/chatHistory/?botUid=${id}`,
     method: 'get',
