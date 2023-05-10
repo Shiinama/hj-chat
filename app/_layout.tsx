@@ -1,7 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Slot, SplashScreen, useNavigation, useSegments } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import * as eva from "@eva-design/eva";
 
 import { Provider as XiaoshuProvider } from "@fruits-chain/react-native-xiaoshu";
@@ -20,7 +20,7 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  console.log(useSegments());
+  console.log("RootLayout:", useSegments());
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -30,12 +30,16 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
+  // 添加useMemo 
+  const RootLayoutView = useMemo(()=>{
+    return <RootLayoutNav />
+  }, [])
 
   return (
     <>
       {/* Keep the splash screen open until the assets have loaded. In the future, we should just support async font loading with a native version of font-display. */}
       {!loaded && <SplashScreen />}
-      {loaded && <RootLayoutNav />}
+      {loaded && RootLayoutView}
     </>
   );
 }
