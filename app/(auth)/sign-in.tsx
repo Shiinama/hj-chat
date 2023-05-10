@@ -27,7 +27,6 @@ const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWH
 
 export default function SignIn() {
   const { signIn } = useAuth()
-  const [code, setCode] = useState('')
   const login = async loginType => {
     const type = loginType
     const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
@@ -152,7 +151,7 @@ export default function SignIn() {
                 }}
                 onPress={() => login('Emial')}
               >
-                <Text style={{ color: 'black', fontSize: 18, fontWeight: 500 }}>Email Login</Text>
+                <Text style={{ color: 'black', fontSize: 18, fontWeight: '500' }}>Email Login</Text>
               </Button>
             </View>
 

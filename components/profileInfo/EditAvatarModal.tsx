@@ -19,7 +19,7 @@ const uploadFile = async uri => {
     uri: filePath,
     type: 'application/octet-stream',
     name: 'file',
-  })
+  } as any)
 
   const boundary = '----WebKitFormBoundaryKuaSUT6xPZeD4B8b'
   return await request({
