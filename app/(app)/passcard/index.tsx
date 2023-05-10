@@ -177,7 +177,6 @@ export default function Passcard() {
       {tab === 1 ? (
         <Carousel
           data={DATA}
-          loop={true}
           contentContainerCustomStyle={{ alignItems: 'flex-start' }}
           renderItem={_renderItem}
           sliderWidth={SLIDER_WIDTH}
@@ -188,7 +187,6 @@ export default function Passcard() {
       ) : (
         <Carousel
           data={DATA1}
-          loop={true}
           contentContainerCustomStyle={{ alignItems: 'flex-start' }}
           renderItem={_renderItem}
           sliderWidth={SLIDER_WIDTH}

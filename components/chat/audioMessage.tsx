@@ -9,7 +9,14 @@ import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
 
 const AudioMessage = forwardRef(
-  ({ audioFileUri, showControl = true, onPlay }: { audioFileUri: string; showControl?: boolean; onPlay?: (playing: boolean)=> void }, ref) => {
+  (
+    {
+      audioFileUri,
+      showControl = true,
+      onPlay,
+    }: { audioFileUri: string; showControl?: boolean; onPlay?: (playing: boolean) => void },
+    ref
+  ) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [currentPosition, setCurrentPosition] = useState<number>(0)
@@ -47,7 +54,7 @@ const AudioMessage = forwardRef(
             setCurrentPosition(status.positionMillis || 0)
             setDuration(status.durationMillis || 0)
           }
-          if (status.isLoaded && isPlaying && (status.positionMillis - status.durationMillis >= 0)) {
+          if (status.isLoaded && isPlaying && status.positionMillis - status.durationMillis >= 0) {
             await sound.stopAsync()
             setCurrentPosition(0)
             setIsPlaying(false)
@@ -63,7 +70,7 @@ const AudioMessage = forwardRef(
           soundManager.current.pause()
         } else {
           // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
-          soundManager.current.play(sound, function(){
+          soundManager.current.play(sound, function () {
             setIsPlaying(false)
           })
         }
@@ -71,7 +78,7 @@ const AudioMessage = forwardRef(
       }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
       onPlay?.(isPlaying)
     }, [isPlaying])
 

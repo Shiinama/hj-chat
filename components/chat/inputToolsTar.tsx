@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native'
-import { MenuItem, OverflowMenu } from '@ui-kitten/components'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -61,7 +60,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const [position, setPosition] = useState('absolute')
   const [audioFileUri, setAudioFileUri] = useState('')
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(true)
   const [showSend, setShowSend] = useState(false)
   const inputRef = useRef(null)
   const audioMessageRef = useRef(null)

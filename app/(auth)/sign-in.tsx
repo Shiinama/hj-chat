@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 import {
   Text,
   View,
@@ -8,62 +8,44 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   ScrollView,
-} from "react-native";
+} from 'react-native'
 
-import { styles } from "./style";
-import userLogo from "../../assets/images/login_icon.png";
-import walletLogo from "../../assets/images/wallet_icon.png";
-import facebookLogo from "../../assets/images/facebook_icon.png";
-import googleLogo from "../../assets/images/google_icon.png";
-import { Button, TextInput, Toast } from "@fruits-chain/react-native-xiaoshu";
-import { useAuth } from "../../context/auth";
-import {
-  ChainInfo,
-  LoginType,
-  SupportAuthType,
-  iOSModalPresentStyle,
-  Env,
-} from "react-native-particle-auth";
-import * as particleAuth from "react-native-particle-auth";
-import useUserStore from "../../store/userStore";
+import { styles } from './style'
+import userLogo from '../../assets/images/login_icon.png'
+import walletLogo from '../../assets/images/wallet_icon.png'
+import facebookLogo from '../../assets/images/facebook_icon.png'
+import googleLogo from '../../assets/images/google_icon.png'
+import { Button, TextInput, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { useAuth } from '../../context/auth'
+import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
+import * as particleAuth from 'react-native-particle-auth'
+import useUserStore from '../../store/userStore'
 
-import { createWeb3 } from "../../tmp/web3Demo";
-import { particleLogin } from "../../api/auth";
-const web3 = createWeb3(
-  "c135c555-a871-4ec2-ac8c-5209ded4bfd1",
-  "clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI"
-);
+import { createWeb3 } from '../../tmp/web3Demo'
+import { particleLogin } from '../../api/auth'
+const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
 
 export default function SignIn() {
-  const { signIn } = useAuth();
-  const [code, setCode] = useState("");
-  const login = async (loginType) => {
-    const type = loginType;
-    const _supportAuthType = [
-      SupportAuthType.Email,
-      SupportAuthType.Google,
-      SupportAuthType.Facebook,
-    ];
-    const result = await particleAuth.login(
-      type,
-      "",
-      _supportAuthType as any,
-      undefined
-    );
+  const { signIn } = useAuth()
+  const [code, setCode] = useState('')
+  const login = async loginType => {
+    const type = loginType
+    const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
+    const result = await particleAuth.login(type, '', _supportAuthType as any, undefined)
     if (result.status) {
-      const userInfo = result.data;
-      useUserStore.setState({ particleInfo: userInfo });
+      const userInfo = result.data
+      useUserStore.setState({ particleInfo: userInfo })
       const info = await particleLogin({
         uuid: userInfo.uuid,
         token: userInfo.token,
-      });
+      })
 
-      signIn(info);
+      signIn(info)
     } else {
-      const error = result.data;
-      Toast(error);
+      const error = result.data
+      Toast(error)
     }
-  };
+  }
 
   // const chainInfo = ChainInfo.EthereumGoerli;
   // const env = Env.Production;
@@ -92,11 +74,11 @@ export default function SignIn() {
             <View>
               <Text
                 style={{
-                  fontWeight: "600",
+                  fontWeight: '600',
                   fontSize: 20,
                   lineHeight: 30,
-                  textAlign: "center",
-                  color: "#000000",
+                  textAlign: 'center',
+                  color: '#000000',
                 }}
               >
                 The most advanced AI chatbot platform
@@ -107,28 +89,25 @@ export default function SignIn() {
               onPress={walletClick}
               style={{
                 marginTop: 20,
-                borderColor: "#000000",
+                borderColor: '#000000',
                 borderWidth: 1,
                 borderRadius: 20,
                 height: 35,
-                width: "80%",
+                width: '80%',
               }}
             >
               <View
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Image
-                  source={walletLogo}
-                  style={{ width: 40, height: 32 }}
-                ></Image>
+                <Image source={walletLogo} style={{ width: 40, height: 32 }}></Image>
                 <Text
                   style={{
-                    fontWeight: "600",
+                    fontWeight: '600',
                     fontSize: 18,
                     marginHorizontal: 10,
                   }}
@@ -138,11 +117,11 @@ export default function SignIn() {
               </View>
             </TouchableHighlight>
 
-            <View style={{ marginTop: 30, width: "80%" }}>
-              <View style={{ backgroundColor: "#cccccc", height: 0.5 }}></View>
+            <View style={{ marginTop: 30, width: '80%' }}>
+              <View style={{ backgroundColor: '#cccccc', height: 0.5 }}></View>
               <View
                 style={{
-                  backgroundColor: "#ffffff",
+                  backgroundColor: '#ffffff',
                   width: 108,
                   marginTop: -8,
                   marginHorizontal: 90,
@@ -150,9 +129,9 @@ export default function SignIn() {
               >
                 <Text
                   style={{
-                    color: "#cccccc",
+                    color: '#cccccc',
                     fontSize: 12,
-                    textAlign: "center",
+                    textAlign: 'center',
                   }}
                 >
                   Or connect using
@@ -163,83 +142,74 @@ export default function SignIn() {
             <View
               style={{
                 marginTop: 25,
-                display: "flex",
-                flexDirection: "row",
-                width: "80%",
-                justifyContent: "space-between",
+                display: 'flex',
+                flexDirection: 'row',
+                width: '80%',
+                justifyContent: 'space-between',
               }}
             >
               <TouchableOpacity
-                onPress={() => login("Facebook")}
+                onPress={() => login('Facebook')}
                 style={{
-                  width: "48%",
-                  borderColor: "#000000",
+                  width: '48%',
+                  borderColor: '#000000',
                   borderWidth: 1,
                   borderRadius: 20,
                   height: 35,
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Image
-                  source={facebookLogo}
-                  style={{ width: 24, height: 24 }}
-                ></Image>
+                <Image source={facebookLogo} style={{ width: 24, height: 24 }}></Image>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => login("Google")}
+                onPress={() => login('Google')}
                 style={{
-                  width: "48%",
-                  borderColor: "#000000",
+                  width: '48%',
+                  borderColor: '#000000',
                   borderWidth: 1,
                   borderRadius: 20,
                   height: 35,
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Image
-                  source={googleLogo}
-                  style={{ width: 24, height: 24 }}
-                ></Image>
+                <Image source={googleLogo} style={{ width: 24, height: 24 }}></Image>
               </TouchableOpacity>
             </View>
 
             <View
               style={{
-                display: "flex",
-                flexDirection: "row",
+                display: 'flex',
+                flexDirection: 'row',
                 marginTop: 20,
-                justifyContent: "center",
+                justifyContent: 'center',
               }}
             >
               <Button
                 style={{
                   width: 200,
                   borderRadius: 20,
-                  borderColor: "#000000",
+                  borderColor: '#000000',
                   borderWidth: 1,
-                  backgroundColor: "white",
+                  backgroundColor: 'white',
                 }}
-                onPress={() => login("Emial")}
+                onPress={() => login('Emial')}
               >
-                <Text style={{ color: "black", fontSize: 18, fontWeight: 500 }}>
-                  Email Login
-                </Text>
+                <Text style={{ color: 'black', fontSize: 18, fontWeight: 500 }}>Email Login</Text>
               </Button>
             </View>
 
-            <View style={{ width: "80%", marginTop: 20 }}>
+            <View style={{ width: '80%', marginTop: 20 }}>
               <Text
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   fontSize: 15,
-                  color: "#aaaaaa",
+                  color: '#aaaaaa',
                   lineHeight: 20,
                 }}
               >
-                If you haven't registered before, we will help you create an
-                account.
+                If you haven't registered before, we will help you create an account.
               </Text>
             </View>
           </View>
@@ -247,5 +217,5 @@ export default function SignIn() {
       </ScrollView>
       {/* <Shim /> */}
     </>
-  );
+  )
 }
