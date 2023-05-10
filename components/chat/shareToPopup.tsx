@@ -14,7 +14,6 @@ export interface ShareToPopupProps {}
 type shareAction = 'save' | 'link' | 'twitter'
 const ShareToPopup: FC<ShareToPopupProps> = () => {
   const { value, setValue } = useContext(ChatContext)
-  console.log(value.selectedItems)
   const action = (key: shareAction) => {
     if (value?.selectedItems?.length <= 0) {
       Toast('Please select at least one chat!')
@@ -22,7 +21,6 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
     }
     // https://share.vinstic.com/share/101952a812444b22a83fd4e4dcb99a46/download
     createSharedConversation(value.selectedItems).then(res => {
-      console.log({ res })
       switch (key) {
         case 'save':
           FileSystem.downloadAsync(

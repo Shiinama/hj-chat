@@ -38,7 +38,6 @@ export default function TabTwoScreen() {
   }
 
   const onShowDetail = event => {
-    console.log(event)
     ugcStore.setState(event)
     router.push({
       pathname: `robot/${event.id}`,

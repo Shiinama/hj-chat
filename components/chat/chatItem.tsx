@@ -26,7 +26,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   const [buttonIndex, setButtonIndex] = useState<number>(1)
   const isBlur = buttonIndex === 1
-  if (item === 123) return null
+  if (item.uid === '1231') return null
   const tag = item?.replyUid
   const renderMessageAudio = () => <AudioMessage audioFileUri={item?.voiceUrl} />
   const renderMessageText = () => {
@@ -69,7 +69,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
       <TouchableOpacity
         key={dText}
         style={[styles.button, buttonIndex === id && styles.active]}
-        onPress={() => {
+        onPress={e => {
           setButtonIndex(id)
           if (id === 3) {
             translationText(item.uid)

@@ -87,10 +87,8 @@ export default function Robot() {
       confirmButtonText: 'Confirm',
       cancelButtonColor: '#1F1F1F',
     }).then(action => {
-      console.log('提示弹窗：', action)
       if (action === 'confirm') {
         postPublishBot({ botUid: botStore.uid }).then(res => {
-          console.log('res', res)
           Toast('Published successfully')
         })
       }
