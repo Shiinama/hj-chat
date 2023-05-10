@@ -47,56 +47,57 @@ export default function TabThreeScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.profile}>
-        <View style={styles.profileInfo}>
-          <Image
-            cachePolicy="disk"
-            placeholderContentFit="cover"
-            placeholder={ImgPlaceholder}
-            source={{ uri: genAvatarUrl(profile?.avatar) }}
-            style={{ width: 80, height: 80, borderRadius: 12 }}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              onEdit();
-            }}
-          >
+      <TouchableOpacity
+        onPress={() => {
+          onEdit();
+        }}
+      >
+        <View style={styles.profile}>
+          <View style={styles.profileInfo}>
+            <Image
+              cachePolicy="disk"
+              placeholderContentFit="cover"
+              placeholder={ImgPlaceholder}
+              source={{ uri: genAvatarUrl(profile?.avatar) }}
+              style={{ width: 80, height: 80, borderRadius: 12 }}
+            />
+
             <Image
               source={editIcon}
               style={{ width: 30, height: 30, borderRadius: 4 }}
             />
-          </TouchableOpacity>
+          </View>
+          <View style={styles.profileDetail}>
+            <Text style={styles.profileDesc}>{profile?.name}</Text>
+            <Text style={styles.profileBianhao}>{profile?.nameTag}</Text>
+          </View>
+          <View style={styles.flex}>
+            <Text style={{ ...styles.flextag, ...styles.pink }}>Basic</Text>
+            <Text style={{ ...styles.flextag, ...styles.green }}>
+              Lv.{profile?.level}
+            </Text>
+            <Image source={SocialIcon} style={{ width: 24, height: 24 }} />
+            <Image source={Social1Icon} style={{ width: 24, height: 24 }} />
+            <Image source={Social2Icon} style={{ width: 24, height: 24 }} />
+          </View>
+          <View style={{ ...styles.flexMain }}>
+            <Image
+              source={ThunderIcon}
+              style={{
+                width: 24,
+                height: 24,
+                position: "absolute",
+                left: 0,
+                top: 0,
+              }}
+            />
+            <ProgressBar
+              maxRange={userEnergyInfo?.dailyEnergy}
+              progressValue={userEnergyInfo?.energy}
+            />
+          </View>
         </View>
-        <View style={styles.profileDetail}>
-          <Text style={styles.profileDesc}>{profile?.name}</Text>
-          <Text style={styles.profileBianhao}>{profile?.nameTag}</Text>
-        </View>
-        <View style={styles.flex}>
-          <Text style={{ ...styles.flextag, ...styles.pink }}>Basic</Text>
-          <Text style={{ ...styles.flextag, ...styles.green }}>
-            Lv.{profile?.level}
-          </Text>
-          <Image source={SocialIcon} style={{ width: 24, height: 24 }} />
-          <Image source={Social1Icon} style={{ width: 24, height: 24 }} />
-          <Image source={Social2Icon} style={{ width: 24, height: 24 }} />
-        </View>
-        <View style={{ ...styles.flexMain }}>
-          <Image
-            source={ThunderIcon}
-            style={{
-              width: 24,
-              height: 24,
-              position: "absolute",
-              left: 0,
-              top: 0,
-            }}
-          />
-          <ProgressBar
-            maxRange={userEnergyInfo?.dailyEnergy}
-            progressValue={userEnergyInfo?.energy}
-          />
-        </View>
-      </View>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.actionItem}
         onPress={() => router.push({ pathname: "passcard" })}
