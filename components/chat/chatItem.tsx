@@ -1,7 +1,7 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import styles from './styles'
-import you from '../../assets/images/flash.jpg'
-import me from '../../assets/images/me.jpg'
+import { genAvatarUrl } from '../../components/profileInfo/helper'
+
 import { ChatItem } from '../../app/(app)/chat/[id]'
 import AudioMessage from './audioMessage'
 import Blur from '../../assets/images/chat/blur.svg'
@@ -18,9 +18,10 @@ type Props = {
   translationText
   children?: (() => React.ReactNode) | React.ReactNode
   logo: string
+  me: string
 }
 
-function chatItem({ item, translationText, logo }: Props) {
+function chatItem({ item, translationText, me, logo }: Props) {
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   const [buttonIndex, setButtonIndex] = useState<number>(1)
   const isBlur = buttonIndex === 1
@@ -105,9 +106,7 @@ function chatItem({ item, translationText, logo }: Props) {
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
         <Image
           source={{
-            uri: tag
-              ? logo
-              : 'https://www.bhmpics.com/downloads/isla-plastic-memories-Wallpapers/1.thumb-1920-657801.jpg',
+            uri: tag ? logo : genAvatarUrl(me),
           }}
           style={styles.avatar}
         />

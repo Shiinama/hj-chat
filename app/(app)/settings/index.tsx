@@ -3,6 +3,7 @@ import { useNavigation } from 'expo-router'
 import { useEffect } from 'react'
 import { View } from 'react-native'
 import { useAuth } from '../../../context/auth'
+import Signout from '../../../assets/images/profile/signout.svg'
 export default function Settings() {
   const { signOut } = useAuth()
   const navigation = useNavigation()
@@ -13,8 +14,8 @@ export default function Settings() {
     })
   }, [])
   return (
-    <View style={{ marginTop: 20 }}>
-      <Button type="ghost" text="Sign Out" onPress={signOut} danger />
+    <View style={{ margin: 20 }}>
+      <Button renderLeftIcon={() => <Signout></Signout>} type="ghost" text="Sign Out" onPress={signOut} danger />
     </View>
   )
 }

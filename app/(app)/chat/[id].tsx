@@ -16,6 +16,7 @@ import { Button } from '@fruits-chain/react-native-xiaoshu'
 import { convert4amToMp3 } from '../../../utils/convert'
 import botStore from '../../../store/botStore'
 import FlashIcon from '../../../components/flashIcon'
+import useUserStore from '../../../store/userStore'
 export type ChatItem = {
   id: number
   uid?: string
@@ -36,6 +37,8 @@ export type ChatItem = {
 
 export default function Chat({}) {
   const botStorage = botStore.getState()
+  const { profile } = useUserStore()
+
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
@@ -201,7 +204,12 @@ export default function Chat({}) {
           renderItem: ({ item, index }) => {
             return (
               <View>
-                <ChatItem logo={botStorage.logo} translationText={translationText} item={item}></ChatItem>
+                <ChatItem
+                  me={profile.avatar}
+                  logo={botStorage.logo}
+                  translationText={translationText}
+                  item={item}
+                ></ChatItem>
               </View>
             )
           },
