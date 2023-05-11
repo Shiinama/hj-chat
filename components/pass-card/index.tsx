@@ -1,9 +1,9 @@
 import { Button } from "@ui-kitten/components";
 import { View, Text, StyleSheet } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { Toast } from "../../utils/toast";
 import { getInvitation } from "../../api/proofile";
 import * as WebBrowser from "expo-web-browser";
+import { Toast } from "@fruits-chain/react-native-xiaoshu";
 
 type Iprops = {
   title: number;

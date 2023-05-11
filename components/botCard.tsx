@@ -2,7 +2,8 @@ import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, S
 import { chatTimeFormat } from '../utils/time'
 import RootStyles from '../constants/RootStyles'
 import Pined from '../assets/images/tabbar/pin.svg'
-import { genBotUrl } from './profileInfo/helper'
+import { genBotUrl, renderImage } from './profileInfo/helper'
+import defaultAvatar from '../assets/images/defaultAvatar.png'
 
 function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   return (
@@ -12,7 +13,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
         onShowDetail(ld)
       }}
     >
-      {<Image source={{ uri: genBotUrl(ld.logo) }} style={styles.avatar} />}
+      {renderImage(ld.logo, styles.avatar)}
       <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
         <View style={styles.listItemTop}>
           <Text style={styles.name}>{ld.name}</Text>
@@ -36,7 +37,12 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 16,
   },
-
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 99,
+    marginHorizontal: 12,
+  },
   listItem: {
     display: 'flex',
     alignItems: 'center',
@@ -49,16 +55,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F6F6',
     flexDirection: 'row',
   },
-
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 99,
-    // borderWidth: 1,
-    // borderColor: '#CDCDCD',
-    marginHorizontal: 12,
-  },
-
   listItemTop: {
     flexDirection: 'row',
     alignItems: 'center',

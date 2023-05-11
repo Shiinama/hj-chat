@@ -1,4 +1,3 @@
-import { Toast } from '../toast'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
 import useUserStore from '../../store/userStore'
@@ -6,7 +5,7 @@ import useUserStore from '../../store/userStore'
 import systemConfig from '../../constants/System'
 import MSG_LIST from './message'
 import debounce from 'lodash/debounce'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
 export type RequestOptions = AxiosRequestConfig & {
   url: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

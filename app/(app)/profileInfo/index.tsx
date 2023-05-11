@@ -22,7 +22,7 @@ import useUserStore, {
   getConnections,
   getProfile,
 } from "../../../store/userStore";
-import { Button, Popup } from "@fruits-chain/react-native-xiaoshu";
+import { Button, Popup, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { useBoolean, useDeepCompareEffect } from "ahooks";
 import {
   getIsUserNameAvailable,
@@ -33,7 +33,6 @@ import {
 } from "../../../api/proofile";
 import EditAvatarModal from "../../../components/profileInfo/EditAvatarModal";
 import { genAvatarUrl } from "../../../components/profileInfo/helper";
-import { Toast } from "../../../utils/toast";
 
 export default function Profile() {
   const navigation = useNavigation();

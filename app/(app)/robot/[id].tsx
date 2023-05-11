@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useSearchParams, useNavigation } from 'expo-router'
 import { Text, View, Image, TouchableOpacity } from 'react-native'
-import { Dialog } from '@fruits-chain/react-native-xiaoshu'
-import { Toast } from '../../../utils/toast'
+import { Dialog, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { postPublishBot } from '../../../api/robot'
 import { styles } from './style'
 import userLogo from '../../../assets/images/userLogo.png'
@@ -12,7 +11,7 @@ import publishIcon from '../../../assets/images/publish.png'
 import cbotStore from '../../../store/botStore'
 import FlashIcon from '../../../components/flashIcon'
 import useUserStore from '../../../store/userStore'
-import { genBotLogo, genBotUrl } from '../../../components/profileInfo/helper'
+import { genBotUrl } from '../../../components/profileInfo/helper'
 
 export default function Robot() {
   const router = useRouter()
