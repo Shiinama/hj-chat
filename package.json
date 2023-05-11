@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start --dev-client -c",
+    "start:dev": "cross-env REACT_APP_IS_LOGIN=true expo start --dev-client -c",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:dev": "cross-env REACT_APP_IS_LOGIN=true expo run:ios",
     "test": "jest --watchAll",
     "postinstall": "npx patch-package"
   },
