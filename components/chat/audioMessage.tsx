@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 20,
     height: "100%",
+    maxHeight: 38,
   },
   slider: {
     height: 10,
