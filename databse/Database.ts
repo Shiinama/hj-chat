@@ -1,8 +1,10 @@
-import * as SQLite from 'expo-sqlite'
+import SQLite from 'react-native-sqlite-storage'
 import { DatabaseInitialization } from './DatabaseInitialization'
+import { List } from './types'
+import { ListItem } from './types'
 import { DATABASE } from './Constants'
 import { AppState, AppStateStatus } from 'react-native'
-import { List, ListItem } from './types'
+
 export interface Database {
   // Create
   createList(newListTitle: string): Promise<void>
@@ -16,7 +18,7 @@ export interface Database {
   deleteList(list: List): Promise<void>
 }
 
-let databaseInstance: SQLite.WebSQLDatabase | undefined
+let databaseInstance: SQLite.SQLiteDatabase | undefined
 
 // Insert a new list into the database
 async function createList(newListTitle: string): Promise<void> {
@@ -132,14 +134,20 @@ async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
 }
 
 // Open a connection to the database
-async function open(): Promise<SQLite.WebSQLDatabase> {
+async function open(): Promise<SQLite.SQLiteDatabase> {
+  SQLite.DEBUG(true)
+  SQLite.enablePromise(true)
+
   if (databaseInstance) {
     console.log('[db] Database is already open: returning the existing instance')
     return databaseInstance
   }
 
   // Otherwise, create a new instance
-  const db = await SQLite.openDatabase(DATABASE.FILE_NAME)
+  const db = await SQLite.openDatabase({
+    name: DATABASE.FILE_NAME,
+    location: 'default',
+  })
   console.log('[db] Database open!')
 
   // Perform any database initialization or updates, if needed

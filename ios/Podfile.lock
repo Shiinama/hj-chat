@@ -118,8 +118,6 @@ PODS:
   - EXSplashScreen (0.18.1):
     - ExpoModulesCore
     - React-Core
-  - EXSQLite (11.1.1):
-    - ExpoModulesCore
   - EXUpdatesInterface (0.9.1)
   - FBLazyVector (0.71.7)
   - FBReactNativeSpec (0.71.7):
@@ -404,6 +402,8 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-slider (4.4.2):
     - React-Core
+  - react-native-sqlite-storage (6.0.1):
+    - React-Core
   - react-native-view-shot (3.6.0):
     - React-Core
   - react-native-webview (11.26.0):
@@ -553,11 +553,10 @@ DEPENDENCIES:
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
-  - EXSQLite (from `../node_modules/expo-sqlite/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
-  - ffmpeg-kit-react-native/audio (from `/Users/ming/projects/yuc/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec`)
+  - ffmpeg-kit-react-native/audio (from `/Users/weishunyu/chatgpt/yu-chat/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - ParticleAuthService (= 0.12.0)
   - ParticleNetworkBase (= 0.12.0)
@@ -582,6 +581,7 @@ DEPENDENCIES:
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
   - react-native-view-shot (from `../node_modules/react-native-view-shot`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -676,8 +676,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-web-browser/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
-  EXSQLite:
-    :path: "../node_modules/expo-sqlite/ios"
   EXUpdatesInterface:
     :path: "../node_modules/expo-updates-interface/ios"
   FBLazyVector:
@@ -685,7 +683,7 @@ EXTERNAL SOURCES:
   FBReactNativeSpec:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   ffmpeg-kit-react-native:
-    :podspec: "/Users/ming/projects/yuc/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec"
+    :podspec: "/Users/weishunyu/chatgpt/yu-chat/node_modules/ffmpeg-kit-react-native/ffmpeg-kit-react-native.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   RCT-Folly:
@@ -728,6 +726,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-sqlite-storage:
+    :path: "../node_modules/react-native-sqlite-storage"
   react-native-view-shot:
     :path: "../node_modules/react-native-view-shot"
   react-native-webview:
@@ -800,7 +800,6 @@ SPEC CHECKSUMS:
   ExpoSystemUI: 0be5173ee2a7c01e9abc44f56d879a1eaaa16527
   ExpoWebBrowser: 033d34c478d9986da2f1679729041423837626e0
   EXSplashScreen: cd7fb052dff5ba8311d5c2455ecbebffe1b7a8ca
-  EXSQLite: 848167441b14cb6cdd6ae46c8d62289161a79550
   EXUpdatesInterface: dd699d1930e28639dcbd70a402caea98e86364ca
   FBLazyVector: a89a0525bc7ca174675045c2b492b5280d5a2470
   FBReactNativeSpec: 7714e6bc1e9ea23df6c4cb42f0b2fd9c6a3a559c
@@ -834,6 +833,7 @@ SPEC CHECKSUMS:
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
   react-native-slider: 33b8d190b59d4f67a541061bb91775d53d617d9d
+  react-native-sqlite-storage: f6d515e1c446d1e6d026aa5352908a25d4de3261
   react-native-view-shot: 705f999ac2a24e4e6c909c0ca65c732ed33ca2ff
   react-native-webview: 994b9f8fbb504d6314dc40d83f94f27c6831b3bf
   React-perflogger: 2d505bbe298e3b7bacdd9e542b15535be07220f6
@@ -869,4 +869,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 466455a427010545cdbe4a5237a6b8b4f4539ea5
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.12.0

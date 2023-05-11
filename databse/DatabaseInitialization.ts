@@ -1,15 +1,9 @@
-/**
- * React Native SQLite Demo
- * Copyright (c) 2018-2020 Bruce Lefebvre <bruce@brucelefebvre.com>
- * https://github.com/blefebvre/react-native-sqlite-demo/blob/master/LICENSE
- */
-import * as SQLite from 'expo-sqlite'
-import { err } from 'react-native-svg/lib/typescript/xml'
+import SQLite from 'react-native-sqlite-storage'
 
 export class DatabaseInitialization {
   // Perform any updates to the database schema. These can occur during initial configuration, or after an app store update.
   // This should be called each time the database is opened.
-  public updateDatabaseTables(database: SQLite.WebSQLDatabase): Promise<void> {
+  public updateDatabaseTables(database: SQLite.SQLiteDatabase): Promise<void> {
     let dbVersion: number = 0
     console.log('Beginning database updates...')
 
@@ -45,7 +39,7 @@ export class DatabaseInitialization {
   }
 
   // Perform initial setup of the database tables
-  private createTables(transaction: SQLite.SQLTransaction) {
+  private createTables(transaction: SQLite.Transaction) {
     // DANGER! For dev only
     const dropAllTables = false
     if (dropAllTables) {
@@ -83,22 +77,21 @@ export class DatabaseInitialization {
   }
 
   // Get the version of the database, as specified in the Version table
-  private getDatabaseVersion(database: SQLite.WebSQLDatabase) {
+  private getDatabaseVersion(database: SQLite.SQLiteDatabase): Promise<number> {
     // Select the highest version number from the version table
-    return database.transaction(transaction => {
-      transaction.executeSql(
-        'SELECT version FROM Version ORDER BY version DESC LIMIT 1;',
-        null,
-        (_, res) => {
-          if (res.rows && res.rows.length > 0) {
-            const version = res.rows.item(0).version
-            return version
-          } else {
-            return 0
-          }
-        },
-        (_, err) => err
-      )
-    })
+    return database
+      .executeSql('SELECT version FROM Version ORDER BY version DESC LIMIT 1;')
+      .then(([results]) => {
+        if (results.rows && results.rows.length > 0) {
+          const version = results.rows.item(0).version
+          return version
+        } else {
+          return 0
+        }
+      })
+      .catch(error => {
+        console.log(`No version set. Returning 0. Details: ${error}`)
+        return 0
+      })
   }
 }
