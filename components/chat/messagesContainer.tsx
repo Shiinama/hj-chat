@@ -53,8 +53,8 @@ type MessagesContainerProps = {
     onKeyboardWillShow: (e: any) => void
     onKeyboardWillHide: (e: any) => void
   }
-  flatListProps: FlatList['props'];
-  flatListRef: LegacyRef<FlatList> | undefined;
+  flatListProps: FlatList['props']
+  flatListRef: LegacyRef<FlatList> | undefined
 }
 
 function MessagesContainer(props: MessagesContainerProps) {
