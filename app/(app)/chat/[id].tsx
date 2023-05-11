@@ -69,7 +69,6 @@ export default function Chat({}) {
     isTouchList: false, // 用户是否touch了list，用户touch后如果触发list的onEndReached才去加载更多
     pageSize: 10, // 每页加载多少条数据
     hasMore: true,
-    page: 1,
   })
   useEffect(() => {
     try {
@@ -115,10 +114,8 @@ export default function Chat({}) {
       // );
       // chatDataInfo.current.data = data
       // console.log(data, chatData)
-      setChatData(chatDataInfo.current.page === 1 ? data : [...chatData, ...data]);
-      if (data.length >= chatDataInfo.current.pageSize) {
-        chatDataInfo.current.page += 1
-      } else {
+      setChatData(!loadMore ? data : [...chatData, ...data]);
+      if (data.length < chatDataInfo.current.pageSize) {
         chatDataInfo.current.hasMore = false
       }
       chatDataInfo.current.isTouchList = false
