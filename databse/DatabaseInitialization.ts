@@ -3,25 +3,26 @@
  * Copyright (c) 2018-2020 Bruce Lefebvre <bruce@brucelefebvre.com>
  * https://github.com/blefebvre/react-native-sqlite-demo/blob/master/LICENSE
  */
-import * as SQLite from "expo-sqlite";
+import * as SQLite from 'expo-sqlite'
+import { err } from 'react-native-svg/lib/typescript/xml'
 
 export class DatabaseInitialization {
   // Perform any updates to the database schema. These can occur during initial configuration, or after an app store update.
   // This should be called each time the database is opened.
-  public updateDatabaseTables(database: SQLite.Database): Promise<void> {
-    let dbVersion: number = 0;
-    console.log("Beginning database updates...");
+  public updateDatabaseTables(database: SQLite.WebSQLDatabase): Promise<void> {
+    let dbVersion: number = 0
+    console.log('Beginning database updates...')
 
     // First: create tables if they do not already exist
     return database
       .transaction(this.createTables)
       .then(() => {
         // Get the current database version
-        return this.getDatabaseVersion(database);
+        return this.getDatabaseVersion(database)
       })
-      .then((version) => {
-        dbVersion = version;
-        console.log("Current database version is: " + dbVersion);
+      .then(version => {
+        dbVersion = version
+        console.log('Current database version is: ' + dbVersion)
 
         // Perform DB updates based on this version
 
@@ -31,7 +32,7 @@ export class DatabaseInitialization {
           // return database.transaction(this.preVersion1Inserts);
         }
         // otherwise,
-        return;
+        return
       })
       .then(() => {
         if (dbVersion < 2) {
@@ -39,18 +40,18 @@ export class DatabaseInitialization {
           // return database.transaction(this.preVersion2Inserts);
         }
         // otherwise,
-        return;
-      });
+        return
+      })
   }
 
   // Perform initial setup of the database tables
-  private createTables(transaction: SQLite.Transaction) {
+  private createTables(transaction: SQLite.SQLTransaction) {
     // DANGER! For dev only
-    const dropAllTables = false;
+    const dropAllTables = false
     if (dropAllTables) {
-      transaction.executeSql("DROP TABLE IF EXISTS List;");
-      transaction.executeSql("DROP TABLE IF EXISTS ListItem;");
-      transaction.executeSql("DROP TABLE IF EXISTS Version;");
+      transaction.executeSql('DROP TABLE IF EXISTS List;')
+      transaction.executeSql('DROP TABLE IF EXISTS ListItem;')
+      transaction.executeSql('DROP TABLE IF EXISTS Version;')
     }
 
     // List table
@@ -59,7 +60,7 @@ export class DatabaseInitialization {
         list_id INTEGER PRIMARY KEY NOT NULL,
         title TEXT
       );
-    `);
+    `)
 
     // ListItem table
     transaction.executeSql(`
@@ -70,7 +71,7 @@ export class DatabaseInitialization {
         done INTEGER DEFAULT 0,
         FOREIGN KEY ( list_id ) REFERENCES List ( list_id )
       );
-    `);
+    `)
 
     // Version table
     transaction.executeSql(`
@@ -78,25 +79,26 @@ export class DatabaseInitialization {
         version_id INTEGER PRIMARY KEY NOT NULL,
         version INTEGER
       );
-    `);
+    `)
   }
 
   // Get the version of the database, as specified in the Version table
-  private getDatabaseVersion(database: SQLite.SQLiteDatabase): Promise<number> {
+  private getDatabaseVersion(database: SQLite.WebSQLDatabase) {
     // Select the highest version number from the version table
-    return database
-      .executeSql("SELECT version FROM Version ORDER BY version DESC LIMIT 1;")
-      .then(([results]) => {
-        if (results.rows && results.rows.length > 0) {
-          const version = results.rows.item(0).version;
-          return version;
-        } else {
-          return 0;
-        }
-      })
-      .catch((error) => {
-        console.log(`No version set. Returning 0. Details: ${error}`);
-        return 0;
-      });
+    return database.transaction(transaction => {
+      transaction.executeSql(
+        'SELECT version FROM Version ORDER BY version DESC LIMIT 1;',
+        null,
+        (_, res) => {
+          if (res.rows && res.rows.length > 0) {
+            const version = res.rows.item(0).version
+            return version
+          } else {
+            return 0
+          }
+        },
+        (_, err) => err
+      )
+    })
   }
-
+}

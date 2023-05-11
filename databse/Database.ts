@@ -16,7 +16,7 @@ export interface Database {
   deleteList(list: List): Promise<void>
 }
 
-let databaseInstance: SQLite.Database | undefined
+let databaseInstance: SQLite.WebSQLDatabase | undefined
 
 // Insert a new list into the database
 async function createList(newListTitle: string): Promise<void> {
@@ -132,17 +132,14 @@ async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
 }
 
 // Open a connection to the database
-async function open(): Promise<SQLite.SQLiteDatabase> {
+async function open(): Promise<SQLite.WebSQLDatabase> {
   if (databaseInstance) {
     console.log('[db] Database is already open: returning the existing instance')
     return databaseInstance
   }
 
   // Otherwise, create a new instance
-  const db = await SQLite.openDatabase({
-    name: DATABASE.FILE_NAME,
-    location: 'default',
-  })
+  const db = await SQLite.openDatabase(DATABASE.FILE_NAME)
   console.log('[db] Database open!')
 
   // Perform any database initialization or updates, if needed
