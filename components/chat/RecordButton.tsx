@@ -29,9 +29,12 @@ const RecordButton = ({ startRecording, stopRecording, setAudioFileUri }) => {
       if (!granted) {
         alert('请允许访问麦克风以录制音频！请到设置中')
       } else {
-        setIsRecording(true)
-        animateScaleOut()
-        startRecording()
+        // 如果手速过快正在录音再去点会录音失败
+        if (!isRecording) {
+          setIsRecording(true)
+          animateScaleOut()
+          startRecording()
+        }
       }
     })
   }

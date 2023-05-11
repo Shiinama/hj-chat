@@ -30,6 +30,7 @@ export default StyleSheet.create({
     marginLeft: 8,
     marginRight: 8,
     maxWidth: 263,
+    
   },
   button: {
     borderRadius: 12,
@@ -51,6 +52,10 @@ export default StyleSheet.create({
     fontSize: 14,
     borderColor: '#E2E8F0',
     borderBottomWidth: 1,
+  },
+  textContent: {
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
   },
   buttonGroup: {
     flexDirection: 'row',

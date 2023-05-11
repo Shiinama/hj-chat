@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start --dev-client -c",
+    "start:dev": "cross-env REACT_APP_IS_LOGIN=true expo start --dev-client -c",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:dev": "cross-env REACT_APP_IS_LOGIN=true expo run:ios",
     "test": "jest --watchAll",
     "postinstall": "npx patch-package"
   },
@@ -73,6 +75,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-soundcloud-waveform": "^1.0.3",
+    "react-native-sqlite-storage": "^6.0.1",
     "react-native-svg": "13.4.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-native-view-shot": "^3.6.0",

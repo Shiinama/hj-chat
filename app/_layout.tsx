@@ -1,6 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { useFonts } from 'expo-font'
-import { Slot, SplashScreen, useNavigation, useSegments } from 'expo-router'
+import { SplashScreen } from 'expo-router'
 import { useEffect, useMemo } from 'react'
 import * as eva from '@eva-design/eva'
 
@@ -8,7 +8,6 @@ import { Provider as XiaoshuProvider, Toast } from '@fruits-chain/react-native-x
 import { Provider as AuthProvider } from '../context/auth'
 
 import { ApplicationProvider } from '@ui-kitten/components'
-import { TouchableOpacity, Platform, StatusBar } from 'react-native'
 import { CustomStack, Stack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'
 export {
@@ -17,16 +16,15 @@ export {
 } from 'expo-router'
 
 export const unstable_settings = {
-  initialRouteName: '(auth)',
+  initialRouteName: '(tabs)',
 }
 
 Toast.setDefaultOptions({ position: 'top' })
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../assets/fonts/SF-Pro.ttf'),
     ...FontAwesome.font,
   })
-
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error

@@ -6,9 +6,10 @@ export const botList = () => {
     method: 'get',
   })
 }
-export const chatHistory = (id: string) => {
+export const chatHistory = (params: {botUid: string; offset?: number; limit?: number; afterId?: number; beforeId?: number}) => {
   return request({
-    url: `/chat/chatHistory/?botUid=${id}`,
+    url: `/chat/chatHistory`,
+    query: params,
     method: 'get',
   })
 }
