@@ -1,7 +1,7 @@
 import Slider, { SliderProps } from "@react-native-community/slider";
 import { useControllableValue } from "ahooks";
 import { FC, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 
 import sliderIcon from "../../assets/images/profile/slider.png";
 import Enlarge from "../../assets/images/profile/enlarge.svg";
@@ -33,7 +33,10 @@ const CustomSlider: FC<CustomSliderProps> = (props) => {
         maximumValue={1}
         minimumValue={0}
         step={0.1}
-        style={styles.slider}
+        style={[
+          styles.slider,
+          Platform.OS === "ios" ? { marginHorizontal: 16 } : {},
+        ]}
         tapToSeek={true}
         thumbImage={sliderIcon}
         maximumTrackTintColor="#F1EAFE"
@@ -59,7 +62,6 @@ const styles = StyleSheet.create({
     width: "100%",
     flexShrink: 1,
     flexGrow: 1,
-    marginHorizontal: 16,
   },
 });
 export default CustomSlider;
