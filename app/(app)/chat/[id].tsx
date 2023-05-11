@@ -22,7 +22,7 @@ import { NativeEventSubscription } from 'react-native'
 
 export type ChatItem = {
   id: number
-  uid?: string
+  uid: string
   userId?: number
   userUid?: string
   status?: string
