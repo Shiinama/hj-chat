@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
 import useUserStore from "../../store/userStore";
-
+import Constants from "expo-constants";
 import systemConfig from "../../constants/System";
 import MSG_LIST from "./message";
 import debounce from "lodash/debounce";
@@ -77,13 +77,20 @@ export default async function request<T>(options: RequestOptions) {
   const { url } = options;
   const opt: RequestOptions = options;
   delete opt.url;
-  // const token = useUserStore.getState().userBaseInfo?.token
-  // if (!token && url !== '/auth/particleLogin') {
-  //   return
-  // }
-  // const Authorization = token ? `Bearer ${token}` : ''
-  const Authorization =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMzM5OTY1MDczLCJqdGkiOiI2MTc1ZDNhMmNjYmE0NWFjYTc2NDc0MDhmYzY1MjllZiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzM0MjU1NzA3M30.C79OLS9eWvDLiEv9ZqDbeoDmJs7AhmnrijHnAnunzx8";
+
+  const notNeedLogin = Constants.manifest.extra.isLogin;
+  let Authorization = "";
+  if (notNeedLogin) {
+    Authorization =
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMzM5OTY1MDczLCJqdGkiOiI2MTc1ZDNhMmNjYmE0NWFjYTc2NDc0MDhmYzY1MjllZiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzM0MjU1NzA3M30.C79OLS9eWvDLiEv9ZqDbeoDmJs7AhmnrijHnAnunzx8";
+  } else {
+    const token = await AsyncStorage.getItem(authKey);
+    if (!token && url !== "/auth/particleLogin") {
+      return;
+    }
+    Authorization = token ? `Bearer ${token}` : "";
+  }
+
   let headers = {};
   if (options) {
     headers = options.headers || {};
