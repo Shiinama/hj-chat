@@ -54,7 +54,7 @@ export default function Chat({}) {
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
     selectedItems: [],
-  })
+  });
   const navigation = useNavigation()
   const [message, resMessage, sendMessage, translationMessage, updateMessage] = useSocketIo()
   const [recording, setRecording] = useState(null)
@@ -63,6 +63,12 @@ export default function Chat({}) {
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [voice, setVoice] = useState(null)
   const [translationTextIndex, setTranslationTextIndex] = useState(null)
+  const chatDataInfo = useRef({
+    isTouchList: false, // 用户是否touch了list，用户touch后如果触发list的onEndReached才去加载更多
+    isLoading: false, // 是否正在加载更多
+    pageSize: 10, // 每页加载多少条数据
+    data: []
+  })
   useEffect(() => {
     try {
       new Audio.Recording()
@@ -75,11 +81,20 @@ export default function Chat({}) {
       Toast('Failed to start recording')
     }
     chatHistory(uid).then(({ data }: any) => {
-      data.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
-      setChatData(data)
-      setLoading(false)
-    })
-  }, [])
+      // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
+      // data.sort(
+      //   (a, b) =>
+      //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      // );
+      chatDataInfo.current.data = data
+      setChatData(data?.length > chatDataInfo.current.pageSize ? data.slice(0, chatDataInfo.current.pageSize) : data);
+      setLoading(false);
+    });
+    return ()=> {
+      // 单列模式里面的sound销毁
+      AudioPayManagerSingle().destory()
+    }
+  }, []);
   async function startRecording() {
     try {
       const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
@@ -153,14 +168,17 @@ export default function Chat({}) {
   }, [navigation, name, chatPageValue.pageStatus])
 
   useEffect(() => {
-    if (!message) return
-    setChatData(chatData.concat(message.data))
-  }, [message])
+    if (!message) return;
+    setChatData([message.data, ...chatData]);
+    // 新插入数据总数据也需要新增
+    chatDataInfo.current.data = [message.data, ...chatDataInfo.current.data]
+  }, [message]);
 
   useEffect(() => {
-    if (!resMessage) return
-    setChatData(chatData.concat(resMessage))
-  }, [resMessage])
+    if (!resMessage) return;
+    setChatData([resMessage, ...chatData]);
+    chatDataInfo.current.data = [resMessage, ...chatDataInfo.current.data]
+  }, [resMessage]);
 
   useEffect(() => {
     if (!updateMessage) return
@@ -183,24 +201,26 @@ export default function Chat({}) {
     })
   }, [translationMessage])
 
-  // 处理播放录音退到后台的问题
-  useEffect(() => {
-    if (eventAppState.current.appState) {
-      eventAppState.current.appState.remove()
-    }
-    eventAppState.current.appState = AppState.addEventListener('change', state => {
-      // 如果进入后台或者重新进入就停止播放
-      if (state === 'background') {
-        eventAppState.current.audioManager.pause(true)
+  const loadNextData = ()=> {
+    try {
+      // 目前为本地分页加载，一次性初始化所有消息的录音文件容易内存溢出(尤其是在安卓上面)
+      const moreLen = chatDataInfo.current.data.length - chatData.length
+      if (moreLen <= 0 || !chatDataInfo.current.isTouchList || chatDataInfo.current.isLoading) {
+        return
       }
-      eventAppState.current.prev = state
-    })
-    return () => {
-      if (eventAppState.current.appState) {
-        eventAppState.current.appState.remove()
-      }
+      chatDataInfo.current.isLoading = true
+      const nextItemIndex = moreLen > chatDataInfo.current.pageSize ? chatData.length - 1 + chatDataInfo.current.pageSize : chatDataInfo.current.data.length
+      const nextItems = chatDataInfo.current.data.slice(chatData.length, nextItemIndex)
+      setChatData(chatData.concat(nextItems))
+      chatDataInfo.current.isTouchList = false
+      chatDataInfo.current.isLoading = false
+    } catch (e) {
+      chatDataInfo.current.isTouchList = false
+      chatDataInfo.current.isLoading = false
+      console.log(e || "loadNextData error")
     }
-  }, [])
+    
+  }
 
   if (loading) return <ShellLoading></ShellLoading>
   return (
@@ -229,6 +249,17 @@ export default function Chat({}) {
         }
         flatListProps={{
           data: chatData,
+          inverted: true, 
+          onTouchStart: ()=> {
+            // inverted: true 颠倒列表，往上滑就是加载更多了 上变为下，数据也是一样，加载完数据就无需排序和调用scrollEnd了，并且新增一条消息也无需调用scrollEnd
+            // 防止进来渲染数据的时候 触发onEndReached去加载更多，用户手动滑动的时候再去加载更多
+            chatDataInfo.current.isTouchList = true
+          },
+          onEndReached:() => {
+            // 分页，颠倒列表 inverted为true往上滑就会调用此方法，原来是往下滑调用这个方法，往上滑是调用onRefresh
+            loadNextData()
+          },
+          onEndReachedThreshold:0.2,
           renderItem: ({ item, index }) => {
             return (
               <View>

@@ -17,6 +17,7 @@ type AudioType = {
 const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, slideWidth = 240 }: AudioType, ref) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  const refPlaying = useRef<boolean>(false)
   const [currentPosition, setCurrentPosition] = useState<number>(0)
   const [duration, setDuration] = useState<number>(0)
   const [sound, setSound] = useState<Audio.Sound | null>(null)
@@ -34,9 +35,20 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       setLoading(false)
     }
     loadSound()
+    return ()=> {
+      soundInterval.current && clearInterval(soundInterval.current)
+    }
   }, [])
 
   useEffect(() => {
+    if (sound !== null) {
+      sound.getStatusAsync().then(status=> {
+        if (status.isLoaded) {
+          setCurrentPosition(status.positionMillis || 0)
+          setDuration(status.durationMillis || 0)
+        }
+      })
+    }
     return sound
       ? () => {
           sound.unloadAsync()
@@ -44,40 +56,59 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       : undefined
   }, [sound])
 
-  useEffect(() => {
-    let interval = setInterval(async () => {
+  const soundInterval = useRef<NodeJS.Timer>()
+
+ /**
+  * 从sound初始化完成就开始计时器 修改为 只有当播放的时候一个才启用计时器，停止播放就注销计时器，
+  * 不然有多少条数据就会有多少个计时器，会卡主线程和内存持续上涨 会崩溃
+  */
+  const startPlayInterval = ()=> {
+    soundInterval.current && clearInterval(soundInterval.current)
+    soundInterval.current = setInterval(async () => {
       if (sound !== null) {
         const status: AVPlaybackStatus = await sound.getStatusAsync()
         if (status.isLoaded) {
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
         }
-        if (status.isLoaded && isPlaying && status.positionMillis - status.durationMillis >= 0) {
-          await sound.stopAsync()
-          setCurrentPosition(0)
-          setIsPlaying(false)
+        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis >= 0) {
+          soundInterval.current && clearInterval(soundInterval.current)
+          setCurrentPosition(()=> {
+            return 0
+          })
+          setIsPlaying(()=> false)
+          soundManager.current.stop()          
         }
       }
-    })
-    return () => clearInterval(interval)
-  }, [sound, currentPosition, duration])
+    }, 100)
+  }
 
   const handlePlayPause = async () => {
     if (sound !== null) {
       if (isPlaying) {
+        soundInterval.current && clearInterval(soundInterval.current)
         soundManager.current.pause()
       } else {
+        console.log("palyaaa:", audioFileUri)
         // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
         soundManager.current.play(sound, function () {
           setIsPlaying(false)
+          console.log("stopforward:", audioFileUri)
+          soundInterval.current && clearInterval(soundInterval.current)
+        }, function() {
+          setIsPlaying(true)
+          startPlayInterval()
         })
+        startPlayInterval()
       }
-      setIsPlaying(!isPlaying)
+      console.log("isPlaying:", !isPlaying)
+      setIsPlaying(()=> !isPlaying)
     }
   }
 
   useEffect(() => {
     onPlay?.(isPlaying)
+    refPlaying.current = isPlaying
   }, [isPlaying])
 
   const handleChange = async (value: number) => {
