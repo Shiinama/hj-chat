@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
 import styles from './styles'
-import { genAvatarUrl, genBotUrl } from '../../components/profileInfo/helper'
+import { genAvatarUrl, genBotUrl, renderImage } from '../../components/profileInfo/helper'
 import { Image } from 'expo-image'
 import { ChatItem } from '../../app/(app)/chat/[id]'
 import AudioMessage from './audioMessage'
@@ -116,13 +116,18 @@ function chatItem({ item, translationText, me, logo }: Props) {
   return (
     <View style={styles.itemWrap}>
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
-        <Image
-          placeholder={imgPlaceholder}
-          source={{
-            uri: tag ? genBotUrl(logo) : genAvatarUrl(me),
-          }}
-          style={styles.avatar}
-        />
+        {tag ? (
+          renderImage(logo, styles.avatar)
+        ) : (
+          <Image
+            placeholder={imgPlaceholder}
+            source={{
+              uri: genAvatarUrl(me),
+            }}
+            style={styles.avatar}
+          />
+        )}
+
         <View
           style={[styles.contentBox, tag ? styles.youContent : { ...styles.meContent, width: item?.voiceUrl && 243 }]}
         >
