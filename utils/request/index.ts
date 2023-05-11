@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "@fruits-chain/react-native-xiaoshu";
 export type RequestOptions = AxiosRequestConfig & {
   url: string;
+  query?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -104,7 +105,21 @@ export default async function request<T>(options: RequestOptions) {
     delete options.headers;
   }
   const newOptions: RequestOptions = { ...defaultOptions, ...options };
-  const newUrl = baseUrl + url;
+  let newUrl = baseUrl + url;
+  
+  if (options.method.toLowerCase() == 'get' && options.query) {
+    const urlParams = []
+    Object.keys(options.query).map((key)=>{
+      if (options.query[key] !== undefined) {
+        urlParams.push(`${key}=${encodeURI(options.query[key])}`)
+      }
+    })
+    
+    if (urlParams.length > 0) {
+      newUrl = `${newUrl}${newUrl.indexOf?.("?") > 0 && newUrl.indexOf?.("=") > 0 ? "&" : "?"}${urlParams.join("&")}`
+    }
+  }
+  
   return _axios
     .request<T>({
       ...newOptions,

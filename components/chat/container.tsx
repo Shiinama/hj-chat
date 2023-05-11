@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, View } from 'react-native'
-import { useState } from 'react'
+import { LegacyRef, useState } from 'react'
 import MessagesContainer from './messagesContainer'
 import InputToolsTar from './inputToolsTar'
 import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
@@ -8,6 +8,7 @@ export interface FishChatProps {
   flatListProps: FlatList['props']
   InputToolBarHeight?: number
   messagesContainerStyle?: StyleProp<ViewStyle>
+  flatListRef?: LegacyRef<FlatList>
 }
 // 工具栏高度
 const minInputToolbarHeight = 80
@@ -17,6 +18,7 @@ const bottomOffset = 1
 function Container({
   messagesContainerStyle,
   inputTextProps,
+  flatListRef,
   flatListProps,
   ...restProps
 }: FishChatProps): JSX.Element {
@@ -60,6 +62,7 @@ function Container({
           {/* message容器 */}
           <View>
             <MessagesContainer
+              flatListRef={flatListRef}
               flatListProps={flatListProps}
               InternalProps={InternalProps}
               messagesContainerStyle={messagesContainerStyle}
