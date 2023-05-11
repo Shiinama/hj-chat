@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, AppState } from 'react-native'
+import { Text, View, TouchableOpacity, AppState, FlatList } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
@@ -63,11 +63,13 @@ export default function Chat({}) {
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [voice, setVoice] = useState(null)
   const [translationTextIndex, setTranslationTextIndex] = useState(null)
+  const flatList = useRef<FlatList>()
+  const [showLoadMoring, setShowLoadMoring] = useState(false)
   const chatDataInfo = useRef({
     isTouchList: false, // 用户是否touch了list，用户touch后如果触发list的onEndReached才去加载更多
-    isLoading: false, // 是否正在加载更多
     pageSize: 10, // 每页加载多少条数据
-    data: []
+    hasMore: true,
+    page: 1,
   })
   useEffect(() => {
     try {
@@ -80,16 +82,7 @@ export default function Chat({}) {
     } catch (err) {
       Toast('Failed to start recording')
     }
-    chatHistory(uid).then(({ data }: any) => {
-      // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
-      // data.sort(
-      //   (a, b) =>
-      //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
-      // );
-      chatDataInfo.current.data = data
-      setChatData(data?.length > chatDataInfo.current.pageSize ? data.slice(0, chatDataInfo.current.pageSize) : data);
-      setLoading(false);
-    });
+    loadData()
     return ()=> {
       // 单列模式里面的sound销毁
       AudioPayManagerSingle().destory()
@@ -103,6 +96,40 @@ export default function Chat({}) {
     } catch (err) {
       Toast('Failed to start recording')
     }
+  }
+
+  const loadData = (loadMore?: boolean)=> {
+    if (loadMore) {
+      setShowLoadMoring(true)
+    }
+    chatHistory({
+      botUid: uid,
+      offset: (chatDataInfo.current.page - 1) * chatDataInfo.current.pageSize,
+      limit: chatDataInfo.current.pageSize,
+      afterId: chatData.length > 0 ? chatData[chatData.length-1].id : undefined
+    }).then(({ data }: any) => {
+      // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
+      // data.sort(
+      //   (a, b) =>
+      //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      // );
+      // chatDataInfo.current.data = data
+      // console.log(data, chatData)
+      setChatData(chatDataInfo.current.page === 1 ? data : [...chatData, ...data]);
+      if (data.length >= chatDataInfo.current.pageSize) {
+        chatDataInfo.current.page += 1
+      } else {
+        chatDataInfo.current.hasMore = false
+      }
+      chatDataInfo.current.isTouchList = false
+      setShowLoadMoring(false)
+      setLoading(false);
+    }).catch(e=>{
+      console.log(e)
+      chatDataInfo.current.isTouchList = false
+      setShowLoadMoring(false)
+      setLoading(false);
+    });
   }
 
   async function stopRecording() {
@@ -170,14 +197,13 @@ export default function Chat({}) {
   useEffect(() => {
     if (!message) return;
     setChatData([message.data, ...chatData]);
-    // 新插入数据总数据也需要新增
-    chatDataInfo.current.data = [message.data, ...chatDataInfo.current.data]
+    flatList.current?.scrollToIndex?.({index: 0})
   }, [message]);
 
   useEffect(() => {
     if (!resMessage) return;
     setChatData([resMessage, ...chatData]);
-    chatDataInfo.current.data = [resMessage, ...chatDataInfo.current.data]
+    flatList.current?.scrollToIndex?.({index: 0})
   }, [resMessage]);
 
   useEffect(() => {
@@ -203,20 +229,11 @@ export default function Chat({}) {
 
   const loadNextData = ()=> {
     try {
-      // 目前为本地分页加载，一次性初始化所有消息的录音文件容易内存溢出(尤其是在安卓上面)
-      const moreLen = chatDataInfo.current.data.length - chatData.length
-      if (moreLen <= 0 || !chatDataInfo.current.isTouchList || chatDataInfo.current.isLoading) {
+      if (!chatDataInfo.current.hasMore || !chatDataInfo.current.isTouchList || showLoadMoring) {
         return
       }
-      chatDataInfo.current.isLoading = true
-      const nextItemIndex = moreLen > chatDataInfo.current.pageSize ? chatData.length - 1 + chatDataInfo.current.pageSize : chatDataInfo.current.data.length
-      const nextItems = chatDataInfo.current.data.slice(chatData.length, nextItemIndex)
-      setChatData(chatData.concat(nextItems))
-      chatDataInfo.current.isTouchList = false
-      chatDataInfo.current.isLoading = false
+      loadData(true)
     } catch (e) {
-      chatDataInfo.current.isTouchList = false
-      chatDataInfo.current.isLoading = false
       console.log(e || "loadNextData error")
     }
     
@@ -247,6 +264,7 @@ export default function Chat({}) {
             },
           } as any
         }
+        flatListRef={flatList}
         flatListProps={{
           data: chatData,
           inverted: true, 
@@ -259,6 +277,15 @@ export default function Chat({}) {
             // 分页，颠倒列表 inverted为true往上滑就会调用此方法，原来是往下滑调用这个方法，往上滑是调用onRefresh
             loadNextData()
           },
+          ListFooterComponent: showLoadMoring ? <View style={{
+            width: "100%",
+            marginVertical: 15,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <ShellLoading/>
+          </View> : null,
           onEndReachedThreshold:0.2,
           renderItem: ({ item, index }) => {
             return (

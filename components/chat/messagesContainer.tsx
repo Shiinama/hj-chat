@@ -1,4 +1,4 @@
-import { memo, useCallback, useRef } from 'react'
+import { LegacyRef, memo, useCallback, useRef } from 'react'
 import { View, StyleSheet, FlatList, StyleProp, ViewStyle } from 'react-native'
 import Message from './message'
 
@@ -53,13 +53,13 @@ type MessagesContainerProps = {
     onKeyboardWillShow: (e: any) => void
     onKeyboardWillHide: (e: any) => void
   }
-  flatListProps: FlatList['props']
+  flatListProps: FlatList['props'];
+  flatListRef: LegacyRef<FlatList> | undefined;
 }
 
 function MessagesContainer(props: MessagesContainerProps) {
   const { InternalProps, flatListProps, messagesContainerHeight, messagesContainerStyle } = props
   const { data, renderItem: propsRenderItem, ...flatRest } = flatListProps
-  const flatListRef = useRef<FlatList>(null)
 
   // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
   // const scrollToEnd = useCallback(() => {
@@ -91,7 +91,7 @@ function MessagesContainer(props: MessagesContainerProps) {
       <View style={styles.container}>
         <FlatList
           initialNumToRender={5}
-          ref={flatListRef}
+          ref={props.flatListRef}
           keyExtractor={item => item.uid}
           data={data.length ? data : [{ uid: '1231' }]}
           // onLayout={onLayoutList}

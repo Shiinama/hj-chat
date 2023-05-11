@@ -33,9 +33,10 @@ function chatItem({ item, translationText, me, logo }: Props) {
       <AudioMessage audioFileUri={item?.voiceUrl} />
     </View>
   )
-  const renderMessageText = () => {
+  const renderMessageText = ({ textMsg } : { textMsg?: boolean }) => {
+    // textMsg fix 纯文字消息上下全局加了两个分割线，这里把它去掉
     return (
-      <View style={[styles.content]}>
+      <View style={[styles.content, textMsg ? styles.textContent : {}]}>
         {isBlur && item?.type === 'REPLY' && (
           <TouchableWithoutFeedback onPress={() => setButtonIndex(2)}>
             <BlurView
@@ -132,7 +133,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
           style={[styles.contentBox, tag ? styles.youContent : { ...styles.meContent, width: item?.voiceUrl && 243 }]}
         >
           {item?.voiceUrl && renderMessageAudio()}
-          {item?.text && renderMessageText()}
+          {item?.text && renderMessageText({textMsg: item?.voiceUrl ? false : true})}
           {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
         </View>
       </View>
