@@ -56,7 +56,7 @@ function Container({
     onKeyboardWillHide,
   }
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={{ flex: 1 }} onLayout={onInitialLayoutViewLayout}>
         <KeyboardAvoidingView enabled>
           {/* message容器 */}
