@@ -25,8 +25,7 @@ import * as FileSystem from "expo-file-system";
 import ToolsModal, { ActionType } from "./toolsModal";
 import ShareToPopup from "./shareToPopup";
 import { ChatContext } from "../../app/(app)/chat/chatContext";
-import { Overlay } from "@fruits-chain/react-native-xiaoshu";
-import { Toast } from "../../utils/toast";
+import { Overlay, Toast } from "@fruits-chain/react-native-xiaoshu";
 import {
   removeBotFromChatList,
   resetHistory,

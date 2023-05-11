@@ -1,6 +1,5 @@
 import { ChatContext } from "../../app/(app)/chat/chatContext";
-import { Popup } from "@fruits-chain/react-native-xiaoshu";
-import { Toast } from "../../utils/toast";
+import { Popup, Toast } from "@fruits-chain/react-native-xiaoshu";
 import { FC, useContext } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import * as FileSystem from "expo-file-system";

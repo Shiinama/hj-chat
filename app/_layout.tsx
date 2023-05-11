@@ -4,7 +4,10 @@ import { Slot, SplashScreen, useNavigation, useSegments } from "expo-router";
 import { useEffect, useMemo } from "react";
 import * as eva from "@eva-design/eva";
 
-import { Provider as XiaoshuProvider } from "@fruits-chain/react-native-xiaoshu";
+import {
+  Provider as XiaoshuProvider,
+  Toast,
+} from "@fruits-chain/react-native-xiaoshu";
 import { Provider as AuthProvider } from "../context/auth";
 
 import { ApplicationProvider } from "@ui-kitten/components";
@@ -20,6 +23,7 @@ export const unstable_settings = {
   initialRouteName: "(auth)",
 };
 
+Toast.setDefaultOptions({ position: "top" });
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),

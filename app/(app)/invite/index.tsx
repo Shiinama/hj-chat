@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { useEffect, useState } from "react";
-import { TextInput } from "@fruits-chain/react-native-xiaoshu";
+import { TextInput, Toast } from "@fruits-chain/react-native-xiaoshu";
 import Copy from "../../../assets/images/profile/copy.svg";
 import Shim from "../../../components/full-image/shim";
 import { getInvitation } from "../../../api/proofile";
@@ -14,7 +14,6 @@ import System from "../../../constants/System";
 import ShellLoading from "../../../components/loading";
 import { useNavigation } from "expo-router";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { Toast } from "../../../utils/toast";
 
 export default function Invite() {
   const navigation = useNavigation();
