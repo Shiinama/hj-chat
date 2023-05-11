@@ -104,7 +104,7 @@ export default function Chat({}) {
     }
     chatHistory({
       botUid: uid,
-      offset: (chatDataInfo.current.page - 1) * chatDataInfo.current.pageSize,
+      offset: chatData.length,
       limit: chatDataInfo.current.pageSize,
       afterId: chatData.length > 0 ? chatData[chatData.length-1].id : undefined
     }).then(({ data }: any) => {
