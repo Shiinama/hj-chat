@@ -4,7 +4,7 @@ export class DatabaseInitialization {
   // Perform any updates to the database schema. These can occur during initial configuration, or after an app store update.
   // This should be called each time the database is opened.
   public updateDatabaseTables(database: SQLite.SQLiteDatabase): Promise<void> {
-    let dbVersion: number = 0
+    let dbVersion: number = 0.1
     console.log('Beginning database updates...')
 
     // First: create tables if they do not already exist
@@ -43,27 +43,27 @@ export class DatabaseInitialization {
     // DANGER! For dev only
     const dropAllTables = false
     if (dropAllTables) {
-      transaction.executeSql('DROP TABLE IF EXISTS List;')
-      transaction.executeSql('DROP TABLE IF EXISTS ListItem;')
+      transaction.executeSql('DROP TABLE IF EXISTS Messages;')
       transaction.executeSql('DROP TABLE IF EXISTS Version;')
     }
-
-    // List table
-    transaction.executeSql(`
-      CREATE TABLE IF NOT EXISTS List(
-        list_id INTEGER PRIMARY KEY NOT NULL,
-        title TEXT
-      );
-    `)
-
     // ListItem table
     transaction.executeSql(`
-      CREATE TABLE IF NOT EXISTS ListItem(
-        item_id INTEGER PRIMARY KEY NOT NULL,
-        list_id INTEGER,
+      CREATE TABLE IF NOT EXISTS Messages(
+        id INTEGER PRIMARY KEY NOT NULL,
+        uid TEXT NOT NULL,
+        userId INTEGER,
+        userUid TEXT,
+        status TEXT,
+        type TEXT,
+        replyUid TEXT,
         text TEXT,
-        done INTEGER DEFAULT 0,
-        FOREIGN KEY ( list_id ) REFERENCES List ( list_id )
+        translation TEXT,
+        voiceUrl TEXT,
+        botId INTEGER,
+        content TEXT,
+        createdDate TEXT,
+        updatedDate TEXT,
+        botUid TEXT
       );
     `)
 

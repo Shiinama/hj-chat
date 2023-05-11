@@ -20,40 +20,6 @@ export interface Database {
 
 let databaseInstance: SQLite.SQLiteDatabase | undefined
 
-// Insert a new list into the database
-async function createList(newListTitle: string): Promise<void> {
-  return getDatabase()
-    .then(db => db.executeSql('INSERT INTO List (title) VALUES (?);', [newListTitle]))
-    .then(([results]) => {
-      const { insertId } = results
-      console.log(`[db] Added list with title: "${newListTitle}"! InsertId: ${insertId}`)
-    })
-}
-
-// Get an array of all the lists in the database
-async function getAllLists(): Promise<List[]> {
-  console.log('[db] Fetching lists from the db...')
-  return getDatabase()
-    .then(db =>
-      // Get all the lists, ordered by newest lists first
-      db.executeSql('SELECT list_id as id, title FROM List ORDER BY id DESC;')
-    )
-    .then(([results]) => {
-      if (results === undefined) {
-        return []
-      }
-      const count = results.rows.length
-      const lists: List[] = []
-      for (let i = 0; i < count; i++) {
-        const row = results.rows.item(i)
-        const { title, id } = row
-        console.log(`[db] List title: ${title}, id: ${id}`)
-        lists.push({ id, title })
-      }
-      return lists
-    })
-}
-
 async function addListItem(text: string, list: List): Promise<void> {
   if (list === undefined) {
     return Promise.reject(Error(`Could not add item to undefined list.`))
