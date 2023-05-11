@@ -154,12 +154,12 @@ function InputToolsTar({
 
   return (
     <View
-      style={[styles.container] as ViewStyle}
+      style={[styles.container, { position }] as ViewStyle}
       onLayout={(e) => {
         setBarHeight(e.nativeEvent.layout.height);
       }}
     >
-      <View style={[styles.wrap, { position }] as ViewStyle}>
+      <View>
         {!audioFileUri ? (
           <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
             <Overlay
@@ -182,7 +182,7 @@ function InputToolsTar({
                 setToolsVisible(true);
                 /** 底部高度ios获取不正确 */
                 if (Platform.OS === "ios") {
-                  inputRef.current?.blur();
+                  inputRef.current.blur();
                 }
               }}
             >
@@ -239,7 +239,7 @@ function InputToolsTar({
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={{ height: "100%" }}>
+          <View>
             <AudioMessage
               ref={audioMessageRef}
               showControl={false}
@@ -300,14 +300,9 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "#b2b2b2",
     backgroundColor: "#F6F6F6",
-    position: "relative",
-    height: "100%",
-  },
-  wrap: {
-    top: 0,
+    bottom: 0,
     left: 0,
-    height: "100%",
-    width: "100%",
+    right: 0,
   },
   primary: {
     flexDirection: "row",
