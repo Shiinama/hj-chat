@@ -60,17 +60,19 @@ function MessagesContainer(props: MessagesContainerProps) {
   const { InternalProps, flatListProps, messagesContainerHeight, messagesContainerStyle } = props
   const { data, renderItem: propsRenderItem, ...flatRest } = flatListProps
   const flatListRef = useRef<FlatList>(null)
-  const scrollToEnd = useCallback(() => {
-    flatListRef?.current?.scrollToEnd({ animated: true })
-  }, [])
-  const onLayoutList = () => {
-    // 因为有可能太快了还没渲染完（薛定谔的渲染？）就开始滚，会滚不到最下面去，所以这里延迟一下，暂时没有特别好的方案
-    if (data?.length) {
-      setTimeout(() => {
-        scrollToEnd()
-      }, data?.length * 5)
-    }
-  }
+
+  // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
+  // const scrollToEnd = useCallback(() => {
+  //   flatListRef?.current?.scrollToEnd({ animated: true })
+  // }, [])
+  // const onLayoutList = () => {
+  //   // 因为有可能太快了还没渲染完（薛定谔的渲染？）就开始滚，会滚不到最下面去，所以这里延迟一下，暂时没有特别好的方案
+  //   if (data?.length) {
+  //     setTimeout(() => {
+  //       scrollToEnd()
+  //     }, data?.length * 5)
+  //   }
+  // }
   const renderItem = ({ item, index, separators }: { item: any; index: number; separators: any }) => {
     if (propsRenderItem) {
       return propsRenderItem({ item, index, separators })
@@ -92,10 +94,10 @@ function MessagesContainer(props: MessagesContainerProps) {
           ref={flatListRef}
           keyExtractor={item => item.uid}
           data={data.length ? data : [{ uid: '1231' }]}
-          onLayout={onLayoutList}
+          // onLayout={onLayoutList}
           style={styles.listStyle}
           renderItem={renderItem}
-          onContentSizeChange={scrollToEnd}
+          // onContentSizeChange={scrollToEnd}
           contentContainerStyle={styles.contentContainerStyle}
           keyboardDismissMode="on-drag"
           {...InternalProps}
