@@ -182,7 +182,7 @@ function InputToolsTar({
                 setToolsVisible(true);
                 /** 底部高度ios获取不正确 */
                 if (Platform.OS === "ios") {
-                  inputRef.current.blur();
+                  inputRef.current?.blur();
                 }
               }}
             >
