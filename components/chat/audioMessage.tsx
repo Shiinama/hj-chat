@@ -43,6 +43,7 @@ const AudioMessage = forwardRef(
         const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri });
         setSound(sound);
         setLoading(false);
+        
       };
       loadSound();
       return () => {
@@ -56,6 +57,11 @@ const AudioMessage = forwardRef(
           if (status.isLoaded) {
             setCurrentPosition(status.positionMillis || 0);
             setDuration(status.durationMillis || 0);
+            if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
+              handlePlayPause()
+              // 自动播放后清空自动播放的url
+              AudioPayManagerSingle().currentAutoPlayUrl = undefined
+            }
           }
         });
       }

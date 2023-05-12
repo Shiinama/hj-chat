@@ -1,5 +1,5 @@
 import { LegacyRef, memo, useCallback, useRef } from 'react'
-import { View, StyleSheet, FlatList, StyleProp, ViewStyle } from 'react-native'
+import { View, StyleSheet, FlatList, StyleProp, ViewStyle, Keyboard } from 'react-native'
 import Message from './message'
 
 const styles = StyleSheet.create({
@@ -84,10 +84,10 @@ function MessagesContainer(props: MessagesContainerProps) {
         {
           height: messagesContainerHeight,
         },
-        messagesContainerStyle,
+        messagesContainerStyle
       ]}
     >
-      <View style={styles.container}>
+      <View style={[styles.container]}>
         <FlatList
           initialNumToRender={5}
           ref={props.flatListRef}
@@ -102,7 +102,11 @@ function MessagesContainer(props: MessagesContainerProps) {
           {...InternalProps}
           {...flatRest}
         ></FlatList>
+       
       </View>
+      <View style={{ flex: 1 }} onTouchStart={()=>{
+        Keyboard.dismiss()
+      }}/>
     </View>
   )
 }
