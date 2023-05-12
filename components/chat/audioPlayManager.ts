@@ -10,6 +10,8 @@ export class AudioPayManager {
   private appStateListener: NativeEventSubscription;
   private appPreState = "";
 
+  currentAutoPlayUrl = undefined
+
   constructor() {
     this.appStateListener = AppState.addEventListener("change", (state)=> {
       if (state === "background") {
@@ -20,6 +22,8 @@ export class AudioPayManager {
       this.appPreState = state;
     })
   }
+
+  
 
   async destory() {
     if (this.currentSound) {
