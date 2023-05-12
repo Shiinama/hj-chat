@@ -230,7 +230,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         )}
       </TouchableOpacity>
     )
-  }, [isShow, showSend])
+  }, [isShow, showSend, value])
 
   return (
     <View
@@ -252,7 +252,6 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                 maxLength={500}
                 placeholder="Wite a message"
                 style={styles.textInput}
-                enablesReturnKeyAutomatically
                 onChangeText={inputText => {
                   onChangeText(inputText)
                 }}
