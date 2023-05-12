@@ -36,8 +36,8 @@ const RecordButton = ({
         startRecording()
         setButtonState('recording')
         setTimeout(() => {
-          AnimationRef.current.startAnimation()
-        })
+          AnimationRef?.current?.startAnimation()
+        }, 100)
       }
     })
   }

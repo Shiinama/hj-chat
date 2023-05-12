@@ -260,6 +260,7 @@ export default function Chat({}) {
             userId,
             pinned,
             setAuInfo,
+            recording,
             pauseRecording,
             startRecording,
             stopRecording,

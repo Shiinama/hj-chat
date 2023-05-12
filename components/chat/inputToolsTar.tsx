@@ -25,6 +25,7 @@ type Props = {
     startRecording: () => void
     stopRecording: () => void
     pauseRecording: () => void
+    recording
     setAuInfo: (audioFileUri: string) => void
     uid: string
     userId: number
@@ -37,6 +38,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const {
     value,
     onChangeText,
+    recording,
     startRecording,
     stopRecording,
     pauseRecording,
@@ -145,56 +147,6 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         stopRecording={stopRecording}
       ></RecordButton>
     )
-    return (
-      <View>
-        <AudioMessage
-          ref={audioMessageRef}
-          showControl={false}
-          slideWidth={500}
-          audioFileUri={audioFileUri}
-          onPlay={playing => {
-            setIsPlaying(playing)
-          }}
-        ></AudioMessage>
-        <View style={styles.accessory}>
-          <TouchableOpacity
-            onPress={async () => {
-              const { exists } = await FileSystem.getInfoAsync(audioFileUri)
-
-              if (exists) {
-                try {
-                  await FileSystem.deleteAsync(audioFileUri)
-                  Toast('Deleted recording file')
-                } catch (error) {
-                  Toast('Failed to delete recording file')
-                }
-              }
-              setAudioFileUri('')
-            }}
-          >
-            <Delete></Delete>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              setIsPlaying(pre => {
-                audioMessageRef.current.handlePlayPause()
-                return !pre
-              })
-            }
-          >
-            {isPlaying ? <Messagepause /> : <MessagePlay />}
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setAuInfo(audioFileUri)
-              setAudioFileUri('')
-            }}
-          >
-            <Send></Send>
-          </TouchableOpacity>
-        </View>
-      </View>
-    )
   }
 
   const renderLeftInput = () => {
@@ -286,7 +238,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                   {renderRightInput}
                 </>
               ) : (
-                <AudioAnimation ref={AnimationRef}></AudioAnimation>
+                <AudioAnimation ref={AnimationRef} recording={recording}></AudioAnimation>
               )}
             </>
           }

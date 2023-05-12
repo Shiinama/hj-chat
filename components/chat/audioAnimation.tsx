@@ -1,8 +1,14 @@
-import React, { useImperativeHandle, useRef } from 'react'
+import React, { useEffect, useImperativeHandle, useRef } from 'react'
 import Lottie from 'lottie-react-native'
 import { Text, View, StyleSheet } from 'react-native'
 import { forwardRef } from 'react'
 function AudioAnimation(props, ref) {
+  const { recording } = props
+  useEffect(() => {
+    if (recording) {
+      console.log(recording.durationMillis, 11)
+    }
+  }, [recording?.durationMillis])
   const animationRef = useRef<Lottie>(null)
   useImperativeHandle(ref, () => ({
     stopAnimation,
