@@ -46,11 +46,11 @@ export class DatabaseInitialization {
       transaction.executeSql('DROP TABLE IF EXISTS Messages;')
       transaction.executeSql('DROP TABLE IF EXISTS Version;')
     }
-    // ListItem table
+
     transaction.executeSql(`
       CREATE TABLE IF NOT EXISTS Messages(
         id INTEGER PRIMARY KEY NOT NULL,
-        uid TEXT NOT NULL,
+        uid TEXT,
         userId INTEGER,
         userUid TEXT,
         status TEXT,

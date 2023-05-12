@@ -6,11 +6,7 @@ import { DATABASE } from './Constants'
 import { AppState, AppStateStatus } from 'react-native'
 
 export interface Database {
-  // Create
-  createList(newListTitle: string): Promise<void>
-  addListItem(text: string, list: List): Promise<void>
-  // Read
-  getAllLists(): Promise<List[]>
+  addMessage(text: string, list: List): Promise<void>
   getListItems(list: List, doneItemsLast: boolean): Promise<ListItem[]>
   // Update
   updateListItem(listItem: ListItem): Promise<void>
@@ -20,14 +16,27 @@ export interface Database {
 
 let databaseInstance: SQLite.SQLiteDatabase | undefined
 
-async function addListItem(text: string, list: List): Promise<void> {
-  if (list === undefined) {
-    return Promise.reject(Error(`Could not add item to undefined list.`))
+async function addMessage(message: List): Promise<void> {
+  const chatSet = new Array(Object.keys(message).length).fill('?')
+  const columns = Object.keys(message).join(', ')
+  const values = Object.values(message)
+
+  if (message === undefined) {
+    return Promise.reject(Error(`Could not add item to undefined message.`))
   }
   return getDatabase()
-    .then(db => db.executeSql('INSERT INTO ListItem (text, list_id) VALUES (?, ?);', [text, list.id]))
+    .then(db => db.executeSql(`INSERT INTO Messages (${columns}) VALUES (${chatSet});`, values))
     .then(([results]) => {
-      console.log(`[db] ListItem with "${text}" created successfully with id: ${results.insertId}`)
+      console.log(`[db] message  created successfully with id: ${results.insertId}`)
+      return results
+    })
+}
+
+async function getLastMessage() {
+  return getDatabase()
+    .then(db => db.executeSql(`SELECT * FROM Messages;`))
+    .then(([results]) => {
+      console.log(results)
     })
 }
 
@@ -152,9 +161,8 @@ function handleAppStateChange(nextAppState: AppStateStatus) {
 
 // Export the functions which fulfill the Database interface contract
 export const sqliteDatabase: Database = {
-  createList,
-  addListItem,
-  getAllLists,
+  addMessage,
+  getLastMessage,
   getListItems,
   updateListItem,
   deleteList,
