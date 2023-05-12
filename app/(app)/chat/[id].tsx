@@ -97,6 +97,14 @@ export default function Chat({}) {
     }
   }
 
+  function pauseRecording() {
+    try {
+      recording.pauseAsync()
+    } catch (err) {
+      Toast('Failed to pause recording')
+    }
+  }
+
   const loadData = (loadMore?: boolean) => {
     if (loadMore) {
       setShowLoadMoring(true)
@@ -249,6 +257,7 @@ export default function Chat({}) {
             userId,
             pinned,
             setAuInfo,
+            pauseRecording,
             startRecording,
             stopRecording,
             onSubmitEditing: async (value: any) => {

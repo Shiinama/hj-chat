@@ -1,82 +1,168 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet, Animated, Easing, TouchableOpacity, Text } from 'react-native'
 import Huatong from '../../assets/images/chat/huatong.svg'
 import { Audio } from 'expo-av'
+import Delete from '../../assets/images/chat/delete.svg'
+import * as FileSystem from 'expo-file-system'
+import { View } from 'react-native'
+import Pause from '../../assets/images/chat/pause.svg'
+import Play from '../../assets/images/chat/play.svg'
+import Send from '../../assets/images/chat/send.svg'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import { useIntervalTime } from '../../utils/time'
+const RecordButton = ({
+  audioFileUri,
+  startRecording,
+  stopRecording,
+  setIsShow,
+  setAuInfo,
+  pauseRecording,
+  setShowAni,
+  setAudioFileUri,
+  isShow,
+  AnimationRef,
+}) => {
+  if (isShow) return null
+  const [sound, setSound] = useState(null)
+  const [buttonState, setButtonState] = useState('penddingRecording')
+  const [isSound, setIsSound] = useState(true)
 
-const RecordButton = ({ startRecording, stopRecording, setAudioFileUri }) => {
-  const [isRecording, setIsRecording] = useState(false)
-  const recordButtonScale = useRef(new Animated.Value(1)).current
-  function animateScaleOut() {
-    Animated.timing(recordButtonScale, {
-      toValue: 0.8,
-      duration: 200,
-      useNativeDriver: true,
-      easing: Easing.inOut(Easing.quad),
-    }).start()
-  }
-
-  function animateScaleIn() {
-    Animated.timing(recordButtonScale, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-      easing: Easing.inOut(Easing.quad),
-    }).start()
-  }
-
-  function handlePressIn() {
+  function handlestartRecording() {
     Audio.requestPermissionsAsync().then(({ granted }) => {
       if (!granted) {
         alert('请允许访问麦克风以录制音频！请到设置中')
       } else {
-        // 如果手速过快正在录音再去点会录音失败
-        if (!isRecording) {
-          setIsRecording(true)
-          animateScaleOut()
-          startRecording()
-        }
+        setShowAni(false)
+        startRecording()
+        setButtonState('recording')
+        setTimeout(() => {
+          AnimationRef.current.startAnimation()
+        })
       }
     })
   }
 
-  async function handlePressOut() {
-    if (isRecording) {
-      setIsRecording(false)
-      animateScaleIn()
-      if (stopRecording) {
-        const uri = await stopRecording()
-        console.log(uri)
-        setAudioFileUri(uri)
-      }
+  const playOrPauseIcon = () => {
+    switch (buttonState) {
+      case 'penddingRecording':
+        return (
+          <View style={{ alignItems: 'center' }}>
+            {/* <Text style={{ color: '#A0AEC0' }}>Tap to record</Text> */}
+            <TouchableOpacity style={styles.recordButton} onPress={handlestartRecording}>
+              <Huatong color="red" />
+            </TouchableOpacity>
+          </View>
+        )
+      case 'recording':
+        return (
+          <TouchableOpacity
+            style={styles.recordButton}
+            onPress={async () => {
+              const uri = await stopRecording()
+              const { sound } = await Audio.Sound.createAsync({ uri })
+              setSound(sound)
+              setAudioFileUri(uri)
+              setButtonState('playing')
+              AnimationRef.current.stopAnimation()
+            }}
+          >
+            <View style={{ backgroundColor: 'red', width: 14, height: 14, borderRadius: 2 }}></View>
+          </TouchableOpacity>
+        )
+      case 'playing':
+        return (
+          <>
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={async () => {
+                const { exists } = await FileSystem.getInfoAsync(audioFileUri)
+                if (exists) {
+                  try {
+                    await FileSystem.deleteAsync(audioFileUri)
+                    Toast('Deleted recording file')
+                  } catch (error) {
+                    Toast('Failed to delete recording file')
+                  }
+                }
+                setAudioFileUri('')
+                setIsShow(true)
+                setShowAni(true)
+              }}
+            >
+              <Delete height={20} width={20}></Delete>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ ...styles.palyButton, marginHorizontal: 90 }}
+              onPress={async () => {
+                setIsSound(pre => {
+                  if (pre) {
+                    sound.playAsync()
+                    AnimationRef.current.startAnimation()
+                  } else {
+                    sound.pauseAsync()
+                    AnimationRef.current.stopAnimation()
+                  }
+                  return !pre
+                })
+                //
+              }}
+            >
+              {isSound ? <Pause></Pause> : <Play></Play>}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={async () => {
+                setAuInfo()
+                setIsShow(true)
+                setShowAni(true)
+              }}
+            >
+              <Send height={20} width={20}></Send>
+            </TouchableOpacity>
+          </>
+        )
     }
   }
-
-  return (
-    <TouchableOpacity style={styles.container} onLongPress={handlePressIn} onPressOut={handlePressOut}>
-      <Animated.View
-        style={[styles.recordButton, isRecording && styles.isRecording, { transform: [{ scale: recordButtonScale }] }]}
-      >
-        <Huatong color="white" />
-      </Animated.View>
-    </TouchableOpacity>
-  )
+  return <View style={styles.container}>{playOrPauseIcon()}</View>
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
+    height: 100,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   recordButton: {
     width: 40,
     height: 40,
     borderRadius: 40,
-    backgroundColor: 'red',
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 59, 48, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  isRecording: {
-    backgroundColor: '#F44336',
+  palyButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    flexDirection: 'row',
+    backgroundColor: '#e7d9f7',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  smallButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 30,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // isRecording: {
+  //   backgroundColor: '#F44336',
+  // },
   recordingIndicator: {
     marginTop: 20,
     fontSize: 20,

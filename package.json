@@ -59,6 +59,7 @@
     "expo-web-browser": "~12.1.1",
     "ffmpeg-kit-react-native": "^5.1.0",
     "https-browserify": "~0.0.0",
+    "lottie-react-native": "^5.1.5",
     "path-browserify": "0.0.0",
     "punycode": "^1.2.4",
     "querystring-es3": "~0.2.0",

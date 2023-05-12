@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   action: {
     position: 'absolute',
     left: 0,
-    bottom: 0,
+    bottom: 33,
     height: 72,
     width: 375,
     boxSizing: 'border-box',
