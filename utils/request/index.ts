@@ -81,7 +81,7 @@ export default async function request<T>(options: RequestOptions) {
   let Authorization = ''
   if (notNeedLogin) {
     Authorization =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMzM5OTY1MDczLCJqdGkiOiI2MTc1ZDNhMmNjYmE0NWFjYTc2NDc0MDhmYzY1MjllZiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzM0MjU1NzA3M30.C79OLS9eWvDLiEv9ZqDbeoDmJs7AhmnrijHnAnunzx8'
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzNzA5MTY0NTM1LCJqdGkiOiIzMTY1ZjYzZWY4ZDg0NzhlYmE0OGZmOWE4NjM0NTkyNyIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzcxMTc1NjUzNX0.6XYjiQclRy0byiWRhrxctmEQWPIJ6dTi8yYUD7GVMaU'
   } else {
     const token = await AsyncStorage.getItem(authKey)
     if (!token && url !== '/auth/particleLogin') {

@@ -10,6 +10,7 @@ import Messagepause from '../../assets/images/chat/message_pause.svg'
 import RecordButton from './RecordButton'
 import { StyleSheet } from 'react-native'
 import AudioMessage from './audioMessage'
+import { useRouter } from 'expo-router'
 import * as FileSystem from 'expo-file-system'
 import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
@@ -17,11 +18,14 @@ import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
 import { useBoolean } from 'ahooks'
+import AudioAnimation from './audioAnimation'
 type Props = {
   minInputToolbarHeight: number
   inputTextProps: TextInput['props'] & {
     startRecording: () => void
     stopRecording: () => void
+    pauseRecording: () => void
+    recording
     setAuInfo: (audioFileUri: string) => void
     uid: string
     userId: number
@@ -34,8 +38,10 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const {
     value,
     onChangeText,
+    recording,
     startRecording,
     stopRecording,
+    pauseRecording,
     setAuInfo,
     onSubmitEditing,
     pinned: originalPinned,
@@ -51,11 +57,14 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  // 控制话筒弹出
   const [isShow, setIsShow] = useState(true)
+  const [showAni, setShowAni] = useState(true)
   const [showSend, setShowSend] = useState(true)
   const inputRef = useRef(null)
   const audioMessageRef = useRef(null)
-
+  const router = useRouter()
+  const AnimationRef = useRef(null)
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
       if (Platform.OS === 'android') return
@@ -104,6 +113,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         const { close: removeClose } = Toast.loading('Move...')
         removeBotFromChatList({ botUid: uid }).then(() => {
           removeClose()
+          router.push({ pathname: '(tabs)' })
         })
         break
       case 'ClearMemory':
@@ -122,56 +132,20 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
     setToolsVisible(false)
   }
 
-  const audioTollsBar = () => {
+  const inputBottmTollsBar = () => {
     return (
-      <View>
-        <AudioMessage
-          ref={audioMessageRef}
-          showControl={false}
-          slideWidth={500}
-          audioFileUri={audioFileUri}
-          onPlay={playing => {
-            setIsPlaying(playing)
-          }}
-        ></AudioMessage>
-        <View style={styles.accessory}>
-          <TouchableOpacity
-            onPress={async () => {
-              const { exists } = await FileSystem.getInfoAsync(audioFileUri)
-
-              if (exists) {
-                try {
-                  await FileSystem.deleteAsync(audioFileUri)
-                  Toast('Deleted recording file')
-                } catch (error) {
-                  Toast('Failed to delete recording file')
-                }
-              }
-              setAudioFileUri('')
-            }}
-          >
-            <Delete></Delete>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              setIsPlaying(pre => {
-                audioMessageRef.current.handlePlayPause()
-                return !pre
-              })
-            }
-          >
-            {isPlaying ? <Messagepause /> : <MessagePlay />}
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setAuInfo(audioFileUri)
-              setAudioFileUri('')
-            }}
-          >
-            <Send></Send>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <RecordButton
+        isShow={isShow}
+        AnimationRef={AnimationRef}
+        setIsShow={setIsShow}
+        setShowAni={setShowAni}
+        setAudioFileUri={setAudioFileUri}
+        audioFileUri={audioFileUri}
+        setAuInfo={setAuInfo}
+        startRecording={startRecording}
+        pauseRecording={pauseRecording}
+        stopRecording={stopRecording}
+      ></RecordButton>
     )
   }
 
@@ -240,36 +214,36 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
       }}
     >
       <View>
-        {!audioFileUri ? (
-          <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
-            {renderLeftInput()}
-            {isShow ? (
-              <TextInput
-                ref={inputRef}
-                returnKeyType="default"
-                blurOnSubmit={false}
-                multiline={true}
-                maxLength={500}
-                placeholder="Wite a message"
-                style={styles.textInput}
-                onChangeText={inputText => {
-                  onChangeText(inputText)
-                }}
-                {...inputTextProps}
-                {...inputProps}
-              />
-            ) : (
-              <RecordButton
-                setAudioFileUri={setAudioFileUri}
-                startRecording={startRecording}
-                stopRecording={stopRecording}
-              ></RecordButton>
-            )}
-            {renderRightInput}
-          </View>
-        ) : (
-          audioTollsBar()
-        )}
+        <View style={{ ...styles.primary, height: isShow ? minInputToolbarHeight : minInputToolbarHeight / 2 }}>
+          {
+            <>
+              {showAni ? (
+                <>
+                  {renderLeftInput()}
+                  <TextInput
+                    ref={inputRef}
+                    returnKeyType="default"
+                    blurOnSubmit={false}
+                    multiline={true}
+                    maxLength={500}
+                    placeholder="Wite a message"
+                    style={styles.textInput}
+                    onChangeText={inputText => {
+                      onChangeText(inputText)
+                    }}
+                    {...inputTextProps}
+                    {...inputProps}
+                  />
+
+                  {renderRightInput}
+                </>
+              ) : (
+                <AudioAnimation ref={AnimationRef} recording={recording}></AudioAnimation>
+              )}
+            </>
+          }
+        </View>
+        {inputBottmTollsBar()}
       </View>
     </View>
   )

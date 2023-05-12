@@ -107,7 +107,7 @@ const AudioMessage = forwardRef(
     const handlePlayPause = async () => {
       if (sound !== null) {
         if (isPlaying) {
-          Audio.setAudioModeAsync({
+          await Audio.setAudioModeAsync({
             allowsRecordingIOS: true,
           });
           soundInterval.current && clearInterval(soundInterval.current);
