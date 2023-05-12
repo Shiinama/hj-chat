@@ -2,7 +2,6 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } f
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 import Slider from '@react-native-community/slider'
 import { Audio, AVPlaybackStatus } from 'expo-av'
-import heidian from '../../assets/images/heidian.png'
 import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
