@@ -17,7 +17,6 @@ const RecordButton = ({
   stopRecording,
   setIsShow,
   setAuInfo,
-  pauseRecording,
   setShowAni,
   setAudioFileUri,
   isShow,
@@ -61,7 +60,14 @@ const RecordButton = ({
             style={styles.recordButton}
             onPress={async () => {
               const uri = await stopRecording()
-              const { sound } = await Audio.Sound.createAsync({ uri })
+              const { sound } = await Audio.Sound.createAsync({ uri }, {}, (status: any) => {
+                if (status.positionMillis >= status.durationMillis) {
+                  setIsSound(true)
+                  AnimationRef.current.stopAnimation()
+                  sound.stopAsync()
+                  // sound.pauseAsync()
+                }
+              })
               setSound(sound)
               setAudioFileUri(uri)
               setButtonState('playing')
@@ -98,6 +104,7 @@ const RecordButton = ({
               onPress={async () => {
                 setIsSound(pre => {
                   if (pre) {
+                    console.log(21312)
                     sound.playAsync()
                     AnimationRef.current.startAnimation()
                   } else {

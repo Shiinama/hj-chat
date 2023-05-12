@@ -92,11 +92,13 @@ export default function Chat({}) {
     try {
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
-      });
+      })
       const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
-      const { recording } = await Audio.Recording.createAsync(defaultParam, status =>
-        setDurationMillis(status.durationMillis)
-      )
+      const { recording } = await Audio.Recording.createAsync(defaultParam, status => {
+        if (status.isRecording) {
+          setDurationMillis(status.durationMillis)
+        }
+      })
       setRecording(recording)
     } catch (err) {
       Toast('Failed to start recording')

@@ -6,6 +6,7 @@ import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
+import { formatTime } from '../../utils/time'
 type AudioType = {
   audioFileUri: string
   slideWidth?: number
@@ -87,14 +88,14 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       if (isPlaying) {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
-        });
+        })
 
         soundInterval.current && clearInterval(soundInterval.current)
         soundManager.current.pause()
       } else {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
-        });
+        })
         // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
         soundManager.current.play(
           sound,
@@ -125,12 +126,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
     }
   }
 
-  const formatTime = (ms: number): string => {
-    const minutes: number = Math.floor(ms / 60000)
-    // @ts-ignore
-    const seconds: number = ((ms % 60000) / 1000).toFixed(0)
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
-  }
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <View style={styles.container}>
