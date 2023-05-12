@@ -10,6 +10,7 @@ import Play from '../../assets/images/chat/play.svg'
 import Send from '../../assets/images/chat/send.svg'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useIntervalTime } from '../../utils/time'
+import AudioPayManagerSingle from './audioPlayManager'
 const RecordButton = ({
   audioFileUri,
   startRecording,
@@ -32,6 +33,7 @@ const RecordButton = ({
       if (!granted) {
         alert('请允许访问麦克风以录制音频！请到设置中')
       } else {
+        AudioPayManagerSingle().pause(true)
         setShowAni(false)
         startRecording()
         setButtonState('recording')

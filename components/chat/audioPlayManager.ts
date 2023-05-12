@@ -96,7 +96,6 @@ export class AudioPayManager {
         console.log("play-pauseAsync",e);
       }
     }
-    this.soundIsAutoStop = false;
     this.currentSound = sound;
     this.currentSoundStopMethod = callBack;
     this.currentSoundRePlayMethod = rePlay;

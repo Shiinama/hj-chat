@@ -40,6 +40,7 @@ const AudioMessage = forwardRef(
       if (!audioFileUri) return;
       const loadSound = async () => {
         setLoading(true);
+        // 输出音频通过扩音器
         const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri });
         setSound(sound);
         setLoading(false);
@@ -106,16 +107,20 @@ const AudioMessage = forwardRef(
     const handlePlayPause = async () => {
       if (sound !== null) {
         if (isPlaying) {
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: true,
+          });
           soundInterval.current && clearInterval(soundInterval.current);
           soundManager.current.pause();
         } else {
-          console.log("palyaaa:", audioFileUri);
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+          });
           // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
           soundManager.current.play(
             sound,
             function () {
               setIsPlaying(false);
-              console.log("stopforward:", audioFileUri);
               soundInterval.current && clearInterval(soundInterval.current);
             },
             function () {
@@ -125,7 +130,6 @@ const AudioMessage = forwardRef(
           );
           startPlayInterval();
         }
-        console.log("isPlaying:", !isPlaying);
         setIsPlaying(() => !isPlaying);
       }
     };
