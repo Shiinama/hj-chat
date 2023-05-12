@@ -25,7 +25,7 @@ type Props = {
     startRecording: () => void
     stopRecording: () => void
     pauseRecording: () => void
-    recording
+    durationMillis
     setAuInfo: (audioFileUri: string) => void
     uid: string
     userId: number
@@ -38,7 +38,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const {
     value,
     onChangeText,
-    recording,
+    durationMillis,
     startRecording,
     stopRecording,
     pauseRecording,
@@ -238,7 +238,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                   {renderRightInput}
                 </>
               ) : (
-                <AudioAnimation ref={AnimationRef} recording={recording}></AudioAnimation>
+                <AudioAnimation ref={AnimationRef} durationMillis={durationMillis}></AudioAnimation>
               )}
             </>
           }

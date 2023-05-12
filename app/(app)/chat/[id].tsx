@@ -61,6 +61,7 @@ export default function Chat({}) {
   const [text, setText] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
+  const [durationMillis, setDurationMillis] = useState(0)
   const [voice, setVoice] = useState(null)
   const [translationTextIndex, setTranslationTextIndex] = useState(null)
   const flatList = useRef<FlatList>()
@@ -90,18 +91,12 @@ export default function Chat({}) {
   async function startRecording() {
     try {
       const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
-      const { recording } = await Audio.Recording.createAsync(defaultParam)
+      const { recording } = await Audio.Recording.createAsync(defaultParam, status =>
+        setDurationMillis(status.durationMillis)
+      )
       setRecording(recording)
     } catch (err) {
       Toast('Failed to start recording')
-    }
-  }
-
-  function pauseRecording() {
-    try {
-      recording.pauseAsync()
-    } catch (err) {
-      Toast('Failed to pause recording')
     }
   }
 
@@ -260,8 +255,7 @@ export default function Chat({}) {
             userId,
             pinned,
             setAuInfo,
-            recording,
-            pauseRecording,
+            durationMillis,
             startRecording,
             stopRecording,
             onSubmitEditing: async (value: any) => {

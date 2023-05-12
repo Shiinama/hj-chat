@@ -2,13 +2,11 @@ import React, { useEffect, useImperativeHandle, useRef } from 'react'
 import Lottie from 'lottie-react-native'
 import { Text, View, StyleSheet } from 'react-native'
 import { forwardRef } from 'react'
+import { formatTime } from '../../utils/time'
+
 function AudioAnimation(props, ref) {
-  const { recording } = props
-  useEffect(() => {
-    if (recording) {
-      console.log(recording.durationMillis, 11)
-    }
-  }, [recording?.durationMillis])
+  const { durationMillis } = props
+  console.log(durationMillis)
   const animationRef = useRef<Lottie>(null)
   useImperativeHandle(ref, () => ({
     stopAnimation,
@@ -32,7 +30,7 @@ function AudioAnimation(props, ref) {
   }
   return (
     <View style={styles.animation}>
-      <Text style={{ color: 'white', marginRight: 20 }}>30</Text>
+      <Text style={{ color: 'white', marginRight: 20 }}>{formatTime(durationMillis)}</Text>
       <Lottie
         style={{ height: 52 }}
         ref={animationRef}

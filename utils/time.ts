@@ -177,3 +177,10 @@ export const useIntervalTime = () => {
     return [time.current, start, pause, resume, reset]
   }
 }
+
+export const formatTime = (ms: number): string => {
+  const minutes: number = Math.floor(ms / 60000)
+  // @ts-ignore
+  const seconds: number = ((ms % 60000) / 1000).toFixed(0)
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+}
