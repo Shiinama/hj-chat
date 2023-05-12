@@ -85,16 +85,21 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
   const handlePlayPause = async () => {
     if (sound !== null) {
       if (isPlaying) {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+        });
+
         soundInterval.current && clearInterval(soundInterval.current)
         soundManager.current.pause()
       } else {
-        console.log('palyaaa:', audioFileUri)
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+        });
         // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
         soundManager.current.play(
           sound,
           function () {
             setIsPlaying(false)
-            console.log('stopforward:', audioFileUri)
             soundInterval.current && clearInterval(soundInterval.current)
           },
           function () {
@@ -104,7 +109,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         )
         startPlayInterval()
       }
-      console.log('isPlaying:', !isPlaying)
       setIsPlaying(() => !isPlaying)
     }
   }
