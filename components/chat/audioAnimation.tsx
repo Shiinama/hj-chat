@@ -6,7 +6,6 @@ import { formatTime } from '../../utils/time'
 
 function AudioAnimation(props, ref) {
   const { durationMillis } = props
-  console.log(durationMillis)
   const animationRef = useRef<Lottie>(null)
   useImperativeHandle(ref, () => ({
     stopAnimation,
