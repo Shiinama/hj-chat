@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, AppState, FlatList } from 'react-native'
+import { Text, View, TouchableOpacity, AppState, FlatList, Alert } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
@@ -105,28 +105,30 @@ export default function Chat({}) {
       botUid: uid,
       offset: chatData.length,
       limit: chatDataInfo.current.pageSize,
-      beforeId: chatData.length > 0 ? chatData[chatData.length-1].id : undefined
-    }).then(({ data }: any) => {
-      // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
-      // data.sort(
-      //   (a, b) =>
-      //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
-      // );
-      // chatDataInfo.current.data = data
-      // console.log(data, chatData)
-      setChatData(!loadMore ? data : [...chatData, ...data]);
-      if (data.length < chatDataInfo.current.pageSize) {
-        chatDataInfo.current.hasMore = false
-      }
-      chatDataInfo.current.isTouchList = false
-      setShowLoadMoring(false)
-      setLoading(false);
-    }).catch(e=>{
-      console.log(e)
-      chatDataInfo.current.isTouchList = false
-      setShowLoadMoring(false)
-      setLoading(false);
-    });
+      beforeId: chatData.length > 0 ? chatData[chatData.length - 1].id : undefined,
+    })
+      .then(({ data }: any) => {
+        // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
+        // data.sort(
+        //   (a, b) =>
+        //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+        // );
+        // chatDataInfo.current.data = data
+        // console.log(data, chatData)
+        setChatData(!loadMore ? data : [...chatData, ...data])
+        if (data.length < chatDataInfo.current.pageSize) {
+          chatDataInfo.current.hasMore = false
+        }
+        chatDataInfo.current.isTouchList = false
+        setShowLoadMoring(false)
+        setLoading(false)
+      })
+      .catch(e => {
+        console.log(e)
+        chatDataInfo.current.isTouchList = false
+        setShowLoadMoring(false)
+        setLoading(false)
+      })
   }
 
   async function stopRecording() {
@@ -250,6 +252,10 @@ export default function Chat({}) {
             startRecording,
             stopRecording,
             onSubmitEditing: async (value: any) => {
+              if (value.length === 0) {
+                Alert.alert('Please enter your message')
+                return
+              }
               const reqId = uuidv4()
               sendMessage('text_chat', {
                 reqId,

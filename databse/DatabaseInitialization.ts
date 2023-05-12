@@ -48,22 +48,23 @@ export class DatabaseInitialization {
       transaction.executeSql('DROP TABLE IF EXISTS Version;')
     }
 
-    // List table
     transaction.executeSql(`
-      CREATE TABLE IF NOT EXISTS List(
-        list_id INTEGER PRIMARY KEY NOT NULL,
-        title TEXT
-      );
-    `)
-
-    // ListItem table
-    transaction.executeSql(`
-      CREATE TABLE IF NOT EXISTS ListItem(
-        item_id INTEGER PRIMARY KEY NOT NULL,
-        list_id INTEGER,
+      CREATE TABLE IF NOT EXISTS Messages(
+        id INTEGER PRIMARY KEY NOT NULL,
+        uid TEXT,
+        userId INTEGER,
+        userUid TEXT,
+        status TEXT,
+        type TEXT,
+        replyUid TEXT,
         text TEXT,
-        done INTEGER DEFAULT 0,
-        FOREIGN KEY ( list_id ) REFERENCES List ( list_id )
+        translation TEXT,
+        voiceUrl TEXT,
+        botId INTEGER,
+        content TEXT,
+        createdDate TEXT,
+        updatedDate TEXT,
+        botUid TEXT
       );
     `)
 
