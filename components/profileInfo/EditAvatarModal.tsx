@@ -1,6 +1,6 @@
 import { getProfile, UserProfile } from "../../store/userStore";
 import { Button, Overlay, Toast } from "@fruits-chain/react-native-xiaoshu";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
@@ -44,19 +44,31 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
 }) => {
   const viewRef = useRef();
   const [imgSize, setImgSize] = useState(0);
+  const [inputImage, setInputImage] =
+    useState<ImagePicker.ImagePickerAsset>(null);
   const [zoom, setZoom] = useState(1);
   const [zoomSize, setZoomSize] = useState(0);
   const [updateLoading, { set: setUpdateLoading }] = useBoolean(false);
+  const canEdit = useMemo(() => {
+    if (inputImage) {
+      return true;
+    } else {
+      if (zoom !== 1) {
+        return true;
+      }
+    }
+    return false;
+  }, [zoom, inputImage]);
   useEffect(() => {
     setZoomSize(imgSize);
   }, [imgSize]);
   useEffect(() => {
     if (visible) {
       setInputImage(null);
+      setZoom(1);
     }
   }, [visible]);
-  const [inputImage, setInputImage] =
-    useState<ImagePicker.ImagePickerAsset>(null);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -122,6 +134,7 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({
               <Text style={styles.headerTitle}>Update avatar</Text>
             </View>
             <Button
+              disabled={!canEdit}
               loading={updateLoading}
               color="#1F1F1F"
               size="s"
