@@ -14,19 +14,7 @@ import useUserStore, { getUserEnergyInfo } from '../../store/userStore'
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
-const styles = StyleSheet.create({
-  bottomIcon: {
-    position: 'relative',
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bottomIconImg: {
-    width: 23,
-    height: 27,
-  },
-})
+
 export default function TabLayout() {
   const { userEnergyInfo: energy } = useUserStore()
   useFocusEffect(
