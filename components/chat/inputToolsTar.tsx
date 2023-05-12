@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Keyboard, View, TextInput, ViewStyle, Platform, Image, TouchableOpacity } from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
@@ -122,6 +122,116 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
     setToolsVisible(false)
   }
 
+  const audioTollsBar = () => {
+    return (
+      <View>
+        <AudioMessage
+          ref={audioMessageRef}
+          showControl={false}
+          slideWidth={500}
+          audioFileUri={audioFileUri}
+          onPlay={playing => {
+            setIsPlaying(playing)
+          }}
+        ></AudioMessage>
+        <View style={styles.accessory}>
+          <TouchableOpacity
+            onPress={async () => {
+              const { exists } = await FileSystem.getInfoAsync(audioFileUri)
+
+              if (exists) {
+                try {
+                  await FileSystem.deleteAsync(audioFileUri)
+                  Toast('Deleted recording file')
+                } catch (error) {
+                  Toast('Failed to delete recording file')
+                }
+              }
+              setAudioFileUri('')
+            }}
+          >
+            <Delete></Delete>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              setIsPlaying(pre => {
+                audioMessageRef.current.handlePlayPause()
+                return !pre
+              })
+            }
+          >
+            {isPlaying ? <Messagepause /> : <MessagePlay />}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setAuInfo(audioFileUri)
+              setAudioFileUri('')
+            }}
+          >
+            <Send></Send>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
+
+  const renderLeftInput = () => {
+    return (
+      <>
+        <Overlay
+          visible={toolsVisible}
+          backgroundColor="transparent"
+          onPress={() => {
+            setToolsVisible(false)
+          }}
+        >
+          <ToolsModal bottom={barHeight} userId={userId} pinned={pinned} toolsAction={toolsAction} />
+        </Overlay>
+        <ShareToPopup />
+        <TouchableOpacity
+          style={styles.toolsIcon}
+          onPress={() => {
+            setToolsVisible(true)
+            /** 底部高度ios获取不正确 */
+            if (Platform.OS === 'ios') {
+              inputRef.current?.blur()
+            }
+          }}
+        >
+          <Lines></Lines>
+        </TouchableOpacity>
+      </>
+    )
+  }
+
+  const renderRightInput = useMemo(() => {
+    return (
+      <TouchableOpacity
+        style={styles.toolsIcon}
+        onPress={() => {
+          setIsShow(pre => {
+            if (!pre) {
+              handleButtonPress()
+            }
+            return !pre
+          })
+        }}
+      >
+        {isShow ? (
+          showSend ? (
+            <Image style={styles.Icon} source={audio}></Image>
+          ) : (
+            <TouchableOpacity onPress={() => onSubmitEditing(value as any)}>
+              <Send></Send>
+            </TouchableOpacity>
+          )
+        ) : (
+          <Keyborad fill={'#2D3748'}></Keyborad>
+        )}
+      </TouchableOpacity>
+    )
+  }, [isShow, showSend])
+
   return (
     <View
       style={[styles.container, { position }] as ViewStyle}
@@ -132,28 +242,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
       <View>
         {!audioFileUri ? (
           <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
-            <Overlay
-              visible={toolsVisible}
-              backgroundColor="transparent"
-              onPress={() => {
-                setToolsVisible(false)
-              }}
-            >
-              <ToolsModal bottom={barHeight} userId={userId} pinned={pinned} toolsAction={toolsAction} />
-            </Overlay>
-            <TouchableOpacity
-              style={styles.toolsIcon}
-              onPress={() => {
-                setToolsVisible(true)
-                /** 底部高度ios获取不正确 */
-                if (Platform.OS === 'ios') {
-                  inputRef.current?.blur()
-                }
-              }}
-            >
-              <Lines></Lines>
-            </TouchableOpacity>
-            <ShareToPopup />
+            {renderLeftInput()}
             {isShow ? (
               <TextInput
                 ref={inputRef}
@@ -177,79 +266,10 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                 stopRecording={stopRecording}
               ></RecordButton>
             )}
-            <TouchableOpacity
-              style={styles.toolsIcon}
-              onPress={() => {
-                setIsShow(pre => {
-                  if (!pre) {
-                    handleButtonPress()
-                  }
-                  return !pre
-                })
-              }}
-            >
-              {isShow ? (
-                showSend ? (
-                  <Image style={styles.Icon} source={audio}></Image>
-                ) : (
-                  <TouchableOpacity onPress={() => onSubmitEditing(value as any)}>
-                    <Send></Send>
-                  </TouchableOpacity>
-                )
-              ) : (
-                <Keyborad fill={'#2D3748'}></Keyborad>
-              )}
-            </TouchableOpacity>
+            {renderRightInput}
           </View>
         ) : (
-          <View>
-            <AudioMessage
-              ref={audioMessageRef}
-              showControl={false}
-              slideWidth={500}
-              audioFileUri={audioFileUri}
-              onPlay={playing => {
-                setIsPlaying(playing)
-              }}
-            ></AudioMessage>
-            <View style={styles.accessory}>
-              <TouchableOpacity
-                onPress={async () => {
-                  const { exists } = await FileSystem.getInfoAsync(audioFileUri)
-
-                  if (exists) {
-                    try {
-                      await FileSystem.deleteAsync(audioFileUri)
-                      Toast('Deleted recording file')
-                    } catch (error) {
-                      Toast('Failed to delete recording file')
-                    }
-                  }
-                  setAudioFileUri('')
-                }}
-              >
-                <Delete></Delete>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  setIsPlaying(pre => {
-                    audioMessageRef.current.handlePlayPause()
-                    return !pre
-                  })
-                }
-              >
-                {isPlaying ? <Messagepause /> : <MessagePlay />}
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setAuInfo(audioFileUri)
-                  setAudioFileUri('')
-                }}
-              >
-                <Send></Send>
-              </TouchableOpacity>
-            </View>
-          </View>
+          audioTollsBar()
         )}
       </View>
     </View>
