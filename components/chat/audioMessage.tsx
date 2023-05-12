@@ -7,7 +7,6 @@ import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
-import { formatTime } from '../../utils/time'
 type AudioType = {
   audioFileUri: string
   slideWidth?: number
@@ -47,11 +46,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         if (status.isLoaded) {
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
-          if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
-            handlePlayPause()
-            // 自动播放后清空自动播放的url
-            AudioPayManagerSingle().currentAutoPlayUrl = undefined
-          }
         }
       })
     }
@@ -128,6 +122,12 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
     }
   }
 
+  const formatTime = (ms: number): string => {
+    const minutes: number = Math.floor(ms / 60000)
+    // @ts-ignore
+    const seconds: number = ((ms % 60000) / 1000).toFixed(0)
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+  }
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <View style={styles.container}>

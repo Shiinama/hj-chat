@@ -23,7 +23,7 @@ import useUserStore, {
   getProfile,
 } from "../../../store/userStore";
 import { Button, Popup, Toast } from "@fruits-chain/react-native-xiaoshu";
-import { useBoolean, useDeepCompareEffect } from "ahooks";
+import { useBoolean, useDebounceEffect, useDeepCompareEffect } from "ahooks";
 import {
   getIsUserNameAvailable,
   getUserConnectedAccounts,
@@ -41,8 +41,20 @@ export default function Profile() {
   const [name, setName] = useState(profile?.name);
   const [visible, { set: setVisible }] = useBoolean(false);
   const [saveLoading, { set: setSaveLoading }] = useBoolean(false);
-
-  const btnDisabled = name === profile?.name;
+  const [btnDisabled, { set: setBtnDisabled }] = useBoolean(true);
+  useDebounceEffect(
+    () => {
+      getIsUserNameAvailable({ name }).then((res) => {
+        if (res) {
+          setBtnDisabled(false);
+        } else {
+          setBtnDisabled(true);
+        }
+      });
+    },
+    [name],
+    { wait: 400 }
+  );
   useDeepCompareEffect(() => {
     setName(profile?.name);
   }, [profile?.name]);

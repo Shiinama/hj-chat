@@ -90,6 +90,9 @@ export default function Chat({}) {
   }, [])
   async function startRecording() {
     try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+      });
       const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
       const { recording } = await Audio.Recording.createAsync(defaultParam, status =>
         setDurationMillis(status.durationMillis)
