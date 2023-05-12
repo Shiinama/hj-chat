@@ -103,9 +103,9 @@ export default function Chat({}) {
     }
     chatHistory({
       botUid: uid,
-      offset: chatData.length,
+      offset: loadMore ? chatData.length : 0,
       limit: chatDataInfo.current.pageSize,
-      beforeId: chatData.length > 0 ? chatData[chatData.length - 1].id : undefined,
+      beforeId: chatData.length > 0 && loadMore ? chatData[chatData.length - 1].id : undefined,
     })
       .then(({ data }: any) => {
         // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
@@ -202,6 +202,9 @@ export default function Chat({}) {
   useEffect(() => {
     if (!resMessage) return
     setChatData([resMessage, ...chatData])
+    if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
+      AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
+    }
     flatList.current?.scrollToIndex?.({ index: 0 })
   }, [resMessage])
 
