@@ -1,3 +1,46 @@
+// 多环境变量
+const envConfig = {
+  dev: {
+    baseUrl: 'https://api-staging.myshell.ai',
+    authKey: 'Authorization',
+    // socketIoUrl: 'https://relay.walletconnect.com',
+    // HOST: 'https://api-staging.myshell.ai',
+    downloadHost: 'https://share.vinstic.com/share',
+
+    shareLink: 'https://app-test.myshell.ai/share/',
+    avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
+  },
+  test: {
+    baseUrl: 'https://app-test.myshell.ai',
+    authKey: 'Authorization',
+    // socketIoUrl: 'https://relay.walletconnect.com',
+    // HOST: 'https://api-staging.myshell.ai',
+    downloadHost: 'https://share.vinstic.com/share',
+
+    shareLink: 'https://app-test.myshell.ai/share/',
+    avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
+  },
+  demo: {
+    baseUrl: 'https://api.myshell.ai',
+    authKey: 'Authorization',
+    // socketIoUrl: 'https://relay.walletconnect.com',
+    // HOST: 'https://api-staging.myshell.ai',
+    downloadHost: 'https://html2img.myshell.ai/share/',
+
+    shareLink: 'https://api.myshell.ai/share/',
+    avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
+  },
+  prod: {
+    baseUrl: 'https://api-test.myshell.ai',
+    authKey: 'Authorization',
+    // socketIoUrl: 'https://relay.walletconnect.com',
+    // HOST: 'https://api-staging.myshell.ai',
+    downloadHost: 'https://share.vinstic.com/share',
+
+    shareLink: 'https://app-test.myshell.ai/share/',
+    avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
+  },
+}
 export default {
   name: 'ai-myshell',
   slug: 'yu-chat',
@@ -72,6 +115,9 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_IS_LOGIN,
+    isLogin: process.env.REACT_APP_ENV === 'dev',
+    systemConfig: {
+      ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
+    },
   },
 }
