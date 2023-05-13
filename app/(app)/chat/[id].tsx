@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity, AppState, FlatList, Alert } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import ChatItem from '../../../components/chat/chatItem'
 import Container from '../../../components/chat/container'
 import { chatHistory } from '../../../api'
@@ -49,14 +49,16 @@ export default function Chat({}) {
   }>({
     audioManager: AudioPayManagerSingle(),
   })
-
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
     selectedItems: [],
   })
   const navigation = useNavigation()
-  const [message, resMessage, sendMessage, translationMessage, updateMessage] = useSocketIo()
+  const { message, resMessage, sendMessage, translationMessage, updateMessage, isPending } = useSocketIo()
+  // 给loading生成一个随机id，这里是用replyUid来判断是否是回复的信息，loading展示为回复数据，所以随便弄一个id当id
+  const randomId = useId()
+
   const [recording, setRecording] = useState(null)
   const [text, setText] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
@@ -256,6 +258,13 @@ export default function Chat({}) {
     }
   }
 
+  const listData = useMemo(() => {
+    if (isPending && chatData?.length > 0) {
+      return [{ type: 'LOADING', replyUid: randomId }, ...chatData]
+    } else {
+      return chatData
+    }
+  }, [chatData, isPending, randomId])
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
@@ -277,6 +286,7 @@ export default function Chat({}) {
                 return
               }
               const reqId = uuidv4()
+
               sendMessage('text_chat', {
                 reqId,
                 botUid: uid,
@@ -288,7 +298,7 @@ export default function Chat({}) {
         }
         flatListRef={flatList}
         flatListProps={{
-          data: chatData,
+          data: listData,
           inverted: true,
           onTouchStart: () => {
             // inverted: true 颠倒列表，往上滑就是加载更多了 上变为下，数据也是一样，加载完数据就无需排序和调用scrollEnd了，并且新增一条消息也无需调用scrollEnd
@@ -315,7 +325,7 @@ export default function Chat({}) {
           onEndReachedThreshold: 0.2,
           renderItem: ({ item, index }) => {
             return (
-              <View>
+              <View key={index}>
                 <ChatItem me={profile?.avatar} logo={logo} translationText={translationText} item={item}></ChatItem>
               </View>
             )

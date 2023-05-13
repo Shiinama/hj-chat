@@ -108,4 +108,18 @@ export default StyleSheet.create({
     right: 0,
     zIndex: 999,
   },
+  loadingBox: {
+    height: 42,
+    backgroundColor: Colors.mainGrey,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 14,
+  },
+  loadingIcon: {
+    marginLeft: 8,
+  },
 })

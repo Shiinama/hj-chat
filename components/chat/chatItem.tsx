@@ -14,6 +14,7 @@ import { useContext, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
 import { BlurView } from '@react-native-community/blur'
+import ShellLoading from '../loading'
 type Props = {
   item: ChatItem & number
   translationText
@@ -93,7 +94,16 @@ function chatItem({ item, translationText, me, logo }: Props) {
       </TouchableOpacity>
     ))
   }
-
+  const loadingRender = () => {
+    return (
+      <View style={styles.loadingBox}>
+        <Text style={styles.loadingText}>replying</Text>
+        <View style={styles.loadingIcon}>
+          <ShellLoading></ShellLoading>
+        </View>
+      </View>
+    )
+  }
   const checkboxJSX = chatValue.pageStatus === 'sharing' && (
     <Checkbox
       style={styles.checkbox}
