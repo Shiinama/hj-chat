@@ -14,7 +14,7 @@ type AudioType = {
   onPlay?: (playing: boolean) => void
 }
 
-const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, slideWidth = 240 }: AudioType, ref) => {
+const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, slideWidth = 140 }: AudioType, ref) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const refPlaying = useRef<boolean>(false)
@@ -132,7 +132,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {showControl && (
           <TouchableOpacity onPress={handlePlayPause}>
-            {isPlaying ? <Messagepause height={20} width={20} /> : <MessagePlay height={20} width={20} />}
+            {isPlaying ? <Messagepause height={32} width={32} /> : <MessagePlay height={32} width={32} />}
           </TouchableOpacity>
         )}
         <Text style={styles.time}>{formatTime(currentPosition) + '/' + formatTime(duration)}</Text>
@@ -140,12 +140,12 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       <View
         style={{
           transform: [{ scale: 0.5 }],
-          position: 'relative',
-          left: slideWidth > 300 ? -120 : -60,
+          position: 'absolute',
+          left: 45,
         }}
       >
         <Slider
-          style={{ ...styles.slider, width: slideWidth }}
+          style={styles.slider}
           minimumValue={0}
           minimumTrackTintColor={'black'}
           thumbTintColor={'black'}
@@ -162,14 +162,16 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     position: 'relative',
+    paddingLeft: 15,
     flexDirection: 'row',
-    paddingHorizontal: 20,
+    justifyContent: 'flex-start',
     height: '100%',
+
     maxHeight: 38,
   },
   slider: {
     height: 10,
-    fontSize: 8,
+    width: 280,
   },
   time: {
     marginHorizontal: 8,

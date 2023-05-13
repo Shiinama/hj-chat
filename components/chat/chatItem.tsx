@@ -29,11 +29,11 @@ function chatItem({ item, translationText, me, logo }: Props) {
   if (item.uid === '1231') return null
   const tag = item?.replyUid
   const renderMessageAudio = () => (
-    <View style={{ height: 38 }}>
+    <View style={{ height: 50, justifyContent: 'center' }}>
       <AudioMessage audioFileUri={item?.voiceUrl} />
     </View>
   )
-  const renderMessageText = ({ textMsg } : { textMsg?: boolean }) => {
+  const renderMessageText = ({ textMsg }: { textMsg?: boolean }) => {
     // textMsg fix 纯文字消息上下全局加了两个分割线，这里把它去掉
     return (
       <View style={[styles.content, textMsg ? styles.textContent : {}]}>
@@ -129,11 +129,9 @@ function chatItem({ item, translationText, me, logo }: Props) {
           />
         )}
 
-        <View
-          style={[styles.contentBox, tag ? styles.youContent : { ...styles.meContent, width: item?.voiceUrl && 243 }]}
-        >
+        <View style={[styles.contentBox, tag ? styles.youContent : { ...styles.meContent }]}>
           {item?.voiceUrl && renderMessageAudio()}
-          {item?.text && renderMessageText({textMsg: item?.voiceUrl ? false : true})}
+          {item?.text && renderMessageText({ textMsg: item?.voiceUrl ? false : true })}
           {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
         </View>
       </View>

@@ -149,6 +149,14 @@ export default function Chat({}) {
       })
       const fileBuffer = Buffer.from(`data:audio/mpeg;base64,${buffer}`, 'base64')
       setVoice(fileBuffer)
+      const { exists } = await FileSystem.getInfoAsync(mp3Uri)
+      if (exists) {
+        try {
+          await FileSystem.deleteAsync(mp3Uri)
+        } catch (error) {
+          console.log(error)
+        }
+      }
       return uri
     } catch (err) {
       console.error('Failed to stop recording', err)

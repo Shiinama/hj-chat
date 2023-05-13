@@ -4,14 +4,9 @@ import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
 import Send from '../../assets/images/chat/send.svg'
-import Delete from '../../assets/images/chat/delete.svg'
-import MessagePlay from '../../assets/images/chat/message_play.svg'
-import Messagepause from '../../assets/images/chat/message_pause.svg'
 import RecordButton from './RecordButton'
 import { StyleSheet } from 'react-native'
-import AudioMessage from './audioMessage'
 import { useRouter } from 'expo-router'
-import * as FileSystem from 'expo-file-system'
 import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
@@ -24,7 +19,6 @@ type Props = {
   inputTextProps: TextInput['props'] & {
     startRecording: () => void
     stopRecording: () => void
-    pauseRecording: () => void
     durationMillis
     setAuInfo: (audioFileUri: string) => void
     uid: string
@@ -41,7 +35,6 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
     durationMillis,
     startRecording,
     stopRecording,
-    pauseRecording,
     setAuInfo,
     onSubmitEditing,
     pinned: originalPinned,
@@ -56,19 +49,18 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const [barHeight, setBarHeight] = useState(0)
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
-  const [isPlaying, setIsPlaying] = useState<boolean>(false)
   // 控制话筒弹出
   const [isShow, setIsShow] = useState(true)
   const [showAni, setShowAni] = useState(true)
   const [showSend, setShowSend] = useState(true)
   const inputRef = useRef(null)
-  const audioMessageRef = useRef(null)
   const router = useRouter()
   const AnimationRef = useRef(null)
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
       if (Platform.OS === 'android') return
       setShowSend(false)
+      setIsShow(true)
       setPosition('relative')
     })
     const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => {
@@ -80,6 +72,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       if (Platform.OS === 'ios') return
       setShowSend(false)
+      setIsShow(true)
       setPosition('relative')
     })
     const KeyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
@@ -143,7 +136,6 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
         audioFileUri={audioFileUri}
         setAuInfo={setAuInfo}
         startRecording={startRecording}
-        pauseRecording={pauseRecording}
         stopRecording={stopRecording}
       ></RecordButton>
     )

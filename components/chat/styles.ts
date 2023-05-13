@@ -26,19 +26,20 @@ export default StyleSheet.create({
     flexDirection: 'row-reverse',
   },
   contentBox: {
-    borderRadius: 5,
+    borderRadius: 16,
     marginLeft: 8,
     marginRight: 8,
-    maxWidth: 263,
-    
+    width: 263,
   },
   button: {
     borderRadius: 12,
     flexDirection: 'row',
-    margin: 12,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
+    marginHorizontal: 4,
+    height: 28,
+    alignContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 12,
+
     backgroundColor: Colors.mainWhite,
   },
   active: {
@@ -51,14 +52,19 @@ export default StyleSheet.create({
     borderTopWidth: 1,
     fontSize: 14,
     borderColor: '#E2E8F0',
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
   },
   textContent: {
     borderTopWidth: 0,
     borderBottomWidth: 0,
   },
   buttonGroup: {
+    borderColor: '#E2E8F0',
+    borderTopWidth: 1,
+    alignContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
+    height: 50,
   },
   youContent: {
     backgroundColor: Colors.mainGrey,

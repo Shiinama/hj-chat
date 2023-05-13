@@ -104,7 +104,9 @@ const RecordButton = ({
               onPress={async () => {
                 setIsSound(pre => {
                   if (pre) {
-                    console.log(21312)
+                    Audio.setAudioModeAsync({
+                      allowsRecordingIOS: false,
+                    })
                     sound.playAsync()
                     AnimationRef.current.startAnimation()
                   } else {
