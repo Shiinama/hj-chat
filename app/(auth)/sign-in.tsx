@@ -149,7 +149,7 @@ export default function SignIn() {
                   borderWidth: 1,
                   backgroundColor: 'white',
                 }}
-                onPress={() => login('Emial')}
+                onPress={() => login('Email')}
               >
                 <Text style={{ color: 'black', fontSize: 18, fontWeight: '500' }}>Email Login</Text>
               </Button>

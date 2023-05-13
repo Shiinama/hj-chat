@@ -223,23 +223,23 @@ function InputToolsTar({
       </TouchableOpacity>
     )
   }, [isShow, showSend, value])
-  // const handleContentSizeChange = ({
-  //   nativeEvent: { contentSize },
-  // }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-  //   let height = contentSize.height
-  //   changeHeight(height)
-  // }
-  // const changeHeight = aHeight => {
-  //   if (aHeight > 40 && aHeight < 100) {
-  //     setInputHeight(aHeight)
-  //     setMinInputToolbarHeight(pre => {
-  //       return pre + (aHeight - 40)
-  //     })
-  //     setMessagesContainerHeight(pre => {
-  //       return pre - (aHeight - 40)
-  //     })
-  //   }
-  // }
+  const handleContentSizeChange = ({
+    nativeEvent: { contentSize },
+  }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
+    let height = contentSize.height
+    changeHeight(height)
+  }
+  const changeHeight = aHeight => {
+    if (aHeight > 40 && aHeight < 100) {
+      setInputHeight(aHeight)
+      setMinInputToolbarHeight(pre => {
+        return pre + (aHeight - 40)
+      })
+      setMessagesContainerHeight(pre => {
+        return pre - (aHeight - 40)
+      })
+    }
+  }
   return (
     <View
       style={[styles.container, { position }] as ViewStyle}
@@ -260,6 +260,7 @@ function InputToolsTar({
                     blurOnSubmit={false}
                     multiline={true}
                     maxLength={500}
+                    // onContentSizeChange={handleContentSizeChange}
                     placeholder="Wite a message"
                     style={[styles.textInput, { height: inputHeight }]}
                     onChangeText={inputText => {
