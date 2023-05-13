@@ -1,9 +1,9 @@
-import { StyleSheet } from 'react-native'
-import Colors from '../../constants/Colors'
+import { StyleSheet } from "react-native";
+import Colors from "../../constants/Colors";
 export default StyleSheet.create({
   avatar: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     width: 32,
     height: 32,
     marginHorizontal: 2,
@@ -11,49 +11,48 @@ export default StyleSheet.create({
   },
 
   itemWrap: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   msgBox: {
     flexShrink: 1,
     flexGrow: 1,
     paddingHorizontal: 10,
     marginBottom: 24,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   you: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   me: {
-    flexDirection: 'row-reverse',
+    flexDirection: "row-reverse",
   },
   contentBox: {
-    borderRadius: 16,
     marginLeft: 8,
     marginRight: 8,
     width: 263,
   },
   button: {
     borderRadius: 12,
-    flexDirection: 'row',
+    flexDirection: "row",
     marginHorizontal: 4,
     height: 28,
-    alignContent: 'center',
-    alignItems: 'center',
+    alignContent: "center",
+    alignItems: "center",
     paddingHorizontal: 12,
 
     backgroundColor: Colors.mainWhite,
   },
   active: {
-    backgroundColor: '#7A2EF6',
+    backgroundColor: "#7A2EF6",
     color: Colors.mainWhite,
   },
   content: {
     padding: 12,
-    width: '100%',
+    width: "100%",
     borderTopWidth: 1,
     fontSize: 14,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
     // borderBottomWidth: 1,
   },
   textContent: {
@@ -61,22 +60,28 @@ export default StyleSheet.create({
     borderBottomWidth: 0,
   },
   buttonGroup: {
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
     borderTopWidth: 1,
-    alignContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
     height: 50,
   },
+  chatWrap: {},
   youContent: {
+    borderRadius: 16,
     backgroundColor: Colors.mainGrey,
   },
   meContent: {
-    backgroundColor: '#F1EAFE',
+    borderRadius: 16,
+    backgroundColor: "#F1EAFE",
+  },
+  placeholder: {
+    flexGrow: 1,
   },
   footer: {
-    backgroundColor: '#f5f5f5',
-    display: 'flex',
+    backgroundColor: "#f5f5f5",
+    display: "flex",
     paddingVertical: 6,
     paddingHorizontal: 12,
   },
@@ -84,13 +89,13 @@ export default StyleSheet.create({
     height: 30,
     paddingLeft: 8,
     paddingRight: 8,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 5,
   },
   sendBtn: {
     width: 60,
     height: 30,
-    backgroundColor: '#9F9F5F',
+    backgroundColor: "#9F9F5F",
   },
   picture: {
     borderRadius: 5,
@@ -101,7 +106,7 @@ export default StyleSheet.create({
     marginLeft: 11,
   },
   absolute: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     bottom: 0,
@@ -113,8 +118,8 @@ export default StyleSheet.create({
     backgroundColor: Colors.mainGrey,
     paddingHorizontal: 16,
     borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   loadingText: {
     fontSize: 14,
@@ -122,4 +127,4 @@ export default StyleSheet.create({
   loadingIcon: {
     marginLeft: 8,
   },
-})
+});
