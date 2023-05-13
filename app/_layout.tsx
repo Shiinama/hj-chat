@@ -19,7 +19,6 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 }
 
-Toast.setDefaultOptions({ position: 'top' })
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SF-Pro.ttf'),

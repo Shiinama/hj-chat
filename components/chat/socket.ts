@@ -1,155 +1,152 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import SysConfig from "../../constants/System";
-import { Alert } from "react-native";
-import useUserStore from "../../store/userStore";
-import { useDebounceEffect, useSet } from "ahooks";
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { io, Socket } from 'socket.io-client'
+import SysConfig from '../../constants/System'
+import { Alert } from 'react-native'
+import useUserStore from '../../store/userStore'
+import { useDebounceEffect, useSet } from 'ahooks'
 
 export enum MsgEvents {
-  AUTH_FAIL = "auth_fail",
-  MSG_ERROR = "message_error",
-  MSG_SENT = "message_sent",
-  MSG_UPDATED = "message_updated",
-  MSG_TRANSLATED = "message_translated",
-  MSG_REPLIED = "message_replied",
-  ENERGY_INFO = "energy_info",
-  NO_ENOUGH_ENERGY = "no_enough_energy",
-  EXCEPTION = "exception",
+  AUTH_FAIL = 'auth_fail',
+  MSG_ERROR = 'message_error',
+  MSG_SENT = 'message_sent',
+  MSG_UPDATED = 'message_updated',
+  MSG_TRANSLATED = 'message_translated',
+  MSG_REPLIED = 'message_replied',
+  ENERGY_INFO = 'energy_info',
+  NO_ENOUGH_ENERGY = 'no_enough_energy',
+  EXCEPTION = 'exception',
 }
 
 interface MessageDto {
-  id: number;
+  id: number
 
-  uid: string;
+  uid: string
 
-  userId: number;
+  userId: number
 
-  userUid: string;
+  userUid: string
 
-  status: string;
+  status: string
 
-  type: string;
+  type: string
 
-  replyUid?: string;
+  replyUid?: string
 
-  text?: string;
+  text?: string
 
-  translation?: string;
+  translation?: string
 
-  voiceUrl?: string;
+  voiceUrl?: string
 
-  botId: number;
+  botId: number
 
-  createdDate: Date;
+  createdDate: Date
 
-  updatedDate: Date;
+  updatedDate: Date
 
-  botUid: string;
+  botUid: string
 }
 
 type MeaageErrorType = {
-  reqId?: string;
-  message?: string;
-};
+  reqId?: string
+  message?: string
+}
 
 type MesageSucessType = {
-  reqId: string;
-  data: MessageDto;
-};
+  reqId: string
+  data: MessageDto
+}
 
 export const useSocketIo = () => {
-  const SocketIoRef = useRef(null);
-  const [message, setMessage] = useState<any>();
+  const SocketIoRef = useRef(null)
+  const [message, setMessage] = useState<any>()
   // 请求队列逻辑
-  const [
-    reqIdsQueue,
-    { add: addReqIds, remove: removeReqIds, reset: resetReqIds },
-  ] = useSet([]);
+  const [reqIdsQueue, { add: addReqIds, remove: removeReqIds, reset: resetReqIds }] = useSet([])
   // 是否处于请求状态
   const isPending = useMemo(() => {
-    return reqIdsQueue?.size > 0;
-  }, [reqIdsQueue]);
+    return reqIdsQueue?.size > 0
+  }, [reqIdsQueue])
   // 10s状态没改变就清除队列
   useDebounceEffect(
     () => {
-      resetReqIds();
+      resetReqIds()
     },
     [reqIdsQueue],
     {
       wait: 10000,
     }
-  );
+  )
 
-  const [resMessage, setResMessage] = useState<any>();
-  const [translationMessage, setTranslation] = useState<any>();
-  const [updateMessage, setUpdateMessage] = useState<any>();
-  const { userBaseInfo } = useUserStore.getState();
+  const [resMessage, setResMessage] = useState<any>()
+  const [translationMessage, setTranslation] = useState<any>()
+  const [updateMessage, setUpdateMessage] = useState<any>()
+  const { userBaseInfo } = useUserStore.getState()
   const token =
     userBaseInfo?.token ??
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzMzM5OTY1MDczLCJqdGkiOiI2MTc1ZDNhMmNjYmE0NWFjYTc2NDc0MDhmYzY1MjllZiIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzM0MjU1NzA3M30.C79OLS9eWvDLiEv9ZqDbeoDmJs7AhmnrijHnAnunzx8";
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsUHJvZCIsInN1YiI6NDMzNTEsImF1ZCI6Ik15U2hlbGxQcm9kIiwibmJmIjowLCJpYXQiOjE2ODM2Mzk2NjI5NzAsImp0aSI6IjRkMmMyNDRjYjVlMzRjMzZhODE3ZWMwYzRjNDYxMmI3Iiwic2VjdXJpdHlTdGFtcCI6IjMyZDU1NDUxMzYwYjQ5YjFiMjQ2OGU3MDZiZTI5MGUzIiwiZXhwIjoxNjgzNjQyMjU0OTcwfQ.tAx1T_aCFZC7GYkspiGwKrS8148dMi2929IeOPvopTo'
   const ready = (): boolean => {
-    return SocketIoRef.current && SocketIoRef.current.connected;
-  };
+    return SocketIoRef.current && SocketIoRef.current.connected
+  }
   const init = () => {
-    if (ready()) return;
+    if (ready()) return
     SocketIoRef.current = io(`${SysConfig.baseUrl}/chat`, {
-      path: "/ws",
-      transports: ["websocket"],
+      path: '/ws',
+      transports: ['websocket'],
       auth: {
         token,
       },
-    });
-    SocketIoRef.current.on(MsgEvents.MSG_ERROR, onMessageError);
-    SocketIoRef.current.on(MsgEvents.EXCEPTION, onException);
+    })
+    SocketIoRef.current.on(MsgEvents.MSG_ERROR, onMessageError)
+    SocketIoRef.current.on(MsgEvents.EXCEPTION, onException)
 
-    SocketIoRef.current.on(MsgEvents.MSG_SENT, onMessageSent);
-    SocketIoRef.current.on(MsgEvents.MSG_REPLIED, onMessageReplied);
-    SocketIoRef.current.on(MsgEvents.MSG_UPDATED, onMessageUpdated);
-    SocketIoRef.current.on(MsgEvents.MSG_TRANSLATED, onMessageTranslated);
+    SocketIoRef.current.on(MsgEvents.MSG_SENT, onMessageSent)
+    SocketIoRef.current.on(MsgEvents.MSG_REPLIED, onMessageReplied)
+    SocketIoRef.current.on(MsgEvents.MSG_UPDATED, onMessageUpdated)
+    SocketIoRef.current.on(MsgEvents.MSG_TRANSLATED, onMessageTranslated)
 
-    SocketIoRef.current.on(MsgEvents.ENERGY_INFO, onEnergyInfo);
-    SocketIoRef.current.on(MsgEvents.NO_ENOUGH_ENERGY, onNoEnoughEnergy);
-  };
+    SocketIoRef.current.on(MsgEvents.ENERGY_INFO, onEnergyInfo)
+    SocketIoRef.current.on(MsgEvents.NO_ENOUGH_ENERGY, onNoEnoughEnergy)
+  }
 
   const onMessageError = ({ message }: MeaageErrorType) => {
-    Alert.alert(message);
-  };
+    Alert.alert(message)
+  }
 
   const onException = ({ message }: MeaageErrorType) => {
-    Alert.alert(message);
-  };
+    Alert.alert(message)
+  }
   const onNoEnoughEnergy = ({ message }: MeaageErrorType) => {
-    Alert.alert(message);
-  };
+    Alert.alert(message)
+  }
 
   const onMessageSent = (data: MesageSucessType) => {
     if (data?.reqId) {
-      addReqIds(data?.reqId);
+      addReqIds(data?.reqId)
     }
-    setMessage(data);
-  };
+    setMessage(data)
+  }
   const onMessageReplied = ({ data, reqId }: MesageSucessType) => {
     if (reqId) {
-      removeReqIds(reqId);
+      removeReqIds(reqId)
     }
-    setResMessage(data);
-  };
+    setResMessage(data)
+  }
   const onMessageTranslated = ({ reqId, data }: MesageSucessType) => {
-    setTranslation(data);
-  };
-  const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {};
+    setTranslation(data)
+  }
+  const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {}
   const onMessageUpdated = ({ data }: MesageSucessType) => {
-    setUpdateMessage(data);
-  };
+    setUpdateMessage(data)
+  }
 
   const sendMessage = (ChatEvent, data) => {
-    SocketIoRef.current.emit(ChatEvent, data);
-  };
+    SocketIoRef.current.emit(ChatEvent, data)
+  }
 
   useEffect(() => {
-    init();
-    return () => SocketIoRef.current.disconnect();
-  }, []);
+    init()
+    return () => SocketIoRef.current.disconnect()
+  }, [])
   return {
     isPending,
     message,
@@ -165,5 +162,5 @@ export const useSocketIo = () => {
     onException,
     onNoEnoughEnergy,
     onMessageError,
-  };
-};
+  }
+}
