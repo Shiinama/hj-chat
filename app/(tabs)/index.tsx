@@ -7,7 +7,6 @@ import { botList } from '../../api/index'
 import BotCard from '../../components/botCard'
 import ShellLoading from '../../components/loading'
 import botStore from '../../store/botStore'
-import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
 type ListDataItem = {
   id: number
   uid: string

@@ -1,5 +1,5 @@
 import { Tabs, useFocusEffect } from 'expo-router'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, Image, Text } from 'react-native'
 import ProgressBar from '../../components/ProgressBar'
 import Flash from '../../assets/images/tabbar/flash.svg'
 import Chat from '../../assets/images/tabbar/chat.svg'
@@ -8,7 +8,7 @@ import Profile from '../../assets/images/tabbar/profile.svg'
 import ProfileAcitve from '../../assets/images/tabbar/profile_acitve.svg'
 import Bot from '../../assets/images/tabbar/bot.svg'
 import BotAcitve from '../../assets/images/tabbar/bot_active.svg'
-import Myshell from '../../assets/images/tabbar/myshell.svg'
+import myshell from '../../assets/images/myshell.png'
 import { useCallback, useEffect, useState } from 'react'
 import useUserStore, { getUserEnergyInfo } from '../../store/userStore'
 /**
@@ -42,8 +42,8 @@ export default function TabLayout() {
                 alignItems: 'center',
               }}
             >
-              <Myshell></Myshell>
-              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 8 }}>MySheel</Text>
+              <Image style={{ width: 20, height: 20 }} source={myshell}></Image>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 4 }}>MySheel</Text>
             </View>
           ),
           headerRight: () => (

@@ -18,31 +18,17 @@ const ProgressBar = ({
   style,
   maxRange = 100,
 }: ProgressBarProps) => {
-  const [progressAnimation] = useState(new Animated.Value(progressStartValue))
-
-  useEffect(() => {
-    Animated.timing(progressAnimation, {
-      toValue: progressValue,
-      duration,
-      useNativeDriver: false,
-    }).start()
-  }, [progressValue])
-
   return (
     <View style={[styles.container, style]}>
-      <Animated.View
+      <View
         style={[
           styles.progressBar,
           { backgroundColor: progressBarColor },
           {
-            width: progressAnimation.interpolate({
-              inputRange: [0, maxRange],
-              outputRange: ['0%', `${maxRange}%`],
-              extrapolate: 'clamp',
-            }),
+            width: progressValue,
           },
         ]}
-      ></Animated.View>
+      ></View>
       <Text style={styles.progressText}>{progressValue + '/' + maxRange}</Text>
     </View>
   )
