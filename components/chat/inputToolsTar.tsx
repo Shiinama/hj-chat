@@ -35,12 +35,16 @@ type Props = {
     userId: number
     pinned: boolean
   }
+  inputHeight
+  setInputHeight
   setMinInputToolbarHeight
   setMessagesContainerHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
 function InputToolsTar({
+  inputHeight,
+  setInputHeight,
   setMessagesContainerHeight,
   setMinInputToolbarHeight,
   inputTextProps,
@@ -51,7 +55,6 @@ function InputToolsTar({
     onChangeText,
     durationMillis,
     startRecording,
-
     stopRecording,
     setAuInfo,
     onSubmitEditing,
@@ -67,7 +70,6 @@ function InputToolsTar({
   const [barHeight, setBarHeight] = useState(0)
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
-  const [height, setHeight] = useState(40)
   // 控制话筒弹出
   const [isShow, setIsShow] = useState(true)
   const [showAni, setShowAni] = useState(true)
@@ -208,7 +210,7 @@ function InputToolsTar({
           ) : (
             <TouchableOpacity
               onPress={() => {
-                setHeight(40)
+                setInputHeight(40)
                 onSubmitEditing(value as any)
               }}
             >
@@ -221,23 +223,23 @@ function InputToolsTar({
       </TouchableOpacity>
     )
   }, [isShow, showSend, value])
-  const handleContentSizeChange = ({
-    nativeEvent: { contentSize },
-  }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-    let height = contentSize.height
-    changeHeight(height)
-  }
-  const changeHeight = aHeight => {
-    if (aHeight > 40 && aHeight < 100) {
-      setHeight(aHeight)
-      setMinInputToolbarHeight(pre => {
-        return pre + (aHeight - 40)
-      })
-      setMessagesContainerHeight(pre => {
-        return pre - (aHeight - 40)
-      })
-    }
-  }
+  // const handleContentSizeChange = ({
+  //   nativeEvent: { contentSize },
+  // }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
+  //   let height = contentSize.height
+  //   changeHeight(height)
+  // }
+  // const changeHeight = aHeight => {
+  //   if (aHeight > 40 && aHeight < 100) {
+  //     setInputHeight(aHeight)
+  //     setMinInputToolbarHeight(pre => {
+  //       return pre + (aHeight - 40)
+  //     })
+  //     setMessagesContainerHeight(pre => {
+  //       return pre - (aHeight - 40)
+  //     })
+  //   }
+  // }
   return (
     <View
       style={[styles.container, { position }] as ViewStyle}
@@ -258,9 +260,8 @@ function InputToolsTar({
                     blurOnSubmit={false}
                     multiline={true}
                     maxLength={500}
-                    onContentSizeChange={handleContentSizeChange}
                     placeholder="Wite a message"
-                    style={[styles.textInput, { height }]}
+                    style={[styles.textInput, { height: inputHeight }]}
                     onChangeText={inputText => {
                       onChangeText(inputText)
                     }}
