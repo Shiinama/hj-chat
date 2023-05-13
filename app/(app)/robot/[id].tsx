@@ -168,7 +168,6 @@ export default function Robot() {
         </View>
       </View>
       <TouchableOpacity
-        style={styles.action}
         onPress={() => {
           router.push({
             pathname: `chat/${botStore.id}`,

@@ -158,7 +158,7 @@ export default function Profile() {
         />
         <WebView
           source={{
-            uri: 'https://api-staging.myshell.ai/mobile/connect/tg',
+            uri: 'https://app-test.myshell.ai/mobile/connect/tg',
           }}
           onMessage={e => {
             setPageVisible(false)

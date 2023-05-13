@@ -139,9 +139,9 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       </View>
       <View
         style={{
+          position: 'relative',
+          left: -55,
           transform: [{ scale: 0.5 }],
-          position: 'absolute',
-          left: 45,
         }}
       >
         <Slider
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   slider: {
     height: 10,
-    width: 280,
+    width: 250,
   },
   time: {
     marginHorizontal: 8,

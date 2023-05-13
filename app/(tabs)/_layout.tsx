@@ -1,27 +1,27 @@
-import { Tabs, useFocusEffect } from "expo-router";
-import { View, Image, Text } from "react-native";
-import ProgressBar from "../../components/ProgressBar";
-import flashImg from "../../assets/images/tabbar/flash.png";
-import Chat from "../../assets/images/tabbar/chat.svg";
-import ChatAcitve from "../../assets/images/tabbar/chat_acitve.svg";
-import Profile from "../../assets/images/tabbar/profile.svg";
-import ProfileAcitve from "../../assets/images/tabbar/profile_acitve.svg";
-import Bot from "../../assets/images/tabbar/bot.svg";
-import BotAcitve from "../../assets/images/tabbar/bot_active.svg";
-import myshell from "../../assets/images/myshell.png";
-import { useCallback, useEffect, useState } from "react";
-import useUserStore, { getUserEnergyInfo } from "../../store/userStore";
+import { Tabs, useFocusEffect } from 'expo-router'
+import { View, Image, Text } from 'react-native'
+import ProgressBar from '../../components/ProgressBar'
+import flashImg from '../../assets/images/tabbar/flash.png'
+import Chat from '../../assets/images/tabbar/chat.svg'
+import ChatAcitve from '../../assets/images/tabbar/chat_acitve.svg'
+import Profile from '../../assets/images/tabbar/profile.svg'
+import ProfileAcitve from '../../assets/images/tabbar/profile_acitve.svg'
+import Bot from '../../assets/images/tabbar/bot.svg'
+import BotAcitve from '../../assets/images/tabbar/bot_active.svg'
+import myshell from '../../assets/images/myshell.png'
+import { useCallback, useEffect, useState } from 'react'
+import useUserStore, { getUserEnergyInfo } from '../../store/userStore'
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
 
 export default function TabLayout() {
-  const { userEnergyInfo: energy } = useUserStore();
+  const { userEnergyInfo: energy } = useUserStore()
   useFocusEffect(
     useCallback(() => {
-      getUserEnergyInfo();
+      getUserEnergyInfo()
     }, [])
-  );
+  )
   return (
     <Tabs
       screenOptions={{
@@ -32,40 +32,34 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarShowLabel: false,
-          title: "",
+          title: '',
           tabBarIcon: ({ focused }) => (focused ? <ChatAcitve /> : <Chat />),
           headerLeft: () => (
             <View
               style={{
                 marginLeft: 16,
-                flexDirection: "row",
-                alignItems: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
               <Image style={{ width: 20, height: 20 }} source={myshell}></Image>
-              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 4 }}>
-                MySheel
-              </Text>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 4 }}>MyShell</Text>
             </View>
           ),
           headerRight: () => (
             <View
               style={{
                 marginRight: 16,
-                flexDirection: "row",
-                alignItems: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
                 width: 75,
-                position: "relative",
-                justifyContent: "flex-end",
+                position: 'relative',
+                justifyContent: 'flex-end',
               }}
             >
               <View style={{ width: 60 }}>
                 {energy && (
-                  <ProgressBar
-                    size="s"
-                    progressValue={energy.energy}
-                    maxRange={energy.dailyEnergy}
-                  ></ProgressBar>
+                  <ProgressBar size="s" progressValue={energy.energy} maxRange={energy.dailyEnergy}></ProgressBar>
                 )}
               </View>
               <Image
@@ -73,7 +67,7 @@ export default function TabLayout() {
                 style={{
                   width: 24,
                   height: 24,
-                  position: "absolute",
+                  position: 'absolute',
                   left: 0,
                   zIndex: 10,
                 }}
@@ -86,7 +80,7 @@ export default function TabLayout() {
         name="setting"
         options={{
           tabBarShowLabel: false,
-          title: "Robot Workshop",
+          title: 'Robot Workshop',
           tabBarIcon: ({ focused }) => (focused ? <BotAcitve /> : <Bot />),
         }}
       />
@@ -94,11 +88,10 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarShowLabel: false,
-          title: "Profile",
-          tabBarIcon: ({ focused }) =>
-            focused ? <ProfileAcitve /> : <Profile />,
+          title: 'Profile',
+          tabBarIcon: ({ focused }) => (focused ? <ProfileAcitve /> : <Profile />),
         }}
       />
     </Tabs>
-  );
+  )
 }

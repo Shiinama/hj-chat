@@ -31,18 +31,15 @@ const envConfig = {
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   prod: {
-    baseUrl: 'https://api-staging.myshell.ai',
+    baseUrl: 'https://api.myshell.ai',
     authKey: 'Authorization',
-    // socketIoUrl: 'https://relay.walletconnect.com',
-    // HOST: 'https://api-staging.myshell.ai',
-    downloadHost: 'https://share.vinstic.com/share/',
-
-    shareLink: 'https://api-staging.myshell.ai/share/',
-    avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
+    downloadHost: 'https://html2img.myshell.ai/',
+    shareLink: 'https://app.myshell.ai/share/',
+    avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
   },
 }
 export default {
-  name: 'ai-myshell',
+  name: 'MyShell',
   slug: 'yu-chat',
   version: '1.0.0',
   orientation: 'portrait',

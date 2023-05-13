@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native'
 const styles = StyleSheet.create({
   container: {
     paddingTop: 32,
-    paddingBottom: 72,
+    paddingBottom: 32,
     paddingLeft: 16,
     paddingRight: 16,
     flex: 1,
@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
   },
   main: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
-    // justifyContent: 'center',
     alignItems: 'center',
   },
   user: {
@@ -127,21 +127,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     color: '#1F1F1F',
   },
-  action: {
-    position: 'absolute',
-    left: 0,
-    bottom: 33,
-    height: 72,
-    width: 375,
-    boxSizing: 'border-box',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   actionMain: {
-    width: 343,
-    marginLeft: 16,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
