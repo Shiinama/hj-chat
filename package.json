@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start --dev-client -c",
-    "start:dev": "cross-env REACT_APP_IS_LOGIN=true expo start --dev-client -c",
+    "start:dev": "cross-env REACT_APP_ENV=dev expo start --dev-client -c",
+    "start:test": "cross-env REACT_APP_ENV=test expo start --dev-client -c",
+    "start:demo": "cross-env REACT_APP_ENV=demo expo start --dev-client -c",
+    "start:prod": "cross-env REACT_APP_ENV=prod expo start --dev-client -c",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "ios:dev": "cross-env REACT_APP_IS_LOGIN=true expo run:ios",
+    "ios:dev": "cross-env REACT_APP_ENV=dev expo run:ios",
+    "ios:test": "cross-env REACT_APP_ENV=test expo run:ios",
+    "ios:demo": "cross-env REACT_APP_ENV=demo expo run:ios",
+    "ios:prod": "cross-env REACT_APP_ENV=prod expo run:ios",
     "test": "jest --watchAll",
     "postinstall": "npx patch-package"
   },
