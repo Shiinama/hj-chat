@@ -7,37 +7,37 @@ const envConfig = {
     // HOST: 'https://api-staging.myshell.ai',
     downloadHost: 'https://share.vinstic.com/share',
 
-    shareLink: 'https://app-test.myshell.ai/share/',
+    shareLink: 'https://api-staging.myshell/share/',
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   test: {
-    baseUrl: 'https://app-test.myshell.ai',
+    baseUrl: 'https://api-staging.myshell',
     authKey: 'Authorization',
     // socketIoUrl: 'https://relay.walletconnect.com',
     // HOST: 'https://api-staging.myshell.ai',
     downloadHost: 'https://share.vinstic.com/share',
 
-    shareLink: 'https://app-test.myshell.ai/share/',
+    shareLink: 'https://api-staging.myshell/share/',
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   demo: {
-    baseUrl: 'https://api.myshell.ai',
+    baseUrl: 'https://api-staging.myshell.ai',
     authKey: 'Authorization',
     // socketIoUrl: 'https://relay.walletconnect.com',
     // HOST: 'https://api-staging.myshell.ai',
-    downloadHost: 'https://html2img.myshell.ai/share/',
+    downloadHost: 'https://share.vinstic.com/share/',
 
-    shareLink: 'https://api.myshell.ai/share/',
-    avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
+    shareLink: 'https://api-staging.myshell.ai/share/',
+    avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   prod: {
-    baseUrl: 'https://api-test.myshell.ai',
+    baseUrl: 'https://api-staging.myshell.ai',
     authKey: 'Authorization',
     // socketIoUrl: 'https://relay.walletconnect.com',
     // HOST: 'https://api-staging.myshell.ai',
-    downloadHost: 'https://share.vinstic.com/share',
+    downloadHost: 'https://share.vinstic.com/share/',
 
-    shareLink: 'https://app-test.myshell.ai/share/',
+    shareLink: 'https://api-staging.myshell.ai/share/',
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
 }
@@ -117,7 +117,7 @@ export default {
     },
     isLogin: process.env.REACT_APP_ENV === 'dev',
     systemConfig: {
-      ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
+      ...(envConfig?.demo || envConfig.prod),
     },
   },
 }
