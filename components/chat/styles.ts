@@ -6,6 +6,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     width: 32,
     height: 32,
+    marginHorizontal: 2,
     borderRadius: 16,
   },
 
@@ -16,6 +17,7 @@ export default StyleSheet.create({
   msgBox: {
     flexShrink: 1,
     flexGrow: 1,
+    paddingHorizontal: 10,
     marginBottom: 24,
     alignItems: 'flex-start',
   },
