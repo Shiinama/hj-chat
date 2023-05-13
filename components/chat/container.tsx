@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, View } from 'react-native'
-import { LegacyRef, useState } from 'react'
+import { LegacyRef, useEffect, useState } from 'react'
 import MessagesContainer from './messagesContainer'
 import InputToolsTar from './inputToolsTar'
 import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
@@ -10,8 +10,6 @@ export interface FishChatProps {
   messagesContainerStyle?: StyleProp<ViewStyle>
   flatListRef?: LegacyRef<FlatList>
 }
-// 工具栏高度
-const minInputToolbarHeight = 80
 
 //  一个自定义距离偏移距离
 const bottomOffset = 1
@@ -23,6 +21,8 @@ function Container({
   ...restProps
 }: FishChatProps): JSX.Element {
   const [maxHeight, setMaxHeight] = useState(0)
+  // 工具栏高度
+  const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(80)
   const [messagesContainerHeight, setMessagesContainerHeight] = useState(0)
 
   const getBasicMessagesContainerHeight = (layoutHeight: number) => {
@@ -49,6 +49,7 @@ function Container({
   const onKeyboardWillHide = () => {
     const newMessagesContainerHeight = getBasicMessagesContainerHeight(maxHeight)
     setMessagesContainerHeight(newMessagesContainerHeight)
+    setMinInputToolbarHeight(80)
   }
 
   const InternalProps = {
@@ -72,6 +73,8 @@ function Container({
         </KeyboardAvoidingView>
         {/* inputToolbar下方输入框工具栏容器 */}
         <InputToolsTar
+          setMinInputToolbarHeight={setMinInputToolbarHeight}
+          setMessagesContainerHeight={setMessagesContainerHeight}
           inputTextProps={inputTextProps as any}
           minInputToolbarHeight={restProps.InputToolBarHeight || minInputToolbarHeight}
         ></InputToolsTar>

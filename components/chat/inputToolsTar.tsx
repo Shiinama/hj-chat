@@ -1,5 +1,15 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Keyboard, View, TextInput, ViewStyle, Platform, Image, TouchableOpacity } from 'react-native'
+import {
+  Keyboard,
+  View,
+  TextInput,
+  ViewStyle,
+  Platform,
+  Image,
+  TouchableOpacity,
+  NativeSyntheticEvent,
+  TextInputContentSizeChangeEventData,
+} from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -25,15 +35,23 @@ type Props = {
     userId: number
     pinned: boolean
   }
+  setMinInputToolbarHeight
+  setMessagesContainerHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
-function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeight }: Props) {
+function InputToolsTar({
+  setMessagesContainerHeight,
+  setMinInputToolbarHeight,
+  inputTextProps,
+  minInputToolbarHeight,
+}: Props) {
   const {
     value,
     onChangeText,
     durationMillis,
     startRecording,
+
     stopRecording,
     setAuInfo,
     onSubmitEditing,
@@ -49,6 +67,7 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
   const [barHeight, setBarHeight] = useState(0)
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
+  const [height, setHeight] = useState(40)
   // 控制话筒弹出
   const [isShow, setIsShow] = useState(true)
   const [showAni, setShowAni] = useState(true)
@@ -187,7 +206,12 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
           showSend ? (
             <Image style={styles.Icon} source={audio}></Image>
           ) : (
-            <TouchableOpacity onPress={() => onSubmitEditing(value as any)}>
+            <TouchableOpacity
+              onPress={() => {
+                setHeight(40)
+                onSubmitEditing(value as any)
+              }}
+            >
               <Send></Send>
             </TouchableOpacity>
           )
@@ -197,7 +221,23 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
       </TouchableOpacity>
     )
   }, [isShow, showSend, value])
-
+  const handleContentSizeChange = ({
+    nativeEvent: { contentSize },
+  }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
+    let height = contentSize.height
+    changeHeight(height)
+  }
+  const changeHeight = aHeight => {
+    if (aHeight > 40 && aHeight < 100) {
+      setHeight(aHeight)
+      setMinInputToolbarHeight(pre => {
+        return pre + (aHeight - 40)
+      })
+      setMessagesContainerHeight(pre => {
+        return pre - (aHeight - 40)
+      })
+    }
+  }
   return (
     <View
       style={[styles.container, { position }] as ViewStyle}
@@ -218,8 +258,9 @@ function InputToolsTar({ inputTextProps, onInputSizeChanged, minInputToolbarHeig
                     blurOnSubmit={false}
                     multiline={true}
                     maxLength={500}
+                    onContentSizeChange={handleContentSizeChange}
                     placeholder="Wite a message"
-                    style={styles.textInput}
+                    style={[styles.textInput, { height }]}
                     onChangeText={inputText => {
                       onChangeText(inputText)
                     }}
@@ -252,7 +293,8 @@ const styles = StyleSheet.create({
   },
   primary: {
     flexDirection: 'row',
-    marginTop: 10,
+    marginBottom: 10,
+    alignItems: 'center',
     justifyContent: 'space-around',
     paddingHorizontal: 20,
     height: 40,
@@ -285,11 +327,6 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     paddingHorizontal: 12,
     borderRadius: 12,
-    height: Platform.select({
-      ios: 40,
-      android: 40,
-      web: 34,
-    }),
     // marginTop: Platform.select({
     //   ios: 6,
     //   android: 0,
