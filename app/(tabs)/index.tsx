@@ -20,20 +20,38 @@ type ListDataItem = {
 }
 
 import { createWeb3 } from '../../tmp/web3Demo'
+import CallBackManagerSingle from '../../utils/CallBackManager'
 
 export default function TabOneScreen() {
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
-  useFocusEffect(
-    useCallback(() => {
-      botList().then(res => {
-        setListData(res as ListDataItem[])
-        setLoading(false)
-      })
-    }, [])
-  )
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     botList().then(res => {
+  //       setListData(res as ListDataItem[])
+  //       setLoading(false)
+  //     })
+  //   }, [])
+  // )
+
+  const loadData = (flash?: boolean) => {
+    botList(flash).then(res => {
+      setListData(res as ListDataItem[])
+      setLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    loadData()
+    CallBackManagerSingle().add('botList', () => {
+      loadData(true)
+    })
+    return () => {
+      CallBackManagerSingle().remove('botList')
+    }
+  }, [])
 
   const onShowDetail = event => {
     botStore.setState(event)

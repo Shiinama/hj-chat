@@ -19,6 +19,7 @@ import FlashIcon from '../../../components/flashIcon'
 import useUserStore from '../../../store/userStore'
 import AudioPayManagerSingle, { AudioPayManager } from '../../../components/chat/audioPlayManager'
 import { NativeEventSubscription } from 'react-native'
+import CallBackManagerSingle from '../../../utils/CallBackManager'
 
 export type ChatItem = {
   id: number
@@ -216,6 +217,10 @@ export default function Chat({}) {
     if (!message) return
     setChatData([message.data, ...chatData])
     flatList.current?.scrollToIndex?.({ index: 0 })
+    // 刷新聊天主页列表
+    if (chatData.length <= 1) {
+      CallBackManagerSingle().execute('botList')
+    }
   }, [message])
 
   useEffect(() => {

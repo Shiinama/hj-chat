@@ -1,12 +1,41 @@
 import request from '../utils/request'
+import RNStorage from '@react-native-async-storage/async-storage'
 
-export const botList = () => {
-  return request({
-    url: '/bot/list',
-    method: 'get',
+const botListLocalKey = 'BotListLocal'
+
+export const botList = (flash?: boolean) => {
+  return new Promise(async (resolve, reject) => {
+    let localBotList = undefined
+    try {
+      const localStr = await RNStorage.getItem(botListLocalKey)
+      if (localStr) {
+        localBotList = JSON.parse(localStr)
+      }
+    } catch (e) {}
+    if (!localBotList || flash) {
+      request({
+        url: '/bot/list',
+        method: 'get',
+      })
+        .then(res => {
+          resolve(res)
+          RNStorage.setItem(botListLocalKey, JSON.stringify(res))
+        })
+        .catch(e => {
+          reject(e)
+        })
+    } else if (localBotList) {
+      resolve(localBotList)
+    }
   })
 }
-export const chatHistory = (params: {botUid: string; offset?: number; limit?: number; afterId?: number; beforeId?: number}) => {
+export const chatHistory = (params: {
+  botUid: string
+  offset?: number
+  limit?: number
+  afterId?: number
+  beforeId?: number
+}) => {
   return request({
     url: `/chat/chatHistory`,
     query: params,
