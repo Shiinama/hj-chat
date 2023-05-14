@@ -25,42 +25,47 @@ function Container({
   // 工具栏高度
   const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(80)
   const [messagesContainerHeight, setMessagesContainerHeight] = useState(0)
+  const [boardHeight, setBoardHeight] = useState(0)
 
-  const getBasicMessagesContainerHeight = (layoutHeight: number) => {
-    return layoutHeight - minInputToolbarHeight
-  }
-  const getMessagesContainerHeightWithKeyboard = (layoutHeight: number, keyboardHeight: number) => {
-    return getBasicMessagesContainerHeight(layoutHeight) - keyboardHeight + bottomOffset
-  }
+  // const getBasicMessagesContainerHeight = (layoutHeight: number) => {
+  //   return layoutHeight - minInputToolbarHeight
+  // }
+  // const getMessagesContainerHeightWithKeyboard = (layoutHeight: number, keyboardHeight: number) => {
+  //   return getBasicMessagesContainerHeight(layoutHeight) - keyboardHeight + bottomOffset
+  // }
   const onInitialLayoutViewLayout = (e: any) => {
     const { layout } = e.nativeEvent
     if (layout.height <= 0) {
       return
     }
     setMaxHeight(layout.height)
-    const newMessagesContainerHeight = getBasicMessagesContainerHeight(layout.height)
-    setMessagesContainerHeight(newMessagesContainerHeight)
+    // const newMessagesContainerHeight = getBasicMessagesContainerHeight(layout.height)
+    // setMessagesContainerHeight(newMessagesContainerHeight)
   }
 
   const onKeyboardWillShow = (e: any) => {
     const keyboardHeight = e.endCoordinates ? e.endCoordinates.height : e.end.height
-    const newMessagesContainerHeight = getMessagesContainerHeightWithKeyboard(maxHeight, keyboardHeight)
-    setMessagesContainerHeight(newMessagesContainerHeight)
+    setBoardHeight(keyboardHeight)
+    // const newMessagesContainerHeight = getMessagesContainerHeightWithKeyboard(maxHeight, keyboardHeight)
+    // setMessagesContainerHeight(newMessagesContainerHeight)
   }
   const onKeyboardWillHide = () => {
-    const newMessagesContainerHeight = getBasicMessagesContainerHeight(maxHeight)
-    setMessagesContainerHeight(newMessagesContainerHeight)
-    setMinInputToolbarHeight(40 + inputHeight)
+    // const newMessagesContainerHeight = getBasicMessagesContainerHeight(maxHeight)
+    setBoardHeight(0)
+    // setMessagesContainerHeight(newMessagesContainerHeight)
+    // setMinInputToolbarHeight(40 + inputHeight)
   }
   useEffect(() => {
-    console.log(inputHeight)
-    if (inputHeight === 40) {
-      setMessagesContainerHeight(pre => pre + 40)
-    } else {
-      setMessagesContainerHeight(pre => pre - (inputHeight - 40))
-    }
+    const inputToolbarHeight = 40 + inputHeight
+    console.log({ inputHeight, maxHeight, inputToolbarHeight })
     setMinInputToolbarHeight(40 + inputHeight)
-  }, [inputHeight])
+    setMessagesContainerHeight(maxHeight - inputToolbarHeight - boardHeight)
+    // if (inputHeight === 40) {
+
+    // } else {
+    //   setMessagesContainerHeight(pre => pre - (inputHeight - 40))
+    // }
+  }, [inputHeight, maxHeight, boardHeight])
   const InternalProps = {
     onKeyboardWillShow,
     onKeyboardWillHide,
