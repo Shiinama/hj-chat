@@ -36,11 +36,20 @@ type Props = {
     pinned: boolean
   }
   inputHeight
+  barHeight
+  setBarHeight
   setInputHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
-function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputToolbarHeight }: Props) {
+function InputToolsTar({
+  setBarHeight,
+  barHeight,
+  inputHeight,
+  setInputHeight,
+  inputTextProps,
+  minInputToolbarHeight,
+}: Props) {
   const {
     value,
     onChangeText,
@@ -58,7 +67,6 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
   const { setValue: setChatValue } = useContext(ChatContext)
   const [pinned, setPinned] = useState(originalPinned)
   const [position, setPosition] = useState('absolute')
-  const [barHeight, setBarHeight] = useState(0)
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
   // 控制话筒弹出
@@ -250,7 +258,7 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
                       multiline={true}
                       maxLength={500}
                       onContentSizeChange={handleContentSizeChange}
-                      placeholder="Wite a message"
+                      placeholder="Write a message"
                       style={[{ height: inputHeight, fontSize: 18, lineHeight: 24 }]}
                       onChangeText={inputText => {
                         onChangeText(inputText)

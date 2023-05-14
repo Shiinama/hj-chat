@@ -22,45 +22,32 @@ function Container({
 }: FishChatProps): JSX.Element {
   const [maxHeight, setMaxHeight] = useState(0)
   const [inputHeight, setInputHeight] = useState(40)
+  const [barHeight, setBarHeight] = useState(0)
   // 工具栏高度
   const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(80)
   const [messagesContainerHeight, setMessagesContainerHeight] = useState(0)
+  const [boardHeight, setBoardHeight] = useState(0)
 
-  const getBasicMessagesContainerHeight = (layoutHeight: number) => {
-    return layoutHeight - minInputToolbarHeight
-  }
-  const getMessagesContainerHeightWithKeyboard = (layoutHeight: number, keyboardHeight: number) => {
-    return getBasicMessagesContainerHeight(layoutHeight) - keyboardHeight + bottomOffset
-  }
   const onInitialLayoutViewLayout = (e: any) => {
     const { layout } = e.nativeEvent
     if (layout.height <= 0) {
       return
     }
     setMaxHeight(layout.height)
-    const newMessagesContainerHeight = getBasicMessagesContainerHeight(layout.height)
-    setMessagesContainerHeight(newMessagesContainerHeight)
   }
 
   const onKeyboardWillShow = (e: any) => {
     const keyboardHeight = e.endCoordinates ? e.endCoordinates.height : e.end.height
-    const newMessagesContainerHeight = getMessagesContainerHeightWithKeyboard(maxHeight, keyboardHeight)
-    setMessagesContainerHeight(newMessagesContainerHeight)
+    setBoardHeight(keyboardHeight)
   }
+
   const onKeyboardWillHide = () => {
-    const newMessagesContainerHeight = getBasicMessagesContainerHeight(maxHeight)
-    setMessagesContainerHeight(newMessagesContainerHeight)
-    setMinInputToolbarHeight(40 + inputHeight)
+    setBoardHeight(0)
   }
   useEffect(() => {
-    console.log(inputHeight)
-    if (inputHeight === 40) {
-      setMessagesContainerHeight(pre => pre + 40)
-    } else {
-      setMessagesContainerHeight(pre => pre - (inputHeight - 40))
-    }
     setMinInputToolbarHeight(40 + inputHeight)
-  }, [inputHeight])
+    setMessagesContainerHeight(maxHeight - barHeight - boardHeight)
+  }, [inputHeight, maxHeight, boardHeight, barHeight])
   const InternalProps = {
     onKeyboardWillShow,
     onKeyboardWillHide,
@@ -83,6 +70,8 @@ function Container({
         {/* inputToolbar下方输入框工具栏容器 */}
         <InputToolsTar
           inputHeight={inputHeight}
+          barHeight={barHeight}
+          setBarHeight={setBarHeight}
           setInputHeight={setInputHeight}
           inputTextProps={inputTextProps as any}
           minInputToolbarHeight={restProps.InputToolBarHeight || minInputToolbarHeight}
