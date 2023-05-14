@@ -31,7 +31,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
             </Text>
           ) : null}
         </View>
-        <View style={{ flexDirection: 'row', backgroundColor: '#F6F6F6', width: '100%' }}>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
           <Text numberOfLines={2} ellipsizeMode="tail" style={styles.message}>
             {!showTime ? ld.description : ld?.lastMessage?.text}
           </Text>
@@ -68,12 +68,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   listItemTop: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 30,
-    backgroundColor: '#F6F6F6',
-    borderColor: '#CDCDCD',
+    flexShrink: 0,
   },
 
   listItemMid: {
@@ -87,8 +84,10 @@ const styles = StyleSheet.create({
 
   name: {
     lineHeight: 20,
+    height: 20,
     fontSize: 16,
     color: '#1F1F1F',
+    // backgroundColor: 'red',
   },
 
   message: {
