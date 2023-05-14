@@ -71,17 +71,17 @@ const RecordButton = ({
     switch (buttonState) {
       case 'penddingRecording':
         return (
-          <View>
-            {/* <Text style={{ color: '#A0AEC0' }}>Tap to record</Text> */}
+          <>
+            <Text style={{ color: '#A0AEC0', paddingTop: 20, paddingBottom: 5 }}>Tap to record</Text>
             <TouchableOpacity style={styles.recordButton} onPress={handlestartRecording}>
-              <Huatong color="red" />
+              <Huatong height={40} width={40} color="red" />
             </TouchableOpacity>
-          </View>
+          </>
         )
       case 'recording':
         return (
           <TouchableOpacity
-            style={styles.recordButton}
+            style={{ ...styles.recordButton, marginTop: 32 }}
             onPress={async () => {
               stopRecord()
             }}
@@ -91,7 +91,7 @@ const RecordButton = ({
         )
       case 'playing':
         return (
-          <>
+          <View style={{ flexDirection: 'row', marginTop: 32 }}>
             <TouchableOpacity
               style={styles.smallButton}
               onPress={async () => {
@@ -142,7 +142,7 @@ const RecordButton = ({
             >
               <Send height={20} width={20}></Send>
             </TouchableOpacity>
-          </>
+          </View>
         )
     }
   }
@@ -151,14 +151,15 @@ const RecordButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    height: 100,
+    // flexDirection: 'row',
+    height: 50,
+    marginBottom: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
   recordButton: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     borderRadius: 40,
     flexDirection: 'row',
     backgroundColor: 'rgba(255, 59, 48, 0.15)',
@@ -166,8 +167,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   palyButton: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     borderRadius: 40,
     flexDirection: 'row',
     backgroundColor: '#e7d9f7',

@@ -21,10 +21,10 @@ function Container({
   ...restProps
 }: FishChatProps): JSX.Element {
   const [maxHeight, setMaxHeight] = useState(0)
-  const [inputHeight, setInputHeight] = useState(40)
+  const [inputHeight, setInputHeight] = useState(24)
   const [barHeight, setBarHeight] = useState(0)
   // 工具栏高度
-  const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(80)
+  const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(0)
   const [messagesContainerHeight, setMessagesContainerHeight] = useState(0)
   const [boardHeight, setBoardHeight] = useState(0)
 
@@ -45,7 +45,7 @@ function Container({
     setBoardHeight(0)
   }
   useEffect(() => {
-    setMinInputToolbarHeight(40 + inputHeight)
+    setMinInputToolbarHeight(24 + inputHeight)
     setMessagesContainerHeight(maxHeight - barHeight - boardHeight)
   }, [inputHeight, maxHeight, boardHeight, barHeight])
   const InternalProps = {

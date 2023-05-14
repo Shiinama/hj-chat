@@ -238,7 +238,7 @@ function InputToolsTar({
   }
   return (
     <View
-      style={[styles.container, { position }, { paddingVertical: isShow ? 0 : 15 }] as ViewStyle}
+      style={[styles.container, { position }, { paddingTop: isShow ? 0 : 20 }] as ViewStyle}
       onLayout={e => {
         setBarHeight(e.nativeEvent.layout.height)
       }}
