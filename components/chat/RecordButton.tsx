@@ -47,7 +47,7 @@ const RecordButton = ({
     switch (buttonState) {
       case 'penddingRecording':
         return (
-          <View style={{ alignItems: 'center' }}>
+          <View>
             {/* <Text style={{ color: '#A0AEC0' }}>Tap to record</Text> */}
             <TouchableOpacity style={styles.recordButton} onPress={handlestartRecording}>
               <Huatong color="red" />

@@ -222,23 +222,23 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
       setInputHeight(40)
       return
     }
-    if (height > 40 && height <= 72) {
+    if (height > 40 && height < 80) {
       setInputHeight(height)
     }
   }
   return (
     <View
-      style={[styles.container, { position }] as ViewStyle}
+      style={[styles.container, { position }, { paddingVertical: isShow ? 0 : 15 }] as ViewStyle}
       onLayout={e => {
         setBarHeight(e.nativeEvent.layout.height)
       }}
     >
-      <View>
+      <>
         <View style={{ ...styles.primary, height: isShow ? minInputToolbarHeight : minInputToolbarHeight / 2 }}>
           {
             <>
               {showAni ? (
-                <>
+                <View style={{ flexDirection: 'row' }}>
                   {renderLeftInput()}
                   <View style={styles.textInput}>
                     <TextInput
@@ -259,7 +259,7 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
                   </View>
 
                   {renderRightInput}
-                </>
+                </View>
               ) : (
                 <AudioAnimation ref={AnimationRef} durationMillis={durationMillis}></AudioAnimation>
               )}
@@ -267,7 +267,7 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
           }
         </View>
         {inputBottmTollsBar()}
-      </View>
+      </>
     </View>
   )
 }
@@ -283,16 +283,10 @@ const styles = StyleSheet.create({
   },
   primary: {
     flexDirection: 'row',
-    marginBottom: 10,
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     paddingHorizontal: 20,
-    height: 40,
-  },
-  accessory: {
-    height: 60,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    marginBottom: 10,
   },
   toolsIcon: {
     width: 40,
@@ -309,9 +303,9 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     marginHorizontal: 10,
-    textAlignVertical: 'center',
+    // textAlignVertical: 'center',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 12,
     borderRadius: 12,
