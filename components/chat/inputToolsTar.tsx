@@ -142,6 +142,8 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
       <RecordButton
         isShow={isShow}
         AnimationRef={AnimationRef}
+        recordMaxSecond={59}
+        durationMillis={durationMillis}
         setIsShow={setIsShow}
         setShowAni={setShowAni}
         setAudioFileUri={setAudioFileUri}
