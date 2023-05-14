@@ -14,9 +14,11 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
       }}
     >
       {renderImage(ld.logo, styles.avatar)}
-      <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: 267 }}>
+      <View style={{ flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
         <View style={styles.listItemTop}>
-          <Text style={styles.name}>{ld.name}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.name}>{ld.name}</Text>
+          </View>
           {showTime ? <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text> : null}
         </View>
         <View style={{ flexDirection: 'row', backgroundColor: '#F6F6F6', width: '100%' }}>
@@ -56,6 +58,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   listItemTop: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     height: 30,
@@ -74,20 +77,17 @@ const styles = StyleSheet.create({
 
   name: {
     lineHeight: 20,
-    width: 231,
     fontSize: 16,
     color: '#1F1F1F',
   },
 
   message: {
-    width: 240,
     // marginTop: 5,
     color: '#B9B9B9',
   },
 
   time: {
     color: '#B9B9B9',
-    flex: 1,
     lineHeight: 12,
     fontSize: 12,
   },
