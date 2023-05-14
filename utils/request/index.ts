@@ -73,6 +73,7 @@ _axios.interceptors.response.use(
 )
 // TODO: 添加options 类型interface
 export default async function request<T>(options: RequestOptions) {
+  console.log(baseUrl)
   const { url } = options
   const opt: RequestOptions = options
   delete opt.url

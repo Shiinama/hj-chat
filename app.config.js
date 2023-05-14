@@ -1,7 +1,7 @@
 // 多环境变量
 const envConfig = {
   dev: {
-    baseUrl: 'https://api-staging.myshell.ai',
+    baseUrl: 'https://api.myshell.ai',
     authKey: 'Authorization',
     // socketIoUrl: 'https://relay.walletconnect.com',
     // HOST: 'https://api-staging.myshell.ai',
@@ -53,13 +53,16 @@ export default {
   },
   assetBundlePatterns: ['**/*'],
   ios: {
-    associatedDomains: ['pn6b6a232e-973a-405c-969a-a546189fda16'],
+    associatedDomains: ['pnf34c6ee8-a870-447e-aa86-3400c12c8f22'],
     supportsTablet: true,
     bundleIdentifier: 'ai.myshell.app',
     infoPlist: {
-      PROJECT_UUID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
-      PROJECT_CLIENT_KEY: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
-      PROJECT_APP_UUID: '6b6a232e-973a-405c-969a-a546189fda16',
+      //       PARTICLE_PROJECT_ID=cb5e91db-f37b-4e53-8107-b97e36f78072
+      // PARTICLE_CLIENT_ID=cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx
+      // PARTICLE_APP_ID=f34c6ee8-a870-447e-aa86-3400c12c8f22
+      PROJECT_UUID: 'cb5e91db-f37b-4e53-8107-b97e36f78072',
+      PROJECT_CLIENT_KEY: 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx',
+      PROJECT_APP_UUID: 'f34c6ee8-a870-447e-aa86-3400c12c8f22',
     },
   },
   android: {
@@ -114,7 +117,7 @@ export default {
     },
     isLogin: process.env.REACT_APP_ENV === 'dev',
     systemConfig: {
-      ...(envConfig?.demo || envConfig.prod),
+      ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },
   },
 }
