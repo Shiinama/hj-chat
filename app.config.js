@@ -3,7 +3,7 @@ const envConfig = {
   dev: {
     baseUrl: 'https://api.myshell.ai',
     authKey: 'Authorization',
-    downloadHost: 'https://html2img.myshell.ai/',
+    downloadHost: 'https://html2img.myshell.ai/share/',
     shareLink: 'https://app.myshell.ai/share/',
     avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
   },
@@ -12,7 +12,7 @@ const envConfig = {
     authKey: 'Authorization',
     // socketIoUrl: 'https://relay.walletconnect.com',
     // HOST: 'https://api-staging.myshell.ai',
-    downloadHost: 'https://share.vinstic.com/share',
+    downloadHost: 'https://share.vinstic.com/share/',
 
     shareLink: 'https://api-staging.myshell/share/',
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
@@ -30,7 +30,7 @@ const envConfig = {
   prod: {
     baseUrl: 'https://api.myshell.ai',
     authKey: 'Authorization',
-    downloadHost: 'https://html2img.myshell.ai/',
+    downloadHost: 'https://html2img.myshell.ai/share/',
     shareLink: 'https://app.myshell.ai/share/',
     avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
   },
