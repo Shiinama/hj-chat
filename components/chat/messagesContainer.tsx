@@ -1,4 +1,4 @@
-import { LegacyRef, memo, useCallback, useRef } from 'react'
+import { LegacyRef, memo } from 'react'
 import { View, StyleSheet, FlatList, StyleProp, ViewStyle, Keyboard } from 'react-native'
 import Message from './message'
 
@@ -27,23 +27,23 @@ const styles = StyleSheet.create({
     // paddingTop: 20,
     // flex: 1,
   },
-  scrollToBottomStyle: {
-    opacity: 0.8,
-    position: 'absolute',
-    right: 10,
-    bottom: 30,
-    zIndex: 999,
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    // backgroundColor: Color.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // shadowColor: Color.black,
-    shadowOpacity: 0.5,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 1,
-  },
+  // scrollToBottomStyle: {
+  //   opacity: 0.8,
+  //   position: 'absolute',
+  //   right: 10,
+  //   bottom: 30,
+  //   zIndex: 999,
+  //   height: 40,
+  //   width: 40,
+  //   borderRadius: 20,
+  //   // backgroundColor: Color.white,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   // shadowColor: Color.black,
+  //   shadowOpacity: 0.5,
+  //   shadowOffset: { width: 0, height: 0 },
+  //   shadowRadius: 1,
+  // },
 })
 type MessagesContainerProps = {
   messagesContainerHeight: number
@@ -84,7 +84,7 @@ function MessagesContainer(props: MessagesContainerProps) {
         {
           height: messagesContainerHeight,
         },
-        messagesContainerStyle
+        messagesContainerStyle,
       ]}
     >
       <View style={[styles.container]}>
@@ -102,11 +102,13 @@ function MessagesContainer(props: MessagesContainerProps) {
           {...InternalProps}
           {...flatRest}
         ></FlatList>
-       
       </View>
-      <View style={{ flex: 1 }} onTouchStart={()=>{
-        Keyboard.dismiss()
-      }}/>
+      <View
+        style={{ flex: 1 }}
+        onTouchStart={() => {
+          Keyboard.dismiss()
+        }}
+      />
     </View>
   )
 }
