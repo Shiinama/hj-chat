@@ -249,7 +249,7 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
                       maxLength={500}
                       onContentSizeChange={handleContentSizeChange}
                       placeholder="Wite a message"
-                      style={[{ height: inputHeight, textAlignVertical: 'top', fontSize: 18, lineHeight: 24 }]}
+                      style={[{ height: inputHeight, fontSize: 18, lineHeight: 24 }]}
                       onChangeText={inputText => {
                         onChangeText(inputText)
                       }}
