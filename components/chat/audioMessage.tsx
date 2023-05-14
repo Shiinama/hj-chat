@@ -70,6 +70,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         if (status.isLoaded) {
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
+          if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
+            handlePlayPause()
+            // 自动播放后清空自动播放的url
+            AudioPayManagerSingle().currentAutoPlayUrl = undefined
+          }
         }
         if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis >= 0) {
           soundInterval.current && clearInterval(soundInterval.current)
