@@ -19,6 +19,8 @@ const RecordButton = ({
   setAuInfo,
   setShowAni,
   setAudioFileUri,
+  recordMaxSecond,
+  durationMillis,
   isShow,
   AnimationRef,
 }) => {
@@ -43,6 +45,28 @@ const RecordButton = ({
     })
   }
 
+  const stopRecord = async () => {
+    const uri = await stopRecording()
+    const { sound } = await Audio.Sound.createAsync({ uri }, {}, (status: any) => {
+      if (status.positionMillis >= status.durationMillis) {
+        setIsSound(true)
+        AnimationRef.current.stopAnimation()
+        sound.stopAsync()
+        // sound.pauseAsync()
+      }
+    })
+    setSound(sound)
+    setAudioFileUri(uri)
+    setButtonState('playing')
+    AnimationRef.current.stopAnimation()
+  }
+
+  useEffect(() => {
+    if (durationMillis && recordMaxSecond && durationMillis / 1000 >= recordMaxSecond) {
+      stopRecord()
+    }
+  }, [durationMillis])
+
   const playOrPauseIcon = () => {
     switch (buttonState) {
       case 'penddingRecording':
@@ -59,19 +83,7 @@ const RecordButton = ({
           <TouchableOpacity
             style={styles.recordButton}
             onPress={async () => {
-              const uri = await stopRecording()
-              const { sound } = await Audio.Sound.createAsync({ uri }, {}, (status: any) => {
-                if (status.positionMillis >= status.durationMillis) {
-                  setIsSound(true)
-                  AnimationRef.current.stopAnimation()
-                  sound.stopAsync()
-                  // sound.pauseAsync()
-                }
-              })
-              setSound(sound)
-              setAudioFileUri(uri)
-              setButtonState('playing')
-              AnimationRef.current.stopAnimation()
+              stopRecord()
             }}
           >
             <View style={{ backgroundColor: 'red', width: 14, height: 14, borderRadius: 2 }}></View>

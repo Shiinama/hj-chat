@@ -90,6 +90,7 @@ export default function Chat({}) {
       AudioPayManagerSingle().destory()
     }
   }, [])
+
   async function startRecording() {
     try {
       await Audio.setAudioModeAsync({
