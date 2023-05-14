@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity, AppState, FlatList, Alert } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import ChatItem from '../../../components/chat/chatItem'
 import Container from '../../../components/chat/container'
 import { chatHistory } from '../../../api'
@@ -38,8 +38,7 @@ export type ChatItem = {
   updatedDate?: string
   botUid?: string
 }
-
-export default function Chat({}) {
+function Chat({}) {
   const { pinned, logo, name, uid, userId, energyPerChat } = botStore.getState()
   const { profile } = useUserStore()
 
@@ -272,6 +271,8 @@ export default function Chat({}) {
     }
   }, [chatData, isPending, randomId])
   if (loading) return <ShellLoading></ShellLoading>
+
+  console.log('re-render:', 'Chat')
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
       <Container
@@ -341,3 +342,5 @@ export default function Chat({}) {
     </ChatContext.Provider>
   )
 }
+
+export default React.memo(Chat)
