@@ -80,7 +80,6 @@ export default async function request<T>(options: RequestOptions) {
 
   const notNeedLogin = Constants.manifest.extra.isLogin
   let Authorization = ''
-  console.log(notNeedLogin)
   if (notNeedLogin) {
     Authorization =
       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsUHJvZCIsInN1YiI6NDUzOTgsImF1ZCI6Ik15U2hlbGxQcm9kIiwibmJmIjowLCJpYXQiOjE2ODQwMDAwNTA1NjUsImp0aSI6IjkzZGQ2YmE2Y2NmMzQ4NzBhZTUyNzdiMjUxM2Y1OTY5Iiwic2VjdXJpdHlTdGFtcCI6ImIyZDljM2UzZDk3NjRkNGY4YWNkNDNiYzExOWVhYTVhIiwiZXhwIjoxNjg0MDAyNjQyNTY1fQ.QnP41guUNbC-i26sdVoIhN74SN4VcVgtQrlZwUOvdY8'
