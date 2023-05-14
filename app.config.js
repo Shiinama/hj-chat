@@ -40,7 +40,6 @@ export default {
   slug: 'yu-chat',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/images/myshell.png',
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
   splash: {
@@ -50,6 +49,7 @@ export default {
   },
   assetBundlePatterns: ['**/*'],
   ios: {
+    icon: './assets/iOS/App Store - 1x.png',
     associatedDomains: ['pnf34c6ee8-a870-447e-aa86-3400c12c8f22'],
     supportsTablet: true,
     bundleIdentifier: 'ai.myshell.app',
@@ -63,9 +63,10 @@ export default {
     },
   },
   android: {
+    icon: './assets/Android/Play_Store/App_Icon_512x512.png',
     adaptiveIcon: {
-      foregroundImage: './assets/images/myshell.png',
-      backgroundColor: '#ffffff',
+      foregroundImage: './assets/Android/Adaptive_Icon/Foreground.png',
+      backgroundImage: './assets/Android/Adaptive_Icon/Background.png',
     },
     package: 'ai.myshell.app',
     permissions: ['android.permission.RECORD_AUDIO'],

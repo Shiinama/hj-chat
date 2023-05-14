@@ -37,7 +37,6 @@ elsif podfile_properties.key?('ios.flipper') then
     flipper_config = FlipperConfiguration.enabled(["Debug", "Release"], { 'Flipper' => podfile_properties['ios.flipper'] })
   end
 end
-
 target 'aimyshell' do
   use_expo_modules!
 # @generated begin ffmpeg-kit-react-native-import - expo prebuild (DO NOT MODIFY) sync-a79a962553e9fe0961383adf881bd0dada86e29b
@@ -52,7 +51,7 @@ target 'aimyshell' do
   
   # Flags change depending on the env values.
   flags = get_default_flags()
-
+  xcodeproj 'aimyshell.xcodeproj' 
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => false,
