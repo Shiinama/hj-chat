@@ -25,6 +25,7 @@ const RecordButton = ({
   AnimationRef,
 }) => {
   if (isShow) return null
+  console.log('aare-render:RecordButton')
   const [sound, setSound] = useState(null)
   const [buttonState, setButtonState] = useState('penddingRecording')
   const [isSound, setIsSound] = useState(true)
@@ -49,16 +50,23 @@ const RecordButton = ({
     const uri = await stopRecording()
     const { sound } = await Audio.Sound.createAsync({ uri }, {}, (status: any) => {
       if (status.positionMillis >= status.durationMillis) {
-        setIsSound(true)
-        AnimationRef.current.stopAnimation()
-        sound.stopAsync()
+        try {
+          setIsSound(true)
+          AnimationRef?.current?.stopAnimation?.()
+          sound.stopAsync()
+        } catch (error) {}
         // sound.pauseAsync()
+      } else if (isSound) {
+        const offMil = status.durationMillis - status.positionMillis
+        AnimationRef?.current?.updateDurationMillis?.(offMil < 0 ? 0 : offMil)
       }
     })
-    setSound(sound)
-    setAudioFileUri(uri)
-    setButtonState('playing')
-    AnimationRef.current.stopAnimation()
+    try {
+      setSound(sound)
+      setAudioFileUri(uri)
+      setButtonState('playing')
+      AnimationRef?.current?.stopAnimation?.()
+    } catch (error) {}
   }
 
   useEffect(() => {
@@ -119,11 +127,14 @@ const RecordButton = ({
                     Audio.setAudioModeAsync({
                       allowsRecordingIOS: false,
                     })
-                    sound.playAsync()
-                    AnimationRef.current.startAnimation()
+                    AudioPayManagerSingle().play(sound, () => {
+                      setIsSound(false)
+                      AnimationRef?.current?.stopAnimation?.()
+                    })
+                    AnimationRef?.current?.startAnimation?.()
                   } else {
-                    sound.pauseAsync()
-                    AnimationRef.current.stopAnimation()
+                    AudioPayManagerSingle().pause()
+                    AnimationRef?.current?.stopAnimation?.()
                   }
                   return !pre
                 })

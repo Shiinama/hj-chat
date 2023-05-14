@@ -52,6 +52,7 @@ function Container({
     onKeyboardWillShow,
     onKeyboardWillHide,
   }
+  console.log('re-render:Container')
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={{ flex: 1 }} onLayout={onInitialLayoutViewLayout}>

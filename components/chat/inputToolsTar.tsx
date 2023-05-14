@@ -150,7 +150,7 @@ function InputToolsTar({
       <RecordButton
         isShow={isShow}
         AnimationRef={AnimationRef}
-        recordMaxSecond={59}
+        recordMaxSecond={60}
         durationMillis={durationMillis}
         setIsShow={setIsShow}
         setShowAni={setShowAni}
@@ -236,6 +236,7 @@ function InputToolsTar({
       setInputHeight(height)
     }
   }
+  console.log('re-render:InputTools')
   return (
     <View
       style={[styles.container, { position }, { paddingTop: isShow ? 0 : 20 }] as ViewStyle}
