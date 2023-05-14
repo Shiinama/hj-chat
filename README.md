@@ -35,3 +35,9 @@
 `expo start --offline`
 
 还是比较简单有问题就问。
+
+打安卓 dev 包
+`eas build --platform android --local --profile development`
+
+打安卓 release
+`eas build --platform android --local --profile preview`

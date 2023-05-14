@@ -1,9 +1,9 @@
-import { ImageSourcePropType, Text, View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { chatTimeFormat } from '../utils/time'
 import RootStyles from '../constants/RootStyles'
 import Pined from '../assets/images/tabbar/pin.svg'
-import { genBotUrl, renderImage } from './profileInfo/helper'
-import defaultAvatar from '../assets/images/defaultAvatar.png'
+import { renderImage } from './profileInfo/helper'
+import dayjs from 'dayjs'
 
 function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   return (
@@ -19,11 +19,21 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
           <View style={{ flex: 1 }}>
             <Text style={styles.name}>{ld.name}</Text>
           </View>
-          {showTime ? <Text style={styles.time}>{chatTimeFormat(Date.now())}</Text> : null}
+          {showTime ? (
+            <Text style={styles.time}>
+              {ld.lastMessage
+                ? dayjs().isSame(dayjs(ld.lastMessage.createdDate), 'day')
+                  ? dayjs(ld.lastMessage.createdDate).format('HH:mm')
+                  : dayjs().isSame(dayjs(ld.lastMessage.createdDate), 'year')
+                  ? dayjs(ld.lastMessage.createdDate).format('MM-DD')
+                  : dayjs(ld.lastMessage.createdDate).format('YYYY-MM-DD')
+                : ''}
+            </Text>
+          ) : null}
         </View>
         <View style={{ flexDirection: 'row', backgroundColor: '#F6F6F6', width: '100%' }}>
           <Text numberOfLines={2} ellipsizeMode="tail" style={styles.message}>
-            {ld.description}
+            {!showTime ? ld.description : ld?.lastMessage?.text}
           </Text>
           {showPined && <Pined></Pined>}
         </View>
