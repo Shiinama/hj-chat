@@ -50,10 +50,17 @@ function Container({
   const onKeyboardWillHide = () => {
     const newMessagesContainerHeight = getBasicMessagesContainerHeight(maxHeight)
     setMessagesContainerHeight(newMessagesContainerHeight)
-    setMinInputToolbarHeight(80)
-    setInputHeight(40)
+    setMinInputToolbarHeight(40 + inputHeight)
   }
-
+  useEffect(() => {
+    console.log(inputHeight)
+    if (inputHeight === 40) {
+      setMessagesContainerHeight(pre => pre + 40)
+    } else {
+      setMessagesContainerHeight(pre => pre - (inputHeight - 40))
+    }
+    setMinInputToolbarHeight(40 + inputHeight)
+  }, [inputHeight])
   const InternalProps = {
     onKeyboardWillShow,
     onKeyboardWillHide,
@@ -77,8 +84,6 @@ function Container({
         <InputToolsTar
           inputHeight={inputHeight}
           setInputHeight={setInputHeight}
-          setMinInputToolbarHeight={setMinInputToolbarHeight}
-          setMessagesContainerHeight={setMessagesContainerHeight}
           inputTextProps={inputTextProps as any}
           minInputToolbarHeight={restProps.InputToolBarHeight || minInputToolbarHeight}
         ></InputToolsTar>

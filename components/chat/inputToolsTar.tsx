@@ -37,19 +37,10 @@ type Props = {
   }
   inputHeight
   setInputHeight
-  setMinInputToolbarHeight
-  setMessagesContainerHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
-function InputToolsTar({
-  inputHeight,
-  setInputHeight,
-  setMessagesContainerHeight,
-  setMinInputToolbarHeight,
-  inputTextProps,
-  minInputToolbarHeight,
-}: Props) {
+function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputToolbarHeight }: Props) {
   const {
     value,
     onChangeText,
@@ -227,17 +218,12 @@ function InputToolsTar({
     nativeEvent: { contentSize },
   }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
     let height = contentSize.height
-    changeHeight(height)
-  }
-  const changeHeight = aHeight => {
-    if (aHeight > 40 && aHeight < 100) {
-      setInputHeight(aHeight)
-      setMinInputToolbarHeight(pre => {
-        return pre + (aHeight - 40)
-      })
-      setMessagesContainerHeight(pre => {
-        return pre - (aHeight - 40)
-      })
+    if (height < 50) {
+      setInputHeight(40)
+      return
+    }
+    if (height > 40 && height <= 72) {
+      setInputHeight(height)
     }
   }
   return (
@@ -254,21 +240,23 @@ function InputToolsTar({
               {showAni ? (
                 <>
                   {renderLeftInput()}
-                  <TextInput
-                    ref={inputRef}
-                    returnKeyType="default"
-                    blurOnSubmit={false}
-                    multiline={true}
-                    maxLength={500}
-                    // onContentSizeChange={handleContentSizeChange}
-                    placeholder="Wite a message"
-                    style={[styles.textInput, { height: inputHeight }]}
-                    onChangeText={inputText => {
-                      onChangeText(inputText)
-                    }}
-                    {...inputTextProps}
-                    {...inputProps}
-                  />
+                  <View style={styles.textInput}>
+                    <TextInput
+                      ref={inputRef}
+                      returnKeyType="default"
+                      blurOnSubmit={false}
+                      multiline={true}
+                      maxLength={500}
+                      onContentSizeChange={handleContentSizeChange}
+                      placeholder="Wite a message"
+                      style={[{ height: inputHeight, textAlignVertical: 'top', fontSize: 18, lineHeight: 24 }]}
+                      onChangeText={inputText => {
+                        onChangeText(inputText)
+                      }}
+                      {...inputTextProps}
+                      {...inputProps}
+                    />
+                  </View>
 
                   {renderRightInput}
                 </>
@@ -321,24 +309,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    marginHorizontal: 8,
-    // marginVertical: 12,
+    justifyContent: 'center',
+    marginHorizontal: 10,
     textAlignVertical: 'center',
-    fontSize: 16,
     backgroundColor: '#FFFFFF',
-    lineHeight: 26,
     paddingHorizontal: 12,
     borderRadius: 12,
-    // marginTop: Platform.select({
-    //   ios: 6,
-    //   android: 0,
-    //   web: 6,
-    // }),
-    // marginBottom: Platform.select({
-    //   ios: 8,
-    //   android: 8,
-    //   web: 4,
-    // }),
   },
 })
 
