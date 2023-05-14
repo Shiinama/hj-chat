@@ -90,8 +90,36 @@ export default function Chat({}) {
       AudioPayManagerSingle().destory()
     }
   }, [])
+
+  // 录音最长到60秒
+  const timeRecord = useRef<{
+    interval?: NodeJS.Timer
+    time: number
+  }>({
+    time: 60,
+  })
+  const startRecordTime = () => {
+    stopRecordTime()
+    timeRecord.current.time = 60
+    timeRecord.current.interval = setInterval(() => {
+      timeRecord.current.time -= 1
+      if (timeRecord.current.time <= 0) {
+        stopRecordTime()
+        stopRecording()
+      }
+    }, 1000)
+  }
+
+  const stopRecordTime = () => {
+    try {
+      timeRecord.current?.interval && clearInterval(timeRecord.current?.interval)
+      timeRecord.current.interval = undefined
+    } catch (e) {}
+  }
+
   async function startRecording() {
     try {
+      startRecordTime()
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
       })
@@ -142,6 +170,7 @@ export default function Chat({}) {
   }
 
   async function stopRecording() {
+    stopRecordTime()
     try {
       await recording.stopAndUnloadAsync()
       const uri = recording.getURI()
