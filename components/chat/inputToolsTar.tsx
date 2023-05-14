@@ -36,11 +36,20 @@ type Props = {
     pinned: boolean
   }
   inputHeight
+  barHeight
+  setBarHeight
   setInputHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
 }
 
-function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputToolbarHeight }: Props) {
+function InputToolsTar({
+  setBarHeight,
+  barHeight,
+  inputHeight,
+  setInputHeight,
+  inputTextProps,
+  minInputToolbarHeight,
+}: Props) {
   const {
     value,
     onChangeText,
@@ -58,7 +67,6 @@ function InputToolsTar({ inputHeight, setInputHeight, inputTextProps, minInputTo
   const { setValue: setChatValue } = useContext(ChatContext)
   const [pinned, setPinned] = useState(originalPinned)
   const [position, setPosition] = useState('absolute')
-  const [barHeight, setBarHeight] = useState(0)
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
   // 控制话筒弹出
