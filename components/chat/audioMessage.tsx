@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react'
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback } from 'react'
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 import Slider from '@react-native-community/slider'
 import { Audio, AVPlaybackStatus } from 'expo-av'
@@ -21,19 +21,41 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
   const [currentPosition, setCurrentPosition] = useState<number>(0)
   const [duration, setDuration] = useState<number>(0)
   const [sound, setSound] = useState<Audio.Sound | null>(null)
+  const [loadFail, setLoadFail] = useState(false)
   // 全局录音单点播放控制
   const soundManager = useRef(AudioPayManagerSingle())
   useImperativeHandle(ref, () => ({
     handlePlayPause,
   }))
-  useEffect(() => {
-    if (!audioFileUri) return
-    const loadSound = async () => {
-      setLoading(true)
+  const loadSound = useCallback(async () => {
+    setLoading(true)
+    setLoadFail(false)
+    console.log('aaa')
+    try {
       const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
       setSound(sound)
-      setLoading(false)
+      setLoadFail(false)
+    } catch (e) {
+      console.log('load sound fail', e, 'url:', audioFileUri)
+      setLoadFail(true)
     }
+    setLoading(false)
+  }, [])
+
+  useEffect(() => {
+    if (!audioFileUri) return
+    // const loadSound = async () => {
+    //   setLoading(true)
+    //   setLoadFail(false)
+    //   try {
+    //     const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
+    //     setSound(sound)
+    //     setLoadFail(false)
+    //   } catch (e) {
+    //     setLoadFail(true)
+    //   }
+    //   setLoading(false)
+    // }
     loadSound()
     return () => {
       soundInterval.current && clearInterval(soundInterval.current)
@@ -46,6 +68,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         if (status.isLoaded) {
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
+          if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
+            handlePlayPause()
+            // 自动播放后清空自动播放的url
+            AudioPayManagerSingle().currentAutoPlayUrl = undefined
+          }
         }
       })
     }
@@ -70,11 +97,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         if (status.isLoaded) {
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
-          if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
-            handlePlayPause()
-            // 自动播放后清空自动播放的url
-            AudioPayManagerSingle().currentAutoPlayUrl = undefined
-          }
         }
         if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 20 >= 0) {
           soundInterval.current && clearInterval(soundInterval.current)
@@ -130,6 +152,19 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       setCurrentPosition(value)
     }
   }
+
+  if (!loading && loadFail)
+    return (
+      <TouchableOpacity
+        activeOpacity={0.6}
+        style={{ paddingHorizontal: 15 }}
+        onPress={() => {
+          loadSound()
+        }}
+      >
+        <Text style={{ color: '#333' }}>Reload</Text>
+      </TouchableOpacity>
+    )
 
   if (loading) return <ShellLoading></ShellLoading>
   return (
