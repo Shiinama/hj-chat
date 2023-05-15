@@ -17,8 +17,11 @@ import { setCustomText } from './utils/font'
 const init = async () => {
   // Get your project id and client from dashboard,
   // https://dashboard.particle.network/
-  ParticleInfo.projectId = 'cb5e91db-f37b-4e53-8107-b97e36f78072' // your project id
-  ParticleInfo.clientKey = 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx' // your client key
+  // 生产
+  // ParticleInfo.projectId = 'cb5e91db-f37b-4e53-8107-b97e36f78072' // your project id
+  // ParticleInfo.clientKey = 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx' // your client key
+  ParticleInfo.projectId = 'c9aa126d-8db2-45cc-8898-60e3a69d5050' // your project id
+  ParticleInfo.clientKey = 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk' // your client key
 
   if (ParticleInfo.projectId == '' || ParticleInfo.clientKey == '') {
     throw new Error('You need set project info')

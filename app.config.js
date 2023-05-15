@@ -1,33 +1,32 @@
 // 多环境变量
 const envConfig = {
   dev: {
-    baseUrl: 'https://api.myshell.ai',
-    authKey: 'Authorization',
-    downloadHost: 'https://html2img.myshell.ai/share/',
-    shareLink: 'https://app.myshell.ai/share/',
-    avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
-  },
-  test: {
-    baseUrl: 'https://api-staging.myshell',
-    authKey: 'Authorization',
-    // socketIoUrl: 'https://relay.walletconnect.com',
-    // HOST: 'https://api-staging.myshell.ai',
-    downloadHost: 'https://share.vinstic.com/share/',
-
-    shareLink: 'https://api-staging.myshell/share/',
-    avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
-  },
-  demo: {
+    PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
+    PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api-staging.myshell.ai',
     authKey: 'Authorization',
-    // socketIoUrl: 'https://relay.walletconnect.com',
-    // HOST: 'https://api-staging.myshell.ai',
     downloadHost: 'https://share.vinstic.com/share/',
-
     shareLink: 'https://api-staging.myshell.ai/share/',
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
+  test: {
+    PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
+    PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
+    baseUrl: 'https://api-test.myshell.ai',
+    authKey: 'Authorization',
+    downloadHost: 'https://share.vinstic.com/share/',
+    shareLink: 'https://api-test.myshell.ai/share/',
+    avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
+  },
   prod: {
+    // PROJECT_UUID: 'cb5e91db-f37b-4e53-8107-b97e36f78072',
+    // PROJECT_CLIENT_KEY: 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx',
+    // PROJECT_APP_UUID: 'f34c6ee8-a870-447e-aa86-3400c12c8f22',
+    PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
+    PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api.myshell.ai',
     authKey: 'Authorization',
     downloadHost: 'https://html2img.myshell.ai/share/',
@@ -50,17 +49,9 @@ export default {
   assetBundlePatterns: ['**/*'],
   ios: {
     icon: './assets/iOS/App Store - 1x.png',
-    associatedDomains: ['pnf34c6ee8-a870-447e-aa86-3400c12c8f22'],
+    associatedDomains: ['pn6b6a232e-973a-405c-969a-a546189fda16'],
     supportsTablet: true,
     bundleIdentifier: 'ai.myshell.app',
-    infoPlist: {
-      //       PARTICLE_PROJECT_ID=cb5e91db-f37b-4e53-8107-b97e36f78072
-      // PARTICLE_CLIENT_ID=cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx
-      // PARTICLE_APP_ID=f34c6ee8-a870-447e-aa86-3400c12c8f22
-      PROJECT_UUID: 'cb5e91db-f37b-4e53-8107-b97e36f78072',
-      PROJECT_CLIENT_KEY: 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx',
-      PROJECT_APP_UUID: 'f34c6ee8-a870-447e-aa86-3400c12c8f22',
-    },
   },
   android: {
     icon: './assets/Android/Play_Store/App_Icon_512x512.png',
