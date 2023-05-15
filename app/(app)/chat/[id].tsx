@@ -341,9 +341,9 @@ function Chat({}) {
             </View>
           ) : null,
           onEndReachedThreshold: 0.2,
-          renderItem: ({ item, index }) => {
+          renderItem: ({ item }) => {
             return (
-              <View key={index}>
+              <View key={item.id}>
                 <ChatItem me={profile?.avatar} logo={logo} translationText={translationText} item={item}></ChatItem>
               </View>
             )
