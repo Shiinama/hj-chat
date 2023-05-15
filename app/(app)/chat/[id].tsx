@@ -228,10 +228,10 @@ function Chat({}) {
     if (!message) return
     setChatData([message.data, ...chatData])
     flatList.current?.scrollToIndex?.({ index: 0 })
-    // 刷新聊天主页列表
-    if (chatData.length <= 1) {
+    // 刷新聊天主页列表 加个延时  马上去请求数据可能还没更新，如果没有延时的问题可以去掉setTimeout
+    setTimeout(() => {
       CallBackManagerSingle().execute('botList')
-    }
+    }, 300)
   }, [message])
 
   useEffect(() => {
@@ -240,6 +240,10 @@ function Chat({}) {
     if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
       AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
     }
+    // 刷新聊天主页列表
+    setTimeout(() => {
+      CallBackManagerSingle().execute('botList')
+    }, 300)
     flatList.current?.scrollToIndex?.({ index: 0 })
   }, [resMessage])
 
