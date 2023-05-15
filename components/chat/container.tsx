@@ -4,6 +4,7 @@ import MessagesContainer from './messagesContainer'
 import InputToolsTar from './inputToolsTar'
 import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
 export interface FishChatProps {
+  haveHistory?: boolean
   inputTextProps: TextInput['props']
   flatListProps: FlatList['props']
   InputToolBarHeight?: number
@@ -15,6 +16,7 @@ export interface FishChatProps {
 const bottomOffset = 1
 function Container({
   messagesContainerStyle,
+  haveHistory,
   inputTextProps,
   flatListRef,
   flatListProps,
@@ -71,6 +73,7 @@ function Container({
         {/* inputToolbar下方输入框工具栏容器 */}
         <InputToolsTar
           inputHeight={inputHeight}
+          haveHistory={haveHistory}
           barHeight={barHeight}
           setBarHeight={setBarHeight}
           setInputHeight={setInputHeight}

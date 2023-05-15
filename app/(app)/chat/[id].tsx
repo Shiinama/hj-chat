@@ -288,6 +288,7 @@ function Chat({}) {
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
       <Container
+        haveHistory={chatData.length > 0}
         inputTextProps={
           {
             onChangeText: setText,
