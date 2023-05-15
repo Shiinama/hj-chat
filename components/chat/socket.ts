@@ -67,15 +67,15 @@ export const useSocketIo = () => {
     return reqIdsQueue?.size > 0
   }, [reqIdsQueue])
   // 10s状态没改变就清除队列
-  useDebounceEffect(
-    () => {
-      resetReqIds()
-    },
-    [reqIdsQueue],
-    {
-      wait: 10000,
-    }
-  )
+  // useDebounceEffect(
+  //   () => {
+  //     resetReqIds()
+  //   },
+  //   [reqIdsQueue],
+  //   {
+  //     wait: 10000,
+  //   }
+  // )
 
   const [resMessage, setResMessage] = useState<any>()
   const [translationMessage, setTranslation] = useState<any>()

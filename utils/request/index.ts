@@ -7,6 +7,7 @@ import MSG_LIST from './message'
 import debounce from 'lodash/debounce'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import { useRouter } from 'expo-router'
 export type RequestOptions = AxiosRequestConfig & {
   url: string
   query?: any
@@ -49,13 +50,16 @@ _axios.interceptors.response.use(
     return response
   },
   error => {
+    console.log(error)
     const { response } = error
     // 请求有响应
     if (response) {
       const { status, data, config } = response
+      console.log(data)
       if (status === 401) {
         // 状态码为401时，根据白名单来判断跳转与否
         errorTip(data.message || '')
+        // router.replace('(auth)/login')
         return Promise.reject(new Error(data.message))
       }
       // 404 502 ..
@@ -73,7 +77,6 @@ _axios.interceptors.response.use(
 )
 // TODO: 添加options 类型interface
 export default async function request<T>(options: RequestOptions) {
-  console.log(baseUrl)
   const { url } = options
   const opt: RequestOptions = options
   delete opt.url
@@ -96,11 +99,6 @@ export default async function request<T>(options: RequestOptions) {
     headers = options.headers || {}
   }
   const defaultOptions = {
-    headers: {
-      Authorization: Authorization ? Authorization : null,
-      appversioncode: 3,
-      ...headers,
-    },
     credentials: 'include',
     timeout: 10000,
     withCredentials: true,
@@ -108,9 +106,12 @@ export default async function request<T>(options: RequestOptions) {
       return status >= 200 && status < 300 // default
     },
   }
-  const newOptions: RequestOptions = { ...defaultOptions, ...options }
+  const newOptions: RequestOptions = Object.assign({}, defaultOptions, options)
+  newOptions.headers = {
+    Authorization: Authorization ? Authorization : null,
+    ...headers,
+  }
   let newUrl = baseUrl + url
-
   if (options.method.toLowerCase() == 'get' && options.query) {
     const urlParams = []
     Object.keys(options.query).map(key => {
@@ -123,7 +124,6 @@ export default async function request<T>(options: RequestOptions) {
       newUrl = `${newUrl}${newUrl.indexOf?.('?') > 0 && newUrl.indexOf?.('=') > 0 ? '&' : '?'}${urlParams.join('&')}`
     }
   }
-
   return _axios
     .request<T>({
       ...newOptions,

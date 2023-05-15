@@ -99,7 +99,7 @@ const RecordButton = ({
         )
       case 'playing':
         return (
-          <View style={{ flexDirection: 'row', marginTop: 32 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 32 }}>
             <TouchableOpacity
               style={styles.smallButton}
               onPress={async () => {
@@ -120,7 +120,7 @@ const RecordButton = ({
               <Delete height={20} width={20}></Delete>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ ...styles.palyButton, marginHorizontal: 90 }}
+              style={{ ...styles.palyButton, marginHorizontal: 30 }}
               onPress={async () => {
                 setIsSound(pre => {
                   if (pre) {

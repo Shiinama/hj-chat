@@ -76,7 +76,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
             AudioPayManagerSingle().currentAutoPlayUrl = undefined
           }
         }
-        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis >= 0) {
+        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 20 >= 0) {
           soundInterval.current && clearInterval(soundInterval.current)
           setCurrentPosition(() => {
             return 0
