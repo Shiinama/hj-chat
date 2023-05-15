@@ -31,7 +31,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
             </Text>
           ) : null}
         </View>
-        <View style={{ flexDirection: 'row', width: '100%' }}>
+        <View style={{ flexDirection: 'row', width: '95%', justifyContent: 'space-between' }}>
           <Text numberOfLines={2} ellipsizeMode="tail" style={styles.message}>
             {!showTime ? ld.description : ld?.lastMessage?.text}
           </Text>

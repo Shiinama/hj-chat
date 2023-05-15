@@ -10,7 +10,7 @@ import CheckIcon from '../../assets/images/chat/check.svg'
 import CheckedIcon from '../../assets/images/chat/checked.svg'
 import Svt from '../../assets/images/chat/svt.svg'
 import Translate from '../../assets/images/chat/translte.svg'
-import { useContext, useState } from 'react'
+import { memo, useContext, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
 import { BlurView } from '@react-native-community/blur'
@@ -156,4 +156,4 @@ function chatItem({ item, translationText, me, logo }: Props) {
   )
 }
 
-export default chatItem
+export default memo(chatItem)

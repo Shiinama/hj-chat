@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback } from 'react'
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback, memo } from 'react'
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 import Slider from '@react-native-community/slider'
 import { Audio, AVPlaybackStatus } from 'expo-av'
@@ -231,4 +231,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default AudioMessage
+export default memo(AudioMessage)

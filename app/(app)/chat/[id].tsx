@@ -62,7 +62,6 @@ function Chat({}) {
   // const [recording, setRecording] = useState(null)
   // 不需要重新渲染的无需存放useState,造成不必要的渲染
   const recordingRef = useRef<Audio.Recording>()
-  const [text, setText] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [durationMillis, setDurationMillis] = useState(0)
@@ -135,7 +134,6 @@ function Chat({}) {
         //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
         // );
         // chatDataInfo.current.data = data
-        console.log(data, chatData)
         setChatData(!loadMore ? data : [...chatData, ...data])
         if (data.length < chatDataInfo.current.pageSize) {
           chatDataInfo.current.hasMore = false
@@ -241,6 +239,10 @@ function Chat({}) {
       AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
     }
     flatList.current?.scrollToIndex?.({ index: 0 })
+    // 回复消息也需要刷新消息列表
+    if (chatData.length <= 1) {
+      CallBackManagerSingle().execute('botList')
+    }
   }, [resMessage])
 
   useEffect(() => {
@@ -283,16 +285,13 @@ function Chat({}) {
     }
   }, [chatData, isPending, randomId])
   if (loading) return <ShellLoading></ShellLoading>
-
-  console.log('re-render:', 'Chat')
+  console.log('rerender chat')
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
       <Container
         haveHistory={chatData.length > 0}
         inputTextProps={
           {
-            onChangeText: setText,
-            value: text,
             uid,
             userId,
             pinned,
@@ -301,18 +300,17 @@ function Chat({}) {
             startRecording,
             stopRecording,
             onSubmitEditing: async (value: any) => {
+              console.log(value)
               if (value.length === 0) {
                 Alert.alert('Please enter your message')
                 return
               }
               const reqId = uuidv4()
-
               sendMessage('text_chat', {
                 reqId,
                 botUid: uid,
                 text: value,
               })
-              setText('')
             },
           } as any
         }

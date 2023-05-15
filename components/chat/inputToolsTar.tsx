@@ -24,6 +24,7 @@ import { Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
 import { useBoolean } from 'ahooks'
 import AudioAnimation from './audioAnimation'
+import CallBackManagerSingle from '../../utils/CallBackManager'
 type Props = {
   minInputToolbarHeight: number
   inputTextProps: TextInput['props'] & {
@@ -53,8 +54,6 @@ function InputToolsTar({
   minInputToolbarHeight,
 }: Props) {
   const {
-    value,
-    onChangeText,
     durationMillis,
     startRecording,
     stopRecording,
@@ -71,6 +70,7 @@ function InputToolsTar({
   const [position, setPosition] = useState('absolute')
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
+  const [text, setText] = useState('')
   // 控制话筒弹出
   const [isShow, setIsShow] = useState(true)
   const [showAni, setShowAni] = useState(true)
@@ -126,12 +126,14 @@ function InputToolsTar({
         setBotPinnedStatus({ botUid: uid, pinned: !pinned }).then(() => {
           setPinned(!pinned)
           pinnedClose()
+          CallBackManagerSingle().execute('botList')
         })
         break
       case 'RemoveFromList':
         const { close: removeClose } = Toast.loading('Move...')
         removeBotFromChatList({ botUid: uid }).then(() => {
           removeClose()
+          CallBackManagerSingle().execute('botList')
           router.push({ pathname: '(tabs)' })
         })
         break
@@ -210,8 +212,8 @@ function InputToolsTar({
             <TouchableOpacity
               style={styles.toolsIcon}
               onPress={() => {
-                setInputHeight(32)
-                onSubmitEditing(value as any)
+                onSubmitEditing(text as any)
+                setText('')
               }}
             >
               <Send></Send>
@@ -230,11 +232,12 @@ function InputToolsTar({
         )}
       </>
     )
-  }, [isShow, showSend, value])
+  }, [isShow, showSend, text])
   const handleContentSizeChange = ({
     nativeEvent: { contentSize },
   }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
     let height = contentSize.height
+    if (height === inputHeight) return
     if (height < 50) {
       setInputHeight(40)
       return
@@ -243,7 +246,6 @@ function InputToolsTar({
       setInputHeight(height)
     }
   }
-  console.log('re-render:InputTools')
   return (
     <View
       style={[styles.container, { position }, { paddingTop: isShow ? 0 : 20 }] as ViewStyle}
@@ -268,9 +270,8 @@ function InputToolsTar({
                       onContentSizeChange={handleContentSizeChange}
                       placeholder="Write a message"
                       style={[{ height: inputHeight, fontSize: 18, lineHeight: 24 }]}
-                      onChangeText={inputText => {
-                        onChangeText(inputText)
-                      }}
+                      onChangeText={setText}
+                      value={text}
                       {...inputTextProps}
                       {...inputProps}
                     />

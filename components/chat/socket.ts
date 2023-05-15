@@ -142,6 +142,7 @@ export const useSocketIo = () => {
   }
 
   const sendMessage = (ChatEvent, data) => {
+    console.log(data)
     SocketIoRef.current.emit(ChatEvent, data)
   }
 

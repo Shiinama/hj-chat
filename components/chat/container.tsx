@@ -47,6 +47,7 @@ function Container({
     setBoardHeight(0)
   }
   useEffect(() => {
+    console.log(1111)
     setMinInputToolbarHeight(32 + inputHeight)
     setMessagesContainerHeight(maxHeight - barHeight - boardHeight)
   }, [inputHeight, maxHeight, boardHeight, barHeight])
@@ -54,7 +55,6 @@ function Container({
     onKeyboardWillShow,
     onKeyboardWillHide,
   }
-  console.log('re-render:Container')
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={{ flex: 1 }} onLayout={onInitialLayoutViewLayout}>
