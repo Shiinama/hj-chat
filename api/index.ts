@@ -22,7 +22,12 @@ export const botList = (flash?: boolean) => {
           RNStorage.setItem(botListLocalKey, JSON.stringify(res))
         })
         .catch(e => {
-          reject(e)
+          // 请求失败使用缓存的列表
+          if (localBotList) {
+            resolve(localBotList)
+          } else {
+            reject(e)
+          }
         })
     } else if (localBotList) {
       resolve(localBotList)
