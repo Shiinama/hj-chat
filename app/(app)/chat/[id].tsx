@@ -59,7 +59,9 @@ function Chat({}) {
   // 给loading生成一个随机id，这里是用replyUid来判断是否是回复的信息，loading展示为回复数据，所以随便弄一个id当id
   const randomId = useId()
 
-  const [recording, setRecording] = useState(null)
+  // const [recording, setRecording] = useState(null)
+  // 不需要重新渲染的无需存放useState,造成不必要的渲染
+  const recordingRef = useRef<Audio.Recording>()
   const [text, setText] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
@@ -88,6 +90,8 @@ function Chat({}) {
     return () => {
       // 单列模式里面的sound销毁
       AudioPayManagerSingle().destory()
+      // recordingRef.current?.stopAndUnloadAsync?.()
+      // recordingRef.current = undefined
     }
   }, [])
 
@@ -99,12 +103,18 @@ function Chat({}) {
       const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
       const { recording } = await Audio.Recording.createAsync(defaultParam, status => {
         if (status.isRecording) {
-          setDurationMillis(status.durationMillis)
+          // 主界面不用关心录音的状态，造成过多无用的渲染，交给callBack，谁需要这个数据谁去执行回调
+          // setDurationMillis(status.durationMillis)
+          CallBackManagerSingle().executeLike('recordingChange', status.durationMillis)
         }
       })
-      setRecording(recording)
+      recordingRef.current = recording
+      // setRecording(recording)
+      return true
     } catch (err) {
+      console.log(err)
       Toast('Failed to start recording')
+      return false
     }
   }
 
@@ -144,8 +154,8 @@ function Chat({}) {
 
   async function stopRecording() {
     try {
-      await recording.stopAndUnloadAsync()
-      const uri = recording.getURI()
+      await recordingRef.current?.stopAndUnloadAsync()
+      const uri = recordingRef.current?.getURI()
       const mp3Uri = await convert4amToMp3(uri)
       const buffer = await FileSystem.readAsStringAsync(mp3Uri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -168,6 +178,8 @@ function Chat({}) {
   function setAuInfo() {
     sendAudio()
   }
+
+  console.log('recording:', recordingRef.current)
 
   const sendAudio = () => {
     const reqId = uuidv4()
@@ -276,6 +288,7 @@ function Chat({}) {
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
       <Container
+        haveHistory={chatData.length > 0}
         inputTextProps={
           {
             onChangeText: setText,

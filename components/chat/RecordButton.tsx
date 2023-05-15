@@ -11,6 +11,7 @@ import Send from '../../assets/images/chat/send.svg'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useIntervalTime } from '../../utils/time'
 import AudioPayManagerSingle from './audioPlayManager'
+import CallBackManagerSingle from '../../utils/CallBackManager'
 const RecordButton = ({
   audioFileUri,
   startRecording,
@@ -25,10 +26,10 @@ const RecordButton = ({
   AnimationRef,
 }) => {
   if (isShow) return null
-  console.log('aare-render:RecordButton')
   const [sound, setSound] = useState(null)
   const [buttonState, setButtonState] = useState('penddingRecording')
-  const [isSound, setIsSound] = useState(true)
+  const [isSound, setIsSound] = useState(false)
+  const playing = useRef(false)
 
   function handlestartRecording() {
     Audio.requestPermissionsAsync().then(({ granted }) => {
@@ -36,28 +37,37 @@ const RecordButton = ({
         alert('请允许访问麦克风以录制音频！请到设置中')
       } else {
         AudioPayManagerSingle().pause(true)
-        setShowAni(false)
-        startRecording()
-        setButtonState('recording')
-        setTimeout(() => {
-          AnimationRef?.current?.startAnimation()
-        }, 100)
+        const success = startRecording()
+        if (success) {
+          setShowAni(false)
+          setButtonState('recording')
+          setTimeout(() => {
+            AnimationRef?.current?.startAnimation()
+          }, 100)
+        }
       }
     })
   }
 
+  useEffect(() => {
+    playing.current = isSound
+  }, [isSound])
+
   const stopRecord = async () => {
     const uri = await stopRecording()
     const { sound } = await Audio.Sound.createAsync({ uri }, {}, (status: any) => {
-      if (status.positionMillis >= status.durationMillis) {
+      if (status.positionMillis >= status.durationMillis && status.durationMillis > 0) {
         try {
-          setIsSound(true)
+          setIsSound(false)
           AnimationRef?.current?.stopAnimation?.()
-          sound.stopAsync()
+          AnimationRef?.current?.updateDurationMillis?.(status.durationMillis)
+          AudioPayManagerSingle().stop()
         } catch (error) {}
         // sound.pauseAsync()
-      } else if (isSound) {
-        const offMil = status.durationMillis - status.positionMillis
+      } else if (playing.current) {
+        const offMil = isNaN(status.durationMillis - status.positionMillis)
+          ? 0
+          : status.durationMillis - status.positionMillis
         AnimationRef?.current?.updateDurationMillis?.(offMil < 0 ? 0 : offMil)
       }
     })
@@ -69,11 +79,42 @@ const RecordButton = ({
     } catch (error) {}
   }
 
+  // useEffect(() => {
+  //   if (durationMillis && recordMaxSecond && durationMillis / 1000 >= recordMaxSecond) {
+  //     stopRecord()
+  //   }
+  // }, [durationMillis])
+
   useEffect(() => {
-    if (durationMillis && recordMaxSecond && durationMillis / 1000 >= recordMaxSecond) {
-      stopRecord()
+    CallBackManagerSingle().add('recordingChangeBtn', (durationMill: number) => {
+      AnimationRef?.current?.updateDurationMillis?.(durationMill)
+      if (durationMill && recordMaxSecond && parseInt(durationMill / 1000) >= recordMaxSecond) {
+        CallBackManagerSingle().remove('recordingChangeBtn')
+        stopRecord()
+      }
+    })
+    return () => {
+      CallBackManagerSingle().remove('recordingChangeBtn')
     }
-  }, [durationMillis])
+  }, [])
+
+  const playSound = () => {
+    if (!isSound) {
+      Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      })
+      AudioPayManagerSingle().play(sound, () => {
+        console.log('AudioPayManagerSingle sttop')
+        setIsSound(() => false)
+        AnimationRef?.current?.stopAnimation?.()
+      })
+      AnimationRef?.current?.startAnimation?.()
+    } else {
+      AudioPayManagerSingle().pause()
+      AnimationRef?.current?.stopAnimation?.()
+    }
+    setIsSound(!isSound)
+  }
 
   const playOrPauseIcon = () => {
     switch (buttonState) {
@@ -103,6 +144,12 @@ const RecordButton = ({
             <TouchableOpacity
               style={styles.smallButton}
               onPress={async () => {
+                try {
+                  if (isSound) {
+                    AudioPayManagerSingle().stop()
+                    AnimationRef?.current?.stopAnimation?.()
+                  }
+                } catch (error) {}
                 const { exists } = await FileSystem.getInfoAsync(audioFileUri)
                 if (exists) {
                   try {
@@ -122,26 +169,11 @@ const RecordButton = ({
             <TouchableOpacity
               style={{ ...styles.palyButton, marginHorizontal: 30 }}
               onPress={async () => {
-                setIsSound(pre => {
-                  if (pre) {
-                    Audio.setAudioModeAsync({
-                      allowsRecordingIOS: false,
-                    })
-                    AudioPayManagerSingle().play(sound, () => {
-                      setIsSound(false)
-                      AnimationRef?.current?.stopAnimation?.()
-                    })
-                    AnimationRef?.current?.startAnimation?.()
-                  } else {
-                    AudioPayManagerSingle().pause()
-                    AnimationRef?.current?.stopAnimation?.()
-                  }
-                  return !pre
-                })
+                playSound()
                 //
               }}
             >
-              {isSound ? <Pause></Pause> : <Play></Play>}
+              {!isSound ? <Pause></Pause> : <Play></Play>}
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.smallButton}
@@ -157,6 +189,7 @@ const RecordButton = ({
         )
     }
   }
+  console.log('isSOund:', isSound)
   return <View style={styles.container}>{playOrPauseIcon()}</View>
 }
 
@@ -204,4 +237,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default RecordButton
+export default React.memo(RecordButton)
