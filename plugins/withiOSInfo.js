@@ -1,5 +1,4 @@
 const withMySDK = config => {
-  console.log(config)
   const myConfg = JSON.parse(JSON.stringify(config))
   // Ensure the objects exist
   if (!config.ios) {

@@ -135,7 +135,7 @@ function Chat({}) {
         //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
         // );
         // chatDataInfo.current.data = data
-        // console.log(data, chatData)
+        console.log(data, chatData)
         setChatData(!loadMore ? data : [...chatData, ...data])
         if (data.length < chatDataInfo.current.pageSize) {
           chatDataInfo.current.hasMore = false
