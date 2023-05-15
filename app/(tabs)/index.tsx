@@ -47,7 +47,8 @@ export default function TabOneScreen() {
   }
 
   useEffect(() => {
-    loadData()
+    // 冷启动App强制刷新缓存 请求接口获取数据  flash 为  true
+    loadData(true)
     CallBackManagerSingle().add('botList', () => {
       loadData(true)
     })
