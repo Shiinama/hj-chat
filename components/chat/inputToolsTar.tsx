@@ -40,6 +40,7 @@ type Props = {
   setBarHeight
   setInputHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
+  haveHistory?: boolean
 }
 
 function InputToolsTar({
@@ -48,6 +49,7 @@ function InputToolsTar({
   inputHeight,
   setInputHeight,
   inputTextProps,
+  haveHistory,
   minInputToolbarHeight,
 }: Props) {
   const {
@@ -114,6 +116,10 @@ function InputToolsTar({
   }
 
   const toolsAction = (key: ActionType) => {
+    if (!haveHistory) {
+      Toast('No chat content')
+      return
+    }
     switch (key) {
       case 'Pin':
         const { close: pinnedClose } = Toast.loading(pinned ? 'Unpin' : 'Pinned')
