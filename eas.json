@@ -30,11 +30,10 @@
         "REACT_APP_ENV": "test"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
       },
-      "ios": {
-        "simulator": true
-      }
+      "ios": {}
     },
     "development": {
       "distribution": "internal",
