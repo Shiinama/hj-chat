@@ -8,6 +8,10 @@ import debounce from 'lodash/debounce'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useRouter } from 'expo-router'
+import {
+  DeviceEventEmitter
+} from 'react-native';
+
 export type RequestOptions = AxiosRequestConfig & {
   url: string
   query?: any
@@ -57,6 +61,8 @@ _axios.interceptors.response.use(
       const { status, data, config } = response
       console.log(data)
       if (status === 401) {
+        DeviceEventEmitter.emit('logout', 'exit');
+
         // 状态码为401时，根据白名单来判断跳转与否
         errorTip(data.message || '')
         // router.replace('(auth)/login')
@@ -112,7 +118,6 @@ export default async function request<T>(options: RequestOptions) {
     ...headers,
   }
   let newUrl = baseUrl + url
-  console.log(newUrl)
   if (options.method.toLowerCase() == 'get' && options.query) {
     const urlParams = []
     Object.keys(options.query).map(key => {

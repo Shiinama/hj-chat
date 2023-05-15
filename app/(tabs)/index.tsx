@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native'
+import { View, StyleSheet, ScrollView, Pressable, Text, DeviceEventEmitter } from 'react-native'
 import { useFocusEffect, useRouter } from 'expo-router'
 import RootStyles from '../../constants/RootStyles'
 import 'react-native-get-random-values'
@@ -7,6 +7,8 @@ import { botList } from '../../api/index'
 import BotCard from '../../components/botCard'
 import ShellLoading from '../../components/loading'
 import botStore from '../../store/botStore'
+import { useAuth } from '../../context/auth'
+
 type ListDataItem = {
   id: number
   uid: string
@@ -26,6 +28,7 @@ export default function TabOneScreen() {
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const { signOut } = useAuth()
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -47,6 +50,9 @@ export default function TabOneScreen() {
     loadData()
     CallBackManagerSingle().add('botList', () => {
       loadData(true)
+    })
+    DeviceEventEmitter.addListener("logout", (item) => {
+      signOut()
     })
     return () => {
       CallBackManagerSingle().remove('botList')
