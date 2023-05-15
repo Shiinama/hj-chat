@@ -392,6 +392,8 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.8.0):
     - React-Core
+  - react-native-netinfo (9.3.10):
+    - React-Core
   - react-native-particle-auth (0.11.0):
     - ParticleAuthService
     - ParticleNetworkBase
@@ -582,6 +584,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-particle-auth (from `../node_modules/react-native-particle-auth`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -726,6 +729,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/blur"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-particle-auth:
     :path: "../node_modules/react-native-particle-auth"
   react-native-randombytes:
@@ -839,6 +844,7 @@ SPEC CHECKSUMS:
   React-logger: 3f8ebad1be1bf3299d1ab6d7f971802d7395c7ef
   react-native-blur: cfdad7b3c01d725ab62a8a729f42ea463998afa2
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
+  react-native-netinfo: ccbe1085dffd16592791d550189772e13bf479e2
   react-native-particle-auth: 70753008104bf582c08925792e71561c31bd6c59
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc

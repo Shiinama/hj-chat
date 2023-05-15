@@ -24,7 +24,6 @@ type Props = {
 }
 
 function chatItem({ item, translationText, me, logo }: Props) {
-  console.log(item)
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   const [buttonIndex, setButtonIndex] = useState<number>(1)
   const isBlur = buttonIndex === 1

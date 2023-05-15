@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity, AppState, FlatList, Alert } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
-import { useSearchParams, useNavigation, useRouter } from 'expo-router'
+import { useNavigation } from 'expo-router'
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import ChatItem from '../../../components/chat/chatItem'
 import Container from '../../../components/chat/container'
