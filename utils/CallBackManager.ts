@@ -12,8 +12,16 @@ export class CallBackManager {
     delete this.callBackMap[key]
   }
 
-  execute(key: string) {
-    this.callBackMap[key]?.()
+  execute(key: string, params?: any) {
+    this.callBackMap[key]?.(params)
+  }
+
+  executeLike(key: string, params?: any) {
+    Object.keys(this.callBackMap)?.map?.(keyS => {
+      if (keyS.indexOf(key) >= 0) {
+        this.callBackMap[keyS]?.(params)
+      }
+    })
   }
 
   removeAll() {

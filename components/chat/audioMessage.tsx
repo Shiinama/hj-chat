@@ -36,6 +36,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       setSound(sound)
       setLoadFail(false)
     } catch (e) {
+      // load sound fail [Error: com.google.android.exoplayer2.audio.AudioSink$InitializationException: AudioTrack init failed 0 Config(22050, 4, 11026)]
+      /**
+       * 音频解码错误，源于无法创建音轨。手机的音轨资源是有限的，如果每个视频都占用一个音轨并且不释放的话，就会导致上述问题。
+       * https://zhuanlan.zhihu.com/p/627702119
+       */
       console.log('load sound fail', e, 'url:', audioFileUri)
       setLoadFail(true)
     }
@@ -44,21 +49,28 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
 
   useEffect(() => {
     if (!audioFileUri) return
-    // const loadSound = async () => {
-    //   setLoading(true)
-    //   setLoadFail(false)
-    //   try {
-    //     const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
-    //     setSound(sound)
-    //     setLoadFail(false)
-    //   } catch (e) {
-    //     setLoadFail(true)
-    //   }
-    //   setLoading(false)
-    // }
-    loadSound()
+    const loadSounda = async () => {
+      setLoading(true)
+      setLoadFail(false)
+      try {
+        const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
+        setSound(sound)
+        setLoadFail(false)
+      } catch (e) {
+        console.log('load sound fail:', e)
+        setLoadFail(true)
+      }
+      setLoading(false)
+    }
+    loadSounda()
     return () => {
       soundInterval.current && clearInterval(soundInterval.current)
+      if (sound) {
+        try {
+          // sound.unloadAsync()
+          // sound.stopAsync()
+        } catch (error) {}
+      }
     }
   }, [])
 
