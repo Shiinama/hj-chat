@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import SysConfig from '../../constants/System'
 import { Alert } from 'react-native'
@@ -67,15 +67,17 @@ export const useSocketIo = () => {
     return reqIdsQueue?.size > 0
   }, [reqIdsQueue])
   // 10s状态没改变就清除队列
-  // useDebounceEffect(
-  //   () => {
-  //     resetReqIds()
-  //   },
-  //   [reqIdsQueue],
-  //   {
-  //     wait: 10000,
-  //   }
-  // )
+  useDebounceEffect(
+    useCallback(() => {
+      if (reqIdsQueue?.size > 0) {
+        resetReqIds()
+      }
+    }, []),
+    [reqIdsQueue],
+    {
+      wait: 10000,
+    }
+  )
 
   const [resMessage, setResMessage] = useState<any>()
   const [translationMessage, setTranslation] = useState<any>()
