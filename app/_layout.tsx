@@ -6,6 +6,7 @@ import * as eva from '@eva-design/eva'
 
 import { Provider as XiaoshuProvider, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { Provider as AuthProvider } from '../context/auth'
+import NetInfo from '@react-native-community/netinfo'
 
 import { ApplicationProvider } from '@ui-kitten/components'
 import { CustomStack, Stack } from './CustomStack'
@@ -29,6 +30,16 @@ export default function RootLayout() {
     if (error) throw error
   }, [error])
   // 添加useMemo
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        Toast('Please check your network connection')
+      }
+    })
+    return () => unsubscribe()
+  }, [])
+
   const RootLayoutView = useMemo(() => {
     return <RootLayoutNav />
   }, [])

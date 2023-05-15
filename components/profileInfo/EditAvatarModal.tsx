@@ -20,8 +20,8 @@ const uploadFile = async uri => {
     type: 'application/octet-stream',
     name: 'file',
   } as any)
-
-  const boundary = '----WebKitFormBoundaryZ78tpYidnFOAWJ5z'
+  console.log(formData)
+  const boundary = '----WebKitFormBoundaryVBvxpDuEpr2AahpG'
   return await request({
     url: '/user/uploadAvatar',
     method: 'post',

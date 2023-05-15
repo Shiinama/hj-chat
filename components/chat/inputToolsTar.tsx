@@ -200,24 +200,17 @@ function InputToolsTar({
 
   const renderRightInput = useMemo(() => {
     return (
-      <TouchableOpacity
-        style={styles.toolsIcon}
-        onPress={() => {
-          setIsShow(pre => {
-            if (!pre) {
-              handleButtonPress()
-            }
-            return !pre
-          })
-        }}
-      >
+      <>
         {isShow ? (
           showSend ? (
-            <Image style={styles.Icon} source={audio}></Image>
+            <TouchableOpacity style={styles.toolsIcon} onPress={() => setIsShow(false)}>
+              <Image style={styles.Icon} source={audio}></Image>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity
+              style={styles.toolsIcon}
               onPress={() => {
-                setInputHeight(40)
+                setInputHeight(32)
                 onSubmitEditing(value as any)
               }}
             >
@@ -225,9 +218,17 @@ function InputToolsTar({
             </TouchableOpacity>
           )
         ) : (
-          <Keyborad fill={'#2D3748'}></Keyborad>
+          <TouchableOpacity
+            style={styles.toolsIcon}
+            onPress={() => {
+              setIsShow(true)
+              handleButtonPress()
+            }}
+          >
+            <Keyborad fill={'#2D3748'}></Keyborad>
+          </TouchableOpacity>
         )}
-      </TouchableOpacity>
+      </>
     )
   }, [isShow, showSend, value])
   const handleContentSizeChange = ({
