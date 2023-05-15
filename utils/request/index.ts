@@ -112,6 +112,7 @@ export default async function request<T>(options: RequestOptions) {
     ...headers,
   }
   let newUrl = baseUrl + url
+  console.log(newUrl)
   if (options.method.toLowerCase() == 'get' && options.query) {
     const urlParams = []
     Object.keys(options.query).map(key => {
