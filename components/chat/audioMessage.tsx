@@ -107,7 +107,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       if (sound !== null) {
         const status: AVPlaybackStatus = await sound.getStatusAsync()
         if (status.isLoaded) {
-          setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
         }
         if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 20 >= 0) {
@@ -117,6 +116,8 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
           })
           setIsPlaying(() => false)
           soundManager.current.stop()
+        } else if (status.isLoaded && status.isPlaying) {
+          setCurrentPosition(status.positionMillis || 0)
         }
       }
     }, 100)
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
   slider: {
     height: 10,
     width: 450,
-    transform: [{ scaleX: .5 }, { scaleY: .5 }]
+    transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }],
   },
   time: {
     marginHorizontal: 8,
