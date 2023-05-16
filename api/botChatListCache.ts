@@ -24,11 +24,6 @@ export const setBotListLocal = (value: any) => {
 
 export const removeBotListLocal = async () => {
   try {
-    const keys = await RNStorage.getAllKeys()
-    keys.map(key => {
-      if (key.indexOf(botListLocalKey) === 0) {
-        RNStorage.removeItem(key)
-      }
-    })
+    RNStorage.removeItem(botListLocalKey)
   } catch (e) {}
 }
