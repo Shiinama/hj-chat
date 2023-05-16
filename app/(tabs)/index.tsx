@@ -23,6 +23,7 @@ type ListDataItem = {
 
 import { createWeb3 } from '../../tmp/web3Demo'
 import CallBackManagerSingle from '../../utils/CallBackManager'
+import { removeBotListLocal } from '../../api/botChatListCache'
 
 export default function TabOneScreen() {
   const router = useRouter()
@@ -52,7 +53,10 @@ export default function TabOneScreen() {
     CallBackManagerSingle().add('botList', () => {
       loadData(true)
     })
-    DeviceEventEmitter.addListener("logout", (item) => {
+    DeviceEventEmitter.addListener('logout', item => {
+      // 会话超时清楚本地缓存
+      removeBotListLocal()
+      setListData([])
       signOut()
     })
     return () => {

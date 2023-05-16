@@ -8,9 +8,7 @@ import debounce from 'lodash/debounce'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useRouter } from 'expo-router'
-import {
-  DeviceEventEmitter
-} from 'react-native';
+import { DeviceEventEmitter } from 'react-native'
 
 export type RequestOptions = AxiosRequestConfig & {
   url: string
@@ -61,7 +59,7 @@ _axios.interceptors.response.use(
       const { status, data, config } = response
       console.log(data)
       if (status === 401) {
-        DeviceEventEmitter.emit('logout', 'exit');
+        DeviceEventEmitter.emit('logout', 'exit')
 
         // 状态码为401时，根据白名单来判断跳转与否
         errorTip(data.message || '')
@@ -91,7 +89,7 @@ export default async function request<T>(options: RequestOptions) {
   let Authorization = ''
   if (notNeedLogin) {
     Authorization =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzNzA5MTY0NTM1LCJqdGkiOiIzMTY1ZjYzZWY4ZDg0NzhlYmE0OGZmOWE4NjM0NTkyNyIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzcxMTc1NjUzNX0.6XYjiQclRy0byiWRhrxctmEQWPIJ6dTi8yYUD7GVMaU'
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjg0MTQyMzI3NjM1LCJqdGkiOiIyNzg5YWFhZjBiODY0YzI5YjA4NjlhY2I5NDZmNzlmNyIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4NDE0NDkxOTYzNX0.2WHYOm1V3LZ0CvZcjr-fnmOQNALR45ZV0yym3THVxGY'
   } else {
     const token = await AsyncStorage.getItem(authKey)
     if (!token && url !== '/auth/particleLogin') {

@@ -248,7 +248,7 @@ function InputToolsTar({
   }
   return (
     <View
-      style={[styles.container, { position }, { paddingTop: isShow ? 0 : 20 }] as ViewStyle}
+      style={[styles.container, { position }, { paddingTop: isShow ? 0 : 10 }] as ViewStyle}
       onLayout={e => {
         setBarHeight(e.nativeEvent.layout.height)
       }}
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   toolsIcon: {
     width: 40,

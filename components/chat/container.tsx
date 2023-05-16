@@ -3,6 +3,7 @@ import { LegacyRef, useEffect, useState } from 'react'
 import MessagesContainer from './messagesContainer'
 import InputToolsTar from './inputToolsTar'
 import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export interface FishChatProps {
   haveHistory?: boolean
   inputTextProps: TextInput['props']
@@ -29,7 +30,7 @@ function Container({
   const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(0)
   const [messagesContainerHeight, setMessagesContainerHeight] = useState(0)
   const [boardHeight, setBoardHeight] = useState(0)
-
+  const Insets = useSafeAreaInsets()
   const onInitialLayoutViewLayout = (e: any) => {
     const { layout } = e.nativeEvent
     if (layout.height <= 0) {
@@ -47,8 +48,7 @@ function Container({
     setBoardHeight(0)
   }
   useEffect(() => {
-    console.log(1111)
-    setMinInputToolbarHeight(32 + inputHeight)
+    setMinInputToolbarHeight(Insets.bottom + 5 + inputHeight)
     setMessagesContainerHeight(maxHeight - barHeight - boardHeight)
   }, [inputHeight, maxHeight, boardHeight, barHeight])
   const InternalProps = {
