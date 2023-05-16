@@ -10,6 +10,7 @@ import TwitterIcon from '../../assets/images/chat/twitter.svg'
 import Clipboard from '@react-native-clipboard/clipboard'
 
 import { createSharedConversation } from '../../api'
+import { ensureDirExists, imageDir } from '../../utils/filesystem'
 // import { ensureDirExists } from '../../utils/filesystem'
 export interface ShareToPopupProps {}
 type shareAction = 'save' | 'link' | 'twitter'
@@ -25,11 +26,13 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
     createSharedConversation(value.selectedItems).then(async res => {
       switch (key) {
         case 'save':
-          // await ensureDirExists()
-          FileSystem.downloadAsync(
-            `${systemConfig.downloadHost}/${res}/download`,
-            `${FileSystem.documentDirectory}image/` + `${res}.png`
-          )
+          const isExists = await ensureDirExists()
+          console.log(isExists)
+          if (!isExists) {
+            Toast('File system error!')
+            return
+          }
+          FileSystem.downloadAsync(`${systemConfig.downloadHost}/${res}/download`, `${imageDir}` + `${res}.png`)
             .then(({ uri }) => {
               console.log(uri)
               Toast('download successfully!')
