@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router'
 import { useSearchParams, useNavigation } from 'expo-router'
 import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Dialog, Toast } from '@fruits-chain/react-native-xiaoshu'
-import { postPublishBot } from '../../../api/robot'
+import { postAddBotToChatList, postPublishBot } from '../../../api/robot'
 import { styles } from './style'
 import userLogo from '../../../assets/images/userLogo.png'
 import editIcon from '../../../assets/images/edit.png'
@@ -12,6 +12,7 @@ import cbotStore from '../../../store/botStore'
 import FlashIcon from '../../../components/flashIcon'
 import useUserStore from '../../../store/userStore'
 import { genBotUrl } from '../../../components/profileInfo/helper'
+import CallBackManagerSingle from '../../../utils/CallBackManager'
 
 export default function Robot() {
   const router = useRouter()
@@ -169,6 +170,8 @@ export default function Robot() {
       </View>
       <TouchableOpacity
         onPress={() => {
+          postAddBotToChatList({ botUid: botStore.uid })
+          CallBackManagerSingle().execute('botList')
           router.push({
             pathname: `chat/${botStore.id}`,
           })

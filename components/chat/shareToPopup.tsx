@@ -27,11 +27,12 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
       switch (key) {
         case 'save':
           const isExists = await ensureDirExists()
-          console.log(isExists)
+          console.log(isExists, 11)
           if (!isExists) {
             Toast('File system error!')
             return
           }
+          console.log(`${systemConfig.downloadHost}/${res}/download`)
           FileSystem.downloadAsync(`${systemConfig.downloadHost}/${res}/download`, `${imageDir}` + `${res}.png`)
             .then(({ uri }) => {
               console.log(uri)

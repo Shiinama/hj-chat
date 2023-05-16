@@ -256,10 +256,11 @@ function Chat({}) {
 
   useEffect(() => {
     if (!translationMessage) return
+    const index = chatData.findIndex(item => item.id === translationMessage.id)
     setChatData(pre => {
       // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
-      if (pre[translationTextIndex]) {
-        pre[translationTextIndex].translation = translationMessage.translation
+      if (index > -1) {
+        pre[index].translation = translationMessage.translation
       }
 
       return [...pre]
@@ -279,7 +280,7 @@ function Chat({}) {
 
   const listData = useMemo(() => {
     if (isPending && chatData?.length > 0) {
-      return [{ type: 'LOADING', replyUid: randomId }, ...chatData]
+      return [{ type: 'LOADING', id: randomId, replyUid: randomId }, ...chatData]
     } else {
       return chatData
     }

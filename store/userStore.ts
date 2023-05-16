@@ -1,57 +1,47 @@
-import { create } from "zustand";
-import {
-  createJSONStorage,
-  subscribeWithSelector,
-  persist,
-} from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Image } from "expo-image";
-import systemConfig from "../constants/System";
-import {
-  profile,
-  getUserEnergyInfo as queryUserEnergyInfo,
-} from "../api/index";
-import { genAvatarUrl } from "../components/profileInfo/helper";
-import {
-  getUserConnectedAccounts,
-  UserConnectedAccounts,
-} from "../api/proofile";
+import { create } from 'zustand'
+import { createJSONStorage, subscribeWithSelector, persist } from 'zustand/middleware'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Image } from 'expo-image'
+import systemConfig from '../constants/System'
+import { profile, getUserEnergyInfo as queryUserEnergyInfo } from '../api/index'
+import { genAvatarUrl } from '../components/profileInfo/helper'
+import { getUserConnectedAccounts, UserConnectedAccounts } from '../api/proofile'
 export type UserProfile = {
-  id: number;
-  uid: string;
-  source: string;
-  name?: string;
-  nameTag: string;
-  email?: string;
-  publicAddress?: string;
-  avatar?: string;
-  isNftAvatar: boolean;
-  default: false;
-  level: number;
-  isPasscard: boolean;
-  isGenesisPasscard: boolean;
-};
+  id: number
+  uid: string
+  source: string
+  name?: string
+  nameTag: string
+  email?: string
+  publicAddress?: string
+  avatar?: string
+  isNftAvatar: boolean
+  default: false
+  level: number
+  isPasscard: boolean
+  isGenesisPasscard: boolean
+}
 export type UserBaseInfo = {
-  token: string;
-  expiration: number;
-  userId: number;
-  userUid: string;
-};
+  token: string
+  expiration: number
+  userId: number
+  userUid: string
+}
 export type UserEnergyInfo = {
-  energy: number;
-  dailyEnergy: number;
-};
+  energy: number
+  dailyEnergy: number
+}
 export type UserStore = {
   /** 用户信息，头像名字等 */
-  profile: UserProfile;
+  profile: UserProfile
   /** 用户电力值信息 */
-  userEnergyInfo: UserEnergyInfo;
+  userEnergyInfo: UserEnergyInfo
   /** */
-  userConnectedAccounts: UserConnectedAccounts;
-  userBaseInfo: UserBaseInfo;
-  particleInfo: any;
-};
-const name = "user-store";
+  userConnectedAccounts: UserConnectedAccounts
+  userBaseInfo: UserBaseInfo
+  particleInfo: any
+}
+const name = 'user-store'
 
 const useUserStore = create(
   subscribeWithSelector(
@@ -69,44 +59,52 @@ const useUserStore = create(
       }
     )
   )
-);
+)
 
 /** 监听token改变，改变获取用户相关信息 */
 useUserStore.subscribe(
-  (state) => state?.userBaseInfo?.token,
-  (val) => {
+  state => state?.userBaseInfo?.token,
+  val => {
     // 同步token到本地存储
-    AsyncStorage.setItem(systemConfig.authKey, val || "");
+    AsyncStorage.setItem(systemConfig.authKey, val || '')
     if (val) {
-      getProfile();
-      getUserEnergyInfo();
+      getProfile()
+      getUserEnergyInfo()
     }
   },
   {
     fireImmediately: true,
   }
-);
+)
 /** 获取用户信息 */
 export const getProfile = () => {
-  return profile().then((res: any) => {
-    if (res?.avatar) {
-      Image.prefetch(genAvatarUrl(res?.avatar));
-    }
-    useUserStore.setState({ profile: res });
-  });
-};
+  return profile()
+    .then((res: any) => {
+      try {
+        if (res?.avatar) {
+          Image.prefetch(genAvatarUrl(res?.avatar))
+        }
+      } catch (error) {
+        console.log(error)
+      }
+      useUserStore.setState({ profile: res })
+    })
+    .catch(e => {
+      console.log(e)
+    })
+}
 /** 获取用户电力值 */
 export const getUserEnergyInfo = () => {
   return queryUserEnergyInfo().then((res: any) => {
-    useUserStore.setState({ userEnergyInfo: res as UserEnergyInfo });
-  });
-};
+    useUserStore.setState({ userEnergyInfo: res as UserEnergyInfo })
+  })
+}
 
 /** 获取用户已连接的app账号 */
 export const getConnections = () => {
-  getUserConnectedAccounts().then((res) => {
-    useUserStore.setState({ userConnectedAccounts: res });
-  });
-};
+  getUserConnectedAccounts().then(res => {
+    useUserStore.setState({ userConnectedAccounts: res })
+  })
+}
 
-export default useUserStore;
+export default useUserStore

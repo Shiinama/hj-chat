@@ -21,11 +21,9 @@ const uploadFile = async uri => {
   const formData = new FormData()
   formData.append('file', {
     uri: filePath,
-    type: 'image/octet-stream',
+    type: 'image/png',
     name: filename,
   } as any)
-  console.log(formData)
-  // const boundary = '----WebKitFormBoundaryVBvxpDuEpr2AahpG'
   return await request({
     url: '/user/uploadAvatar',
     method: 'post',

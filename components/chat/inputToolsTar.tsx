@@ -117,7 +117,7 @@ function InputToolsTar({
   }
 
   const toolsAction = (key: ActionType) => {
-    if (!haveHistory) {
+    if (!haveHistory && key !== 'RemoveFromList' && key !== 'Pin') {
       Toast('No chat content')
       return
     }
