@@ -114,7 +114,13 @@ export default function Profile() {
           <View style={styles.contentWrap}>
             <View>
               <Text style={styles.label}>Name</Text>
-              <TextInput style={styles.input} value={name} onChangeText={nextValue => setName(nextValue)} />
+              <TextInput
+                style={styles.input}
+                value={name}
+                placeholder="Write your name, MAX 32 characters"
+                maxLength={32}
+                onChangeText={nextValue => setName(nextValue)}
+              />
             </View>
             <View style={styles.br} />
             <View>

@@ -24,13 +24,13 @@ function Container({
   ...restProps
 }: FishChatProps): JSX.Element {
   const [maxHeight, setMaxHeight] = useState(0)
-  const [inputHeight, setInputHeight] = useState(32)
+  const [inputHeight, setInputHeight] = useState(28)
   const [barHeight, setBarHeight] = useState(0)
   // 工具栏高度
   const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(0)
   const [messagesContainerHeight, setMessagesContainerHeight] = useState(0)
   const [boardHeight, setBoardHeight] = useState(0)
-  const Insets = useSafeAreaInsets()
+  const [toolsBottm, setToolsBottm] = useState(10)
   const onInitialLayoutViewLayout = (e: any) => {
     const { layout } = e.nativeEvent
     if (layout.height <= 0) {
@@ -42,13 +42,15 @@ function Container({
   const onKeyboardWillShow = (e: any) => {
     const keyboardHeight = e.endCoordinates ? e.endCoordinates.height : e.end.height
     setBoardHeight(keyboardHeight)
+    setToolsBottm(0)
   }
 
   const onKeyboardWillHide = () => {
     setBoardHeight(0)
+    setToolsBottm(10)
   }
   useEffect(() => {
-    setMinInputToolbarHeight(Insets.bottom + 5 + inputHeight)
+    setMinInputToolbarHeight(28 + inputHeight)
     setMessagesContainerHeight(maxHeight - barHeight - boardHeight)
   }, [inputHeight, maxHeight, boardHeight, barHeight])
   const InternalProps = {
@@ -75,6 +77,7 @@ function Container({
           inputHeight={inputHeight}
           haveHistory={haveHistory}
           barHeight={barHeight}
+          toolsBottm={toolsBottm}
           setBarHeight={setBarHeight}
           setInputHeight={setInputHeight}
           inputTextProps={inputTextProps as any}
