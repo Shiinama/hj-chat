@@ -9,25 +9,36 @@ import SaveIcon from '../../assets/images/chat/save_img.svg'
 import TwitterIcon from '../../assets/images/chat/twitter.svg'
 import Clipboard from '@react-native-clipboard/clipboard'
 import * as MediaLibrary from 'expo-media-library'
+import * as Permissions from 'expo-permissions'
 
 import { createSharedConversation } from '../../api'
 import { ensureDirExists, imageDir } from '../../utils/filesystem'
-// import { ensureDirExists } from '../../utils/filesystem'
+// import { ensureDirExists } from '../../utils/filesystem
 export interface ShareToPopupProps {}
 type shareAction = 'save' | 'link' | 'twitter'
 const ShareToPopup: FC<ShareToPopupProps> = () => {
   const { value, setValue } = useContext(ChatContext)
   const saveImage = async uri => {
-    try {
-      // Request device storage access permission
-      const { status } = await MediaLibrary.requestPermissionsAsync()
-      if (status === 'granted') {
-        await MediaLibrary.saveToLibraryAsync(uri)
-        Toast('Image successfully saved')
-      }
-    } catch (error) {
-      console.log(error)
+    // try {
+    //   const asset = await MediaLibrary.createAssetAsync(uri)
+    //   const album = await MediaLibrary.getAlbumAsync('Download')
+    //   if (album == null) {
+    //     await MediaLibrary.createAlbumAsync('Download', asset, false)
+    //     Toast('Image successfully saved')
+    //   } else {
+    //     await MediaLibrary.addAssetsToAlbumAsync([asset], album, false)
+    //     Toast('Image successfully saved')
+    //   }
+    // } catch (e) {
+    //   console.log(e)
+    // }
+    const { status } = await MediaLibrary.requestPermissionsAsync()
+    console.log(await MediaLibrary.requestPermissionsAsync())
+    if (status != 'granted') {
+      return
     }
+    await MediaLibrary.saveToLibraryAsync(uri)
+    Toast('Image successfully saved')
   }
   const action = (key: shareAction) => {
     if (value?.selectedItems?.length <= 0) {
