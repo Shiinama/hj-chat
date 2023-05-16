@@ -1,6 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback, memo } from 'react'
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
-import Slider from '@react-native-community/slider'
+// import Slider from '@react-native-community/slider'
+import { Slider } from '@miblanchard/react-native-slider';
 import { Audio, AVPlaybackStatus } from 'expo-av'
 import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
@@ -191,19 +192,26 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       </View>
       <View
         style={{
-          position: 'relative',
-          left: -55,
-          transform: [{ scale: 0.5 }],
+          // position: 'relative',
+          // left: -55,
+          // transform: [{ scale: 0.5 }],
+          flex:1,
+          marginRight:20
         }}
       >
         <Slider
-          style={styles.slider}
+          // style={styles.slider}
           minimumValue={0}
           minimumTrackTintColor={'black'}
           thumbTintColor={'black'}
           maximumValue={duration}
           value={currentPosition}
-          onValueChange={handleChange}
+          thumbStyle={{width:5,height:5}}
+          trackStyle={{height:2}}
+          // onValueChange={handleChange}
+          onValueChange={(value) => {
+            handleChange(value[value.length - 1])
+          }}  
         />
       </View>
     </View>
@@ -222,7 +230,7 @@ const styles = StyleSheet.create({
     maxHeight: 38,
   },
   slider: {
-    height: 10,
+    height: 5,
     width: 250,
   },
   time: {
