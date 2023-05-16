@@ -11,6 +11,7 @@ import NetInfo from '@react-native-community/netinfo'
 import { ApplicationProvider } from '@ui-kitten/components'
 import { CustomStack, Stack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'
+import { addMultipleGifs } from '../utils/filesystem'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -37,6 +38,7 @@ export default function RootLayout() {
         Toast('Please check your network connection')
       }
     })
+    addMultipleGifs()
     return () => unsubscribe()
   }, [])
 

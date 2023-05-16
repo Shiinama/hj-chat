@@ -39,6 +39,7 @@ type Props = {
   inputHeight
   barHeight
   setBarHeight
+  toolsBottm
   setInputHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
   haveHistory?: boolean
@@ -51,6 +52,7 @@ function InputToolsTar({
   setInputHeight,
   inputTextProps,
   haveHistory,
+  toolsBottm,
   minInputToolbarHeight,
 }: Props) {
   const {
@@ -64,7 +66,6 @@ function InputToolsTar({
     userId,
     ...inputProps
   } = inputTextProps
-
   const { setValue: setChatValue } = useContext(ChatContext)
   const [pinned, setPinned] = useState(originalPinned)
   const [position, setPosition] = useState('absolute')
@@ -254,7 +255,13 @@ function InputToolsTar({
       }}
     >
       <>
-        <View style={{ ...styles.primary, height: isShow ? minInputToolbarHeight : minInputToolbarHeight / 2 }}>
+        <View
+          style={{
+            ...styles.primary,
+            height: isShow ? minInputToolbarHeight : minInputToolbarHeight / 2,
+            marginBottom: toolsBottm,
+          }}
+        >
           {
             <>
               {showAni ? (
