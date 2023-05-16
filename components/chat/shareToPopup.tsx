@@ -8,6 +8,7 @@ import CopyLinkIcon from '../../assets/images/chat/copy_link.svg'
 import SaveIcon from '../../assets/images/chat/save_img.svg'
 import TwitterIcon from '../../assets/images/chat/twitter.svg'
 import Clipboard from '@react-native-clipboard/clipboard'
+import * as MediaLibrary from 'expo-media-library'
 
 import { createSharedConversation } from '../../api'
 import { ensureDirExists, imageDir } from '../../utils/filesystem'
@@ -16,6 +17,18 @@ export interface ShareToPopupProps {}
 type shareAction = 'save' | 'link' | 'twitter'
 const ShareToPopup: FC<ShareToPopupProps> = () => {
   const { value, setValue } = useContext(ChatContext)
+  const saveImage = async uri => {
+    try {
+      // Request device storage access permission
+      const { status } = await MediaLibrary.requestPermissionsAsync()
+      if (status === 'granted') {
+        await MediaLibrary.saveToLibraryAsync(uri)
+        Toast('Image successfully saved')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const action = (key: shareAction) => {
     if (value?.selectedItems?.length <= 0) {
       Toast('Please select at least one chat!')
@@ -27,23 +40,16 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
       switch (key) {
         case 'save':
           const isExists = await ensureDirExists()
-          console.log(isExists, 11)
           if (!isExists) {
             Toast('File system error!')
             return
           }
-          console.log(`${systemConfig.downloadHost}/${res}/download`)
-          FileSystem.downloadAsync(`${systemConfig.downloadHost}/${res}/download`, `${imageDir}` + `${res}.png`)
-            .then(({ uri }) => {
-              console.log(uri)
-              Toast('download successfully!')
-            })
-            .catch(error => {
-              console.error(error)
-            })
-            .finally(() => {
-              clearClose()
-            })
+          const { uri } = await FileSystem.downloadAsync(
+            `${systemConfig.downloadHost}/${res}/download`,
+            `${imageDir}` + `${res}.png`
+          )
+          await saveImage(uri)
+
           break
         case 'link':
           Clipboard.setString(`${systemConfig.shareLink}${res}`)
