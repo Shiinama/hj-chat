@@ -42,13 +42,6 @@ function Chat({}) {
   const { pinned, logo, name, uid, userId, energyPerChat } = botStore.getState()
   const { profile } = useUserStore()
 
-  const eventAppState = useRef<{
-    appState?: NativeEventSubscription
-    audioManager: AudioPayManager
-    prev?: string
-  }>({
-    audioManager: AudioPayManagerSingle(),
-  })
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
@@ -89,8 +82,11 @@ function Chat({}) {
     return () => {
       // 单列模式里面的sound销毁
       AudioPayManagerSingle().destory()
-      // recordingRef.current?.stopAndUnloadAsync?.()
-      // recordingRef.current = undefined
+      try {
+        // 退出的时候录音停止销毁
+        recordingRef.current?.stopAndUnloadAsync?.()
+        recordingRef.current = undefined
+      } catch (error) {}
     }
   }, [])
 
