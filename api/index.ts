@@ -1,17 +1,9 @@
 import request from '../utils/request'
-import RNStorage from '@react-native-async-storage/async-storage'
-
-const botListLocalKey = 'BotListLocal'
+import { getBotListLocal, setBotListLocal } from './botChatListCache'
 
 export const botList = (flash?: boolean) => {
   return new Promise(async (resolve, reject) => {
-    let localBotList = undefined
-    try {
-      const localStr = await RNStorage.getItem(botListLocalKey)
-      if (localStr) {
-        localBotList = JSON.parse(localStr)
-      }
-    } catch (e) {}
+    let localBotList = getBotListLocal()
     if (!localBotList || flash) {
       request({
         url: '/bot/list',
@@ -19,7 +11,7 @@ export const botList = (flash?: boolean) => {
       })
         .then(res => {
           resolve(res)
-          RNStorage.setItem(botListLocalKey, JSON.stringify(res))
+          setBotListLocal(res)
         })
         .catch(e => {
           // 请求失败使用缓存的列表
