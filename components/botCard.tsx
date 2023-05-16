@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   name: {
     lineHeight: 20,
     height: 20,
+    fontWeight: 'bold',
     fontSize: 16,
     color: '#1F1F1F',
     // backgroundColor: 'red',

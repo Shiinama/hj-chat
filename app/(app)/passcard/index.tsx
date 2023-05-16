@@ -140,7 +140,12 @@ export default function Passcard() {
   const [tab, setTab] = useState(1)
   const botStore = useUserStore().profile
   const _renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
+    <View
+      style={[
+        styles.itemContainer,
+        { borderColor: botStore.level === item.id ? '#7A2EF6' : '#F6F6F6', borderWidth: 1 },
+      ]}
+    >
       <PassCardItem {...item} level={botStore.level}></PassCardItem>
     </View>
   )
@@ -169,13 +174,16 @@ export default function Passcard() {
             height: 40,
             borderRadius: 4,
           }}
-          onPress={() => setTab(2)}
+          onPress={() => {
+            setTab(2)
+          }}
         >
           <Text style={{ color: tab == 2 ? 'white' : 'black' }}>Genesis</Text>
         </TouchableOpacity>
       </View>
       {tab === 1 ? (
         <Carousel
+          key={'1'}
           data={DATA}
           contentContainerCustomStyle={{ alignItems: 'flex-start' }}
           renderItem={_renderItem}
@@ -186,6 +194,7 @@ export default function Passcard() {
         />
       ) : (
         <Carousel
+          key={'2'}
           data={DATA1}
           contentContainerCustomStyle={{ alignItems: 'flex-start' }}
           renderItem={_renderItem}
@@ -206,8 +215,8 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: ITEM_WIDTH,
     height: ITEM_HEIGHT - 200,
-    boderRadius: 30,
     alignItems: 'center',
+    borderRadius: 6,
     justifyContent: 'center',
     backgroundColor: '#F6F6F6',
   },
