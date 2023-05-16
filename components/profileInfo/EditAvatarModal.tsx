@@ -21,13 +21,13 @@ const uploadFile = async uri => {
     name: 'file',
   } as any)
   console.log(formData)
-  const boundary = '----WebKitFormBoundaryVBvxpDuEpr2AahpG'
+  // const boundary = '----WebKitFormBoundaryVBvxpDuEpr2AahpG'
   return await request({
     url: '/user/uploadAvatar',
     method: 'post',
     data: formData,
     headers: {
-      'Content-Type': `multipart/form-data; boundary=${boundary}`,
+      'Content-Type': `multipart/form-data`,
     },
   })
 }
@@ -86,6 +86,7 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
         quality: 1,
       }).then(
         uri => {
+          console.log(uri)
           uploadFile(uri)
             .then(res => {
               console.log(res)
