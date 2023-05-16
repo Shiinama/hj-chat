@@ -85,7 +85,7 @@ export const useSocketIo = () => {
   const { userBaseInfo } = useUserStore.getState()
   const token =
     userBaseInfo?.token ??
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjgzNzA5MTY0NTM1LCJqdGkiOiIzMTY1ZjYzZWY4ZDg0NzhlYmE0OGZmOWE4NjM0NTkyNyIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4MzcxMTc1NjUzNX0.6XYjiQclRy0byiWRhrxctmEQWPIJ6dTi8yYUD7GVMaU'
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjg0MTQyMzI3NjM1LCJqdGkiOiIyNzg5YWFhZjBiODY0YzI5YjA4NjlhY2I5NDZmNzlmNyIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4NDE0NDkxOTYzNX0.2WHYOm1V3LZ0CvZcjr-fnmOQNALR45ZV0yym3THVxGY'
   const ready = (): boolean => {
     return SocketIoRef.current && SocketIoRef.current.connected
   }
