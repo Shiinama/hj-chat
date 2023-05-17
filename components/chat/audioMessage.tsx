@@ -8,6 +8,7 @@ import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
 import { formatTime } from '../../utils/time'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
 type AudioType = {
   audioFileUri: string
   slideWidth?: number
@@ -107,7 +108,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       if (sound !== null) {
         const status: AVPlaybackStatus = await sound.getStatusAsync()
         if (status.isLoaded) {
-          setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
         }
         if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 20 >= 0) {
@@ -117,6 +117,8 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
           })
           setIsPlaying(() => false)
           soundManager.current.stop()
+        } else if (status.isLoaded && status.isPlaying) {
+          setCurrentPosition(status.positionMillis || 0)
         }
       }
     }, 100)
@@ -124,6 +126,10 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
 
   const handlePlayPause = async () => {
     soundInterval.current && clearInterval(soundInterval.current)
+    if (AudioPayManagerSingle().isRecording) {
+      Toast('Recording in progress')
+      return
+    }
     if (sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({

@@ -11,6 +11,8 @@ export class AudioPayManager {
   private appPreState = ''
   private isPlay = false
 
+  isRecording = false
+
   currentAutoPlayUrl = undefined
 
   constructor() {
@@ -25,6 +27,8 @@ export class AudioPayManager {
   }
 
   async destory() {
+    this.isRecording = false
+    this.currentAutoPlayUrl = undefined
     if (this.currentSound) {
       try {
         await this.currentSound.unloadAsync()
@@ -86,6 +90,9 @@ export class AudioPayManager {
   }
 
   async play(sound: Audio.Sound, callBack: Function, rePlay?: Function) {
+    if (this.isRecording) {
+      return
+    }
     if (this.currentSound) {
       try {
         this.currentSoundStopMethod?.()

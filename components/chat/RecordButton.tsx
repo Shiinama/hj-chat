@@ -39,6 +39,7 @@ const RecordButton = ({
         AudioPayManagerSingle().pause(true)
         const success = startRecording()
         if (success) {
+          AudioPayManagerSingle().isRecording = true
           setShowAni(false)
           setButtonState('recording')
           setTimeout(() => {
@@ -54,6 +55,7 @@ const RecordButton = ({
   }, [isSound])
 
   const stopRecord = async () => {
+    AudioPayManagerSingle().isRecording = false
     const uri = await stopRecording()
     const { sound } = await Audio.Sound.createAsync({ uri }, {}, (status: any) => {
       if (status.positionMillis >= status.durationMillis && status.durationMillis > 0) {
@@ -65,10 +67,11 @@ const RecordButton = ({
         } catch (error) {}
         // sound.pauseAsync()
       } else if (playing.current) {
-        const offMil = isNaN(status.durationMillis - status.positionMillis)
-          ? 0
-          : status.durationMillis - status.positionMillis
-        AnimationRef?.current?.updateDurationMillis?.(offMil < 0 ? 0 : offMil)
+        // 播放时间暂时不显示
+        // const offMil = isNaN(status.durationMillis - status.positionMillis)
+        //   ? 0
+        //   : status.durationMillis - status.positionMillis
+        // AnimationRef?.current?.updateDurationMillis?.(offMil < 0 ? 0 : offMil)
       }
     })
     try {
@@ -88,7 +91,7 @@ const RecordButton = ({
   useEffect(() => {
     CallBackManagerSingle().add('recordingChangeBtn', (durationMill: number) => {
       AnimationRef?.current?.updateDurationMillis?.(durationMill)
-      if (durationMill && recordMaxSecond && parseInt(durationMill / 1000) >= recordMaxSecond) {
+      if (durationMill && recordMaxSecond && durationMill >= recordMaxSecond * 1000) {
         CallBackManagerSingle().remove('recordingChangeBtn')
         stopRecord()
       }

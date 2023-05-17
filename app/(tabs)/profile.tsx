@@ -182,10 +182,12 @@ const styles = StyleSheet.create({
   },
   profileDetail: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     height: 30,
     marginBottom: 10,
+    marginRight: 55,
   },
   profileDesc: {
     fontSize: 20,
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     paddingLeft: 10,
     paddingRight: 10,
+    overflow: 'hidden',
     borderRadius: 8,
     fontStyle: 'normal',
     fontWeight: '700',
