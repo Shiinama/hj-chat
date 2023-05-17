@@ -75,7 +75,14 @@ function chatItem({ item, translationText, me, logo }: Props) {
       {
         id: 3,
         dText: 'Translate',
-        Icon: id => <Translate fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
+        Icon: id => (
+          <Translate
+            fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'}
+            width={14}
+            height={14}
+            style={{ marginRight: 5 }}
+          />
+        ),
       },
     ]
     return data.map(({ Icon, id, dText }) => (

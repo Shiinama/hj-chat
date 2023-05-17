@@ -52,12 +52,10 @@ _axios.interceptors.response.use(
     return response
   },
   error => {
-    console.log(error)
     const { response } = error
     // 请求有响应
     if (response) {
       const { status, data, config } = response
-      console.log(data)
       if (status === 401) {
         DeviceEventEmitter.emit('logout', 'exit')
 

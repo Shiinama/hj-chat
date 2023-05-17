@@ -265,24 +265,36 @@ function InputToolsTar({
           {
             <>
               {showAni ? (
-                <View style={{ flexDirection: 'row' }}>
+                <>
                   {renderLeftInput()}
-                  <TextInput
-                    ref={inputRef}
-                    returnKeyType="default"
-                    blurOnSubmit={false}
-                    multiline={true}
-                    maxLength={500}
-                    onContentSizeChange={handleContentSizeChange}
-                    placeholder="Write a message"
-                    style={[styles.textInput, { height: inputHeight }]}
-                    onChangeText={setText}
-                    value={text}
-                    {...inputTextProps}
-                    {...inputProps}
-                  />
+                  <View
+                    style={{
+                      height: inputHeight,
+                      flex: 1,
+                      marginHorizontal: 10,
+                      paddingVertical: 4,
+                      borderRadius: 6,
+                      justifyContent: 'center',
+                      backgroundColor: 'white',
+                    }}
+                  >
+                    <TextInput
+                      ref={inputRef}
+                      returnKeyType="default"
+                      blurOnSubmit={false}
+                      multiline={true}
+                      maxLength={500}
+                      onContentSizeChange={handleContentSizeChange}
+                      placeholder="Write a message"
+                      style={[styles.textInput]}
+                      onChangeText={setText}
+                      value={text}
+                      {...inputTextProps}
+                      {...inputProps}
+                    />
+                  </View>
                   {renderRightInput}
-                </View>
+                </>
               ) : (
                 <AudioAnimation ref={AnimationRef} durationMillis={durationMillis}></AudioAnimation>
               )}
@@ -325,13 +337,12 @@ const styles = StyleSheet.create({
     height: 18,
   },
   textInput: {
+    // justifyContent: 'center',
     flex: 1,
-    marginHorizontal: 10,
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fff',
     paddingHorizontal: 12,
-    borderRadius: 6,
     fontSize: 16,
+    // textAlignVertical: 'center',
   },
 })
 

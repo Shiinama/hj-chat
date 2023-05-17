@@ -181,6 +181,7 @@ function Chat({}) {
       botUid: uid,
       voice,
     })
+    setVoice(null)
   }
   const translationText = messageUid => {
     const reqId = uuidv4()
