@@ -35,13 +35,20 @@ export default function Profile() {
   const [btnDisabled, { set: setBtnDisabled }] = useBoolean(true)
   useDebounceEffect(
     () => {
-      getIsUserNameAvailable({ name }).then(res => {
-        if (res) {
-          setBtnDisabled(false)
-        } else {
-          setBtnDisabled(true)
-        }
-      })
+      // 长度为空就不用去调用接口了，去掉不必要的网络请求
+      if (name?.length > 0) {
+        getIsUserNameAvailable({ name })
+          .then(res => {
+            if (res) {
+              setBtnDisabled(false)
+            } else {
+              setBtnDisabled(true)
+            }
+          })
+          .catch(e => {
+            setBtnDisabled(true)
+          })
+      }
     },
     [name],
     { wait: 400 }
@@ -78,15 +85,23 @@ export default function Profile() {
   }, [userConnectedAccounts])
   const saveAction = () => {
     setSaveLoading(true)
-    getIsUserNameAvailable({ name }).then(res => {
-      if (res) {
-        postUpdateUserName({ name }).then(res => {
-          Toast('Update successfully!')
-          setSaveLoading(false)
-          getProfile()
-        })
-      }
-    })
+    getIsUserNameAvailable({ name })
+      .then(res => {
+        if (res) {
+          postUpdateUserName({ name })
+            .then(res => {
+              Toast('Update successfully!')
+              setSaveLoading(false)
+              getProfile()
+            })
+            .catch(e => {
+              setSaveLoading(false)
+            })
+        }
+      })
+      .catch(e => {
+        setSaveLoading(false)
+      })
   }
   return (
     <View style={styles.container}>
@@ -119,7 +134,12 @@ export default function Profile() {
                 value={name}
                 placeholder="Write your name, MAX 32 characters"
                 maxLength={32}
-                onChangeText={nextValue => setName(nextValue)}
+                onChangeText={nextValue => {
+                  if (nextValue?.length === 0) {
+                    setBtnDisabled(true)
+                  }
+                  setName(nextValue)
+                }}
               />
             </View>
             <View style={styles.br} />

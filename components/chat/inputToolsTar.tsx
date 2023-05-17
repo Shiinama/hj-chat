@@ -159,7 +159,7 @@ function InputToolsTar({
       <RecordButton
         isShow={isShow}
         AnimationRef={AnimationRef}
-        recordMaxSecond={60}
+        recordMaxSecond={59}
         durationMillis={durationMillis}
         setIsShow={setIsShow}
         setShowAni={setShowAni}

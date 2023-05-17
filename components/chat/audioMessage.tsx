@@ -1,13 +1,14 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback, memo } from 'react'
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 // import Slider from '@react-native-community/slider'
-import { Slider } from '@miblanchard/react-native-slider';
+import { Slider } from '@miblanchard/react-native-slider'
 import { Audio, AVPlaybackStatus } from 'expo-av'
 import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
 import { formatTime } from '../../utils/time'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
 type AudioType = {
   audioFileUri: string
   slideWidth?: number
@@ -126,6 +127,10 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
 
   const handlePlayPause = async () => {
     soundInterval.current && clearInterval(soundInterval.current)
+    if (AudioPayManagerSingle().isRecording) {
+      Toast('Recording in progress')
+      return
+    }
     if (sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({
@@ -196,8 +201,8 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
           // position: 'relative',
           // left: -55,
           // transform: [{ scale: 0.5 }],
-          flex:1,
-          marginRight:20
+          flex: 1,
+          marginRight: 20,
         }}
       >
         <Slider
@@ -207,12 +212,12 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
           thumbTintColor={'black'}
           maximumValue={duration}
           value={currentPosition}
-          thumbStyle={{width:5,height:5}}
-          trackStyle={{height:2}}
+          thumbStyle={{ width: 5, height: 5 }}
+          trackStyle={{ height: 2 }}
           // onValueChange={handleChange}
-          onValueChange={(value) => {
+          onValueChange={value => {
             handleChange(value[value.length - 1])
-          }}  
+          }}
         />
       </View>
     </View>
