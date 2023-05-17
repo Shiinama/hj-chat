@@ -182,10 +182,12 @@ const styles = StyleSheet.create({
   },
   profileDetail: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     height: 30,
     marginBottom: 10,
+    marginRight: 55,
   },
   profileDesc: {
     fontSize: 20,
