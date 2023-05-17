@@ -218,7 +218,7 @@ function Chat({}) {
   }, [navigation, name, chatPageValue.pageStatus])
 
   useEffect(() => {
-    if (!message || id !== message.data.botId) return
+    if (!message) return
     setChatData([message.data, ...chatData])
     flatList.current?.scrollToIndex?.({ index: 0 })
     // 刷新聊天主页列表 加个延时  马上去请求数据可能还没更新，如果没有延时的问题可以去掉setTimeout
@@ -228,7 +228,7 @@ function Chat({}) {
   }, [message])
 
   useEffect(() => {
-    if (!resMessage || id !== resMessage.botId) return
+    if (!resMessage) return
     setChatData([resMessage, ...chatData])
     if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
       AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
@@ -245,7 +245,7 @@ function Chat({}) {
   }, [resMessage])
 
   useEffect(() => {
-    if (!updateMessage || id !== updateMessage.botId) return
+    if (!updateMessage) return
     const index = chatData.findIndex(item => item.uid === updateMessage.uid)
     setChatData(pre => {
       pre[index].text = updateMessage.text
@@ -254,7 +254,7 @@ function Chat({}) {
   }, [updateMessage])
 
   useEffect(() => {
-    if (!translationMessage || id !== translationMessage.botId) return
+    if (!translationMessage) return
     const index = chatData.findIndex(item => item.id === translationMessage.id)
     setChatData(pre => {
       // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')

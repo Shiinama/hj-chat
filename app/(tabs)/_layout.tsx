@@ -80,7 +80,12 @@ export default function TabLayout() {
         name="setting"
         options={{
           tabBarShowLabel: false,
-          title: 'Robot Workshop',
+          title: '',
+          headerLeft: () => (
+            <View>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 20, fontWeight: 'bold' }}>Robot Workshop</Text>
+            </View>
+          ),
           tabBarIcon: ({ focused }) => (focused ? <BotAcitve /> : <Bot />),
         }}
       />

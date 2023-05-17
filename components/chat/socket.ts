@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client'
 import SysConfig from '../../constants/System'
 import { Alert } from 'react-native'
 import useUserStore from '../../store/userStore'
+import botStore from '../../store/botStore'
 import { useDebounceEffect, useSet } from 'ahooks'
 
 export enum MsgEvents {
@@ -59,6 +60,7 @@ type MesageSucessType = {
 
 export const useSocketIo = () => {
   const SocketIoRef = useRef(null)
+  const currentBot = botStore.getState()
   const [message, setMessage] = useState<any>()
   // 请求队列逻辑
   const [reqIdsQueue, { add: addReqIds, remove: removeReqIds, reset: resetReqIds }] = useSet([])
@@ -123,22 +125,26 @@ export const useSocketIo = () => {
   }
 
   const onMessageSent = (data: MesageSucessType) => {
+    if (currentBot.id !== data.data.botId) return
     if (data?.reqId) {
       addReqIds(data?.reqId)
     }
     setMessage(data)
   }
   const onMessageReplied = ({ data, reqId }: MesageSucessType) => {
+    if (currentBot.id !== data.botId) return
     if (reqId) {
       removeReqIds(reqId)
     }
     setResMessage(data)
   }
   const onMessageTranslated = ({ reqId, data }: MesageSucessType) => {
+    if (currentBot.id !== data.botId) return
     setTranslation(data)
   }
   const onEnergyInfo = ({ reqId, data }: MesageSucessType) => {}
   const onMessageUpdated = ({ data }: MesageSucessType) => {
+    if (currentBot.id !== data.botId) return
     setUpdateMessage(data)
   }
 
