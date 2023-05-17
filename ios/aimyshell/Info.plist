@@ -40,7 +40,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>pn${PROJECT_APP_UUID}</string>
+				<string>pn$(PROJECT_APP_UUID)</string>
 			</array>
 		</dict>
 	</array>
@@ -70,11 +70,11 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Give $(PRODUCT_NAME) permission to access your photos</string>
 	<key>PROJECT_APP_UUID</key>
-	<string>${PROJECT_APP_UUID}</string>
+	<string>$(PROJECT_APP_UUID)</string>
 	<key>PROJECT_CLIENT_KEY</key>
-	<string>${PROJECT_CLIENT_KEY}</string>
+	<string>$(PROJECT_CLIENT_KEY)</string>
 	<key>PROJECT_UUID</key>
-	<string>${PROJECT_UUID}</string>
+	<string>$(PROJECT_UUID)</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
