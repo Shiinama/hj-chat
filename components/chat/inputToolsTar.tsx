@@ -39,6 +39,7 @@ type Props = {
   inputHeight
   barHeight
   setBarHeight
+  toolsBottm
   setInputHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
   haveHistory?: boolean
@@ -51,6 +52,7 @@ function InputToolsTar({
   setInputHeight,
   inputTextProps,
   haveHistory,
+  toolsBottm,
   minInputToolbarHeight,
 }: Props) {
   const {
@@ -64,7 +66,6 @@ function InputToolsTar({
     userId,
     ...inputProps
   } = inputTextProps
-
   const { setValue: setChatValue } = useContext(ChatContext)
   const [pinned, setPinned] = useState(originalPinned)
   const [position, setPosition] = useState('absolute')
@@ -72,7 +73,7 @@ function InputToolsTar({
   const [audioFileUri, setAudioFileUri] = useState('')
   const [text, setText] = useState('')
   // 控制话筒弹出
-  const [isShow, setIsShow] = useState(true)
+  const [isShow, setIsShow] = useState(false)
   const [showAni, setShowAni] = useState(true)
   const [showSend, setShowSend] = useState(true)
   const inputRef = useRef(null)
@@ -116,7 +117,7 @@ function InputToolsTar({
   }
 
   const toolsAction = (key: ActionType) => {
-    if (!haveHistory) {
+    if (!haveHistory && key !== 'RemoveFromList' && key !== 'Pin') {
       Toast('No chat content')
       return
     }
@@ -239,7 +240,7 @@ function InputToolsTar({
     let height = contentSize.height
     if (height === inputHeight) return
     if (height < 50) {
-      setInputHeight(40)
+      setInputHeight(35)
       return
     }
     if (height > 40 && height < 80) {
@@ -254,29 +255,32 @@ function InputToolsTar({
       }}
     >
       <>
-        <View style={{ ...styles.primary, height: isShow ? minInputToolbarHeight : minInputToolbarHeight / 2 }}>
+        <View
+          style={{
+            ...styles.primary,
+            height: isShow ? minInputToolbarHeight : minInputToolbarHeight / 2,
+            marginBottom: toolsBottm,
+          }}
+        >
           {
             <>
               {showAni ? (
                 <View style={{ flexDirection: 'row' }}>
                   {renderLeftInput()}
-                  <View style={styles.textInput}>
-                    <TextInput
-                      ref={inputRef}
-                      returnKeyType="default"
-                      blurOnSubmit={false}
-                      multiline={true}
-                      maxLength={500}
-                      onContentSizeChange={handleContentSizeChange}
-                      placeholder="Write a message"
-                      style={[{ height: inputHeight, fontSize: 18, lineHeight: 24 }]}
-                      onChangeText={setText}
-                      value={text}
-                      {...inputTextProps}
-                      {...inputProps}
-                    />
-                  </View>
-
+                  <TextInput
+                    ref={inputRef}
+                    returnKeyType="default"
+                    blurOnSubmit={false}
+                    multiline={true}
+                    maxLength={500}
+                    onContentSizeChange={handleContentSizeChange}
+                    placeholder="Write a message"
+                    style={[styles.textInput, { height: inputHeight }]}
+                    onChangeText={setText}
+                    value={text}
+                    {...inputTextProps}
+                    {...inputProps}
+                  />
                   {renderRightInput}
                 </View>
               ) : (
@@ -308,9 +312,9 @@ const styles = StyleSheet.create({
     // marginBottom: 10,
   },
   toolsIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 35,
+    height: 35,
+    borderRadius: 6,
     position: 'relative',
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
@@ -322,12 +326,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    // justifyContent: 'center',
     marginHorizontal: 10,
-    // textAlignVertical: 'center',
+    flexDirection: 'row',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 12,
-    borderRadius: 12,
+    borderRadius: 6,
+    fontSize: 16,
   },
 })
 

@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
   },
   viewItem: {
     flexDirection: 'row',
+
     // justifyContent: 'flex-start',
     marginBottom: 30,
     alignItems: 'center',

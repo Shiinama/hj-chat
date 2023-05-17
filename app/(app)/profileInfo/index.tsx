@@ -90,7 +90,7 @@ export default function Profile() {
   }
   return (
     <View style={styles.container}>
-      <ScrollView bounces={false}>
+      <ScrollView bounces={false} style={{ flex: 1 }}>
         <View style={styles.main}>
           <TouchableOpacity
             style={styles.avatar}
@@ -114,7 +114,13 @@ export default function Profile() {
           <View style={styles.contentWrap}>
             <View>
               <Text style={styles.label}>Name</Text>
-              <TextInput style={styles.input} value={name} onChangeText={nextValue => setName(nextValue)} />
+              <TextInput
+                style={styles.input}
+                value={name}
+                placeholder="Write your name, MAX 32 characters"
+                maxLength={32}
+                onChangeText={nextValue => setName(nextValue)}
+              />
             </View>
             <View style={styles.br} />
             <View>
@@ -144,11 +150,13 @@ export default function Profile() {
           </View>
         </View>
       </ScrollView>
+
       <View style={styles.action}>
         <Button style={styles.actionMain} disabled={btnDisabled} loading={saveLoading} onPress={saveAction}>
           Save Changes
         </Button>
       </View>
+
       <Popup.Page visible={pageVisible}>
         <Popup.Header
           title="telegram"

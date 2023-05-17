@@ -15,7 +15,14 @@ export default function Settings() {
   }, [])
   return (
     <View style={{ margin: 20 }}>
-      <Button renderLeftIcon={() => <Signout></Signout>} type="ghost" text="Sign Out" onPress={signOut} danger />
+      <Button
+        style={{ alignItems: 'flex-start' }}
+        renderLeftIcon={() => <Signout></Signout>}
+        type="ghost"
+        text="Sign Out"
+        onPress={signOut}
+        danger
+      />
     </View>
   )
 }

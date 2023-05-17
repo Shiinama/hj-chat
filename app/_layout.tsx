@@ -9,8 +9,9 @@ import { Provider as AuthProvider } from '../context/auth'
 import NetInfo from '@react-native-community/netinfo'
 
 import { ApplicationProvider } from '@ui-kitten/components'
-import { CustomStack, Stack } from './CustomStack'
+import { CustomStack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'
+import { ensureDirExists } from '../utils/filesystem'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -25,6 +26,7 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SF-Pro.ttf'),
     ...FontAwesome.font,
   })
+
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error
@@ -37,6 +39,7 @@ export default function RootLayout() {
         Toast('Please check your network connection')
       }
     })
+    ensureDirExists()
     return () => unsubscribe()
   }, [])
 

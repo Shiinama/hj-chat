@@ -14,14 +14,16 @@ import ViewShot, { captureRef } from 'react-native-view-shot'
 import { useBoolean } from 'ahooks'
 const uploadFile = async uri => {
   const filePath = uri
+  console.log(uri)
+  const regex = /\/([\w-]+)\.\w+$/
+  const match = regex.exec(uri)
+  const filename = match[1]
   const formData = new FormData()
   formData.append('file', {
     uri: filePath,
-    type: 'application/octet-stream',
-    name: 'file',
+    type: 'image/png',
+    name: filename,
   } as any)
-  console.log(formData)
-  // const boundary = '----WebKitFormBoundaryVBvxpDuEpr2AahpG'
   return await request({
     url: '/user/uploadAvatar',
     method: 'post',
@@ -67,12 +69,12 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     })
-
+    console.log(result)
     if (!result.canceled) {
       setInputImage(result.assets[0])
     }
@@ -86,7 +88,6 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
         quality: 1,
       }).then(
         uri => {
-          console.log(uri)
           uploadFile(uri)
             .then(res => {
               console.log(res)
