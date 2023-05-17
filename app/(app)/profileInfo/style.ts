@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
+    // backgroundColor: "gray",
     width: "100%",
     height: "100%",
     position: "relative",
@@ -103,9 +104,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   action: {
-    position: "absolute",
-    left: 0,
-    bottom: 32,
+    // position: "absolute",
+    // left: 0,
+    // bottom: 32,
+    marginBottom: 32,
     width: "100%",
     paddingHorizontal: 16,
     display: "flex",

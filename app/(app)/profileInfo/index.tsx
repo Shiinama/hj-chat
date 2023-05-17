@@ -90,7 +90,7 @@ export default function Profile() {
   }
   return (
     <View style={styles.container}>
-      <ScrollView bounces={false}>
+      <ScrollView bounces={false} style={{ flex: 1 }}>
         <View style={styles.main}>
           <TouchableOpacity
             style={styles.avatar}
@@ -150,11 +150,13 @@ export default function Profile() {
           </View>
         </View>
       </ScrollView>
+
       <View style={styles.action}>
         <Button style={styles.actionMain} disabled={btnDisabled} loading={saveLoading} onPress={saveAction}>
           Save Changes
         </Button>
       </View>
+
       <Popup.Page visible={pageVisible}>
         <Popup.Header
           title="telegram"
