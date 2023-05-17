@@ -16,7 +16,7 @@
     },
     "dev": {
       "env": {
-        "REACT_APP_ENV": "dev"
+        "REACT_APP_ENV": "test"
       },
       "android": {
         "buildType": "apk"

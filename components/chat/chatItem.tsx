@@ -85,6 +85,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
         onPress={e => {
           setButtonIndex(id)
           if (id === 3) {
+            if (item.translation) return
             translationText(item.uid)
           }
         }}

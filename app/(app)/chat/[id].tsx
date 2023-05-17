@@ -39,7 +39,7 @@ export type ChatItem = {
   botUid?: string
 }
 function Chat({}) {
-  const { pinned, logo, name, uid, userId, energyPerChat } = botStore.getState()
+  const { pinned, logo, name, uid, userId, energyPerChat, id } = botStore.getState()
   const { profile } = useUserStore()
 
   /** 页面数据上下文 */
@@ -59,7 +59,6 @@ function Chat({}) {
   const [chatData, setChatData] = useState<ChatItem[]>([])
   const [durationMillis, setDurationMillis] = useState(0)
   const [voice, setVoice] = useState(null)
-  const [translationTextIndex, setTranslationTextIndex] = useState(null)
   const flatList = useRef<FlatList>()
   const [showLoadMoring, setShowLoadMoring] = useState(false)
   const chatDataInfo = useRef({
@@ -184,9 +183,6 @@ function Chat({}) {
     })
   }
   const translationText = messageUid => {
-    const Index = chatData.findIndex(item => item.uid === messageUid)
-    if (chatData[Index].translation) return
-    setTranslationTextIndex(Index)
     const reqId = uuidv4()
     sendMessage('translate_message', {
       reqId,
@@ -219,7 +215,8 @@ function Chat({}) {
   }, [navigation, name, chatPageValue.pageStatus])
 
   useEffect(() => {
-    if (!message) return
+    console.log(id, message, 12312)
+    if (!message || id !== message.data.botId) return
     setChatData([message.data, ...chatData])
     flatList.current?.scrollToIndex?.({ index: 0 })
     // 刷新聊天主页列表 加个延时  马上去请求数据可能还没更新，如果没有延时的问题可以去掉setTimeout
@@ -229,7 +226,8 @@ function Chat({}) {
   }, [message])
 
   useEffect(() => {
-    if (!resMessage) return
+    console.log(resMessage, id, 12312)
+    if (!resMessage || id !== resMessage.botId) return
     setChatData([resMessage, ...chatData])
     if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
       AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
@@ -246,7 +244,7 @@ function Chat({}) {
   }, [resMessage])
 
   useEffect(() => {
-    if (!updateMessage) return
+    if (!updateMessage || id !== updateMessage.botId) return
     const index = chatData.findIndex(item => item.uid === updateMessage.uid)
     setChatData(pre => {
       pre[index].text = updateMessage.text
@@ -255,7 +253,7 @@ function Chat({}) {
   }, [updateMessage])
 
   useEffect(() => {
-    if (!translationMessage) return
+    if (!translationMessage || id !== translationMessage.botId) return
     const index = chatData.findIndex(item => item.id === translationMessage.id)
     setChatData(pre => {
       // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
