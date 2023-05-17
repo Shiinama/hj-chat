@@ -220,8 +220,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   smallButton: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     borderRadius: 30,
     backgroundColor: 'white',
     flexDirection: 'row',

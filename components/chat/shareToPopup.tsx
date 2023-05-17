@@ -8,14 +8,38 @@ import CopyLinkIcon from '../../assets/images/chat/copy_link.svg'
 import SaveIcon from '../../assets/images/chat/save_img.svg'
 import TwitterIcon from '../../assets/images/chat/twitter.svg'
 import Clipboard from '@react-native-clipboard/clipboard'
+import * as MediaLibrary from 'expo-media-library'
+import * as Permissions from 'expo-permissions'
 
 import { createSharedConversation } from '../../api'
 import { ensureDirExists, imageDir } from '../../utils/filesystem'
-// import { ensureDirExists } from '../../utils/filesystem'
+// import { ensureDirExists } from '../../utils/filesystem
 export interface ShareToPopupProps {}
 type shareAction = 'save' | 'link' | 'twitter'
 const ShareToPopup: FC<ShareToPopupProps> = () => {
   const { value, setValue } = useContext(ChatContext)
+  const saveImage = async uri => {
+    // try {
+    //   const asset = await MediaLibrary.createAssetAsync(uri)
+    //   const album = await MediaLibrary.getAlbumAsync('Download')
+    //   if (album == null) {
+    //     await MediaLibrary.createAlbumAsync('Download', asset, false)
+    //     Toast('Image successfully saved')
+    //   } else {
+    //     await MediaLibrary.addAssetsToAlbumAsync([asset], album, false)
+    //     Toast('Image successfully saved')
+    //   }
+    // } catch (e) {
+    //   console.log(e)
+    // }
+    const { status } = await MediaLibrary.requestPermissionsAsync()
+    console.log(await MediaLibrary.requestPermissionsAsync())
+    if (status != 'granted') {
+      return
+    }
+    await MediaLibrary.saveToLibraryAsync(uri)
+    Toast('Image successfully saved')
+  }
   const action = (key: shareAction) => {
     if (value?.selectedItems?.length <= 0) {
       Toast('Please select at least one chat!')
@@ -27,22 +51,16 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
       switch (key) {
         case 'save':
           const isExists = await ensureDirExists()
-          console.log(isExists)
           if (!isExists) {
             Toast('File system error!')
             return
           }
-          FileSystem.downloadAsync(`${systemConfig.downloadHost}/${res}/download`, `${imageDir}` + `${res}.png`)
-            .then(({ uri }) => {
-              console.log(uri)
-              Toast('download successfully!')
-            })
-            .catch(error => {
-              console.error(error)
-            })
-            .finally(() => {
-              clearClose()
-            })
+          const { uri } = await FileSystem.downloadAsync(
+            `${systemConfig.downloadHost}/${res}/download`,
+            `${imageDir}` + `${res}.png`
+          )
+          await saveImage(uri)
+
           break
         case 'link':
           Clipboard.setString(`${systemConfig.shareLink}${res}`)
