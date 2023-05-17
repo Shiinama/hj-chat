@@ -70,11 +70,11 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Give $(PRODUCT_NAME) permission to access your photos</string>
 	<key>PROJECT_APP_UUID</key>
-	<string>6b6a232e-973a-405c-969a-a546189fda16</string>
+	<string>${PROJECT_APP_UUID}</string>
 	<key>PROJECT_CLIENT_KEY</key>
-	<string>cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk</string>
+	<string>${PROJECT_CLIENT_KEY}</string>
 	<key>PROJECT_UUID</key>
-	<string>c9aa126d-8db2-45cc-8898-60e3a69d5050</string>
+	<string>${PROJECT_UUID}</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

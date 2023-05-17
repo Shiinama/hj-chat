@@ -16,7 +16,7 @@ export default function Settings() {
   return (
     <View style={{ margin: 20 }}>
       <Button
-        style={{ alignItems: 'flex-start' }}
+        style={{ alignItems: 'center' }}
         renderLeftIcon={() => <Signout></Signout>}
         type="ghost"
         text="Sign Out"

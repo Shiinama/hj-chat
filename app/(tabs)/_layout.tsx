@@ -42,8 +42,8 @@ export default function TabLayout() {
                 alignItems: 'center',
               }}
             >
-              <Image style={{ width: 20, height: 20 }} source={myshell}></Image>
-              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 4 }}>MyShell</Text>
+              <Image style={{ width: 22, height: 22 }} source={myshell}></Image>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 4, fontWeight: 'bold' }}>MyShell</Text>
             </View>
           ),
           headerRight: () => (
@@ -91,7 +91,7 @@ export default function TabLayout() {
           title: '',
           headerLeft: () => (
             <View>
-              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 20 }}>Profile</Text>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 20, fontWeight: 'bold' }}>Profile</Text>
             </View>
           ),
           tabBarIcon: ({ focused }) => (focused ? <ProfileAcitve /> : <Profile />),

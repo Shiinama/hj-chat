@@ -4,6 +4,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { getInvitation } from '../../api/proofile'
 import * as WebBrowser from 'expo-web-browser'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import System from '../../constants/System'
 
 type Iprops = {
   title: number
@@ -93,7 +94,7 @@ export default function PassCardItem({ title, subView, level, id, Sea }: Iprops)
         <Button
           onPress={() => {
             getInvitation({}).then(({ code }: any) => {
-              Clipboard.setString(code)
+              Clipboard.setString(`${System.inviteLink}${code}`)
               Toast('Copied!')
             })
           }}
