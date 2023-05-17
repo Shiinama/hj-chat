@@ -108,6 +108,8 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 20,
+    width: '100%',
+    minHeight: 220,
     padding: 12,
     boxSizing: 'border-box',
     backgroundColor: '#F6F6F6',

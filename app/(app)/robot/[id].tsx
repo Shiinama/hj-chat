@@ -161,11 +161,7 @@ export default function Robot() {
         )}
         <View style={styles.description}>
           <Text style={styles.descriptionTitle}>Description</Text>
-          <Text style={styles.descriptionValue}>
-            "Her" is a futuristic romantic drama movie that takes place in a world where technology has advanced to the
-            point where people form relationships with AI operating systems. I will provide my answer, but we will need
-            to improve it through continual iterations by going through the next steps.
-          </Text>
+          <Text style={styles.descriptionValue}>{botStore.description}</Text>
         </View>
       </View>
       <TouchableOpacity
