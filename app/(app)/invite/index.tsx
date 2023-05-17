@@ -21,7 +21,7 @@ export default function Invite() {
     setLoading(true)
     getInvitation({}).then(({ code, validInvitationCount }: any) => {
       setCode(code)
-      setLink(`${System.baseUrl}/invite/${code}`)
+      setLink(`${System.inviteLink}${code}`)
       setValidInvitationCount(validInvitationCount)
       setLoading(false)
     })
