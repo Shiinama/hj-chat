@@ -22,12 +22,12 @@ const envConfig = {
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   prod: {
-    // PROJECT_UUID: 'cb5e91db-f37b-4e53-8107-b97e36f78072',
-    // PROJECT_CLIENT_KEY: 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx',
-    // PROJECT_APP_UUID: 'f34c6ee8-a870-447e-aa86-3400c12c8f22',
-    PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
-    PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
-    PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
+    PROJECT_UUID: 'cb5e91db-f37b-4e53-8107-b97e36f78072',
+    PROJECT_CLIENT_KEY: 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx',
+    PROJECT_APP_UUID: 'f34c6ee8-a870-447e-aa86-3400c12c8f22',
+    // PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
+    // PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    // PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api.myshell.ai',
     inviteLink: 'https://app.myshell.ai/invite/',
     authKey: 'Authorization',
@@ -106,7 +106,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
+    isLogin: process.env.REACT_APP_ENV === 'dev',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },

@@ -151,14 +151,24 @@ export default function Passcard() {
   )
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          marginTop: 20,
+          borderRadius: 8,
+          marginHorizontal: 20,
+          backgroundColor: '#f6f6f6',
+          padding: 5,
+        }}
+      >
         <TouchableOpacity
           style={{
             backgroundColor: tab == 1 ? '#7A2EF6' : '#f6f6f6',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 166,
-            height: 40,
+            flex: 1,
+            height: 30,
             borderRadius: 8,
           }}
           onPress={() => setTab(1)}
@@ -170,8 +180,8 @@ export default function Passcard() {
             backgroundColor: tab == 2 ? '#7A2EF6' : '#f6f6f6',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 166,
-            height: 40,
+            flex: 1,
+            height: 30,
             borderRadius: 4,
           }}
           onPress={() => {
@@ -216,7 +226,7 @@ const styles = StyleSheet.create({
     width: ITEM_WIDTH,
     height: ITEM_HEIGHT - 200,
     alignItems: 'center',
-    borderRadius: 6,
+    borderRadius: 12,
     justifyContent: 'center',
     backgroundColor: '#F6F6F6',
   },

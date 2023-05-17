@@ -88,7 +88,12 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarShowLabel: false,
-          title: 'Profile',
+          title: '',
+          headerLeft: () => (
+            <View>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 20 }}>Profile</Text>
+            </View>
+          ),
           tabBarIcon: ({ focused }) => (focused ? <ProfileAcitve /> : <Profile />),
         }}
       />

@@ -207,7 +207,9 @@ function Chat({}) {
               color="#7A2EF6"
               size="s"
               style={{ borderRadius: 8 }}
-              onPress={() => setChatPageValue({ pageStatus: 'normal' })}
+              onPress={() => {
+                setChatPageValue({ pageStatus: 'normal', selectedItems: [] })
+              }}
             />
           )
         )
@@ -216,7 +218,6 @@ function Chat({}) {
   }, [navigation, name, chatPageValue.pageStatus])
 
   useEffect(() => {
-    console.log(id, message, 12312)
     if (!message || id !== message.data.botId) return
     setChatData([message.data, ...chatData])
     flatList.current?.scrollToIndex?.({ index: 0 })
@@ -227,7 +228,6 @@ function Chat({}) {
   }, [message])
 
   useEffect(() => {
-    console.log(resMessage, id, 12312)
     if (!resMessage || id !== resMessage.botId) return
     setChatData([resMessage, ...chatData])
     if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
