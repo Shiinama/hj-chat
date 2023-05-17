@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     paddingLeft: 10,
     paddingRight: 10,
+    overflow: 'hidden',
     borderRadius: 8,
     fontStyle: 'normal',
     fontWeight: '700',
