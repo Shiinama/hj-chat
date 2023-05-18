@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFocusEffect } from 'expo-router'
 import { useNavigation } from 'expo-router'
-import { Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native'
+import { Text, View, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
 import { WebView } from 'react-native-webview'
 
 import { Image } from 'expo-image'
@@ -104,7 +104,11 @@ export default function Profile() {
       })
   }
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="height"
+      keyboardVerticalOffset={Platform.OS === 'android' ? -60 : -70}
+    >
       <ScrollView bounces={false} style={{ flex: 1 }}>
         <View style={styles.main}>
           <TouchableOpacity
@@ -194,6 +198,6 @@ export default function Profile() {
           }}
         />
       </Popup.Page>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
