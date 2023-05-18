@@ -17,7 +17,6 @@ function useProtectedRoute(user) {
       return
     }
     const notNeedLogin = Constants.manifest.extra.isLogin
-    console.log(notNeedLogin)
     if (!notNeedLogin) {
       if (!user && rootSegment !== '(auth)/sign-in') {
         router.replace('(auth)/sign-in')

@@ -14,7 +14,6 @@ import ViewShot, { captureRef } from 'react-native-view-shot'
 import { useBoolean } from 'ahooks'
 const uploadFile = async uri => {
   const filePath = uri
-  console.log(uri)
   const regex = /\/([\w-]+)\.\w+$/
   const match = regex.exec(uri)
   const filename = match[1]
@@ -74,7 +73,6 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
       aspect: [4, 3],
       quality: 1,
     })
-    console.log(result)
     if (!result.canceled) {
       setInputImage(result.assets[0])
     }
@@ -90,7 +88,6 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
         uri => {
           uploadFile(uri)
             .then(res => {
-              console.log(res)
               Toast('Update successfully!')
               setVisible(false)
               getProfile()

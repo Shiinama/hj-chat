@@ -33,7 +33,6 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
     //   console.log(e)
     // }
     const { status } = await MediaLibrary.requestPermissionsAsync()
-    console.log(await MediaLibrary.requestPermissionsAsync())
     if (status != 'granted') {
       return
     }

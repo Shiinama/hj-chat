@@ -300,7 +300,6 @@ function Chat({}) {
             startRecording,
             stopRecording,
             onSubmitEditing: async (value: any) => {
-              console.log(value)
               if (value.length === 0) {
                 Alert.alert('Please enter your message')
                 return

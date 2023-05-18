@@ -107,7 +107,6 @@ const RecordButton = ({
         allowsRecordingIOS: false,
       })
       AudioPayManagerSingle().play(sound, () => {
-        console.log('AudioPayManagerSingle sttop')
         setIsSound(() => false)
         AnimationRef?.current?.stopAnimation?.()
       })
@@ -192,7 +191,6 @@ const RecordButton = ({
         )
     }
   }
-  console.log('isSOund:', isSound)
   return <View style={styles.container}>{playOrPauseIcon()}</View>
 }
 
