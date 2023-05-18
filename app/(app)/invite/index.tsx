@@ -60,7 +60,7 @@ export default function Invite() {
                   backgroundColor: '#EDEDED',
                   marginTop: 10,
                   height: 40,
-                  borderRadius: 4,
+                  borderRadius: 8,
                 }}
                 value={link}
                 onChangeText={nextValue => setLink(nextValue)}
@@ -82,7 +82,7 @@ export default function Invite() {
                   backgroundColor: '#EDEDED',
                   marginTop: 10,
                   height: 40,
-                  borderRadius: 4,
+                  borderRadius: 10,
                 }}
                 value={code}
                 onChangeText={nextValue => setCode(nextValue)}
@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     backgroundColor: '#F6F6F6',
     width: 343,
+    borderRadius: 10,
     height: 261,
     justifyContent: 'space-between',
     alignItems: 'center',
