@@ -219,7 +219,6 @@ function InputToolsTar({
             <TouchableOpacity
               style={styles.toolsIcon}
               onPress={() => {
-                console.log('aaaaaaaaaaaaa:', text, onEndEditText)
                 if (onEndEditText) {
                   const clear = onEndEditText?.(text)
                   clear && setText('')
