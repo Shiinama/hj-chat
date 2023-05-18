@@ -106,7 +106,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
+    isLogin: process.env.REACT_APP_ENV === 'dev',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },

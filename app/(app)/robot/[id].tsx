@@ -14,6 +14,7 @@ import useUserStore from '../../../store/userStore'
 import { genBotUrl } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import LinearText from '../../../components/linearText'
+import Tag from '../../../components/tag'
 
 export default function Robot() {
   const router = useRouter()
@@ -110,29 +111,14 @@ export default function Robot() {
           }}
         />
         <View style={styles.user}>
-          <Text style={styles.userName}>{botStore.name}</Text>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.userName}>
+            {botStore.name}
+          </Text>
+          {/* <LinearText text={botStore.name} fontSize={12.2} styles={styles.userName}></LinearText> */}
           <FlashIcon energyPerChat={botStore.energyPerChat} />
-          {/* <LinearText text={botStore.name} styles={styles.userName}></LinearText> */}
         </View>
         <View style={styles.tagList}>
-          {tagList &&
-            tagList.map(item => (
-              <View
-                key={item?.id}
-                style={{
-                  ...styles.tagListItem,
-                  backgroundColor: item?.bgColor,
-                }}
-              >
-                <View
-                  style={{
-                    ...styles.tagListItemTip,
-                    backgroundColor: item?.tagColor,
-                  }}
-                ></View>
-                <Text style={styles.tagListItemText}>{botStore[item.key] || item.name}</Text>
-              </View>
-            ))}
+          {tagList && tagList.map(item => <Tag key={item} {...{ ...item, keyValue: botStore[item.key] }}></Tag>)}
         </View>
         {userStore?.userId === botStore?.userId && (
           <View style={styles.actions}>

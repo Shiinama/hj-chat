@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   user: {
-    marginTop: 10,
+    marginTop: 5,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 24,
+    width: '80%',
     fontStyle: 'normal',
     fontWeight: '700',
   },

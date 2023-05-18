@@ -8,9 +8,15 @@ import MaskedView from '@react-native-masked-view/masked-view'
 import { LinearGradient } from 'expo-linear-gradient'
 import userStore from '../store/userStore'
 import LinearText from './linearText'
+import Tag from './tag'
 function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   const userInfo = userStore.getState().profile
-  console.log(userInfo, ld)
+  const tag = {
+    name: ld.privateBotId ? (ld.statis === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
+    bgColor: ld.privateBotId ? (ld.statis === 'Public' ? '#CAF1B7' : '#FAF4E1') : '#FAF4E1',
+    tagColor: ld.privateBotId ? (ld.statis === 'Public' ? '#165B0B' : '#FAF4E1') : '#E4B50C',
+  }
+
   return (
     <TouchableOpacity
       style={styles.listItem}
@@ -25,7 +31,10 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
             {showTime ? (
               <Text style={styles.name}>{ld.name}</Text>
             ) : userInfo?.id === ld.userId ? (
-              <LinearText text={ld.name} styles={styles.name}></LinearText>
+              <View style={{ flexDirection: 'row' }}>
+                <LinearText fontSize={10} text={ld.name} styles={styles.name}></LinearText>
+                <Tag {...tag}></Tag>
+              </View>
             ) : (
               <Text style={styles.name}>{ld.name}</Text>
             )}
