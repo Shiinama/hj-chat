@@ -38,8 +38,8 @@ export default function Invite() {
         <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
           <View>
             <View style={styles.inviteConut}>
-              <Text style={{ fontSize: 16, fontWeight: '700' }}>Your valid invite</Text>
-              <Text style={{ fontSize: 34, fontWeight: '800', color: '#7A2EF6' }}>{validInvitationCount || 0}</Text>
+              <Text style={{ fontSize: 18, fontWeight: '700' }}>Your valid invite</Text>
+              <Text style={{ fontSize: 70, fontWeight: '600', color: '#7A2EF6' }}>{validInvitationCount || 0}</Text>
               <Text style={{ fontSize: 16, width: 263, color: '#797979' }}>
                 Share Myshell with Friends and instantly enjoy high rebate benefits.
               </Text>
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F6F6',
     width: 343,
     borderRadius: 10,
-    height: 261,
+    height: 250,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
