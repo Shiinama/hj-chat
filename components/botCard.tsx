@@ -21,7 +21,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
     <TouchableOpacity
       style={styles.listItem}
       onPress={() => {
-        onShowDetail(ld)
+        onShowDetail({ ...ld, tag: userInfo?.id === ld.userId && tag })
       }}
     >
       {renderImage(ld.logo, styles.avatar)}

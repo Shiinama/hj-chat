@@ -9,7 +9,7 @@ import SaveIcon from '../../assets/images/chat/save_img.svg'
 import TwitterIcon from '../../assets/images/chat/twitter.svg'
 import Clipboard from '@react-native-clipboard/clipboard'
 import * as MediaLibrary from 'expo-media-library'
-import * as Permissions from 'expo-permissions'
+import * as WebBrowser from 'expo-web-browser'
 
 import { createSharedConversation } from '../../api'
 import { ensureDirExists, imageDir } from '../../utils/filesystem'
@@ -67,6 +67,9 @@ const ShareToPopup: FC<ShareToPopupProps> = () => {
           Toast('Copied!')
           break
         case 'twitter':
+          WebBrowser.openBrowserAsync(
+            `https://twitter.com/intent/tweet?url=${systemConfig.shareLink}${res}&text=@myshell_ai`
+          )
           break
         default:
           break

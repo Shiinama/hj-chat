@@ -45,6 +45,7 @@ export default function TabTwoScreen() {
       pathname: `robot/${event.id}`,
       params: {
         id: event.id,
+        tag: event.tag,
         userId: event.userId,
         status: event.status,
         name: event.name,

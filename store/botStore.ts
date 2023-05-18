@@ -9,6 +9,11 @@ type ListDataItem = {
   userId: number
   logo: string
   language: string
+  tag?: {
+    name: string
+    bgColor: string
+    tagColor: string
+  }
   energyPerChat: number
   pinned: boolean
   lastInteractionDate: string

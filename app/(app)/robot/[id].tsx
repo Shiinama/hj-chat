@@ -29,55 +29,33 @@ export default function Robot() {
       title: 'Robot',
     })
   }, [])
-
+  console.log(botStore?.tag)
   useEffect(() => {
-    let list = [
-      {
-        id: 0,
-        bgColor: '#F1EAFE',
-        tagColor: '#7A2EF6',
-        keu: 'userId',
-        name: 'Mine',
-      },
-      {
-        id: 1,
-        bgColor: '#FAF4E1',
-        tagColor: '#F6CA2E',
-        key: 'status',
-        name: 'Testnet',
-      },
-      {
-        id: 2,
-        bgColor: '#F5E1EF',
-        tagColor: '#DD0EA3',
-        key: 'language',
-        name: 'en_US',
-      },
-      // {
-      //   id: 3,
-      //   bgColor: '#F5E1EF',
-      //   tagColor: '#DD0EA3',
-      //   name: 'US',
-      // },
-      // {
-      //   id: 4,
-      //   bgColor: '#E2F2F6',
-      //   tagColor: '#2ED2F6',
-      //   name: 'Game',
-      // },
-      // {
-      //   id: 5,
-      //   bgColor: '#E2F2F6',
-      //   tagColor: '#2ED2F6',
-      //   name: 'Cartoon',
-      // },
-      // {
-      //   id: 6,
-      //   bgColor: '#E4E6F7',
-      //   tagColor: '#1A2FE8',
-      //   name: 'Tool',
-      // },
-    ]
+    let list
+    if (botStore?.tag) {
+      list = [
+        botStore.tag,
+        ...[
+          {
+            id: 2,
+            bgColor: '#F5E1EF',
+            tagColor: '#DD0EA3',
+            key: 'language',
+            name: 'en_US',
+          },
+        ],
+      ]
+    } else {
+      list = [
+        {
+          id: 2,
+          bgColor: '#F5E1EF',
+          tagColor: '#DD0EA3',
+          key: 'language',
+          name: 'en_US',
+        },
+      ]
+    }
     setTagList(list)
   }, [navigation, name])
 
