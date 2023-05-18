@@ -75,6 +75,7 @@ function Chat({}) {
         playsInSilentModeIOS: true,
       })
     } catch (err) {
+      console.log(err)
       Toast('Failed to start recording')
     }
     loadData()
@@ -172,9 +173,11 @@ function Chat({}) {
     sendAudio()
   }
 
-  console.log('recording:', recordingRef.current)
-
   const sendAudio = () => {
+    if (!AudioPayManagerSingle().netInfo?.isConnected) {
+      Alert.alert('Please check your network connection')
+      return
+    }
     const reqId = uuidv4()
     sendMessage('voice_chat', {
       reqId,
@@ -184,6 +187,10 @@ function Chat({}) {
     setVoice(null)
   }
   const translationText = messageUid => {
+    if (!AudioPayManagerSingle().netInfo?.isConnected) {
+      Alert.alert('Please check your network connection')
+      return
+    }
     const reqId = uuidv4()
     sendMessage('translate_message', {
       reqId,
@@ -285,34 +292,37 @@ function Chat({}) {
     }
   }, [chatData, isPending, randomId])
   if (loading) return <ShellLoading></ShellLoading>
-  console.log('rerender chat')
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
       <Container
         haveHistory={chatData.length > 0}
-        inputTextProps={
-          {
-            uid,
-            userId,
-            pinned,
-            setAuInfo,
-            durationMillis,
-            startRecording,
-            stopRecording,
-            onSubmitEditing: async (value: any) => {
-              if (value.length === 0) {
-                Alert.alert('Please enter your message')
-                return
-              }
-              const reqId = uuidv4()
-              sendMessage('text_chat', {
-                reqId,
-                botUid: uid,
-                text: value,
-              })
-            },
-          } as any
-        }
+        inputTextProps={{
+          uid,
+          userId,
+          pinned,
+          setAuInfo,
+          durationMillis,
+          startRecording,
+          stopRecording,
+          onSubmitEditing: v => {},
+          onEndEditText: (value: any) => {
+            if (value.length === 0) {
+              Alert.alert('Please enter your message')
+              return true
+            }
+            if (!AudioPayManagerSingle().netInfo?.isConnected) {
+              Alert.alert('Please check your network connection')
+              return false
+            }
+            const reqId = uuidv4()
+            sendMessage('text_chat', {
+              reqId,
+              botUid: uid,
+              text: value,
+            })
+            return true
+          },
+        }}
         flatListRef={flatList}
         flatListProps={{
           data: listData,

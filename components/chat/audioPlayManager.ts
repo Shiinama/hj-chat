@@ -1,3 +1,4 @@
+import { NetInfoState } from '@react-native-community/netinfo'
 import { Audio } from 'expo-av'
 import { AppState, NativeEventSubscription } from 'react-native'
 
@@ -14,6 +15,8 @@ export class AudioPayManager {
   isRecording = false
 
   currentAutoPlayUrl = undefined
+
+  netInfo: NetInfoState
 
   constructor() {
     this.appStateListener = AppState.addEventListener('change', state => {
