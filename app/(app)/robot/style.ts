@@ -109,9 +109,8 @@ const styles = StyleSheet.create({
   description: {
     marginTop: 20,
     width: '100%',
-    // minHeight: 220,
+    minHeight: 220,
     padding: 12,
-    boxSizing: 'border-box',
     backgroundColor: '#F6F6F6',
     borderRadius: 12,
   },
@@ -123,10 +122,9 @@ const styles = StyleSheet.create({
     color: '#1F1F1F',
   },
   descriptionValue: {
-    lineHeight: 22,
     fontSize: 14,
     fontWeight: '400',
-    // fontStyle: 'normal',
+    fontStyle: 'normal',
     color: '#1F1F1F',
   },
   actionMain: {
