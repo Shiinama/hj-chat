@@ -1,7 +1,7 @@
 import { useRouter, useSegments } from 'expo-router'
 import { useEffect, useContext, createContext, useState } from 'react'
 import useUserStore from '../store/userStore'
-
+import * as particleAuth from 'react-native-particle-auth'
 import Constants from 'expo-constants'
 const AuthContext = createContext(null)
 
@@ -47,9 +47,16 @@ export function Provider(props) {
           useUserStore.setState({ userBaseInfo: value })
           router.replace('(tabs)')
         },
-        signOut: () => {
-          setAuth(null)
-          useUserStore.setState({ userBaseInfo: null })
+        signOut: async () => {
+          const result = await particleAuth.logout()
+          if (result.status) {
+            console.log(result.data)
+            setAuth(null)
+            useUserStore.setState({ userBaseInfo: null })
+          } else {
+            const error = result.data
+            console.log(error)
+          }
         },
         user,
       }}

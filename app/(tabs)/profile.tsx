@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-nati
 import ImgPlaceholder from '../../assets/images/img_placeholder.png'
 import { Image } from 'expo-image'
 import arrowIcon from '../../assets/images/profile/arrow.png'
-import editIcon from '../../assets/images/profile/edit.png'
+import EditIcon from '../../assets/images/profile/edit.svg'
 import helpIcon from '../../assets/images/profile/help.png'
 import inviteIcon from '../../assets/images/profile/invite.png'
 import walletIcon from '../../assets/images/profile/wallet.png'
@@ -54,7 +54,7 @@ export default function TabThreeScreen() {
               style={{ width: 80, height: 80, borderRadius: 12 }}
             />
 
-            <Image source={editIcon} style={{ width: 30, height: 30, borderRadius: 4 }} />
+            <EditIcon></EditIcon>
           </View>
           <View style={styles.profileDetail}>
             <Text numberOfLines={1} ellipsizeMode="tail" style={styles.profileDesc}>

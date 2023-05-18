@@ -30,7 +30,7 @@ export default function SignIn() {
   const login = async loginType => {
     const type = loginType
     const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
-    const result = await particleAuth.login(type, '', _supportAuthType as any, undefined)
+    const result = await particleAuth.login(type, '', _supportAuthType as any, true)
     if (result.status) {
       const userInfo = result.data
       useUserStore.setState({ particleInfo: userInfo })
