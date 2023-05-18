@@ -12,6 +12,7 @@ import { ApplicationProvider } from '@ui-kitten/components'
 import { CustomStack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'
 import { ensureDirExists } from '../utils/filesystem'
+import AudioPayManagerSingle from '../components/chat/audioPlayManager'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -35,6 +36,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
+      AudioPayManagerSingle().netInfo = state
       if (!state.isConnected) {
         Toast('Please check your network connection')
       }

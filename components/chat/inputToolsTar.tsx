@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   NativeSyntheticEvent,
   TextInputContentSizeChangeEventData,
+  TextInputProps,
 } from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
@@ -25,17 +26,21 @@ import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../a
 import { useBoolean } from 'ahooks'
 import AudioAnimation from './audioAnimation'
 import CallBackManagerSingle from '../../utils/CallBackManager'
+
+export interface MTextInputProps extends TextInputProps {
+  onEndEditText?: (value: string) => boolean
+  startRecording: () => void
+  stopRecording: () => void
+  durationMillis
+  setAuInfo: (audioFileUri: string) => void
+  uid: string
+  userId: number
+  pinned: boolean
+}
+
 type Props = {
   minInputToolbarHeight: number
-  inputTextProps: TextInput['props'] & {
-    startRecording: () => void
-    stopRecording: () => void
-    durationMillis
-    setAuInfo: (audioFileUri: string) => void
-    uid: string
-    userId: number
-    pinned: boolean
-  }
+  inputTextProps: MTextInputProps
   inputHeight
   barHeight
   setBarHeight
@@ -61,6 +66,7 @@ function InputToolsTar({
     stopRecording,
     setAuInfo,
     onSubmitEditing,
+    onEndEditText,
     pinned: originalPinned,
     uid,
     userId,
@@ -213,8 +219,14 @@ function InputToolsTar({
             <TouchableOpacity
               style={styles.toolsIcon}
               onPress={() => {
-                onSubmitEditing(text as any)
-                setText('')
+                console.log('aaaaaaaaaaaaa:', text, onEndEditText)
+                if (onEndEditText) {
+                  const clear = onEndEditText?.(text)
+                  clear && setText('')
+                } else {
+                  onSubmitEditing(text as any)
+                  setText('')
+                }
               }}
             >
               <Send></Send>

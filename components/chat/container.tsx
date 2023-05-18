@@ -1,12 +1,13 @@
-import { KeyboardAvoidingView, View } from 'react-native'
+import { KeyboardAvoidingView, TextInputProps, View } from 'react-native'
 import { LegacyRef, useEffect, useState } from 'react'
 import MessagesContainer from './messagesContainer'
-import InputToolsTar from './inputToolsTar'
+import InputToolsTar, { MTextInputProps } from './inputToolsTar'
 import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 export interface FishChatProps {
   haveHistory?: boolean
-  inputTextProps: TextInput['props']
+  inputTextProps: MTextInputProps
   flatListProps: FlatList['props']
   InputToolBarHeight?: number
   messagesContainerStyle?: StyleProp<ViewStyle>
