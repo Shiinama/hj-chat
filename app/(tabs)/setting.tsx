@@ -34,7 +34,6 @@ export default function TabTwoScreen() {
   const loadData = () => {
     setLoading(true)
     getUgcBotList({}).then(res => {
-      console.log(res)
       setLoading(false)
       setListData(res as ListDataItem[])
     })
