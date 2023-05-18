@@ -15,6 +15,7 @@ import { genBotUrl } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import LinearText from '../../../components/linearText'
 import Tag from '../../../components/tag'
+import { ScrollView } from 'react-native'
 
 export default function Robot() {
   const router = useRouter()
@@ -111,10 +112,10 @@ export default function Robot() {
           }}
         />
         <View style={styles.user}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.userName}>
+          {/* <Text numberOfLines={1} ellipsizeMode="tail" style={styles.userName}>
             {botStore.name}
-          </Text>
-          {/* <LinearText text={botStore.name} fontSize={12.2} styles={styles.userName}></LinearText> */}
+          </Text> */}
+          <LinearText text={botStore.name} styles={styles.userName}></LinearText>
           <FlashIcon energyPerChat={botStore.energyPerChat} />
         </View>
         <View style={styles.tagList}>
@@ -147,10 +148,10 @@ export default function Robot() {
             </TouchableOpacity>
           </View>
         )}
-        <View style={styles.description}>
+        <ScrollView style={styles.description}>
           <Text style={styles.descriptionTitle}>Description</Text>
           <Text style={styles.descriptionValue}>{botStore.description}</Text>
-        </View>
+        </ScrollView>
       </View>
       <TouchableOpacity
         onPress={() => {

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   tagListItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 20,
+    height: 28,
     paddingLeft: 10,
     paddingRight: 10,
     borderRadius: 6,

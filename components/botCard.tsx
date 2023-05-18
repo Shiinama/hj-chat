@@ -32,7 +32,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
               <Text style={styles.name}>{ld.name}</Text>
             ) : userInfo?.id === ld.userId ? (
               <View style={{ flexDirection: 'row' }}>
-                <LinearText fontSize={9.8} text={ld.name} styles={styles.name}></LinearText>
+                <LinearText text={ld.name} styles={styles.name}></LinearText>
                 <Tag {...tag}></Tag>
               </View>
             ) : (
@@ -110,8 +110,6 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    lineHeight: 20,
-    height: 20,
     fontWeight: 'bold',
     fontSize: 16,
     color: '#1F1F1F',

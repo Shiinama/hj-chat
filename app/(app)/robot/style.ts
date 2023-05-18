@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 24,
-    width: '80%',
     fontStyle: 'normal',
     fontWeight: '700',
   },
@@ -110,8 +109,8 @@ const styles = StyleSheet.create({
   description: {
     marginTop: 20,
     width: '100%',
-    minHeight: 220,
     padding: 12,
+    marginBottom: 80,
     backgroundColor: '#F6F6F6',
     borderRadius: 12,
   },
