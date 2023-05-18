@@ -4,8 +4,13 @@ import RootStyles from '../constants/RootStyles'
 import Pined from '../assets/images/tabbar/pin.svg'
 import { renderImage } from './profileInfo/helper'
 import dayjs from 'dayjs'
-
+import MaskedView from '@react-native-masked-view/masked-view'
+import { LinearGradient } from 'expo-linear-gradient'
+import userStore from '../store/userStore'
+import LinearText from './linearText'
 function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
+  const userInfo = userStore.getState().profile
+  console.log(userInfo, ld)
   return (
     <TouchableOpacity
       style={styles.listItem}
@@ -17,7 +22,13 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
       <View style={{ flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
         <View style={styles.listItemTop}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.name}>{ld.name}</Text>
+            {showTime ? (
+              <Text style={styles.name}>{ld.name}</Text>
+            ) : userInfo?.id === ld.userId ? (
+              <LinearText text={ld.name} styles={styles.name}></LinearText>
+            ) : (
+              <Text style={styles.name}>{ld.name}</Text>
+            )}
           </View>
           {showTime ? (
             <Text style={styles.time}>

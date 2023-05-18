@@ -13,6 +13,7 @@ import FlashIcon from '../../../components/flashIcon'
 import useUserStore from '../../../store/userStore'
 import { genBotUrl } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
+import LinearText from '../../../components/linearText'
 
 export default function Robot() {
   const router = useRouter()
@@ -111,6 +112,7 @@ export default function Robot() {
         <View style={styles.user}>
           <Text style={styles.userName}>{botStore.name}</Text>
           <FlashIcon energyPerChat={botStore.energyPerChat} />
+          {/* <LinearText text={botStore.name} styles={styles.userName}></LinearText> */}
         </View>
         <View style={styles.tagList}>
           {tagList &&
