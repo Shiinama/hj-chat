@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, Animated, Easing, TouchableOpacity, Text } from 'react-native'
+import { StyleSheet, Animated, Easing, TouchableOpacity, Text, Alert } from 'react-native'
 import Huatong from '../../assets/images/chat/huatong.svg'
 import { Audio } from 'expo-av'
 import Delete from '../../assets/images/chat/delete.svg'
@@ -180,6 +180,10 @@ const RecordButton = ({
             <TouchableOpacity
               style={styles.smallButton}
               onPress={async () => {
+                if (!AudioPayManagerSingle().netInfo?.isConnected) {
+                  Alert.alert('Please check your network connection')
+                  return
+                }
                 setAuInfo()
                 setIsShow(true)
                 setShowAni(true)
