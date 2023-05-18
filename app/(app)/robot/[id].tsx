@@ -24,12 +24,12 @@ export default function Robot() {
   const [tagList, setTagList] = useState([])
   const botStore = cbotStore.getState()
   const userStore = useUserStore.getState().userBaseInfo
+  console.log(botStore, userStore)
   useEffect(() => {
     navigation.setOptions({
       title: 'Robot',
     })
   }, [])
-  console.log(botStore?.tag)
   useEffect(() => {
     let list
     if (botStore?.tag) {

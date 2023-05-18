@@ -12,9 +12,9 @@ import Tag from './tag'
 function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   const userInfo = userStore.getState().profile
   const tag = {
-    name: ld.privateBotId ? (ld.statis === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
-    bgColor: ld.privateBotId ? (ld.statis === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
-    tagColor: ld.privateBotId ? (ld.statis === 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
+    name: ld.privateBotId ? (ld.statis !== 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
+    bgColor: ld.privateBotId ? (ld.statis !== 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
+    tagColor: ld.privateBotId ? (ld.statis !== 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
   }
 
   return (
