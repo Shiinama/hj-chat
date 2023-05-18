@@ -110,7 +110,8 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         if (status.isLoaded) {
           setDuration(status.durationMillis || 0)
         }
-        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 20 >= 0) {
+        // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
+        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 150 >= 0) {
           soundInterval.current && clearInterval(soundInterval.current)
           setCurrentPosition(() => {
             return 0
