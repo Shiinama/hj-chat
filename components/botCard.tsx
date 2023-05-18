@@ -13,8 +13,8 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   const userInfo = userStore.getState().profile
   const tag = {
     name: ld.privateBotId ? (ld.statis === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
-    bgColor: ld.privateBotId ? (ld.statis === 'Public' ? '#CAF1B7' : '#FAF4E1') : '#FAF4E1',
-    tagColor: ld.privateBotId ? (ld.statis === 'Public' ? '#165B0B' : '#FAF4E1') : '#E4B50C',
+    bgColor: ld.privateBotId ? (ld.statis === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
+    tagColor: ld.privateBotId ? (ld.statis === 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
   }
 
   return (
@@ -32,7 +32,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
               <Text style={styles.name}>{ld.name}</Text>
             ) : userInfo?.id === ld.userId ? (
               <View style={{ flexDirection: 'row' }}>
-                <LinearText fontSize={10} text={ld.name} styles={styles.name}></LinearText>
+                <LinearText fontSize={9.8} text={ld.name} styles={styles.name}></LinearText>
                 <Tag {...tag}></Tag>
               </View>
             ) : (
