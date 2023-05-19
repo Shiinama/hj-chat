@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Text,
   View,
@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native'
 
 import { styles } from './style'
@@ -20,12 +21,33 @@ import { useAuth } from '../../context/auth'
 import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
 import * as particleAuth from 'react-native-particle-auth'
 import useUserStore from '../../store/userStore'
+import { useWeb3Modal, Web3Button, Web3Modal } from '@web3modal/react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 
 // import { createWeb3 } from '../../tmp/web3Demo'
 import { particleLogin } from '../../api/auth'
 // const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
 
 export default function SignIn() {
+  const providerMetadata = {
+    name: 'React Native V2 dApp',
+    description: 'RN dApp by WalletConnect',
+    url: 'https://walletconnect.com/',
+    icons: ['https://avatars.githubusercontent.com/u/37784886'],
+  }
+  const sessionParams = {
+    namespaces: {
+      eip155: {
+        methods: ['eth_sendTransaction', 'eth_signTransaction', 'eth_sign', 'personal_sign', 'eth_signTypedData'],
+        chains: ['eip155:1'],
+        events: ['chainChanged', 'accountsChanged'],
+        rpcMap: {},
+      },
+    },
+  }
+
+  const [clientId, setClientId] = useState<string>()
+  const { isConnected, provider } = useWeb3Modal()
   const { signIn } = useAuth()
   const login = async loginType => {
     const type = loginType
@@ -45,6 +67,22 @@ export default function SignIn() {
       Toast(error)
     }
   }
+  const onCopy = (value: string) => {
+    Clipboard.setString(value)
+    Alert.alert('Copied to clipboard')
+  }
+
+  useEffect(() => {
+    async function getClientId() {
+      if (provider && isConnected) {
+        const _clientId = await provider?.client?.core.crypto.getClientId()
+        setClientId(_clientId)
+      } else {
+        setClientId(undefined)
+      }
+    }
+    getClientId()
+  }, [isConnected, provider])
 
   return (
     <>
@@ -153,6 +191,27 @@ export default function SignIn() {
               >
                 <Text style={{ color: 'black', fontSize: 18, fontWeight: '500' }}>Email Login</Text>
               </Button>
+            </View>
+
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginTop: 20,
+                justifyContent: 'center',
+              }}
+            >
+              <Web3Button
+                style={{
+                  width: 200,
+                }}
+              ></Web3Button>
+              <Web3Modal
+                projectId={'c92c0eff30f8f19ef515ef7a86200fd7'}
+                providerMetadata={providerMetadata}
+                sessionParams={sessionParams}
+                onCopyClipboard={onCopy}
+              />
             </View>
 
             <View style={{ width: '80%', marginTop: 20 }}>
