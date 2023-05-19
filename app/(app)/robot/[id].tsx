@@ -33,6 +33,13 @@ export default function Robot() {
     let list
     if (botStore?.tag) {
       list = [
+        {
+          id: 0,
+          bgColor: '#F1EAFE',
+          tagColor: '#7A2EF6',
+          keu: 'userId',
+          name: 'Mine',
+        },
         botStore.tag,
         ...[
           {

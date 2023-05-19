@@ -4,17 +4,15 @@ import RootStyles from '../constants/RootStyles'
 import Pined from '../assets/images/tabbar/pin.svg'
 import { renderImage } from './profileInfo/helper'
 import dayjs from 'dayjs'
-import MaskedView from '@react-native-masked-view/masked-view'
-import { LinearGradient } from 'expo-linear-gradient'
 import userStore from '../store/userStore'
 import LinearText from './linearText'
 import Tag from './tag'
 function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
   const userInfo = userStore.getState().profile
   const tag = {
-    name: ld.privateBotId ? (ld.statis !== 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
-    bgColor: ld.privateBotId ? (ld.statis !== 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
-    tagColor: ld.privateBotId ? (ld.statis !== 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
+    name: ld.privateBotId ? (ld.status === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
+    bgColor: ld.privateBotId ? (ld.status === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
+    tagColor: ld.privateBotId ? (ld.status === 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
   }
 
   return (
@@ -38,7 +36,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
                 <Tag {...tag}></Tag>
               </View>
             ) : (
-              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.name}>
+              <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.name }}>
                 {ld.name}
               </Text>
             )}
@@ -116,7 +114,7 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: 'bold',
     fontSize: 16,
-    maxWidth: '80%',
+    // maxWidth: '80%',
     color: '#1F1F1F',
     // backgroundColor: 'red',
   },
