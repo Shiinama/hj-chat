@@ -10,7 +10,7 @@ import publishIcon from '../../../assets/images/publish.png'
 import useBotStore from '../../../store/botStore'
 import FlashIcon from '../../../components/flashIcon'
 import useUserStore from '../../../store/userStore'
-import { genBotUrl } from '../../../components/profileInfo/helper'
+import { genBotUrl, renderImage } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import LinearText from '../../../components/linearText'
 import Tag from '../../../components/tag'
@@ -142,14 +142,15 @@ export default function Robot() {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
-        <Image
+        {renderImage(botStore.logo, {
+          width: 100,
+          height: 100,
+          borderRadius: 100,
+        })}
+        {/* <Image
           source={{ uri: genBotUrl(botStore.logo) }}
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 100,
-          }}
-        />
+          style={}
+        /> */}
         <View style={styles.user}>
           {/* <Text numberOfLines={1} ellipsizeMode="tail" style={styles.userName}>
             {botStore.name}
