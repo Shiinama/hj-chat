@@ -43,6 +43,13 @@ export default {
   orientation: 'portrait',
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
+  updates: {
+    requestHeaders: {
+      'expo-channel-name': 'main',
+    },
+    url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
+  },
+  runtimeVersion: '1.0.0',
   splash: {
     image: './assets/images/myshell.png',
     resizeMode: 'contain',
@@ -106,7 +113,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev',
+    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },

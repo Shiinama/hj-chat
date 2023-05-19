@@ -29,14 +29,18 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
         <View style={styles.listItemTop}>
           <View style={{ flex: 1 }}>
             {showTime ? (
-              <Text style={styles.name}>{ld.name}</Text>
+              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.name}>
+                {ld.name}
+              </Text>
             ) : userInfo?.id === ld.userId ? (
               <View style={{ flexDirection: 'row' }}>
                 <LinearText text={ld.name} styles={styles.name}></LinearText>
                 <Tag {...tag}></Tag>
               </View>
             ) : (
-              <Text style={styles.name}>{ld.name}</Text>
+              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.name}>
+                {ld.name}
+              </Text>
             )}
           </View>
           {showTime ? (
@@ -112,6 +116,7 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: 'bold',
     fontSize: 16,
+    maxWidth: '80%',
     color: '#1F1F1F',
     // backgroundColor: 'red',
   },

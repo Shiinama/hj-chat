@@ -5,7 +5,7 @@ import { Text, View } from 'react-native'
 export default function LinearText({ text, styles }) {
   return (
     <View>
-      <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles, maxWidth: 200, height: 0, opacity: 0 }}>
+      <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles, maxWidth: '70%', height: 0, opacity: 0 }}>
         {text}
       </Text>
       <MaskedView

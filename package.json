@@ -72,6 +72,7 @@
     "expo-splash-screen": "~0.18.1",
     "expo-status-bar": "~1.4.4",
     "expo-system-ui": "~2.2.1",
+    "expo-updates": "~0.16.4",
     "expo-web-browser": "~12.1.1",
     "ffmpeg-kit-react-native": "^5.1.0",
     "https-browserify": "~0.0.0",

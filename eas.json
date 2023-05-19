@@ -12,7 +12,8 @@
       "distribution": "internal",
       "ios": {
         "simulator": true
-      }
+      },
+      "channel": "development-simulator"
     },
     "dev": {
       "env": {
@@ -23,7 +24,8 @@
       },
       "ios": {
         "simulator": true
-      }
+      },
+      "channel": "dev"
     },
     "test": {
       "env": {
@@ -33,7 +35,8 @@
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
       },
-      "ios": {}
+      "ios": {},
+      "channel": "test"
     },
     "development": {
       "distribution": "internal",
@@ -43,24 +46,28 @@
       "ios": {
         "buildConfiguration": "Debug",
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "env": {
         "REACT_APP_ENV": "prod"
       },
       "android": {
+        "channel": "preview",
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
       },
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {
