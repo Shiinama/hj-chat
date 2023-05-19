@@ -200,8 +200,10 @@ function Chat({}) {
   useEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={{ fontSize: 18, fontWeight: '600' }}>{name}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', width: '70%' }}>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontSize: 18, fontWeight: '600' }}>
+            {name}
+          </Text>
           <FlashIcon energyPerChat={energyPerChat} />
         </View>
       ),

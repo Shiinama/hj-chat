@@ -5,12 +5,16 @@ import { Text, View } from 'react-native'
 export default function LinearText({ text, styles }) {
   return (
     <View>
-      <Text style={{ ...styles, height: 0, opacity: 0 }}>{text}</Text>
+      <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles, maxWidth: 200, height: 0, opacity: 0 }}>
+        {text}
+      </Text>
       <MaskedView
         style={{ height: '100%', flex: 1 }}
         maskElement={
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start' }}>
-            <Text style={styles}>{text}</Text>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles}>
+              {text}
+            </Text>
           </View>
         }
       >
