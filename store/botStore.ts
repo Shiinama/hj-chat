@@ -7,8 +7,10 @@ type ListDataItem = {
   name: string
   description: string
   userId: number
+  privateBotId: number
   logo: string
   language: string
+  status: string
   tag?: {
     name: string
     bgColor: string

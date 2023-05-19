@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useSearchParams, useNavigation } from 'expo-router'
 import { Text, View, Image, TouchableOpacity } from 'react-native'
-import { Dialog, Toast } from '@fruits-chain/react-native-xiaoshu'
-import { postAddBotToChatList, postPublishBot } from '../../../api/robot'
+import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import { postAddBotToChatList, postPublishBot, setBotPrivate } from '../../../api/robot'
 import { styles } from './style'
-import userLogo from '../../../assets/images/userLogo.png'
 import editIcon from '../../../assets/images/edit.png'
 import publishIcon from '../../../assets/images/publish.png'
 import cbotStore from '../../../store/botStore'
@@ -22,8 +21,10 @@ export default function Robot() {
   const navigation = useNavigation()
   const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
+  const [loading, setLoading] = useState<boolean>(false)
   const botStore = cbotStore.getState()
   const userStore = useUserStore.getState().userBaseInfo
+  console.log(botStore, userStore?.userId, 1231)
   useEffect(() => {
     navigation.setOptions({
       title: 'Robot',
@@ -65,23 +66,79 @@ export default function Robot() {
     setTagList(list)
   }, [navigation, name])
 
-  const showView = () => {
-    Dialog({
-      title: 'Publish',
-      message: 'A robot named "Robot Name" already exists. Are you sure you want to overwrite it?',
-      cancelButtonTextBold: true,
-      showCancelButton: true,
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#7A2EF6',
-      confirmButtonText: 'Confirm',
-      cancelButtonColor: '#1F1F1F',
-    }).then(action => {
-      if (action === 'confirm') {
-        postPublishBot({ botUid: botStore.uid }).then(res => {
-          Toast('Published successfully')
-        })
+  const renderButton = () => {
+    if (userStore?.userId === botStore?.userId) {
+      if (botStore.privateBotId) {
+        if (botStore.status === 'Public') {
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
+                setBotPrivate({ botUid: botStore.uid })
+                  .then(() => {
+                    setMessage('Unpublished successfully')
+                    CallBackManagerSingle().execute('ugcbotList')
+                  })
+                  .finally(() => {
+                    close()
+                  })
+              }}
+              style={styles.actionsItem}
+            >
+              <Image
+                source={publishIcon}
+                style={{
+                  width: 30,
+                  height: 30,
+                }}
+              />
+              <Text style={styles.actionsItemText}>Unpublish</Text>
+            </TouchableOpacity>
+          )
+        }
+      } else {
+        return (
+          <>
+            <TouchableOpacity
+              onPress={() => Toast('Please use a desktop browser to create a robot')}
+              style={{ ...styles.actionsItem, marginRight: 10 }}
+            >
+              <Image
+                source={editIcon}
+                style={{
+                  width: 30,
+                  height: 30,
+                }}
+              />
+              <Text style={styles.actionsItemText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
+                postPublishBot({ botUid: botStore.uid })
+                  .then(() => {
+                    setMessage('Published successfully')
+                    CallBackManagerSingle().execute('ugcbotList')
+                  })
+                  .finally(() => {
+                    close()
+                  })
+              }}
+              style={styles.actionsItem}
+            >
+              <Image
+                source={publishIcon}
+                style={{
+                  width: 30,
+                  height: 30,
+                }}
+              />
+              <Text style={styles.actionsItemText}>Publish</Text>
+            </TouchableOpacity>
+          </>
+        )
       }
-    })
+    }
   }
 
   return (
@@ -103,35 +160,10 @@ export default function Robot() {
           <FlashIcon energyPerChat={botStore.energyPerChat} />
         </View>
         <View style={styles.tagList}>
-          {tagList && tagList.map(item => <Tag key={item} {...{ ...item, keyValue: botStore[item.key] }}></Tag>)}
+          {tagList &&
+            tagList.map(item => <Tag key={item.bgColor} {...{ ...item, keyValue: botStore[item.key] }}></Tag>)}
         </View>
-        {userStore?.userId === botStore?.userId && (
-          <View style={styles.actions}>
-            <TouchableOpacity
-              onPress={() => Toast('Please use a desktop browser to create a robot')}
-              style={styles.actionsItem}
-            >
-              <Image
-                source={editIcon}
-                style={{
-                  width: 30,
-                  height: 30,
-                }}
-              />
-              <Text style={styles.actionsItemText}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => showView()} style={styles.actionsItem}>
-              <Image
-                source={publishIcon}
-                style={{
-                  width: 30,
-                  height: 30,
-                }}
-              />
-              <Text style={styles.actionsItemText}>Publish</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        {<View style={styles.actions}>{renderButton()}</View>}
         <ScrollView style={styles.description}>
           <Text style={styles.descriptionTitle}>Description</Text>
           <Text style={styles.descriptionValue}>{botStore.description}</Text>

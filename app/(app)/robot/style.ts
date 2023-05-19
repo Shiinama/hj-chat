@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '48%',
+    flex: 1,
     height: 88,
     backgroundColor: '#F6F6F6',
     borderRadius: 12,

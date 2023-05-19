@@ -9,6 +9,7 @@ import ShellLoading from '../../components/loading'
 import MaskedView from '@react-native-masked-view/masked-view'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import CallBackManagerSingle from '../../utils/CallBackManager'
 type ListDataItem = {
   id: string | number
   uid: string
@@ -28,11 +29,14 @@ export default function TabTwoScreen() {
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
+    CallBackManagerSingle().add('ugcbotList', () => {
+      loadData()
+    })
     loadData()
   }, [])
 
   const loadData = () => {
-    setLoading(true)
+    console.log(231231)
     getUgcBotList({}).then(res => {
       setLoading(false)
       setListData(res as ListDataItem[])
