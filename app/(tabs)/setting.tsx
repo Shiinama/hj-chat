@@ -6,8 +6,7 @@ import { getUgcBotList, queryCanCreateUgcBot } from '../../api/robot'
 import addIcon from '../../assets/images/add.png'
 import botStore from '../../store/botStore'
 import ShellLoading from '../../components/loading'
-import MaskedView from '@react-native-masked-view/masked-view'
-import { LinearGradient } from 'expo-linear-gradient'
+import cbotStore from '../../store/botStore'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 type ListDataItem = {
@@ -29,17 +28,23 @@ export default function TabTwoScreen() {
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
-    CallBackManagerSingle().add('ugcbotList', () => {
-      loadData()
+    CallBackManagerSingle().add('ugcbotList', botUid => {
+      loadData(botUid)
     })
     loadData()
   }, [])
 
-  const loadData = () => {
-    console.log(231231)
-    getUgcBotList({}).then(res => {
+  const loadData = (botUid?: string) => {
+    getUgcBotList({}).then((res: any) => {
+      if (botUid) {
+        console.log(
+          res.find(item => item.uid === botUid),
+          12312
+        )
+        cbotStore.setState(res.find(item => item.uid === botUid))
+      }
       setLoading(false)
-      setListData(res as ListDataItem[])
+      setListData(res)
     })
   }
 

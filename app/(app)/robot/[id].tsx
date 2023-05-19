@@ -7,7 +7,7 @@ import { postAddBotToChatList, postPublishBot, setBotPrivate } from '../../../ap
 import { styles } from './style'
 import editIcon from '../../../assets/images/edit.png'
 import publishIcon from '../../../assets/images/publish.png'
-import cbotStore from '../../../store/botStore'
+import useBotStore from '../../../store/botStore'
 import FlashIcon from '../../../components/flashIcon'
 import useUserStore from '../../../store/userStore'
 import { genBotUrl } from '../../../components/profileInfo/helper'
@@ -21,10 +21,8 @@ export default function Robot() {
   const navigation = useNavigation()
   const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const botStore = cbotStore.getState()
+  const botStore = useBotStore()
   const userStore = useUserStore.getState().userBaseInfo
-  console.log(botStore, userStore?.userId, 1231)
   useEffect(() => {
     navigation.setOptions({
       title: 'Robot',
@@ -77,7 +75,7 @@ export default function Robot() {
                 setBotPrivate({ botUid: botStore.uid })
                   .then(() => {
                     setMessage('Unpublished successfully')
-                    CallBackManagerSingle().execute('ugcbotList')
+                    CallBackManagerSingle().execute('ugcbotList', botStore.uid)
                   })
                   .finally(() => {
                     close()
@@ -118,7 +116,7 @@ export default function Robot() {
                 postPublishBot({ botUid: botStore.uid })
                   .then(() => {
                     setMessage('Published successfully')
-                    CallBackManagerSingle().execute('ugcbotList')
+                    CallBackManagerSingle().execute('ugcbotList', botStore.uid)
                   })
                   .finally(() => {
                     close()
