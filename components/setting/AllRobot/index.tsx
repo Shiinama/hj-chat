@@ -30,13 +30,15 @@ const AllRobot: FC<AllRobotProps> = () => {
   }, [filterValue])
   return (
     <>
-      <ScrollView style={styles.page}>
+      <View style={{ paddingHorizontal: 16 }}>
         <SearchInput
           value={params?.name}
           onChange={keyword => {
             setParams({ ...params, name: keyword })
           }}
         />
+      </View>
+      <ScrollView style={styles.page}>
         <RobotList requestParams={params} />
       </ScrollView>
       <Filter />
@@ -48,5 +50,6 @@ export default AllRobot
 const styles = StyleSheet.create({
   page: {
     height: '100%',
+    paddingHorizontal: 16,
   },
 })

@@ -21,5 +21,6 @@ export default MyShell
 const styles = StyleSheet.create({
   page: {
     height: '100%',
+    paddingHorizontal: 16,
   },
 })
