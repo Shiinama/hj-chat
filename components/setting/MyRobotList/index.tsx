@@ -1,24 +1,22 @@
 import botStore from '../../../store/botStore'
-import { useBoolean, useDebounceEffect } from 'ahooks'
-import { useRouter } from 'expo-router'
-import { FC, useEffect, useState } from 'react'
+import { useBoolean } from 'ahooks'
+import { useFocusEffect, useRouter } from 'expo-router'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
-import { getUgcBotList } from '../../../api/robot'
 import BotCard from '../../botCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
+import { getUgcOwnList } from '../../../api/setting'
 
-export interface RobotListProps {
-  /** 请求的参数 */
-  requestParams: any
-}
-const RobotList: FC<RobotListProps> = ({ requestParams }) => {
-  const [robotListData, setRobotListData] = useState([])
+export interface MyRobotListProps {}
+const MyRobotList: FC<MyRobotListProps> = () => {
+  const [MyRobotListData, setMyRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(false)
   useEffect(() => {
     CallBackManagerSingle().add('ugcbotList', botUid => {
       loadData(botUid)
     })
+    loadData()
     return () => {
       CallBackManagerSingle().remove('ugcbotList')
     }
@@ -26,25 +24,22 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   const loadData = (botUid?: string) => {
     setTrue()
 
-    getUgcBotList(requestParams)
+    getUgcOwnList()
       .then((res: any) => {
         if (botUid) {
           botStore.setState(res.find(item => item.uid === botUid))
         }
-        setRobotListData(res)
+
+        setMyRobotListData(res)
       })
       .finally(() => {
         setFalse()
       })
   }
-  useDebounceEffect(
-    () => {
+  useFocusEffect(
+    useCallback(() => {
       loadData()
-    },
-    [requestParams],
-    {
-      wait: 400,
-    }
+    }, [])
   )
   const router = useRouter()
   const onShowDetail = event => {
@@ -70,7 +65,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
     )
   return (
     <View>
-      {robotListData?.map((ld, i) => {
+      {MyRobotListData?.map((ld, i) => {
         return (
           <BotCard
             onShowDetail={e => {
@@ -85,4 +80,4 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
     </View>
   )
 }
-export default RobotList
+export default MyRobotList

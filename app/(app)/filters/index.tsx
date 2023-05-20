@@ -14,6 +14,11 @@ import useFilterStore from '../../../components/setting/Filter/filterStore'
 import { useDeepCompareEffect, useSetState } from 'ahooks'
 
 export interface FiltersProps {}
+
+const nameMap = {
+  function: 'tagId',
+  language: 'languageId',
+}
 const Filters: FC<FiltersProps> = () => {
   const { filterValue } = useFilterStore()
   const { setState } = useFilterStore
@@ -36,9 +41,14 @@ const Filters: FC<FiltersProps> = () => {
         for (const key in res) {
           if (Object.prototype.hasOwnProperty.call(res, key)) {
             const item = res[key]
-            resList.push({ title: t(key), name: key, children: item?.map(v => ({ ...v, name: t(v?.name) })) })
+            resList.push({
+              title: t(key),
+              name: nameMap?.[key] || key,
+              children: item?.map(v => ({ ...v, name: t(v?.name) })),
+            })
           }
         }
+
         setFilterList(resList)
       })
     }, [])
@@ -98,7 +108,7 @@ const Filters: FC<FiltersProps> = () => {
       <ScrollView style={styles.body}>
         {filterList?.map((v, i) => {
           return (
-            <View style={styles.filterType}>
+            <View style={styles.filterType} key={i}>
               <View>
                 <Text style={styles.filterTypeTitle}>{v?.title}</Text>
               </View>

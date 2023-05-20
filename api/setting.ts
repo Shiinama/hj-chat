@@ -9,3 +9,13 @@ export const getFilters = () => {
     method: 'get',
   })
 }
+
+/**
+ *  我的机器人列表
+ */
+export const getUgcOwnList = () => {
+  return request({
+    url: `/bot/ugc/own`,
+    method: 'get',
+  })
+}
