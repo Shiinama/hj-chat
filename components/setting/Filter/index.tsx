@@ -27,11 +27,9 @@ const Filter: FC<FilterProps> = () => {
       >
         <FilterIcon style={styles.icon} />
         <Text style={styles.text}>Filter</Text>
-        {count > 0 && (
-          <View style={styles.count}>
-            <Text style={styles.countText}>{count}</Text>
-          </View>
-        )}
+        <View style={styles.count}>
+          <Text style={styles.countText}>{count}</Text>
+        </View>
       </TouchableOpacity>
     </View>
   )

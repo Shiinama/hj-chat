@@ -7,10 +7,12 @@ import BotCard from '../../botCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import { getUgcOwnList } from '../../../api/setting'
+import NoData from '../NoData'
+import CreateCard from '../CreateCard'
 
 export interface MyRobotListProps {}
 const MyRobotList: FC<MyRobotListProps> = () => {
-  const [MyRobotListData, setMyRobotListData] = useState([])
+  const [myRobotListData, setMyRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(false)
   useEffect(() => {
     CallBackManagerSingle().add('ugcbotList', botUid => {
@@ -57,15 +59,20 @@ const MyRobotList: FC<MyRobotListProps> = () => {
       },
     })
   }
-  if (loading)
+  if (loading) {
     return (
       <View style={{ minHeight: 210, alignItems: 'center' }}>
         <ShellLoading></ShellLoading>
       </View>
     )
+  }
+  if (myRobotListData?.length === 0) {
+    return <NoData />
+  }
   return (
     <View>
-      {MyRobotListData?.map((ld, i) => {
+      <CreateCard />
+      {myRobotListData?.map((ld, i) => {
         return (
           <BotCard
             onShowDetail={e => {

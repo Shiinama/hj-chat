@@ -37,8 +37,6 @@ const AllRobot: FC<AllRobotProps> = () => {
             setParams({ ...params, name: keyword })
           }}
         />
-
-        <CreateCard />
         <RobotList requestParams={params} />
       </ScrollView>
       <Filter />

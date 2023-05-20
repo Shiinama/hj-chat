@@ -7,6 +7,8 @@ import { getUgcBotList } from '../../../api/robot'
 import BotCard from '../../botCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
+import NoData from '../NoData'
+import CreateCard from '../CreateCard'
 
 export interface RobotListProps {
   /** 请求的参数 */
@@ -62,14 +64,19 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       },
     })
   }
-  if (loading)
+  if (loading) {
     return (
       <View style={{ minHeight: 210, alignItems: 'center' }}>
         <ShellLoading></ShellLoading>
       </View>
     )
+  }
+  if (robotListData?.length === 0) {
+    return <NoData />
+  }
   return (
     <View>
+      <CreateCard />
       {robotListData?.map((ld, i) => {
         return (
           <BotCard

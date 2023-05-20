@@ -12,7 +12,6 @@ export interface MyShellProps {}
 const MyShell: FC<MyShellProps> = () => {
   return (
     <ScrollView style={styles.page}>
-      <CreateCard />
       <MyRobotList />
     </ScrollView>
   )
