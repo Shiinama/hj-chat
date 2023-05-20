@@ -1,9 +1,8 @@
 import { FC, useState } from 'react'
 import { View, ScrollView, StyleSheet } from 'react-native'
-import CreateCard from '../CreateCard'
 import RobotList from '../RobotList'
 import SearchInput from '../SearchInput'
-import { useDeepCompareEffect, useSetState } from 'ahooks'
+import { useDeepCompareEffect } from 'ahooks'
 import Filter from '../Filter'
 import useFilterStore from '../Filter/filterStore'
 
@@ -30,13 +29,15 @@ const AllRobot: FC<AllRobotProps> = () => {
   }, [filterValue])
   return (
     <>
-      <ScrollView style={styles.page}>
+      <View style={{ paddingHorizontal: 16 }}>
         <SearchInput
           value={params?.name}
           onChange={keyword => {
             setParams({ ...params, name: keyword })
           }}
         />
+      </View>
+      <ScrollView style={styles.page}>
         <RobotList requestParams={params} />
       </ScrollView>
       <Filter />
@@ -48,5 +49,6 @@ export default AllRobot
 const styles = StyleSheet.create({
   page: {
     height: '100%',
+    paddingHorizontal: 16,
   },
 })

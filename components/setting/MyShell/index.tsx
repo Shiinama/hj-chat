@@ -1,11 +1,6 @@
-import { FC, useState } from 'react'
-import { View, ScrollView, StyleSheet } from 'react-native'
-import CreateCard from '../CreateCard'
-import RobotList from '../RobotList'
-import SearchInput from '../SearchInput'
-import { useDeepCompareEffect, useSetState } from 'ahooks'
-import Filter from '../Filter'
-import useFilterStore from '../Filter/filterStore'
+import { FC } from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+
 import MyRobotList from '../MyRobotList'
 
 export interface MyShellProps {}
@@ -21,5 +16,6 @@ export default MyShell
 const styles = StyleSheet.create({
   page: {
     height: '100%',
+    paddingHorizontal: 16,
   },
 })

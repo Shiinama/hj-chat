@@ -18,8 +18,9 @@ export default function TabTwoScreen() {
   return (
     <>
       <View style={styles.container}>
-        <Tabs data={tabsData} value={tabVal} onChange={setTabVal} />
-        <View style={{ height: 12 }} />
+        <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+          <Tabs data={tabsData} value={tabVal} onChange={setTabVal} />
+        </View>
         {tabVal === pageTypes.allRobot ? <AllRobot /> : null}
         {tabVal === pageTypes.myShell ? <MyShell /> : null}
       </View>
@@ -31,7 +32,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     paddingTop: 8,
-    paddingHorizontal: 16,
     height: '100%',
   },
 })
