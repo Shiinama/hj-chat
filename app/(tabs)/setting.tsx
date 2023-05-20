@@ -1,6 +1,6 @@
 import Tabs from '../../components/setting/Tabs'
-import { useEffect, useState } from 'react'
-import { StyleSheet, View, ScrollView } from 'react-native'
+import { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 import AllRobot from '../../components/setting/AllRobot'
 import MyShell from '../../components/setting/MyShell'
 /** page tabs 的value */
@@ -16,18 +16,21 @@ export default function TabTwoScreen() {
   /** 当前页面处于哪一个tab */
   const [tabVal, setTabVal] = useState(pageTypes.allRobot)
   return (
-    <ScrollView style={styles.container} alwaysBounceVertical={false}>
-      <Tabs data={tabsData} value={tabVal} onChange={setTabVal} />
-      {tabVal === pageTypes.allRobot ? <AllRobot /> : null}
-      {tabVal === pageTypes.myShell ? <MyShell /> : null}
-    </ScrollView>
+    <>
+      <View style={styles.container}>
+        <Tabs data={tabsData} value={tabVal} onChange={setTabVal} />
+        <View style={{ height: 12 }} />
+        {tabVal === pageTypes.allRobot ? <AllRobot /> : null}
+        {tabVal === pageTypes.myShell ? <MyShell /> : null}
+      </View>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingVertical: 8,
+    paddingTop: 8,
     paddingHorizontal: 16,
     height: '100%',
   },
