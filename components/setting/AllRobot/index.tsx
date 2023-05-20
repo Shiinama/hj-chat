@@ -1,9 +1,8 @@
 import { FC, useState } from 'react'
 import { View, ScrollView, StyleSheet } from 'react-native'
-import CreateCard from '../CreateCard'
 import RobotList from '../RobotList'
 import SearchInput from '../SearchInput'
-import { useDeepCompareEffect, useSetState } from 'ahooks'
+import { useDeepCompareEffect } from 'ahooks'
 import Filter from '../Filter'
 import useFilterStore from '../Filter/filterStore'
 
