@@ -2,6 +2,8 @@ import { useControllableValue } from 'ahooks'
 import type { FC } from 'react'
 import { View, TextInput, StyleSheet } from 'react-native'
 import SearchIcon from '../../../assets/images/setting/Search.svg'
+import XIcon from '../../../assets/images/setting/xfill.svg'
+
 export interface SearchInputProps {
   value?: string
   onChange?: (val: string) => void
@@ -19,6 +21,14 @@ const SearchInput: FC<SearchInputProps> = props => {
         placeholderTextColor="#B9B9B9"
         style={styles.input}
       />
+      {state ? (
+        <XIcon
+          style={styles.xIcon}
+          onPress={() => {
+            setState('')
+          }}
+        />
+      ) : null}
     </View>
   )
 }
@@ -41,8 +51,12 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 10,
   },
+  xIcon: {
+    marginLeft: 8,
+  },
   input: {
     fontSize: 16,
     flexShrink: 1,
+    flexGrow: 1,
   },
 })
