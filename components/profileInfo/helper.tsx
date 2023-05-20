@@ -1,4 +1,4 @@
-import { Image } from 'react-native'
+import { Image } from 'expo-image'
 import systemConfig from '../../constants/System'
 import defaultAvatar from '../../assets/images/defaultAvatar.png'
 

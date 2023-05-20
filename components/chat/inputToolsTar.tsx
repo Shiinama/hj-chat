@@ -250,11 +250,11 @@ function InputToolsTar({
   }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
     let height = contentSize.height
     if (height === inputHeight) return
-    if (height < 50) {
+    if (height < 35) {
       setInputHeight(35)
       return
     }
-    if (height > 40 && height < 80) {
+    if (height > 35 && height < 80) {
       setInputHeight(height)
     }
   }
@@ -280,12 +280,9 @@ function InputToolsTar({
                   {renderLeftInput()}
                   <View
                     style={{
-                      height: inputHeight,
                       flex: 1,
                       marginHorizontal: 10,
-                      paddingVertical: 4,
                       borderRadius: 6,
-                      justifyContent: 'center',
                       backgroundColor: 'white',
                     }}
                   >
@@ -297,7 +294,7 @@ function InputToolsTar({
                       maxLength={500}
                       onContentSizeChange={handleContentSizeChange}
                       placeholder="Write a message"
-                      style={[styles.textInput]}
+                      style={[styles.textInput, { height: inputHeight }]}
                       onChangeText={setText}
                       value={text}
                       {...inputTextProps}
@@ -348,12 +345,11 @@ const styles = StyleSheet.create({
     height: 18,
   },
   textInput: {
-    // justifyContent: 'center',
-    flex: 1,
+    paddingTop: 8,
+    borderRadius: 6,
     backgroundColor: '#fff',
     paddingHorizontal: 12,
     fontSize: 16,
-    // textAlignVertical: 'center',
   },
 })
 

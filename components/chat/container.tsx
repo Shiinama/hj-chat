@@ -1,9 +1,8 @@
-import { KeyboardAvoidingView, TextInputProps, View } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 import { LegacyRef, useEffect, useState } from 'react'
 import MessagesContainer from './messagesContainer'
 import InputToolsTar, { MTextInputProps } from './inputToolsTar'
-import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import type { FlatList, StyleProp, ViewStyle } from 'react-native'
 
 export interface FishChatProps {
   haveHistory?: boolean
@@ -14,8 +13,6 @@ export interface FishChatProps {
   flatListRef?: LegacyRef<FlatList>
 }
 
-//  一个自定义距离偏移距离
-const bottomOffset = 1
 function Container({
   messagesContainerStyle,
   haveHistory,
@@ -25,7 +22,7 @@ function Container({
   ...restProps
 }: FishChatProps): JSX.Element {
   const [maxHeight, setMaxHeight] = useState(0)
-  const [inputHeight, setInputHeight] = useState(28)
+  const [inputHeight, setInputHeight] = useState(35)
   const [barHeight, setBarHeight] = useState(0)
   // 工具栏高度
   const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(0)

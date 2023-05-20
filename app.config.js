@@ -5,6 +5,8 @@ const envConfig = {
     PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
     PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api-staging.myshell.ai',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsU3RhZ2luZyIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsU3RhZ2luZyIsIm5iZiI6MCwiaWF0IjoxNjg0NTA3MTE1NTk4LCJqdGkiOiIxMWNmNjFhNTY5Yzc0MjRlOTVlMzYxNTg1OTNmZjc1ZSIsInNlY3VyaXR5U3RhbXAiOiJmOTRkMDE5OGY2OTA0ODUwODIwYjJjMDkxYTFiODQwNCIsImV4cCI6MTY4NDUwOTcwNzU5OH0.nNaN7MafVAr8XF5XLz0JOAfjvRQgOBRcpnQOn9Gt7ig',
     authKey: 'Authorization',
     downloadHost: 'https://share.vinstic.com/share/',
     shareLink: 'https://api-staging.myshell.ai/share/',
@@ -13,6 +15,8 @@ const envConfig = {
   test: {
     PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
     PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjg0NTgyOTg3ODc2LCJqdGkiOiI1NjRhMjIyYjEyY2U0YjJkOTc3NTg2ZTg0NjVlMDE1NCIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4NDU4NTU3OTg3Nn0.L9YmRKlwTdOIpjBC9dCMu-draDgrq7mM1BOc6hHw-Pk',
     PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api-test.myshell.ai',
     authKey: 'Authorization',
@@ -113,7 +117,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev',
+    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },
