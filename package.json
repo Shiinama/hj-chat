@@ -60,7 +60,6 @@
     "expo-av": "~13.2.1",
     "expo-blur": "~12.2.2",
     "expo-build-properties": "~0.6.0",
-    "expo-dev-client": "~2.2.1",
     "expo-file-system": "~15.2.2",
     "expo-font": "~11.1.1",
     "expo-image": "~1.0.0",
@@ -92,7 +91,6 @@
     "react-native-screens": "~3.20.0",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-soundcloud-waveform": "^1.0.3",
-    "react-native-sqlite-storage": "^6.0.1",
     "react-native-svg": "13.4.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-native-view-shot": "^3.6.0",
@@ -111,6 +109,7 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
+    "expo-dev-client": "~2.2.1",
     "@babel/core": "^7.20.0",
     "@types/react": "~18.0.14",
     "@types/react-native": "^0.71.6",

@@ -47,13 +47,6 @@ export default {
   orientation: 'portrait',
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
-  updates: {
-    requestHeaders: {
-      'expo-channel-name': 'main',
-    },
-    url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
-  },
-  runtimeVersion: '1.0.0',
   splash: {
     image: './assets/images/myshell.png',
     resizeMode: 'contain',
