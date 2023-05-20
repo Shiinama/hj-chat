@@ -12,3 +12,23 @@ export const particleLogin = data => {
     data,
   })
 }
+
+type generateNonceModel = {
+  nonce: string
+}
+export const generateNonce = data => {
+  return request<generateNonceModel>({
+    url: `/auth/generateNonce`,
+    method: 'post',
+    data,
+  })
+}
+
+
+export const verifySignature = data => {
+  return request<UserStore>({
+    url: `/auth/verifySignature`,
+    method: 'post',
+    data,
+  })
+}

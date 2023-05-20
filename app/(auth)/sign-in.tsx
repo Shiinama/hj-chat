@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   Text,
   View,
@@ -23,16 +23,23 @@ import * as particleAuth from 'react-native-particle-auth'
 import useUserStore from '../../store/userStore'
 import { useWeb3Modal, Web3Button, Web3Modal } from '@web3modal/react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
+import { AccountCtrl } from "@web3modal/react-native/src/controllers/AccountCtrl"
+import {useSnapshot} from "valtio"
+import { ethers } from 'ethers';
+import { utf8ToHex } from '@walletconnect/encoding';
+import {recoverAddress} from '@ethersproject/transactions';
+import {hashMessage} from '@ethersproject/hash';
+import type {Bytes, SignatureLike} from '@ethersproject/bytes';
 
 // import { createWeb3 } from '../../tmp/web3Demo'
-import { particleLogin } from '../../api/auth'
+import { generateNonce, particleLogin, verifySignature } from '../../api/auth'
 // const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
 
 export default function SignIn() {
   const providerMetadata = {
     name: 'React Native V2 dApp',
     description: 'RN dApp by WalletConnect',
-    url: 'https://walletconnect.com/',
+    url: 'app-test.myshell.ai',
     icons: ['https://avatars.githubusercontent.com/u/37784886'],
   }
   const sessionParams = {
@@ -48,6 +55,7 @@ export default function SignIn() {
 
   const [clientId, setClientId] = useState<string>()
   const { isConnected, provider } = useWeb3Modal()
+  const { address } = useSnapshot(AccountCtrl.state);
   const { signIn } = useAuth()
   const login = async loginType => {
     const type = loginType
@@ -71,12 +79,43 @@ export default function SignIn() {
     Clipboard.setString(value)
     Alert.alert('Copied to clipboard')
   }
+  const web3Provider = useMemo(
+    () => (provider ? new ethers.providers.Web3Provider(provider) : undefined),
+    [provider],
+  );
 
   useEffect(() => {
     async function getClientId() {
       if (provider && isConnected) {
         const _clientId = await provider?.client?.core.crypto.getClientId()
         setClientId(_clientId)
+
+        setTimeout(() => {
+          generateNonce({
+            publicAddress: address
+          }).then((msg) => {  
+            testSignMessage(web3Provider, msg.nonce).then(res => {              
+              const signature = res["result"]
+              console.log("address="+address)
+              console.log("signature="+signature)
+              verifySignature({
+                invitationCode: "",
+                publicAddress: address,
+                signature: signature
+              }).then( res => {
+                const userInfo = res
+                useUserStore.setState({ particleInfo: userInfo })
+                console.log(userInfo)
+                const info =  particleLogin({
+                  uuid: userInfo.userUid,
+                  token: userInfo.token,
+                })
+
+                signIn(info)
+              })
+            })
+          })
+        }, 100);
       } else {
         setClientId(undefined)
       }
@@ -232,4 +271,42 @@ export default function SignIn() {
       {/* <Shim /> */}
     </>
   )
+}
+
+
+export const testSignMessage = async (
+  web3Provider?: ethers.providers.Web3Provider,
+  msg: string = "Hello World"
+) => {
+  if (!web3Provider) {
+    throw new Error('web3Provider not connected');
+  }
+  // const msg = 'Hello World';
+  const hexMsg = utf8ToHex(msg, true);
+  const [address] = await web3Provider.listAccounts();
+  if (!address) {
+    throw new Error('No address found');
+  }
+
+  const signature = await web3Provider.send('personal_sign', [hexMsg, address]);
+  const valid = verifyEip155MessageSignature(msg, signature, address);
+  return {
+    method: 'personal_sign',
+    address,
+    valid,
+    result: signature,
+  };
+};
+
+const verifyEip155MessageSignature = (
+  message: string,
+  signature: string,
+  address: string,
+) => verifyMessage(message, signature).toLowerCase() === address.toLowerCase();
+
+export function verifyMessage(
+  message: Bytes | string,
+  signature: SignatureLike,
+): string {
+  return recoverAddress(hashMessage(message), signature);
 }

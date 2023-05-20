@@ -90,7 +90,7 @@ export default async function request<T>(options: RequestOptions) {
       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjg0MTQyMzI3NjM1LCJqdGkiOiIyNzg5YWFhZjBiODY0YzI5YjA4NjlhY2I5NDZmNzlmNyIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4NDE0NDkxOTYzNX0.2WHYOm1V3LZ0CvZcjr-fnmOQNALR45ZV0yym3THVxGY'
   } else {
     const token = await AsyncStorage.getItem(authKey)
-    if (!token && url !== '/auth/particleLogin') {
+    if (!token && (url !== '/auth/particleLogin' && url !== "/auth/generateNonce" && url !== "/auth/verifySignature")) {
       return
     }
     Authorization = token ? `Bearer ${token}` : ''
@@ -114,6 +114,7 @@ export default async function request<T>(options: RequestOptions) {
     ...headers,
   }
   let newUrl = baseUrl + url
+  console.log(newUrl)
   if (options.method.toLowerCase() == 'get' && options.query) {
     const urlParams = []
     Object.keys(options.query).map(key => {

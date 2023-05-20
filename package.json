@@ -44,6 +44,7 @@
     "@types/react-native-snap-carousel": "^3.8.5",
     "@types/uuid": "^9.0.1",
     "@ui-kitten/components": "^5.3.1",
+    "@walletconnect/encoding": "^1.0.2",
     "@web3modal/react-native": "^1.0.0-alpha.3",
     "ahooks": "^3.7.7",
     "assert": "^1.1.1",
