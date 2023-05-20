@@ -1,13 +1,22 @@
 import { useRouter } from 'expo-router'
-import { FC } from 'react'
+import { FC, useEffect, useMemo } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import FilterIcon from '../../../assets/images/setting/filter_icon.svg'
 import useFilterStore from './filterStore'
 export interface FilterProps {}
-const Filter: FC<FilterProps> = ({ ...valueProps }) => {
-  const { count } = useFilterStore()
+const Filter: FC<FilterProps> = () => {
+  const { filterValue } = useFilterStore()
   const router = useRouter()
-
+  const count = useMemo(() => {
+    let res = 0
+    for (const key in filterValue) {
+      if (Object.prototype.hasOwnProperty.call(filterValue, key)) {
+        const element = filterValue[key]
+        res += element?.length || 0
+      }
+    }
+    return res
+  }, [filterValue])
   return (
     <View pointerEvents="box-none" style={styles.filterWrap}>
       <TouchableOpacity

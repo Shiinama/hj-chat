@@ -7,6 +7,7 @@ import { getUgcBotList } from '../../../api/robot'
 import BotCard from '../../botCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
+import useFilterStore from '../Filter/filterStore'
 
 export interface RobotListProps {
   /** 请求的参数 */
@@ -31,6 +32,8 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
         if (botUid) {
           botStore.setState(res.find(item => item.uid === botUid))
         }
+        // 设置 filters那里的count
+        useFilterStore.setState({ count: res?.length || 0 })
         setRobotListData(res)
       })
       .finally(() => {
