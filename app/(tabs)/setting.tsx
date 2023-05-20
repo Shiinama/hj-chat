@@ -79,7 +79,7 @@ export default function TabTwoScreen() {
         }}
       >
         <Image source={addIcon} style={{ width: 20, height: 20 }} />
-        <Text style={styles.title}>Creat a Robot</Text>
+        <Text style={styles.title}>Create a Robot</Text>
         <Text style={styles.desc}>Robot creator, expert in robotics</Text>
       </TouchableOpacity>
       <View style={styles.mt12}>

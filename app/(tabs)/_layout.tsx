@@ -83,7 +83,7 @@ export default function TabLayout() {
           title: '',
           headerLeft: () => (
             <View>
-              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 20, fontWeight: 'bold' }}>Robot Workshop</Text>
+              <Text style={{ fontSize: 18, lineHeight: 28, marginLeft: 20, fontWeight: 'bold' }}>Workshop</Text>
             </View>
           ),
           tabBarIcon: ({ focused }) => (focused ? <BotAcitve /> : <Bot />),
