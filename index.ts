@@ -3,7 +3,7 @@
 import 'expo-router/entry'
 import 'react-native-get-random-values'
 import './tmp/pollify'
-
+import './utils/shadow-polyfill'
 //test particle
 import { ParticleInfo } from './tmp/NetService/ParticleInfo'
 

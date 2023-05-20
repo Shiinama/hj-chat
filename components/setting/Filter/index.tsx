@@ -20,15 +20,16 @@ const Filter: FC<FilterProps> = () => {
   return (
     <View pointerEvents="box-none" style={styles.filterWrap}>
       <TouchableOpacity
-        style={styles.filterBox}
         onPress={() => {
           router.push('filters')
         }}
       >
-        <FilterIcon style={styles.icon} />
-        <Text style={styles.text}>Filter</Text>
-        <View style={styles.count}>
-          <Text style={styles.countText}>{count}</Text>
+        <View style={styles.filterBox}>
+          <FilterIcon style={styles.icon} />
+          <Text style={styles.text}>Filter</Text>
+          <View style={styles.count}>
+            <Text style={styles.countText}>{count}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -51,7 +52,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 99,
-    // TODO 阴影效果
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 1,
+    shadowColor: 'rgba(0, 0, 0, 0.08)',
+
     // box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
   },
   icon: {
