@@ -50,6 +50,14 @@ interface MessageDto {
   botUid: string
 }
 
+type messageStreamDataType = {
+  data: {
+    replyMessage: MessageDto
+    index: number
+    text: string
+    isFinal: boolean
+  }
+}
 type MeaageErrorType = {
   reqId?: string
   message?: string
@@ -133,9 +141,12 @@ export const useSocketIo = () => {
     setMessage(data)
   }
 
-  const onMessageTextStream = (data: MesageSucessType) => {
-    if (currentBot.id !== data.data.botId) return
-    console.log(data)
+  const onMessageTextStream = ({ data }: messageStreamDataType) => {
+    if (currentBot.id !== data?.replyMessage?.botId) {
+      return
+    } else {
+      console.log('-----', { data })
+    }
   }
   const onMessageAudioStream = (data: MesageSucessType) => {
     if (currentBot.id !== data.data.botId) return
@@ -181,5 +192,6 @@ export const useSocketIo = () => {
     onException,
     onNoEnoughEnergy,
     onMessageError,
+    onMessageTextStream,
   }
 }
