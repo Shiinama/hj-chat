@@ -40,6 +40,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
     const markdownRender = text => {
       return (
         <Markdown
+          styles={{ code: { backgroundColor: '#fff', padding: 16 }, paragraph: { backgroundColor: '#F6F6F6' } }}
           value={text}
           flatListProps={{
             initialNumToRender: 8,
