@@ -28,6 +28,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   useFocusEffect(
     useCallback(() => {
       setTrue()
+      loadData()
     }, [])
   )
   const loadData = (botUid?: string) => {
@@ -75,6 +76,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       </View>
     )
   }
+
   if (robotListData?.length === 0) {
     return <NoData />
   }
