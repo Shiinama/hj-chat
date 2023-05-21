@@ -1,7 +1,7 @@
 import botStore from '../../../store/botStore'
 import { useBoolean, useDebounceEffect } from 'ahooks'
-import { useRouter } from 'expo-router'
-import { FC, useEffect, useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { getUgcBotList } from '../../../api/robot'
 import UgcBotCard from '../UgcBotCard'
@@ -25,6 +25,11 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       CallBackManagerSingle().remove('ugcbotList')
     }
   }, [])
+  useFocusEffect(
+    useCallback(() => {
+      setTrue()
+    }, [])
+  )
   const loadData = (botUid?: string) => {
     setTrue()
 

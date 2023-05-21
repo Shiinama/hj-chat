@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
 import styles from './styles'
-import { genAvatarUrl, genBotUrl, renderImage } from '../../components/profileInfo/helper'
+import { genAvatarUrl, renderImage } from '../../components/profileInfo/helper'
 import { Image } from 'expo-image'
 import { ChatItem } from '../../app/(app)/chat/[id]'
 import AudioMessage from './audioMessage'
@@ -14,6 +14,8 @@ import { memo, useContext, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
 import { BlurView } from '@react-native-community/blur'
+import Markdown from 'react-native-marked'
+
 import ShellLoading from '../loading'
 type Props = {
   item: ChatItem & number
@@ -35,6 +37,17 @@ function chatItem({ item, translationText, me, logo }: Props) {
     </View>
   )
   const renderMessageText = ({ textMsg }: { textMsg?: boolean }) => {
+    const markdownRender = text => {
+      return (
+        <Markdown
+          styles={{ code: { backgroundColor: '#fff', padding: 16 }, paragraph: { backgroundColor: '#F6F6F6' } }}
+          value={text}
+          flatListProps={{
+            initialNumToRender: 8,
+          }}
+        />
+      )
+    }
     // textMsg fix 纯文字消息上下全局加了两个分割线，这里把它去掉
     return (
       <View style={[styles.content, textMsg ? styles.textContent : {}]}>
@@ -49,7 +62,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
           </TouchableWithoutFeedback>
         )}
         {buttonIndex === 1 && <Text>{item.text}</Text>}
-        {buttonIndex === 2 && <Text>{item.text}</Text>}
+        {buttonIndex === 2 && markdownRender(item.text)}
         {buttonIndex === 3 &&
           (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
