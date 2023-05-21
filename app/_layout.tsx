@@ -7,7 +7,6 @@ import * as eva from '@eva-design/eva'
 import { Provider as XiaoshuProvider, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { Provider as AuthProvider } from '../context/auth'
 import NetInfo from '@react-native-community/netinfo'
-
 import { ApplicationProvider } from '@ui-kitten/components'
 import { CustomStack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Linking
+  Linking,
 } from 'react-native'
 
 import { styles } from './style'
@@ -24,20 +24,21 @@ import * as particleAuth from 'react-native-particle-auth'
 import useUserStore from '../../store/userStore'
 import { useWeb3Modal, Web3Button, Web3Modal } from '@web3modal/react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
-import { AccountCtrl } from "@web3modal/react-native/src/controllers/AccountCtrl"
-import {useSnapshot} from "valtio"
-import { ethers } from 'ethers';
-import { utf8ToHex } from '@walletconnect/encoding';
-import {recoverAddress} from '@ethersproject/transactions';
-import {hashMessage} from '@ethersproject/hash';
-import type {Bytes, SignatureLike} from '@ethersproject/bytes';
+import { AccountCtrl } from '@web3modal/react-native/src/controllers/AccountCtrl'
+import { useSnapshot } from 'valtio'
+import { ethers } from 'ethers'
+import { utf8ToHex } from '@walletconnect/encoding'
+import { recoverAddress } from '@ethersproject/transactions'
+import { hashMessage } from '@ethersproject/hash'
+import type { Bytes, SignatureLike } from '@ethersproject/bytes'
+import { ConnectorAlreadyConnectedError, useConnect, useDisconnect, useSignMessage } from 'wagmi'
 
 // import { createWeb3 } from '../../tmp/web3Demo'
 import { generateNonce, particleLogin, verifySignature } from '../../api/auth'
 // const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
 
-import MetaMaskSDK from '@metamask/sdk';
-import BackgroundTimer from 'react-native-background-timer';
+import MetaMaskSDK from '@metamask/sdk'
+import BackgroundTimer from 'react-native-background-timer'
 
 export default function SignIn() {
   const providerMetadata = {
@@ -56,45 +57,46 @@ export default function SignIn() {
       },
     },
   }
-
+  const [publicAddress, setPublicAddress] = useState<string>('')
   const [clientId, setClientId] = useState<string>()
   const { isConnected, provider } = useWeb3Modal()
-  const { address } = useSnapshot(AccountCtrl.state);
+  const { address } = useSnapshot(AccountCtrl.state)
 
   const sdk = new MetaMaskSDK({
     openDeeplink: link => {
-      Linking.openURL(link);
+      Linking.openURL(link)
     },
     timer: BackgroundTimer,
     dappMetadata: {
       name: 'React Native Test Dapp',
       url: 'app-test.myshell.ai',
     },
-  });
-  
-  const ethereum = sdk.getProvider();
+  })
+
+  const ethereum = sdk.getProvider()
 
   const connect = async () => {
     try {
-      const result = await ethereum.request({method: 'eth_requestAccounts'});
+      const result = await ethereum.request({ method: 'eth_requestAccounts' })
+      console.log(result)
       /// public address
       const address = result?.[0]
+      setPublicAddress(address)
       console.log('public address = ' + address)
       generateNonce({
-        publicAddress: address
-      }).then((msg) => {  
+        publicAddress: address,
+      }).then(msg => {
         setTimeout(() => {
-          console.log("msg.nonce = " + msg.nonce)
+          console.log('msg.nonce = ' + msg.nonce)
           sign(msg.nonce)
-        }, 100);
+        }, 100)
       })
-      
     } catch (e) {
       console.log('public address have error = ' + e)
     }
-  };
+  }
 
-  const sign = async (msg) => {
+  const sign = async msg => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
@@ -117,67 +119,53 @@ export default function SignIn() {
         */
         contents: msg,
         attachedMoneyInEth: 4.2,
-        from: {
-          name: 'Cow',
-          wallets: [
-            '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
-            '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF',
-          ],
-        },
-        to: [
-          {
-            name: 'Bob',
-            wallets: [
-              '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-              '0xB0BdaBea57B0BDABeA57b0bdABEA57b0BDabEa57',
-              '0xB0B0b0b0b0b0B000000000000000000000000000',
-            ],
-          },
-        ],
       },
       // Refers to the keys of the *types* object below.
       primaryType: 'Mail',
       types: {
         // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
         EIP712Domain: [
-          {name: 'name', type: 'string'},
-          {name: 'version', type: 'string'},
-          {name: 'chainId', type: 'uint256'},
-          {name: 'verifyingContract', type: 'address'},
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
         ],
         // Not an EIP712Domain definition
         Group: [
-          {name: 'name', type: 'string'},
-          {name: 'members', type: 'Person[]'},
+          { name: 'name', type: 'string' },
+          { name: 'members', type: 'Person[]' },
         ],
         // Refer to PrimaryType
         Mail: [
-          {name: 'from', type: 'Person'},
-          {name: 'to', type: 'Person[]'},
-          {name: 'contents', type: 'string'},
+          { name: 'from', type: 'Person' },
+          { name: 'to', type: 'Person[]' },
+          { name: 'contents', type: 'string' },
         ],
         // Not an EIP712Domain definition
         Person: [
-          {name: 'name', type: 'string'},
-          {name: 'wallets', type: 'address[]'},
+          { name: 'name', type: 'string' },
+          { name: 'wallets', type: 'address[]' },
         ],
       },
-    });
+    })
 
-    var address = ethereum.selectedAddress;
-    console.log("address = " + address)
-    var params = [address, msgParams];
-    var method = 'eth_signTypedData_v4';
-
+    var address = ethereum.selectedAddress
+    console.log('address = ' + address)
+    var params = [address, msgParams]
+    var method = 'eth_signTypedData_v4'
+    try {
+      const signature = await ethereum.request({ method, params })
+      console.log('签名', signature)
+    } catch (e) {
+      console.log(e)
+    }
     /// 签名
-    const signature = await ethereum.request({method, params});
-    console.log("签名"+signature) 
 
     verifySignature({
-      invitationCode: "",
+      invitationCode: '',
       publicAddress: address,
-      signature: signature
-    }).then( res => {
+      // signature: signature,
+    }).then(res => {
       const userInfo = res
       console.log(userInfo)
       // useUserStore.setState({ particleInfo: userInfo })
@@ -189,7 +177,7 @@ export default function SignIn() {
 
       // signIn(info)
     })
-  };
+  }
 
   const { signIn } = useAuth()
   const login = async loginType => {
@@ -214,10 +202,7 @@ export default function SignIn() {
     Clipboard.setString(value)
     Alert.alert('Copied to clipboard')
   }
-  const web3Provider = useMemo(
-    () => (provider ? new ethers.providers.Web3Provider(provider) : undefined),
-    [provider],
-  );
+  const web3Provider = useMemo(() => (provider ? new ethers.providers.Web3Provider(provider) : undefined), [provider])
 
   useEffect(() => {
     async function getClientId() {
@@ -227,21 +212,20 @@ export default function SignIn() {
 
         setTimeout(() => {
           generateNonce({
-            publicAddress: address
-          }).then((msg) => {  
-            testSignMessage(web3Provider, msg.nonce).then(res => {              
-              const signature = res["result"]
-              console.log("address="+address)
-              console.log("signature="+signature)
+            publicAddress: address,
+          }).then(msg => {
+            testSignMessage(web3Provider, msg.nonce).then(res => {
+              const signature = res['result']
+              console.log('address=' + address)
+              console.log('signature=' + signature)
               verifySignature({
-                invitationCode: "",
+                invitationCode: '',
                 publicAddress: address,
-                signature: signature
-              }).then( res => {
+                signature: signature,
+              }).then(res => {
                 const userInfo = res
                 useUserStore.setState({ particleInfo: userInfo })
-                console.log(userInfo)
-                const info =  particleLogin({
+                const info = particleLogin({
                   uuid: userInfo.userUid,
                   token: userInfo.token,
                 })
@@ -250,13 +234,12 @@ export default function SignIn() {
               })
             })
           })
-        }, 100);
+        }, 100)
       } else {
         setClientId(undefined)
       }
     }
     getClientId()
-
   }, [isConnected, provider])
 
   return (
@@ -431,40 +414,30 @@ export default function SignIn() {
   )
 }
 
-
-export const testSignMessage = async (
-  web3Provider?: ethers.providers.Web3Provider,
-  msg: string = "Hello World"
-) => {
+export const testSignMessage = async (web3Provider?: ethers.providers.Web3Provider, msg: string = 'Hello World') => {
   if (!web3Provider) {
-    throw new Error('web3Provider not connected');
+    throw new Error('web3Provider not connected')
   }
   // const msg = 'Hello World';
-  const hexMsg = utf8ToHex(msg, true);
-  const [address] = await web3Provider.listAccounts();
+  const hexMsg = utf8ToHex(msg, true)
+  const [address] = await web3Provider.listAccounts()
   if (!address) {
-    throw new Error('No address found');
+    throw new Error('No address found')
   }
 
-  const signature = await web3Provider.send('personal_sign', [hexMsg, address]);
-  const valid = verifyEip155MessageSignature(msg, signature, address);
+  const signature = await web3Provider.send('personal_sign', [hexMsg, address])
+  const valid = verifyEip155MessageSignature(msg, signature, address)
   return {
     method: 'personal_sign',
     address,
     valid,
     result: signature,
-  };
-};
+  }
+}
 
-const verifyEip155MessageSignature = (
-  message: string,
-  signature: string,
-  address: string,
-) => verifyMessage(message, signature).toLowerCase() === address.toLowerCase();
+const verifyEip155MessageSignature = (message: string, signature: string, address: string) =>
+  verifyMessage(message, signature).toLowerCase() === address.toLowerCase()
 
-export function verifyMessage(
-  message: Bytes | string,
-  signature: SignatureLike,
-): string {
-  return recoverAddress(hashMessage(message), signature);
+export function verifyMessage(message: Bytes | string, signature: SignatureLike): string {
+  return recoverAddress(hashMessage(message), signature)
 }
