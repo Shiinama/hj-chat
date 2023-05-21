@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (5.7.1)
+  - Alamofire (5.6.4)
   - BigInt (5.2.0)
   - boost (1.76.0)
   - CryptoSwift (1.6.0)
@@ -138,15 +138,15 @@ PODS:
     - React-Core
   - fmt (6.2.1)
   - glog (0.3.5)
-  - libaom (3.0.0):
-    - libvmaf (>= 2.2.0)
-  - libavif (0.11.1):
-    - libavif/libaom (= 0.11.1)
-  - libavif/core (0.11.1)
-  - libavif/libaom (0.11.1):
+  - libaom (2.0.2):
+    - libvmaf
+  - libavif (0.10.1):
+    - libavif/libaom (= 0.10.1)
+  - libavif/core (0.10.1)
+  - libavif/libaom (0.10.1):
     - libaom (>= 2.0.0)
     - libavif/core
-  - libvmaf (2.3.1)
+  - libvmaf (2.3.0)
   - libwebp (1.2.4):
     - libwebp/demux (= 1.2.4)
     - libwebp/mux (= 1.2.4)
@@ -526,9 +526,9 @@ PODS:
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
-  - SDWebImage (5.15.8):
-    - SDWebImage/Core (= 5.15.8)
-  - SDWebImage/Core (5.15.8)
+  - SDWebImage (5.15.7):
+    - SDWebImage/Core (= 5.15.7)
+  - SDWebImage/Core (5.15.7)
   - SDWebImageAVIFCoder (0.9.5):
     - libavif (>= 0.9.1)
     - SDWebImage (~> 5.10)
@@ -803,7 +803,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
+  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
   BigInt: f668a80089607f521586bbe29513d708491ef2f7
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CryptoSwift: 562f8eceb40e80796fffc668b0cad9313284cfa6
@@ -838,9 +838,9 @@ SPEC CHECKSUMS:
   ffmpeg-kit-react-native: 56ecfcd21536379dd123eade87c3b6fd55f12030
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
-  libaom: 144606b1da4b5915a1054383c3a4459ccdb3c661
-  libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
-  libvmaf: 27f523f1e63c694d14d534cd0fddd2fab0ae8711
+  libaom: 9bb51e0f8f9192245e3ca2a1c9e4375d9cbccc52
+  libavif: e242998ccec1c83bcba0bbdc256f460ad5077348
+  libvmaf: f20c616ce77cfde49a85a3056f758bff56870a2d
   libwebp: f62cb61d0a484ba548448a4bd52aabf150ff6eef
   lottie-ios: 8f97d3271e155c2d688875c29cd3c74908aef5f8
   lottie-react-native: 3e722c63015fdb9c27638b0a77969fc412067c18
@@ -894,7 +894,7 @@ SPEC CHECKSUMS:
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
-  SDWebImage: cb032eba469c54e0000e78bcb0a13cdde0a52798
+  SDWebImage: 25bac438318faf37e35650619ebc288a9061d292
   SDWebImageAVIFCoder: d759e21cf4efb640cc97250566aa556ad8bb877c
   SDWebImageSVGCoder: 6fc109f9c2a82ab44510fff410b88b1a6c271ee8
   SDWebImageWebPCoder: 18503de6621dd2c420d680e33d46bf8e1d5169b0
