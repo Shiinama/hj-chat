@@ -1,5 +1,5 @@
-//import './shim.js'
-//import crypto from 'crypto'
+import './shim.js'
+// import crypto from 'crypto'
 import 'expo-router/entry'
 import 'react-native-get-random-values'
 import './tmp/pollify'
