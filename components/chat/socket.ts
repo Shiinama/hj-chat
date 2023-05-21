@@ -16,6 +16,8 @@ export enum MsgEvents {
   ENERGY_INFO = 'energy_info',
   NO_ENOUGH_ENERGY = 'no_enough_energy',
   EXCEPTION = 'exception',
+  MSG_TEXT_STREAM = 'text_stream',
+  MSG_AUDIO_STREAM = 'audio_stream',
 }
 
 interface MessageDto {
@@ -102,6 +104,8 @@ export const useSocketIo = () => {
     SocketIoRef.current.on(MsgEvents.EXCEPTION, onException)
 
     SocketIoRef.current.on(MsgEvents.MSG_SENT, onMessageSent)
+    SocketIoRef.current.on(MsgEvents.MSG_TEXT_STREAM, onMessageTextStream)
+    SocketIoRef.current.on(MsgEvents.MSG_AUDIO_STREAM, onMessageAudioStream)
     SocketIoRef.current.on(MsgEvents.MSG_REPLIED, onMessageReplied)
     SocketIoRef.current.on(MsgEvents.MSG_UPDATED, onMessageUpdated)
     SocketIoRef.current.on(MsgEvents.MSG_TRANSLATED, onMessageTranslated)
@@ -127,6 +131,15 @@ export const useSocketIo = () => {
       addReqIds(data?.reqId)
     }
     setMessage(data)
+  }
+
+  const onMessageTextStream = (data: MesageSucessType) => {
+    if (currentBot.id !== data.data.botId) return
+    console.log(data)
+  }
+  const onMessageAudioStream = (data: MesageSucessType) => {
+    if (currentBot.id !== data.data.botId) return
+    console.log(data)
   }
   const onMessageReplied = ({ data, reqId }: MesageSucessType) => {
     if (currentBot.id !== data.botId) return

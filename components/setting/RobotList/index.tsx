@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router'
 import { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { getUgcBotList } from '../../../api/robot'
-import BotCard from '../../botCard'
+import UgcBotCard from '../UgcBotCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import NoData from '../NoData'
@@ -79,7 +79,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       <CreateCard />
       {robotListData?.map((ld, i) => {
         return (
-          <BotCard
+          <UgcBotCard
             onShowDetail={e => {
               onShowDetail(e)
             }}
