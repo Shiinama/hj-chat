@@ -37,7 +37,7 @@ const AllRobot: FC<AllRobotProps> = () => {
           }}
         />
       </View>
-      <ScrollView style={styles.page}>
+      <ScrollView style={styles.page} keyboardDismissMode="on-drag">
         <RobotList requestParams={params} />
       </ScrollView>
       <Filter />
