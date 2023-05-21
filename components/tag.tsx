@@ -24,9 +24,10 @@ const styles = StyleSheet.create({
   tagListItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 28,
+    height: 26,
     paddingLeft: 10,
     paddingRight: 10,
+    marginRight: 4,
     borderRadius: 6,
     flexShrink: 1,
   },
@@ -39,7 +40,6 @@ const styles = StyleSheet.create({
   tagListItemText: {
     fontWeight: '500',
     fontSize: 12,
-    lineHeight: 14,
     color: '#3A0D84',
   },
 })

@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 24,
+    lineHeight: 34,
     fontStyle: 'normal',
     fontWeight: '700',
   },
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    marginHorizontal: 4,
     height: 88,
     backgroundColor: '#F6F6F6',
     borderRadius: 12,

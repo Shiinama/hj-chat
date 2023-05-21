@@ -1,57 +1,36 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
-import { chatTimeFormat } from '../utils/time'
 import RootStyles from '../constants/RootStyles'
 import Pined from '../assets/images/tabbar/pin.svg'
 import { renderImage } from './profileInfo/helper'
 import dayjs from 'dayjs'
 import userStore from '../store/userStore'
-import LinearText from './linearText'
-import Tag from './tag'
-function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
-  const userInfo = userStore.getState().profile
-  const tag = {
-    name: ld.privateBotId ? (ld.status === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
-    bgColor: ld.privateBotId ? (ld.status === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
-    tagColor: ld.privateBotId ? (ld.status === 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
-  }
 
+function BotCard({ ld, onShowDetail, showPined }: any) {
+  const userInfo = userStore.getState().profile
   return (
     <TouchableOpacity
       style={styles.listItem}
       onPress={() => {
-        onShowDetail({ ...ld, tag: userInfo?.id === ld.userId && tag })
+        onShowDetail({ ...ld, tag: userInfo?.id === ld.userId })
       }}
     >
       {renderImage(ld.logo, styles.avatar)}
       <View style={{ flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
         <View style={styles.listItemTop}>
           <View style={{ flex: 1 }}>
-            {showTime ? (
-              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.name}>
-                {ld.name}
-              </Text>
-            ) : userInfo?.id === ld.userId ? (
-              <View style={{ flexDirection: 'row' }}>
-                <LinearText text={ld.name} styles={styles.name}></LinearText>
-                <Tag {...tag}></Tag>
-              </View>
-            ) : (
-              <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.name }}>
-                {ld.name}
-              </Text>
-            )}
-          </View>
-          {showTime ? (
-            <Text style={styles.time}>
-              {ld.lastMessage
-                ? dayjs().isSame(dayjs(ld.lastMessage.createdDate), 'day')
-                  ? dayjs(ld.lastMessage.createdDate).format('HH:mm')
-                  : dayjs().isSame(dayjs(ld.lastMessage.createdDate), 'year')
-                  ? dayjs(ld.lastMessage.createdDate).format('MM-DD')
-                  : dayjs(ld.lastMessage.createdDate).format('YYYY-MM-DD')
-                : ''}
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.name}>
+              {ld.name}
             </Text>
-          ) : null}
+          </View>
+          <Text style={styles.time}>
+            {ld.lastMessage
+              ? dayjs().isSame(dayjs(ld.lastMessage.createdDate), 'day')
+                ? dayjs(ld.lastMessage.createdDate).format('HH:mm')
+                : dayjs().isSame(dayjs(ld.lastMessage.createdDate), 'year')
+                ? dayjs(ld.lastMessage.createdDate).format('MM-DD')
+                : dayjs(ld.lastMessage.createdDate).format('YYYY-MM-DD')
+              : ''}
+          </Text>
         </View>
         <View
           style={{
@@ -62,7 +41,7 @@ function BotCard({ ld, showTime, onShowDetail, showPined }: any) {
           }}
         >
           <Text numberOfLines={2} ellipsizeMode="tail" style={styles.message}>
-            {!showTime ? ld.description : ld?.lastMessage?.text}
+            {ld?.lastMessage?.text}
           </Text>
           {showPined && <Pined></Pined>}
         </View>

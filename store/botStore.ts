@@ -11,11 +11,11 @@ type ListDataItem = {
   logo: string
   language: string
   status: string
-  tag?: {
+  tags?: {
     name: string
     bgColor: string
     tagColor: string
-  }
+  }[]
   energyPerChat: number
   pinned: boolean
   lastInteractionDate: string

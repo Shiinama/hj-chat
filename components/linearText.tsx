@@ -1,21 +1,20 @@
 import MaskedView from '@react-native-masked-view/masked-view'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Text, View } from 'react-native'
+import { Text, View, Dimensions } from 'react-native'
 
+const width = Dimensions.get('window').width - 150
 export default function LinearText({ text, styles }) {
   return (
     <View>
-      <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles, maxWidth: '70%', height: 0, opacity: 0 }}>
+      <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles, height: 0 }}>
         {text}
       </Text>
       <MaskedView
-        style={{ height: '100%', flex: 1 }}
+        style={{ height: styles.lineHeight }}
         maskElement={
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start' }}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles}>
-              {text}
-            </Text>
-          </View>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles, width }}>
+            {text}
+          </Text>
         }
       >
         <LinearGradient

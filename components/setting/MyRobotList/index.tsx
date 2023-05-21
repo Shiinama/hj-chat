@@ -3,7 +3,7 @@ import { useBoolean } from 'ahooks'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
-import BotCard from '../../botCard'
+import UgcBotCard from '../UgcBotCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import { getUgcOwnList } from '../../../api/setting'
@@ -50,7 +50,6 @@ const MyRobotList: FC<MyRobotListProps> = () => {
       pathname: `robot/${event.id}`,
       params: {
         id: event.id,
-        tag: event.tag,
         userId: event.userId,
         status: event.status,
         name: event.name,
@@ -74,7 +73,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
       <CreateCard />
       {myRobotListData?.map((ld, i) => {
         return (
-          <BotCard
+          <UgcBotCard
             onShowDetail={e => {
               onShowDetail(e)
             }}
