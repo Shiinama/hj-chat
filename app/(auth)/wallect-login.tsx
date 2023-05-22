@@ -1,16 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import {
-  Text,
-  View,
-  Image,
-  TouchableHighlight,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Linking,
-} from 'react-native'
+import { View, Alert } from 'react-native'
 import { useWeb3Modal, Web3Button, Web3Modal } from '@web3modal/react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AccountCtrl } from '@web3modal/react-native/src/controllers/AccountCtrl'
@@ -20,7 +9,7 @@ import { utf8ToHex } from '@walletconnect/encoding'
 import { recoverAddress } from '@ethersproject/transactions'
 import { hashMessage } from '@ethersproject/hash'
 import type { Bytes, SignatureLike } from '@ethersproject/bytes'
-import { generateNonce, particleLogin, verifySignature } from '../../api/auth'
+import { generateNonce, verifySignature } from '../../api/auth'
 import { useAuth } from '../../context/auth'
 
 export function WallectConnectView() {

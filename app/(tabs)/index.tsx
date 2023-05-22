@@ -11,7 +11,6 @@ import { useAuth } from '../../context/auth'
 import { createWeb3 } from '../../tmp/web3Demo'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 import { removeBotListLocal } from '../../api/botChatListCache'
-import Clipboard from '@react-native-clipboard/clipboard'
 
 type ListDataItem = {
   id: number
@@ -58,15 +57,6 @@ export default function TabOneScreen() {
       removeBotListLocal()
       setListData([])
       signOut()
-    })
-    Clipboard.getString().then(res => {
-      const regex = /bot\/(.+)/
-      const [, botId] = res.match(regex) ?? []
-      if (botId) {
-        router.push({
-          pathname: `robot/${botId}`,
-        })
-      }
     })
     return () => {
       CallBackManagerSingle().remove('botList')
