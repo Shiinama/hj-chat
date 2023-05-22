@@ -20,6 +20,9 @@ import CallBackManagerSingle from '../../../utils/CallBackManager'
 import LinearText from '../../../components/linearText'
 import Tag from '../../../components/tag'
 import { ScrollView } from 'react-native'
+import { getBotSharingCode } from '../../../api/setting'
+import System from '../../../constants/System'
+import Clipboard from '@react-native-clipboard/clipboard'
 
 export default function Robot() {
   const router = useRouter()
@@ -144,7 +147,15 @@ export default function Robot() {
               />
               <Text style={styles.actionsItemText}>Publish</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {}} style={styles.actionsItem}>
+            <TouchableOpacity
+              onPress={() => {
+                getBotSharingCode({ botUid: botStore.uid }).then(res => {
+                  Clipboard.setString(`${System.botShareLink}${res}`)
+                  Toast('Copied')
+                })
+              }}
+              style={styles.actionsItem}
+            >
               <Image
                 source={escape}
                 style={{

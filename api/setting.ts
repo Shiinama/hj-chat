@@ -19,3 +19,12 @@ export const getUgcOwnList = () => {
     method: 'get',
   })
 }
+/**
+ *  获得分享码
+ */
+export const getBotSharingCode = params => {
+  return request({
+    url: `/bot/getBotSharingCode`,
+    method: 'get',
+  })
+}
