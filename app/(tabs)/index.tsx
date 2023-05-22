@@ -8,9 +8,6 @@ import BotCard from '../../components/botCard'
 import ShellLoading from '../../components/loading'
 import botStore from '../../store/botStore'
 import { useAuth } from '../../context/auth'
-import { createWeb3 } from '../../tmp/web3Demo'
-import CallBackManagerSingle from '../../utils/CallBackManager'
-import { removeBotListLocal } from '../../api/botChatListCache'
 
 type ListDataItem = {
   id: number
@@ -23,6 +20,11 @@ type ListDataItem = {
   pinned: boolean
   lastInteractionDate: string
 }
+
+// import { createWeb3 } from '../../tmp/web3Demo'
+import CallBackManagerSingle from '../../utils/CallBackManager'
+import { removeBotListLocal } from '../../api/botChatListCache'
+import SocketStreamManager from '../../components/chat/socketManager'
 
 export default function TabOneScreen() {
   const router = useRouter()
@@ -58,8 +60,11 @@ export default function TabOneScreen() {
       setListData([])
       signOut()
     })
+    // 初始化socket
+    SocketStreamManager()
     return () => {
       CallBackManagerSingle().remove('botList')
+      SocketStreamManager(true)
     }
   }, [])
 

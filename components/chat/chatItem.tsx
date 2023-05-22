@@ -10,13 +10,15 @@ import CheckIcon from '../../assets/images/chat/check.svg'
 import CheckedIcon from '../../assets/images/chat/checked.svg'
 import Svt from '../../assets/images/chat/svt.svg'
 import Translate from '../../assets/images/chat/translte.svg'
-import { memo, useContext, useState } from 'react'
+import { memo, useContext, useEffect, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
 import { BlurView } from '@react-native-community/blur'
 import Markdown from 'react-native-marked'
 
 import ShellLoading from '../loading'
+import { MessageStreamText, MessageStreamTextRes } from './type'
+import SocketStreamManager from './socketManager'
 type Props = {
   item: ChatItem & number
   translationText
@@ -27,16 +29,57 @@ type Props = {
 
 function chatItem({ item, translationText, me, logo }: Props) {
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
+  const [messageStream, setMessageStream] = useState<MessageStreamText>()
+  const [audioStream, setAudioStream] = useState<string>()
   const [buttonIndex, setButtonIndex] = useState<number>(1)
+  useEffect(() => {
+    const msgKey = item.botId + '&BOT&' + item.replyUid
+    // console.log('item.type:', item)
+    if (item.type === 'LOADING' && item.replyUid) {
+      // console.log('注册:', item)
+      setButtonIndex(() => 2)
+      SocketStreamManager().addTextStreamCallBack(msgKey, item => {
+        // console.log('收到item:', item)
+        setMessageStream({ ...item })
+        if (item.isFinal) {
+          SocketStreamManager().removeTextStreamCallBack(msgKey)
+        }
+      })
+      SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
+        // console.log('收到item:', item)
+        setAudioStream(url)
+        if (item.isFinal) {
+          SocketStreamManager().removeTextStreamCallBack(msgKey)
+        }
+      })
+    } else {
+      SocketStreamManager().removeTextStreamCallBack(msgKey)
+    }
+    return () => {
+      SocketStreamManager().removeTextStreamCallBack(msgKey)
+      SocketStreamManager().removeAudioStreamCallBack(msgKey)
+    }
+  }, [item])
   const isBlur = buttonIndex === 1
   if (item.uid === '1231') return null
   const tag = item?.replyUid
-  const renderMessageAudio = () => (
-    <View style={{ height: 50, justifyContent: 'center', width: 263 }}>
-      <AudioMessage audioFileUri={item?.voiceUrl} />
-    </View>
-  )
+  const renderMessageAudio = () => {
+    const url = item?.voiceUrl || audioStream
+    if (!url) {
+      return null
+    }
+    return (
+      <View style={{ height: 50, justifyContent: 'center', width: 263 }}>
+        <AudioMessage audioFileUri={url} />
+      </View>
+    )
+  }
   const renderMessageText = ({ textMsg }: { textMsg?: boolean }) => {
+    const messageTxt = messageStream?.text || item.text
+    // console.log('messageTxt:', messageTxt)
+    if (!messageTxt) {
+      return null
+    }
     const markdownRender = text => {
       return (
         <Markdown
@@ -48,6 +91,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
         />
       )
     }
+
     // textMsg fix 纯文字消息上下全局加了两个分割线，这里把它去掉
     return (
       <View style={[styles.content, textMsg ? styles.textContent : {}]}>
@@ -61,8 +105,8 @@ function chatItem({ item, translationText, me, logo }: Props) {
             />
           </TouchableWithoutFeedback>
         )}
-        {buttonIndex === 1 && <Text>{item.text}</Text>}
-        {buttonIndex === 2 && markdownRender(item.text)}
+        {buttonIndex === 1 && <Text>{messageTxt}</Text>}
+        {buttonIndex === 2 && markdownRender(messageTxt)}
         {buttonIndex === 3 &&
           (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
@@ -164,10 +208,10 @@ function chatItem({ item, translationText, me, logo }: Props) {
 
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[styles.chatWrap, tag ? styles.youContent : styles.meContent]}>
-            {item?.voiceUrl && renderMessageAudio()}
-            {item?.text && renderMessageText({ textMsg: item?.voiceUrl ? false : true })}
+            {renderMessageAudio()}
+            {renderMessageText({ textMsg: item?.voiceUrl ? false : true })}
             {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
-            {item?.type === 'LOADING' && loadingRender()}
+            {item?.type === 'LOADING' && !item.text && !messageStream?.text && loadingRender()}
           </View>
           <View style={styles.placeholder} />
         </View>
