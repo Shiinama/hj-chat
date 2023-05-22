@@ -97,74 +97,17 @@ export default function SignIn() {
   }
 
   const sign = async msg => {
-    const msgParams = JSON.stringify({
-      domain: {
-        // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(ethereum.chainId, 16),
-        // Give a user friendly name to the specific contract you are signing for.
-        name: 'Ether Mail',
-        // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
-        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-        // Just let's you know the latest version. Definitely make sure the field name is correct.
-        version: '1',
-      },
-
-      // Defining the message signing data content.
-      message: {
-        /*
-         - Anything you want. Just a JSON Blob that encodes the data you want to send
-         - No required fields
-         - This is DApp Specific
-         - Be as explicit as possible when building out the message schema.
-        */
-        contents: msg,
-        attachedMoneyInEth: 4.2,
-      },
-      // Refers to the keys of the *types* object below.
-      primaryType: 'Mail',
-      types: {
-        // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-        EIP712Domain: [
-          { name: 'name', type: 'string' },
-          { name: 'version', type: 'string' },
-          { name: 'chainId', type: 'uint256' },
-          { name: 'verifyingContract', type: 'address' },
-        ],
-        // Not an EIP712Domain definition
-        Group: [
-          { name: 'name', type: 'string' },
-          { name: 'members', type: 'Person[]' },
-        ],
-        // Refer to PrimaryType
-        Mail: [
-          { name: 'from', type: 'Person' },
-          { name: 'to', type: 'Person[]' },
-          { name: 'contents', type: 'string' },
-        ],
-        // Not an EIP712Domain definition
-        Person: [
-          { name: 'name', type: 'string' },
-          { name: 'wallets', type: 'address[]' },
-        ],
-      },
-    })
-
     var address = ethereum.selectedAddress
     console.log('address = ' + address)
-    var params = [address, msgParams]
-    var method = 'eth_signTypedData_v4'
-    try {
-      const signature = await ethereum.request({ method, params })
-      console.log('签名', signature)
-    } catch (e) {
-      console.log(e)
-    }
+    var params = [address, msg]
+    var method = 'personal_sign'
     /// 签名
-
+    const signature = await ethereum.request({ method, params })
+    console.log('签名', signature)
     verifySignature({
       invitationCode: '',
       publicAddress: address,
-      // signature: signature,
+      signature: signature,
     }).then(res => {
       const userInfo = res
       console.log(userInfo)
