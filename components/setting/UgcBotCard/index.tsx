@@ -30,6 +30,8 @@ function UgcBotCard({ ld, onShowDetail }: any) {
   ]
   if (userInfo?.id !== ld.userId) {
     tags = tags.slice(1)
+  } else {
+    tags = tags.slice(0, 1)
   }
 
   return (
@@ -55,7 +57,7 @@ function UgcBotCard({ ld, onShowDetail }: any) {
           </View>
           <View style={styles.tagList}>
             {tags.map(tag => {
-              return <Tag key={tag.name} {...tag}></Tag>
+              return <Tag key={tag.bgColor} {...tag}></Tag>
             })}
           </View>
         </View>

@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text } from 'react-native'
 
-export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon }: any) {
+export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon, isYuandian }: any) {
   return (
     <View
       style={{
@@ -9,12 +9,14 @@ export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon }:
       }}
     >
       {childrenIcon}
-      {/* <View
-        style={{
-          ...styles.tagListItemTip,
-          backgroundColor: tagColor,
-        }}
-      ></View> */}
+      {isYuandian && (
+        <View
+          style={{
+            ...styles.tagListItemTip,
+            backgroundColor: tagColor,
+          }}
+        ></View>
+      )}
       <Text style={{ ...styles.tagListItemText, color: tagColor }}>{keyValue || name}</Text>
     </View>
   )
