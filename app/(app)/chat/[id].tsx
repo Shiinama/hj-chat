@@ -20,26 +20,13 @@ import useUserStore from '../../../store/userStore'
 import AudioPayManagerSingle, { AudioPayManager } from '../../../components/chat/audioPlayManager'
 import { NativeEventSubscription } from 'react-native'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
+import SocketStreamManager from '../../../components/chat/socketManager'
+import { MesageSucessType, MessageDto } from '../../../components/chat/type'
 
-export type ChatItem = {
-  id: number
-  uid: string
-  userId?: number
-  userUid?: string
-  status?: string
-  type?: string
-  replyUid?: string | null
-  text?: string
-  translation?: string | null
-  voiceUrl?: string | null
-  botId?: number
-  content?: string
-  createdDate?: string
-  updatedDate?: string
-  botUid?: string
-}
+export type ChatItem = MessageDto
 function Chat({}) {
   const { pinned, logo, name, uid, userId, energyPerChat, id } = botStore.getState()
+
   const { profile } = useUserStore()
 
   /** 页面数据上下文 */
@@ -48,7 +35,8 @@ function Chat({}) {
     selectedItems: [],
   })
   const navigation = useNavigation()
-  const { message, resMessage, sendMessage, translationMessage, updateMessage, isPending } = useSocketIo()
+  const isPending = useRef(false)
+  // const { message, resMessage, sendMessage, translationMessage, updateMessage } = useSocketIo()
   // 给loading生成一个随机id，这里是用replyUid来判断是否是回复的信息，loading展示为回复数据，所以随便弄一个id当id
   const randomId = useId()
 
@@ -66,6 +54,7 @@ function Chat({}) {
     pageSize: 10, // 每页加载多少条数据
     hasMore: true,
   })
+  const currentSendMsgInfo = useRef<MesageSucessType>()
   useEffect(() => {
     try {
       new Audio.Recording()
@@ -123,13 +112,22 @@ function Chat({}) {
       limit: chatDataInfo.current.pageSize,
       beforeId: chatData.length > 0 && loadMore ? chatData[chatData.length - 1].id : undefined,
     })
-      .then(({ data }: any) => {
+      .then(({ data }: { data: Array<MessageDto> }) => {
         // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
         // data.sort(
         //   (a, b) =>
         //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
         // );
         // chatDataInfo.current.data = data
+        data?.map(item => {
+          // 查找正在接收的内容，type置为loading
+          const msgKey = item.botId + '&BOT&' + item.replyUid
+          const messageText = SocketStreamManager().getMessageTextStream(msgKey)
+          if (messageText) {
+            item.type = 'LOADING'
+            item.text = messageText
+          }
+        })
         setChatData(!loadMore ? data : [...chatData, ...data])
         if (data.length < chatDataInfo.current.pageSize) {
           chatDataInfo.current.hasMore = false
@@ -179,7 +177,12 @@ function Chat({}) {
       return
     }
     const reqId = uuidv4()
-    sendMessage('voice_chat', {
+    // sendMessage('voice_chat', {
+    //   reqId,
+    //   botUid: uid,
+    //   voice,
+    // })
+    SocketStreamManager().sendMessage('voice_chat', {
       reqId,
       botUid: uid,
       voice,
@@ -192,7 +195,7 @@ function Chat({}) {
       return
     }
     const reqId = uuidv4()
-    sendMessage('translate_message', {
+    SocketStreamManager().sendMessage('translate_message', {
       reqId,
       messageUid,
     })
@@ -226,54 +229,123 @@ function Chat({}) {
     })
   }, [navigation, name, chatPageValue.pageStatus])
 
+  // socket回调
   useEffect(() => {
-    if (!message) return
-    setChatData([message.data, ...chatData])
-    flatList.current?.scrollToIndex?.({ index: 0 })
-    // 刷新聊天主页列表 加个延时  马上去请求数据可能还没更新，如果没有延时的问题可以去掉setTimeout
-    setTimeout(() => {
-      CallBackManagerSingle().execute('botList')
-    }, 300)
-  }, [message])
-
-  useEffect(() => {
-    if (!resMessage) return
-    setChatData([resMessage, ...chatData])
-    if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
-      AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
+    SocketStreamManager().onPending = pending => {
+      isPending.current = pending
     }
-    // 刷新聊天主页列表
-    setTimeout(() => {
-      CallBackManagerSingle().execute('botList')
-    }, 300)
-    flatList.current?.scrollToIndex?.({ index: 0 })
-    // 回复消息也需要刷新消息列表
-    if (chatData.length <= 1) {
-      CallBackManagerSingle().execute('botList')
+    SocketStreamManager().onSendMessage = data => {
+      // console.log('onSendMessagedata:', data)
+      currentSendMsgInfo.current = data
+      if (!data?.data) return
+      setChatData(list => {
+        return [data.data, ...list]
+      })
+      flatList.current?.scrollToIndex?.({ index: 0 })
     }
-  }, [resMessage])
-
-  useEffect(() => {
-    if (!updateMessage) return
-    const index = chatData.findIndex(item => item.uid === updateMessage.uid)
-    setChatData(pre => {
-      pre[index].text = updateMessage.text
-      return [...pre]
-    })
-  }, [updateMessage])
-
-  useEffect(() => {
-    if (!translationMessage) return
-    const index = chatData.findIndex(item => item.id === translationMessage.id)
-    setChatData(pre => {
-      // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
-      if (index > -1) {
-        pre[index].translation = translationMessage.translation
+    SocketStreamManager().onMessageStreamStart = data => {
+      setChatData(list => {
+        return [{ ...data.replyMessage, type: 'LOADING' }, ...list]
+      })
+    }
+    SocketStreamManager().onResMessage = resMessage => {
+      if (!resMessage) return
+      setChatData(list => {
+        let have = false
+        const newList = list.map(item => {
+          if (item.replyUid === resMessage.replyUid) {
+            have = true
+            console.log('reitem:', item, resMessage)
+            item = { ...resMessage }
+          }
+          return item
+        })
+        // console.log('reitem:', newList)
+        return have ? [...newList] : [resMessage, ...list]
+      })
+      if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
+        AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
       }
+      flatList.current?.scrollToIndex?.({ index: 0 })
+    }
+    SocketStreamManager().onUpdateMessage = updateMessage => {
+      if (!updateMessage) return
+      setChatData(pre => {
+        const index = pre.findIndex(item => item.uid === updateMessage.uid)
+        if (index < 0) {
+          return pre
+        }
+        pre[index].text = updateMessage.text
+        return [...pre]
+      })
+    }
+    SocketStreamManager().onTransalteMessage = translationMessage => {
+      if (!translationMessage) return
+      const index = chatData.findIndex(item => item.id === translationMessage.id)
+      setChatData(pre => {
+        // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
+        if (index > -1) {
+          pre[index].translation = translationMessage.translation
+        }
 
-      return [...pre]
-    })
-  }, [translationMessage])
+        return [...pre]
+      })
+    }
+
+    SocketStreamManager().currentBot = botStore.getState()
+    console.log('botStore.getState()', SocketStreamManager().currentBot)
+  }, [])
+
+  console.log('chatData:', chatData)
+
+  // useEffect(() => {
+  //   if (!message) return
+  //   setChatData([message.data, ...chatData])
+  //   flatList.current?.scrollToIndex?.({ index: 0 })
+  //   // 刷新聊天主页列表 加个延时  马上去请求数据可能还没更新，如果没有延时的问题可以去掉setTimeout
+  //   setTimeout(() => {
+  //     CallBackManagerSingle().execute('botList')
+  //   }, 300)
+  // }, [message])
+
+  // useEffect(() => {
+  //   if (!resMessage) return
+  //   setChatData([resMessage, ...chatData])
+  //   if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
+  //     AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
+  //   }
+  //   // 刷新聊天主页列表
+  //   setTimeout(() => {
+  //     CallBackManagerSingle().execute('botList')
+  //   }, 300)
+  //   flatList.current?.scrollToIndex?.({ index: 0 })
+  //   // 回复消息也需要刷新消息列表
+  //   if (chatData.length <= 1) {
+  //     CallBackManagerSingle().execute('botList')
+  //   }
+  // }, [resMessage])
+
+  // useEffect(() => {
+  //   if (!updateMessage) return
+  //   const index = chatData.findIndex(item => item.uid === updateMessage.uid)
+  //   setChatData(pre => {
+  //     pre[index].text = updateMessage.text
+  //     return [...pre]
+  //   })
+  // }, [updateMessage])
+
+  // useEffect(() => {
+  //   if (!translationMessage) return
+  //   const index = chatData.findIndex(item => item.id === translationMessage.id)
+  //   setChatData(pre => {
+  //     // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
+  //     if (index > -1) {
+  //       pre[index].translation = translationMessage.translation
+  //     }
+
+  //     return [...pre]
+  //   })
+  // }, [translationMessage])
 
   const loadNextData = () => {
     try {
@@ -287,12 +359,18 @@ function Chat({}) {
   }
 
   const listData = useMemo(() => {
-    if (isPending && chatData?.length > 0) {
-      return [{ type: 'LOADING', id: randomId, replyUid: randomId }, ...chatData]
+    return chatData
+    if (isPending.current && chatData?.length > 0) {
+      const newList = [
+        { type: 'LOADING', id: randomId, replyUid: currentSendMsgInfo.current?.data?.uid, botId: id },
+        ...chatData,
+      ]
+      console.log('addResponse:', newList)
+      return newList
     } else {
       return chatData
     }
-  }, [chatData, isPending, randomId])
+  }, [chatData, isPending.current, randomId])
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
@@ -317,7 +395,7 @@ function Chat({}) {
               return false
             }
             const reqId = uuidv4()
-            sendMessage('text_chat', {
+            SocketStreamManager().sendMessage('text_chat', {
               reqId,
               botUid: uid,
               text: value,
