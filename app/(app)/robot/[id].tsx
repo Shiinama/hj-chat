@@ -31,6 +31,7 @@ export default function Robot() {
   const [tagList, setTagList] = useState([])
   const botStore = useBotStore()
   const userStore = useUserStore.getState().profile
+  const isMinme = userStore?.id === botStore?.userId
   useEffect(() => {
     navigation.setOptions({
       title: 'Robot',
@@ -39,28 +40,41 @@ export default function Robot() {
   useEffect(() => {
     let tags = [
       {
+        id: 2,
+        bgColor: '#F1EAFE',
+        tagColor: '#7A2EF6',
+        name: 'Mine',
+        isYuandian: true,
+      },
+      {
+        id: 1,
         name: botStore.energyPerChat,
         bgColor: '#FDF5CA',
         tagColor: '#5F5107',
         childrenIcon: <Flash width={14} height={14} />,
       },
       {
+        id: 2,
         name: botStore.privateBotId ? (botStore.status === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
         bgColor: botStore.privateBotId ? (botStore.status === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
         tagColor: botStore.privateBotId ? (botStore.status === 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
         childrenIcon: <Wang width={14} height={14} />,
       },
       {
+        id: 3,
         name: botStore.language,
         bgColor: '#E7EFFF',
         tagColor: '#05286F',
         childrenIcon: <Huatong width={14} height={14} />,
       },
     ]
+    if (!isMinme) {
+      tags = tags.filter(i => i.id !== 2)
+    }
     setTagList(tags)
   }, [navigation, name])
   const renderButton = () => {
-    if (userStore?.id === botStore?.userId) {
+    if (isMinme) {
       if (botStore.privateBotId) {
         if (botStore.status === 'Public') {
           return (
