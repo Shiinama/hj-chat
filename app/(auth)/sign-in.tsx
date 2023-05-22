@@ -22,106 +22,16 @@ import { useAuth } from '../../context/auth'
 import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
 import * as particleAuth from 'react-native-particle-auth'
 import useUserStore from '../../store/userStore'
-import { useWeb3Modal, Web3Button, Web3Modal } from '@web3modal/react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
-import { AccountCtrl } from '@web3modal/react-native/src/controllers/AccountCtrl'
-import { useSnapshot } from 'valtio'
-import { ethers } from 'ethers'
-import { utf8ToHex } from '@walletconnect/encoding'
-import { recoverAddress } from '@ethersproject/transactions'
-import { hashMessage } from '@ethersproject/hash'
-import type { Bytes, SignatureLike } from '@ethersproject/bytes'
+
 import { ConnectorAlreadyConnectedError, useConnect, useDisconnect, useSignMessage } from 'wagmi'
 
 // import { createWeb3 } from '../../tmp/web3Demo'
 import { generateNonce, particleLogin, verifySignature } from '../../api/auth'
 // const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
-
-import MetaMaskSDK from '@metamask/sdk'
-import BackgroundTimer from 'react-native-background-timer'
+import { MateMaskView } from './matemask-login'
+import { WallectConnectView } from './wallect-login'
 
 export default function SignIn() {
-  const providerMetadata = {
-    name: 'React Native V2 dApp',
-    description: 'RN dApp by WalletConnect',
-    url: 'app-test.myshell.ai',
-    icons: ['https://avatars.githubusercontent.com/u/37784886'],
-  }
-  const sessionParams = {
-    namespaces: {
-      eip155: {
-        methods: ['eth_sendTransaction', 'eth_signTransaction', 'eth_sign', 'personal_sign', 'eth_signTypedData'],
-        chains: ['eip155:1'],
-        events: ['chainChanged', 'accountsChanged'],
-        rpcMap: {},
-      },
-    },
-  }
-  const [publicAddress, setPublicAddress] = useState<string>('')
-  const [clientId, setClientId] = useState<string>()
-  const { isConnected, provider } = useWeb3Modal()
-  const { address } = useSnapshot(AccountCtrl.state)
-
-  const sdk = new MetaMaskSDK({
-    openDeeplink: link => {
-      Linking.openURL(link)
-    },
-    timer: BackgroundTimer,
-    dappMetadata: {
-      name: 'React Native Test Dapp',
-      url: 'app-test.myshell.ai',
-    },
-  })
-
-  const ethereum = sdk.getProvider()
-
-  const connect = async () => {
-    try {
-      const result = await ethereum.request({ method: 'eth_requestAccounts' })
-      console.log(result)
-      /// public address
-      const address = result?.[0]
-      setPublicAddress(address)
-      console.log('public address = ' + address)
-      generateNonce({
-        publicAddress: address,
-      }).then(msg => {
-        setTimeout(() => {
-          console.log('msg.nonce = ' + msg.nonce)
-          sign(msg.nonce)
-        }, 100)
-      })
-    } catch (e) {
-      console.log('public address have error = ' + e)
-    }
-  }
-
-  const sign = async msg => {
-    var address = ethereum.selectedAddress
-    console.log('address = ' + address)
-    var params = [address, msg]
-    var method = 'personal_sign'
-    /// 签名
-    const signature = await ethereum.request({ method, params })
-    console.log('签名', signature)
-    verifySignature({
-      invitationCode: '',
-      publicAddress: address,
-      signature: signature,
-    }).then(res => {
-      const userInfo = res
-      console.log(userInfo)
-      // useUserStore.setState({ particleInfo: userInfo })
-      // console.log(userInfo)
-      // const info =  particleLogin({
-      //   uuid: userInfo.userUid,
-      //   token: userInfo.token,
-      // })
-
-      // signIn(info)
-    })
-  }
-
   const { signIn } = useAuth()
   const login = async loginType => {
     const type = loginType
@@ -141,49 +51,6 @@ export default function SignIn() {
       Toast(error)
     }
   }
-  const onCopy = (value: string) => {
-    Clipboard.setString(value)
-    Alert.alert('Copied to clipboard')
-  }
-  const web3Provider = useMemo(() => (provider ? new ethers.providers.Web3Provider(provider) : undefined), [provider])
-
-  useEffect(() => {
-    async function getClientId() {
-      if (provider && isConnected) {
-        const _clientId = await provider?.client?.core.crypto.getClientId()
-        setClientId(_clientId)
-
-        setTimeout(() => {
-          generateNonce({
-            publicAddress: address,
-          }).then(msg => {
-            testSignMessage(web3Provider, msg.nonce).then(res => {
-              const signature = res['result']
-              console.log('address=' + address)
-              console.log('signature=' + signature)
-              verifySignature({
-                invitationCode: '',
-                publicAddress: address,
-                signature: signature,
-              }).then(res => {
-                const userInfo = res
-                useUserStore.setState({ particleInfo: userInfo })
-                const info = particleLogin({
-                  uuid: userInfo.userUid,
-                  token: userInfo.token,
-                })
-
-                signIn(info)
-              })
-            })
-          })
-        }, 100)
-      } else {
-        setClientId(undefined)
-      }
-    }
-    getClientId()
-  }, [isConnected, provider])
 
   return (
     <>
@@ -294,48 +161,9 @@ export default function SignIn() {
               </Button>
             </View>
 
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginTop: 20,
-                justifyContent: 'center',
-              }}
-            >
-              <Button
-                style={{
-                  width: 200,
-                  borderRadius: 20,
-                  borderColor: '#000000',
-                  borderWidth: 1,
-                  backgroundColor: 'white',
-                }}
-                onPress={() => connect()}
-              >
-                <Text style={{ color: 'black', fontSize: 18, fontWeight: '500' }}>MetaMask</Text>
-              </Button>
-            </View>
+            <MateMaskView></MateMaskView>
 
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginTop: 20,
-                justifyContent: 'center',
-              }}
-            >
-              <Web3Button
-                style={{
-                  width: 200,
-                }}
-              ></Web3Button>
-              <Web3Modal
-                projectId={'c92c0eff30f8f19ef515ef7a86200fd7'}
-                providerMetadata={providerMetadata}
-                sessionParams={sessionParams}
-                onCopyClipboard={onCopy}
-              />
-            </View>
+            <WallectConnectView />
 
             <View style={{ width: '80%', marginTop: 20 }}>
               <Text
@@ -355,32 +183,4 @@ export default function SignIn() {
       {/* <Shim /> */}
     </>
   )
-}
-
-export const testSignMessage = async (web3Provider?: ethers.providers.Web3Provider, msg: string = 'Hello World') => {
-  if (!web3Provider) {
-    throw new Error('web3Provider not connected')
-  }
-  // const msg = 'Hello World';
-  const hexMsg = utf8ToHex(msg, true)
-  const [address] = await web3Provider.listAccounts()
-  if (!address) {
-    throw new Error('No address found')
-  }
-
-  const signature = await web3Provider.send('personal_sign', [hexMsg, address])
-  const valid = verifyEip155MessageSignature(msg, signature, address)
-  return {
-    method: 'personal_sign',
-    address,
-    valid,
-    result: signature,
-  }
-}
-
-const verifyEip155MessageSignature = (message: string, signature: string, address: string) =>
-  verifyMessage(message, signature).toLowerCase() === address.toLowerCase()
-
-export function verifyMessage(message: Bytes | string, signature: SignatureLike): string {
-  return recoverAddress(hashMessage(message), signature)
 }
