@@ -20,9 +20,10 @@ const envConfig = {
     PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api-test.myshell.ai',
     authKey: 'Authorization',
+    botShareLink: 'https://app-test.myshell.ai/en/bot/',
     inviteLink: 'https://app-test.myshell.ai/invite/',
     downloadHost: 'https://share.vinstic.com/share/',
-    shareLink: 'https://api-test.myshell.ai/share/',
+    shareLink: 'https://app-test.myshell.ai/share/',
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   prod: {
@@ -110,7 +111,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
+    isLogin: process.env.REACT_APP_ENV === 'dev',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },

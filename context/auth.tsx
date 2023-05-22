@@ -3,6 +3,7 @@ import { useEffect, useContext, createContext, useState } from 'react'
 import useUserStore from '../store/userStore'
 import * as particleAuth from 'react-native-particle-auth'
 import Constants from 'expo-constants'
+import Clipboard from '@react-native-clipboard/clipboard'
 const AuthContext = createContext(null)
 
 export function useAuth() {
@@ -32,6 +33,16 @@ export function Provider(props) {
     const userInfo = useUserStore.getState()?.userBaseInfo
     if (userInfo != null) {
       setAuth(userInfo)
+      Clipboard.getString().then(res => {
+        const regex = /(?:bot\/)([a-zA-Z0-9_-]+)/
+        const [, botId] = res.match(regex) ?? []
+        console.log(res, botId, 111)
+        if (botId) {
+          router.push({
+            pathname: `robot/${botId}`,
+          })
+        }
+      })
     } else {
       setAuth(null)
     }
@@ -48,15 +59,8 @@ export function Provider(props) {
           router.replace('(tabs)')
         },
         signOut: async () => {
-          const result = await particleAuth.logout()
-          if (result.status) {
-            console.log(result.data)
-            setAuth(null)
-            useUserStore.setState({ userBaseInfo: null })
-          } else {
-            const error = result.data
-            console.log(error)
-          }
+          setAuth(null)
+          useUserStore.setState({ userBaseInfo: null })
         },
         user,
       }}
