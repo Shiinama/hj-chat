@@ -22,6 +22,7 @@ import { hashMessage } from '@ethersproject/hash'
 import type { Bytes, SignatureLike } from '@ethersproject/bytes'
 import { generateNonce, particleLogin, verifySignature } from '../../api/auth'
 import { useAuth } from '../../context/auth'
+import { WallectButton } from './wallect-button'
 
 export function WallectConnectView() {
   const providerMetadata = {
@@ -42,7 +43,6 @@ export function WallectConnectView() {
   }
 
   const { signIn } = useAuth()
-  const [clientId, setClientId] = useState<string>()
   const { isConnected, provider } = useWeb3Modal()
   const { address } = useSnapshot(AccountCtrl.state)
 
@@ -83,9 +83,8 @@ export function WallectConnectView() {
   useEffect(() => {
     async function getClientId() {
       if (provider && isConnected) {
-        const _clientId = await provider?.client?.core.crypto.getClientId()
-        setClientId(_clientId)
-
+        // const _clientId = await provider?.client?.core.crypto.getClientId()
+        console.log('我链接了')
         setTimeout(() => {
           generateNonce({
             publicAddress: address,
@@ -106,10 +105,17 @@ export function WallectConnectView() {
           })
         }, 100)
       } else {
-        setClientId(undefined)
+        console.log('还没链接')
       }
     }
     getClientId()
+
+    return () => {
+      if (provider && isConnected) {
+        console.log('disconnect被调用了')
+        provider.disconnect()
+      }
+    }
   }, [isConnected, provider])
 
   return (
@@ -122,11 +128,11 @@ export function WallectConnectView() {
           justifyContent: 'center',
         }}
       >
-        <Web3Button
+        <WallectButton
           style={{
             width: 200,
           }}
-        ></Web3Button>
+        ></WallectButton>
         <Web3Modal
           projectId={'c92c0eff30f8f19ef515ef7a86200fd7'}
           providerMetadata={providerMetadata}
