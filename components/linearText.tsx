@@ -2,7 +2,7 @@ import MaskedView from '@react-native-masked-view/masked-view'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Text, View, Dimensions } from 'react-native'
 
-const width = Dimensions.get('window').width - 150
+const width = Dimensions.get('window').width - 140
 export default function LinearText({ text, styles }) {
   return (
     <View>

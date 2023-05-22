@@ -50,7 +50,7 @@ function UgcBotCard({ ld, onShowDetail }: any) {
                 <LinearText text={ld.name} styles={styles.name}></LinearText>
               </View>
             ) : (
-              <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.name }}>
+              <Text numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.name, width: 230 }}>
                 {ld.name}
               </Text>
             )}

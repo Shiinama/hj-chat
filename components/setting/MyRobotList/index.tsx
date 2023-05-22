@@ -47,7 +47,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
   const onShowDetail = event => {
     botStore.setState(event)
     router.push({
-      pathname: `robot/${event.id}`,
+      pathname: `robot/${event.uid}`,
       params: {
         id: event.id,
         userId: event.userId,

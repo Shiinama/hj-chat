@@ -73,6 +73,7 @@ export default function Robot() {
     }
     setTagList(tags)
   }, [navigation, name])
+  console.log(botStore.id, 'botStore.uid')
   const renderButton = () => {
     if (isMinme) {
       if (botStore.privateBotId) {
@@ -106,25 +107,6 @@ export default function Robot() {
       } else {
         return (
           <>
-            <TouchableOpacity
-              style={styles.actionsItem}
-              onPress={() => {
-                postAddBotToChatList({ botUid: botStore.uid })
-                CallBackManagerSingle().execute('botList')
-                router.push({
-                  pathname: `chat/${botStore.id}`,
-                })
-              }}
-            >
-              <Image
-                source={chat}
-                style={{
-                  width: 30,
-                  height: 30,
-                }}
-              />
-              <Text style={styles.actionsItemText}>Chat</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => Toast('Please use a desktop browser to create a robot')}
               style={{ ...styles.actionsItem }}
@@ -201,7 +183,32 @@ export default function Robot() {
           {tagList &&
             tagList.map(item => <Tag key={item.bgColor} {...{ ...item, keyValue: botStore[item.key] }}></Tag>)}
         </View>
-        {<View style={styles.actions}>{renderButton()}</View>}
+        {
+          <View style={styles.actions}>
+            <>
+              <TouchableOpacity
+                style={styles.actionsItem}
+                onPress={() => {
+                  postAddBotToChatList({ botUid: botStore.uid })
+                  CallBackManagerSingle().execute('botList')
+                  router.push({
+                    pathname: `chat/${botStore.id}`,
+                  })
+                }}
+              >
+                <Image
+                  source={chat}
+                  style={{
+                    width: 30,
+                    height: 30,
+                  }}
+                />
+                <Text style={styles.actionsItemText}>Chat</Text>
+              </TouchableOpacity>
+              {renderButton()}
+            </>
+          </View>
+        }
         <ScrollView style={styles.description}>
           <Text style={styles.descriptionTitle}>Description</Text>
           <Text style={styles.descriptionValue}>{botStore.description}</Text>
