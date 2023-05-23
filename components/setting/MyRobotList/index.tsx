@@ -30,7 +30,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
     getUgcOwnList()
       .then((res: any) => {
         if (botUid) {
-          botStore.setState(res.find(item => item.uid === botUid))
+          botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
         }
 
         setMyRobotListData(res)
@@ -46,7 +46,8 @@ const MyRobotList: FC<MyRobotListProps> = () => {
   )
   const router = useRouter()
   const onShowDetail = event => {
-    botStore.setState(event)
+    botStore.setState({ botBaseInfo: event })
+
     router.push({
       pathname: `robot/${event.uid}`,
       params: {
@@ -81,7 +82,6 @@ const MyRobotList: FC<MyRobotListProps> = () => {
             type={TagFromType.MyBot}
             key={ld.id}
             ld={ld}
-            showTime={false}
           />
         )
       })}

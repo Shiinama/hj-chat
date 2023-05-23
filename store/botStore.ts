@@ -6,10 +6,15 @@ import { BotInfo } from '../types/BotTypes'
 const name = 'bot-store'
 
 const botStore = create(
-  persist<BotInfo>(() => ({} as BotInfo), {
-    storage: createJSONStorage(() => AsyncStorage),
-    name: name,
-  })
+  persist<{ botBaseInfo: BotInfo }>(
+    () => ({
+      botBaseInfo: {} as BotInfo,
+    }),
+    {
+      storage: createJSONStorage(() => AsyncStorage),
+      name: name,
+    }
+  )
 )
 
 export default botStore

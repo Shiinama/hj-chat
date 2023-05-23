@@ -21,8 +21,6 @@ const styles = StyleSheet.create({
   },
   user: {
     marginTop: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
     height: 34,
   },
   userName: {

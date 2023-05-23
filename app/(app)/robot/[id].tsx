@@ -11,10 +11,6 @@ import chat from '../../../assets/images/chat.png'
 import escape from '../../../assets/images/escape.png'
 import useBotStore from '../../../store/botStore'
 import useUserStore from '../../../store/userStore'
-import Wang from '../../../assets/images/setting/wang.svg'
-
-import Flash from '../../../assets/images/tabbar/flash.svg'
-import Huatong from '../../../assets/images/setting/huatong.svg'
 import { renderImage } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import LinearText from '../../../components/linearText'
@@ -30,7 +26,7 @@ export default function Robot() {
   const navigation = useNavigation()
   const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
-  const botStore = useBotStore()
+  const botStore = useBotStore().botBaseInfo
   const userStore = useUserStore.getState().profile
   const tags = useTagList(botStore, TagFromType.Robot)
   const isMinme = userStore?.id === botStore?.userId

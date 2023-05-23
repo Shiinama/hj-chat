@@ -32,11 +32,11 @@ import { MesageSucessType, MessageDto } from '../../../components/chat/type'
 
 export type ChatItem = MessageDto
 function Chat({}) {
-  const { pinned, logo, name, uid, userId, id } = botStore.getState()
+  const { pinned, logo, name, uid, userId, id } = botStore.getState().botBaseInfo
 
   const { profile } = useUserStore()
   const router = useRouter()
-  const tags = useTagList(botStore.getState(), TagFromType.Chat)
+  const tags = useTagList(botStore.getState().botBaseInfo, TagFromType.Chat)
   const safeTop = useSafeAreaInsets().top
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
@@ -241,7 +241,7 @@ function Chat({}) {
                   pathname: `robot/${uid}`,
                 })
               }}
-              style={{ flexDirection: 'row', alignItems: 'center' }}
+              style={{ flexDirection: 'row', alignItems: 'center', maxWidth: 200 }}
             >
               <Text
                 numberOfLines={1}

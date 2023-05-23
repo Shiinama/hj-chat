@@ -138,15 +138,15 @@ export default function Passcard() {
     })
   }, [])
   const [tab, setTab] = useState(1)
-  const botStore = useUserStore().profile
+  const userInfo = useUserStore().profile
   const _renderItem = ({ item }) => (
     <View
       style={[
         styles.itemContainer,
-        { borderColor: botStore.level === item.id ? '#7A2EF6' : '#F6F6F6', borderWidth: 1 },
+        { borderColor: userInfo.level === item.id ? '#7A2EF6' : '#F6F6F6', borderWidth: 1 },
       ]}
     >
-      <PassCardItem {...item} level={botStore.level}></PassCardItem>
+      <PassCardItem {...item} level={userInfo.level}></PassCardItem>
     </View>
   )
   return (

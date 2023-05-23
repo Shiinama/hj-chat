@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text } from 'react-native'
 
-export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon }) {
+export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon }: any) {
   return (
     <View
       style={{

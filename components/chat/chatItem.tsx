@@ -33,7 +33,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
   const [messageStream, setMessageStream] = useState<MessageStreamText>()
   const [audioStream, setAudioStream] = useState<string>()
   const [buttonIndex, setButtonIndex] = useState<number>(1)
-  const botState = botStore.getState()
+  const botState = botStore.getState().botBaseInfo
   useEffect(() => {
     const msgKey = item.botId + '&BOT&' + item.replyUid
     // console.log('item.type:', item)

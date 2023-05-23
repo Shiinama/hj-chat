@@ -12,7 +12,7 @@ function UgcBotCard({ ld, onShowDetail, type }: any) {
     <TouchableOpacity
       style={styles.listItem}
       onPress={() => {
-        onShowDetail({ ...ld, tag: userInfo?.id === ld.userId })
+        onShowDetail(ld)
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>

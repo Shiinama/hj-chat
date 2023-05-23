@@ -70,7 +70,7 @@ type MesageSucessType = {
 
 export const useSocketIo = () => {
   const SocketIoRef = useRef(null)
-  const currentBot = botStore.getState()
+  const currentBot = botStore.getState().botBaseInfo
   const [message, setMessage] = useState<any>()
   // 请求队列逻辑
   const [reqIdsQueue, { add: addReqIds, remove: removeReqIds, reset: resetReqIds }] = useSet([])
