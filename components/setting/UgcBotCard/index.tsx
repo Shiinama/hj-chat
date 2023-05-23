@@ -2,38 +2,12 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { renderImage } from '../../profileInfo/helper'
 import userStore from '../../../store/userStore'
 import LinearText from '../../linearText'
-import Flash from '../../../assets/images/tabbar/flash.svg'
-import Wang from '../../../assets/images/setting/wang.svg'
-import Huatong from '../../../assets/images/setting/huatong.svg'
 import Tag from '../../tag'
-function UgcBotCard({ ld, onShowDetail }: any) {
+import { useTagList } from '../../../constants/TagList'
+import { memo } from 'react'
+function UgcBotCard({ ld, onShowDetail, type }: any) {
+  const tags = useTagList(ld, type)
   const userInfo = userStore.getState().profile
-  let tags = [
-    {
-      name: ld.privateBotId ? (ld.status === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
-      bgColor: ld.privateBotId ? (ld.status === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
-      tagColor: ld.privateBotId ? (ld.status === 'Public' ? '#165B0B' : '#6b7280') : '#705A0C',
-      childrenIcon: <Wang width={14} height={14} />,
-    },
-    {
-      name: ld.energyPerChat,
-      bgColor: '#FDF5CA',
-      tagColor: '#5F5107',
-      childrenIcon: <Flash width={14} height={14} />,
-    },
-    {
-      name: ld.language,
-      bgColor: '#E7EFFF',
-      tagColor: '#05286F',
-      childrenIcon: <Huatong width={14} height={14} />,
-    },
-  ]
-  if (userInfo?.id !== ld.userId) {
-    tags = tags.slice(1)
-  } else {
-    tags = tags.slice(0, 1)
-  }
-
   return (
     <TouchableOpacity
       style={styles.listItem}
@@ -118,4 +92,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default UgcBotCard
+export default memo(UgcBotCard)

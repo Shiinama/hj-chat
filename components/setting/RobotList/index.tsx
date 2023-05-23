@@ -9,6 +9,7 @@ import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import NoData from '../NoData'
 import CreateCard from '../CreateCard'
+import { TagFromType } from '../../../constants/TagList'
 
 export interface RobotListProps {
   /** 请求的参数 */
@@ -89,9 +90,9 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
             onShowDetail={e => {
               onShowDetail(e)
             }}
+            type={TagFromType.AllBot}
             key={ld.id}
             ld={ld}
-            showTime={false}
           />
         )
       })}

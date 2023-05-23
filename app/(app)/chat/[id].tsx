@@ -25,18 +25,18 @@ import To from '../../../assets/images/chat/to.svg'
 import useUserStore from '../../../store/userStore'
 import AudioPayManagerSingle, { AudioPayManager } from '../../../components/chat/audioPlayManager'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
-import { useTagList } from '../../../constants/TagList'
+import { TagFromType, useTagList } from '../../../constants/TagList'
 import Tag from '../../../components/tag'
 import SocketStreamManager from '../../../components/chat/socketManager'
 import { MesageSucessType, MessageDto } from '../../../components/chat/type'
 
 export type ChatItem = MessageDto
 function Chat({}) {
-  const { pinned, logo, name, uid, userId, energyPerChat, id } = botStore.getState()
+  const { pinned, logo, name, uid, userId, id } = botStore.getState()
 
   const { profile } = useUserStore()
   const router = useRouter()
-  const tags = useTagList()
+  const tags = useTagList(botStore.getState(), TagFromType.Chat)
   const safeTop = useSafeAreaInsets().top
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({

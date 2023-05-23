@@ -9,6 +9,7 @@ import CallBackManagerSingle from '../../../utils/CallBackManager'
 import { getUgcOwnList } from '../../../api/setting'
 import NoData from '../NoData'
 import CreateCard from '../CreateCard'
+import { TagFromType } from '../../../constants/TagList'
 
 export interface MyRobotListProps {}
 const MyRobotList: FC<MyRobotListProps> = () => {
@@ -77,6 +78,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
             onShowDetail={e => {
               onShowDetail(e)
             }}
+            type={TagFromType.MyBot}
             key={ld.id}
             ld={ld}
             showTime={false}
