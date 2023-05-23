@@ -9,12 +9,16 @@ import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import NoData from '../NoData'
 import CreateCard from '../CreateCard'
+import { TagFromType } from '../../../constants/TagList'
 
 export interface RobotListProps {
   /** 请求的参数 */
   requestParams: any
 }
 const RobotList: FC<RobotListProps> = ({ requestParams }) => {
+  const a = botStore()
+  console.log({ a })
+
   const [robotListData, setRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(false)
   useEffect(() => {
@@ -37,7 +41,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
     getUgcBotList(requestParams)
       .then((res: any) => {
         if (botUid) {
-          botStore.setState(res.find(item => item.uid === botUid))
+          botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
         }
         setRobotListData(res)
       })
@@ -56,9 +60,9 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   )
   const router = useRouter()
   const onShowDetail = event => {
-    botStore.setState(event)
+    botStore.setState({ botBaseInfo: event })
     router.push({
-      pathname: `robot/${event.id}`,
+      pathname: `robot/${event.uid}`,
       params: {
         id: event.id,
         userId: event.userId,
@@ -89,9 +93,9 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
             onShowDetail={e => {
               onShowDetail(e)
             }}
+            type={TagFromType.AllBot}
             key={ld.id}
             ld={ld}
-            showTime={false}
           />
         )
       })}

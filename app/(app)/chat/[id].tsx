@@ -2,11 +2,14 @@ import { Text, View, TouchableOpacity, AppState, FlatList, Alert } from 'react-n
 import { v4 as uuidv4 } from 'uuid'
 import { useNavigation } from 'expo-router'
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 import ChatItem from '../../../components/chat/chatItem'
 import Container from '../../../components/chat/container'
 import { chatHistory } from '../../../api'
 import { Audio } from 'expo-av'
 import { useSetState } from 'ahooks'
+import { useRouter } from 'expo-router'
 import ShellLoading from '../../../components/loading'
 import { useSocketIo } from '../../../components/chat/socket'
 import * as FileSystem from 'expo-file-system'
@@ -15,20 +18,26 @@ import { ChatContext, ChatPageState } from './chatContext'
 import { Button, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { convert4amToMp3 } from '../../../utils/convert'
 import botStore from '../../../store/botStore'
+
+import Back from '../../../assets/images/tabbar/back.svg'
 import FlashIcon from '../../../components/flashIcon'
+import To from '../../../assets/images/chat/to.svg'
 import useUserStore from '../../../store/userStore'
 import AudioPayManagerSingle, { AudioPayManager } from '../../../components/chat/audioPlayManager'
-import { NativeEventSubscription } from 'react-native'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
+import { TagFromType, useTagList } from '../../../constants/TagList'
+import Tag from '../../../components/tag'
 import SocketStreamManager from '../../../components/chat/socketManager'
 import { MesageSucessType, MessageDto } from '../../../components/chat/type'
 
 export type ChatItem = MessageDto
 function Chat({}) {
-  const { pinned, logo, name, uid, userId, energyPerChat, id } = botStore.getState()
+  const { pinned, logo, name, uid, userId, id } = botStore.getState().botBaseInfo
 
   const { profile } = useUserStore()
-
+  const router = useRouter()
+  const tags = useTagList(botStore.getState().botBaseInfo, TagFromType.Chat)
+  const safeTop = useSafeAreaInsets().top
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
     pageStatus: 'normal',
@@ -202,30 +211,69 @@ function Chat({}) {
   }
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: () => (
-        <View style={{ flexDirection: 'row', justifyContent: 'center', width: '70%' }}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontSize: 18, fontWeight: '600' }}>
-            {name}
-          </Text>
-          <FlashIcon energyPerChat={energyPerChat} />
+      header: () => (
+        <View
+          style={{
+            backgroundColor: 'white',
+            paddingTop: safeTop,
+            paddingHorizontal: 10,
+            borderBottomWidth: 1,
+            position: 'relative',
+            borderColor: '#E0E0E0',
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{
+                position: 'absolute',
+                left: 0,
+                height: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Back></Back>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: `robot/${uid}`,
+                })
+              }}
+              style={{ flexDirection: 'row', alignItems: 'center', maxWidth: 200 }}
+            >
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{ marginRight: 5, fontSize: 20, lineHeight: 30, fontWeight: '700' }}
+              >
+                {name}
+              </Text>
+              <To width={12} height={14}></To>
+            </TouchableOpacity>
+            <View style={{ position: 'absolute', right: 0 }}>
+              {chatPageValue.pageStatus === 'sharing' && (
+                <Button
+                  type="ghost"
+                  text="Cancel"
+                  color="#7A2EF6"
+                  size="s"
+                  style={{ borderRadius: 8 }}
+                  onPress={() => {
+                    setChatPageValue({ pageStatus: 'normal', selectedItems: [] })
+                  }}
+                />
+              )}
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', marginVertical: 10, justifyContent: 'center' }}>
+            {tags.map(tag => (
+              <Tag key={tag.bgColor} {...tag}></Tag>
+            ))}
+          </View>
         </View>
       ),
-      headerRight: () => {
-        return (
-          chatPageValue.pageStatus === 'sharing' && (
-            <Button
-              type="ghost"
-              text="Cancel"
-              color="#7A2EF6"
-              size="s"
-              style={{ borderRadius: 8 }}
-              onPress={() => {
-                setChatPageValue({ pageStatus: 'normal', selectedItems: [] })
-              }}
-            />
-          )
-        )
-      },
     })
   }, [navigation, name, chatPageValue.pageStatus])
 

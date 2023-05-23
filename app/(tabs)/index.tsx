@@ -69,7 +69,7 @@ export default function TabOneScreen() {
   }, [])
 
   const onShowDetail = event => {
-    botStore.setState(event)
+    botStore.setState({ botBaseInfo: event })
     router.push({
       pathname: `chat/${event.uid}`,
     })

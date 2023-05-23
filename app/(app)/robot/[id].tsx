@@ -11,10 +11,6 @@ import chat from '../../../assets/images/chat.png'
 import escape from '../../../assets/images/escape.png'
 import useBotStore from '../../../store/botStore'
 import useUserStore from '../../../store/userStore'
-import Wang from '../../../assets/images/setting/wang.svg'
-
-import Flash from '../../../assets/images/tabbar/flash.svg'
-import Huatong from '../../../assets/images/setting/huatong.svg'
 import { renderImage } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import LinearText from '../../../components/linearText'
@@ -23,14 +19,16 @@ import { ScrollView } from 'react-native'
 import { getBotSharingCode } from '../../../api/setting'
 import System from '../../../constants/System'
 import Clipboard from '@react-native-clipboard/clipboard'
+import { TagFromType, useTagList } from '../../../constants/TagList'
 
 export default function Robot() {
   const router = useRouter()
   const navigation = useNavigation()
   const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
-  const botStore = useBotStore()
+  const botStore = useBotStore().botBaseInfo
   const userStore = useUserStore.getState().profile
+  const tags = useTagList(botStore, TagFromType.Robot)
   const isMinme = userStore?.id === botStore?.userId
   useEffect(() => {
     navigation.setOptions({
@@ -38,39 +36,6 @@ export default function Robot() {
     })
   }, [])
   useEffect(() => {
-    let tags = [
-      {
-        id: 2,
-        bgColor: '#F1EAFE',
-        tagColor: '#7A2EF6',
-        name: 'Mine',
-        isYuandian: true,
-      },
-      {
-        id: 1,
-        name: botStore.energyPerChat,
-        bgColor: '#FDF5CA',
-        tagColor: '#5F5107',
-        childrenIcon: <Flash width={14} height={14} />,
-      },
-      {
-        id: 2,
-        name: botStore.privateBotId ? (botStore.status === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
-        bgColor: botStore.privateBotId ? (botStore.status === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
-        tagColor: botStore.privateBotId ? (botStore.status === 'Public' ? '#165B0B' : '#6b7280') : '#E4B50C',
-        childrenIcon: <Wang width={14} height={14} />,
-      },
-      {
-        id: 3,
-        name: botStore.language,
-        bgColor: '#E7EFFF',
-        tagColor: '#05286F',
-        childrenIcon: <Huatong width={14} height={14} />,
-      },
-    ]
-    if (!isMinme) {
-      tags = tags.filter(i => i.id !== 2)
-    }
     setTagList(tags)
   }, [navigation, name])
   const renderButton = () => {
@@ -106,25 +71,6 @@ export default function Robot() {
       } else {
         return (
           <>
-            <TouchableOpacity
-              style={styles.actionsItem}
-              onPress={() => {
-                postAddBotToChatList({ botUid: botStore.uid })
-                CallBackManagerSingle().execute('botList')
-                router.push({
-                  pathname: `chat/${botStore.id}`,
-                })
-              }}
-            >
-              <Image
-                source={chat}
-                style={{
-                  width: 30,
-                  height: 30,
-                }}
-              />
-              <Text style={styles.actionsItemText}>Chat</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => Toast('Please use a desktop browser to create a robot')}
               style={{ ...styles.actionsItem }}
@@ -201,7 +147,32 @@ export default function Robot() {
           {tagList &&
             tagList.map(item => <Tag key={item.bgColor} {...{ ...item, keyValue: botStore[item.key] }}></Tag>)}
         </View>
-        {<View style={styles.actions}>{renderButton()}</View>}
+        {
+          <View style={styles.actions}>
+            <>
+              <TouchableOpacity
+                style={styles.actionsItem}
+                onPress={() => {
+                  postAddBotToChatList({ botUid: botStore.uid })
+                  CallBackManagerSingle().execute('botList')
+                  router.push({
+                    pathname: `chat/${botStore.id}`,
+                  })
+                }}
+              >
+                <Image
+                  source={chat}
+                  style={{
+                    width: 30,
+                    height: 30,
+                  }}
+                />
+                <Text style={styles.actionsItemText}>Chat</Text>
+              </TouchableOpacity>
+              {renderButton()}
+            </>
+          </View>
+        }
         <ScrollView style={styles.description}>
           <Text style={styles.descriptionTitle}>Description</Text>
           <Text style={styles.descriptionValue}>{botStore.description}</Text>

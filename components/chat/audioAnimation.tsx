@@ -6,7 +6,6 @@ import { formatTime } from '../../utils/time'
 
 function AudioAnimation(props, ref) {
   // console.log('aare-render:', 'AudioAnimation')
-  const { durationMillis } = props
   const [durMills, setDurMills] = useState(props.durationMillis || 0)
   const animationRef = useRef<Lottie>(null)
   useImperativeHandle(ref, () => ({

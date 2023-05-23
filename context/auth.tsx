@@ -1,7 +1,6 @@
 import { useRouter, useSegments } from 'expo-router'
 import { useEffect, useContext, createContext, useState } from 'react'
 import useUserStore from '../store/userStore'
-import * as particleAuth from 'react-native-particle-auth'
 import Constants from 'expo-constants'
 import Clipboard from '@react-native-clipboard/clipboard'
 const AuthContext = createContext(null)

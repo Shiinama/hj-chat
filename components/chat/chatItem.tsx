@@ -2,7 +2,6 @@ import { Text, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-na
 import styles from './styles'
 import { genAvatarUrl, renderImage } from '../../components/profileInfo/helper'
 import { Image } from 'expo-image'
-import { ChatItem } from '../../app/(app)/chat/[id]'
 import AudioMessage from './audioMessage'
 import Blur from '../../assets/images/chat/blur.svg'
 import imgPlaceholder from '../../assets/images/img_placeholder.png'
@@ -20,9 +19,10 @@ import { MessageStreamText, MessageStreamTextRes } from './type'
 import SocketStreamManager from './socketManager'
 import AudioPayManagerSingle from './audioPlayManager'
 import { deleteAudio } from '../../utils/audioFile'
-
+import { MessageDetail } from '../../types/MessageTyps'
+import botStore from '../../store/botStore'
 type Props = {
-  item: ChatItem & number
+  item: MessageDetail & number
   translationText
   children?: (() => React.ReactNode) | React.ReactNode
   logo: string
@@ -35,6 +35,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
   const [audioStream, setAudioStream] = useState<string>()
   const [buttonIndex, setButtonIndex] = useState<number>(1)
   const audioMessage = useRef()
+  const botState = botStore.getState().botBaseInfo
   useEffect(() => {
     const msgKey = item.botId + '&BOT&' + item.replyUid
     // console.log('item.type:', item)
@@ -94,7 +95,6 @@ function chatItem({ item, translationText, me, logo }: Props) {
   }, [item?.voiceUrl, audioStream])
   const renderMessageText = ({ textMsg }: { textMsg?: boolean }) => {
     const messageTxt = messageStream?.text || item.text
-    // console.log('messageTxt:', messageTxt)
     if (!messageTxt) {
       return null
     }
@@ -136,8 +136,9 @@ function chatItem({ item, translationText, me, logo }: Props) {
       width: 10,
       height: 10,
     }
+    console.log(botState.botSetting)
     const data = [
-      {
+      botState?.botSetting?.textMasking && {
         id: 1,
         dText: 'Blur',
         Icon: id => <Blur fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
@@ -147,7 +148,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
         dText: 'Text',
         Icon: id => <Svt fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
       },
-      {
+      botState?.botSetting?.textTranslation && {
         id: 3,
         dText: 'Translate',
         Icon: id => (
@@ -159,7 +160,8 @@ function chatItem({ item, translationText, me, logo }: Props) {
           />
         ),
       },
-    ]
+    ].filter(Boolean)
+    console.log('data:', data)
     return data.map(({ Icon, id, dText }) => (
       <TouchableOpacity
         key={dText}
