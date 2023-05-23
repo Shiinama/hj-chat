@@ -10,15 +10,17 @@ import CheckIcon from '../../assets/images/chat/check.svg'
 import CheckedIcon from '../../assets/images/chat/checked.svg'
 import Svt from '../../assets/images/chat/svt.svg'
 import Translate from '../../assets/images/chat/translte.svg'
-import { memo, useContext, useEffect, useState } from 'react'
+import { memo, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
 import { BlurView } from '@react-native-community/blur'
 import Markdown from 'react-native-marked'
-
 import ShellLoading from '../loading'
 import { MessageStreamText, MessageStreamTextRes } from './type'
 import SocketStreamManager from './socketManager'
+import AudioPayManagerSingle from './audioPlayManager'
+import { deleteAudio } from '../../utils/audioFile'
+
 type Props = {
   item: ChatItem & number
   translationText
@@ -32,6 +34,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
   const [messageStream, setMessageStream] = useState<MessageStreamText>()
   const [audioStream, setAudioStream] = useState<string>()
   const [buttonIndex, setButtonIndex] = useState<number>(1)
+  const audioMessage = useRef()
   useEffect(() => {
     const msgKey = item.botId + '&BOT&' + item.replyUid
     // console.log('item.type:', item)
@@ -47,8 +50,22 @@ function chatItem({ item, translationText, me, logo }: Props) {
       })
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
         // console.log('收到item:', item)
+        // AudioPayManagerSingle().currentAutoPlayUrl = url
+        // 本地缓存mp3文件有更新就回调这个方法 url是本地的mp3路径
         setAudioStream(url)
+        if (item.index > 0) {
+          // 刷新音频
+          audioMessage.current?.loadRefreshSound?.()
+        }
+
         if (item.isFinal) {
+          AudioPayManagerSingle().currentAutoPlayUrl = url
+          setTimeout(() => {
+            audioMessage.current?.loadRefreshSound?.(true)
+          }, 500)
+          // 加载完再播放，不然每次load播放有卡顿
+
+          // audioMessage.current?.handlePlayPause?.()
           SocketStreamManager().removeTextStreamCallBack(msgKey)
         }
       })
@@ -63,17 +80,18 @@ function chatItem({ item, translationText, me, logo }: Props) {
   const isBlur = buttonIndex === 1
   if (item.uid === '1231') return null
   const tag = item?.replyUid
-  const renderMessageAudio = () => {
-    const url = item?.voiceUrl || audioStream
+  const renderMessageAudio = useMemo(() => {
+    const url = audioStream || item?.voiceUrl
+    // console.log('renderMessageAudio:', url)
     if (!url) {
       return null
     }
     return (
       <View style={{ height: 50, justifyContent: 'center', width: 263 }}>
-        <AudioMessage audioFileUri={url} />
+        <AudioMessage audioFileUri={url} ref={audioMessage} />
       </View>
     )
-  }
+  }, [item?.voiceUrl, audioStream])
   const renderMessageText = ({ textMsg }: { textMsg?: boolean }) => {
     const messageTxt = messageStream?.text || item.text
     // console.log('messageTxt:', messageTxt)
@@ -208,8 +226,8 @@ function chatItem({ item, translationText, me, logo }: Props) {
 
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[styles.chatWrap, tag ? styles.youContent : styles.meContent]}>
-            {renderMessageAudio()}
-            {renderMessageText({ textMsg: item?.voiceUrl ? false : true })}
+            {renderMessageAudio}
+            {renderMessageText({ textMsg: audioStream || item?.voiceUrl ? false : true })}
             {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
             {item?.type === 'LOADING' && !item.text && !messageStream?.text && loadingRender()}
           </View>
