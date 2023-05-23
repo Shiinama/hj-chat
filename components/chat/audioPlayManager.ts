@@ -94,7 +94,7 @@ export class AudioPayManager {
 
   async play(sound: Audio.Sound, callBack: Function, rePlay?: Function) {
     if (this.isRecording) {
-      return
+      return false
     }
     if (this.currentSound) {
       try {
@@ -112,8 +112,10 @@ export class AudioPayManager {
     this.currentSoundRePlayMethod = rePlay
     try {
       await sound.playAsync()
+      return true
     } catch (e) {
       console.log('play', e)
+      return false
     }
   }
 }

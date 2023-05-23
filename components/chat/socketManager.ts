@@ -11,14 +11,14 @@ import SysConfig from '../../constants/System'
 import useUserStore from '../../store/userStore'
 import { Alert } from 'react-native'
 import CallBackManagerSingle from '../../utils/CallBackManager'
-import { arrayBufferToBase64, saveAudio } from '../../utils/audioFile'
+import { arrayBufferToBase64, concatBuffer, deleteAll, getAudioFileUrl, saveAudio } from '../../utils/audioFile'
 
 export class SocketStream {
   private socket: Socket
 
   private currentTextStream: { [key: string]: string } = {}
 
-  private currentAudioStream: { [key: string]: string } = {}
+  private currentAudioStream: { [key: string]: ArrayBuffer } = {}
 
   private onTextStreamUpdate: { [key: string]: (item: MessageStreamText) => void } = {}
 
@@ -47,6 +47,8 @@ export class SocketStream {
   }
 
   private init() {
+    // 初始化删除本地mp3文件
+    deleteAll()
     const { userBaseInfo } = useUserStore.getState()
     const token = userBaseInfo?.token ?? SysConfig.token
     this.socket = io(`${SysConfig.baseUrl}/chat`, {
@@ -103,40 +105,48 @@ export class SocketStream {
     // }
   }
   private async onMessageAudioStream(data: MessageStreamTextRes) {
-    console.log('----audio', data)
+    // console.log('----audio', data)
     try {
-      // const msg = data?.data
-      // const msgKey = msg.replyMessage?.botId + '&BOT&' + msg.replyMessage?.replyUid
-      // msg?.audio.blob?.().then(blob => {
-      //   const fileReader = new FileReader()
-      //   fileReader.onload = e => {
-      //     const base64Img = e.target?.result
-      //     console.log(e)
-      //   }
-      //   fileReader.readAsDataURL(blob)
-      // })
-      // if (!msg.isFinal && msg.index === 0) {
-      //   this.currentAudioStream[msgKey] = arrayBufferToBase64(msg.audio)
-      // } else {
-      //   this.currentAudioStream[msgKey] += arrayBufferToBase64(msg.audio)
-      // }
-      // const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
-      // const res = await saveAudio({
-      //   audio: data.data?.audio,
-      //   botId: data.data?.replyMessage?.botId,
-      //   replyUid: data?.data?.replyMessage?.replyUid,
-      // })
-      // console.log('mp3res:', res)
-      // this.onAudioStreamUpdate[msgKey]?.(resMsg, res)
+      const msg = data?.data
+      // 待回复消息的机器人和哪一条消息
+      const msgKey = msg.replyMessage?.botId + '&BOT&' + msg.replyMessage?.replyUid
+      // 存储当前视频
+      if (!msg.isFinal && msg.index === 0) {
+        // const base64 = await arrayBufferToBase64(msg.audio)
+        this.currentAudioStream[msgKey] = msg.audio
+      } else if (msg.audio) {
+        this.currentAudioStream[msgKey] = concatBuffer(this.currentAudioStream[msgKey], msg.audio)
+      }
+      const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
+      if (msg.audio) {
+        try {
+          const res = await saveAudio({
+            audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
+            botId: data.data?.replyMessage?.botId,
+            replyUid: data?.data?.replyMessage?.replyUid,
+          })
+          // console.log('mp3res:', res)
+        } catch (e) {
+          console.log('mp3error:', e)
+        }
+      }
+      // 回调给单独某一条消息
+      this.onAudioStreamUpdate[msgKey]?.(
+        resMsg,
+        getAudioFileUrl(data.data?.replyMessage?.botId, data?.data?.replyMessage?.replyUid)
+      )
       // if (msg.index === 0) {
       //   this.onMessageStreamStart?.(resMsg)
       // }
-      // // console.log('addTextStream', msgKey, this.onTextStreamUpdate, resMsg)
-      // if (msg.isFinal) {
-      //   delete this.currentAudioStream[msgKey]
-      //   delete this.onAudioStreamUpdate[msgKey]
-      // }
-    } catch (error) {}
+      // console.log('addTextStream', msgKey, this.onTextStreamUpdate, resMsg)
+      if (msg.isFinal) {
+        // 下载完到本地就删除缓存
+        delete this.currentAudioStream[msgKey]
+        delete this.onAudioStreamUpdate[msgKey]
+      }
+    } catch (error) {
+      console.log('error:', error)
+    }
     // if (this.currentBot?.id !== data.data.botId) return
   }
   private onMessageReplied({ data, reqId }: MesageSucessType) {
@@ -242,6 +252,8 @@ const SocketStreamManager = (function () {
   return function (destory?: boolean) {
     if (destory && instance) {
       instance.destory()
+      // 销毁删除本地mp3文件
+      deleteAll()
       return instance
     }
     if (instance) return instance

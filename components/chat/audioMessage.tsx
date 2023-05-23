@@ -28,9 +28,39 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
   const soundManager = useRef(AudioPayManagerSingle())
   useImperativeHandle(ref, () => ({
     handlePlayPause,
+    loadRefreshSound,
   }))
-  const loadSound = useCallback(async () => {
-    setLoading(true)
+  const loadRefreshSound = async (finish?: boolean) => {
+    if (sound) {
+      try {
+        console.log('loadRefreshSound', finish)
+        await sound.unloadAsync()
+      } catch (e) {
+        console.log('loadRefreshSoundunloadAsyncerror:', e)
+      }
+      try {
+        // console.log('loadRefreshSound')
+        const status = await sound.loadAsync({
+          uri: audioFileUri,
+        })
+        setDuration(status.durationMillis || 0)
+        if (finish) {
+          // 完成了就去播放一下
+          playCurrentRecevice()
+        }
+        // if (!isPlaying) {
+        //   const success = await playSound()
+        //   success && setIsPlaying(() => !isPlaying)
+        // }
+        // sound.playFromPositionAsync(currentPosition)
+        // loadSound(true)
+      } catch (error) {
+        // console.log('loadRefreshSoundloadAsyncerror:', error)
+      }
+    }
+  }
+  const loadSound = useCallback(async (hideLoading?: boolean) => {
+    !hideLoading && setLoading(true)
     setLoadFail(false)
     try {
       const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
@@ -75,17 +105,32 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
     }
   }, [])
 
+  const playCurrentRecevice = async () => {
+    console.log('playCurrentRecevice:', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
+    if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
+      console.log('playCurrentRecevice:to', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
+      const success = await handlePlayPause()
+      console.log('handlePlayPause-success:', success)
+      // 自动播放后清空自动播放的url
+      if (success) {
+        AudioPayManagerSingle().currentAutoPlayUrl = undefined
+      }
+    }
+  }
+
   useEffect(() => {
     if (sound !== null) {
-      sound.getStatusAsync().then(status => {
+      sound.getStatusAsync().then(async status => {
         if (status.isLoaded) {
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
-          if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
-            handlePlayPause()
-            // 自动播放后清空自动播放的url
-            AudioPayManagerSingle().currentAutoPlayUrl = undefined
-          }
+          // console.log(
+          //   'AudioPayManagerSingle().currentAutoPlayUrl:',
+          //   AudioPayManagerSingle().currentAutoPlayUrl,
+          //   audioFileUri,
+          //   status
+          // )
+          playCurrentRecevice()
         }
       })
     }
@@ -110,6 +155,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         if (status.isLoaded) {
           setDuration(status.durationMillis || 0)
         }
+
         // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
         if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 150 >= 0) {
           soundInterval.current && clearInterval(soundInterval.current)
@@ -125,12 +171,35 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
     }, 100)
   }
 
+  const playSound = async () => {
+    let opSuccess = false
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+    })
+    // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
+    opSuccess = await soundManager.current.play(
+      sound,
+      function () {
+        setIsPlaying(false)
+        soundInterval.current && clearInterval(soundInterval.current)
+      },
+      function () {
+        setIsPlaying(true)
+        startPlayInterval()
+      }
+    )
+    opSuccess && startPlayInterval()
+    return opSuccess
+  }
+
   const handlePlayPause = async () => {
+    let opSuccess = false
     soundInterval.current && clearInterval(soundInterval.current)
     if (AudioPayManagerSingle().isRecording) {
       Toast('Recording in progress')
-      return
+      return opSuccess
     }
+
     if (sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({
@@ -138,26 +207,13 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
         })
 
         soundManager.current.pause()
+        opSuccess = true
       } else {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-        })
-        // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
-        soundManager.current.play(
-          sound,
-          function () {
-            setIsPlaying(false)
-            soundInterval.current && clearInterval(soundInterval.current)
-          },
-          function () {
-            setIsPlaying(true)
-            startPlayInterval()
-          }
-        )
-        startPlayInterval()
+        opSuccess = await playSound()
       }
-      setIsPlaying(() => !isPlaying)
+      opSuccess && setIsPlaying(() => !isPlaying)
     }
+    return opSuccess
   }
 
   useEffect(() => {

@@ -298,20 +298,34 @@ function Chat({}) {
     }
     SocketStreamManager().onResMessage = resMessage => {
       if (!resMessage) return
+      // 新回复
+      // if (resMessage.type === 'REPLY' && resMessage.voiceUrl) {
+      //   AudioPayManagerSingle().currentAutoPlayUrl = resMessage.voiceUrl
+      // }
+      let have = false
       setChatData(list => {
-        let have = false
-        const newList = list.map(item => {
+        const newList = []
+        list.map(item => {
           if (item.replyUid === resMessage.replyUid) {
-            have = true
             console.log('reitem:', item, resMessage)
             item = { ...resMessage }
+            if (!have) {
+              newList.push(item)
+            }
+            have = true
+          } else {
+            newList.push(item)
           }
-          return item
         })
         // console.log('reitem:', newList)
-        return have ? [...newList] : [resMessage, ...list]
+        return have ? [...newList] : [resMessage, ...newList]
       })
-      if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
+      if (
+        !have &&
+        resMessage.type === 'REPLY' &&
+        resMessage?.voiceUrl?.length > 0 &&
+        !AudioPayManagerSingle().currentAutoPlayUrl
+      ) {
         AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
       }
       flatList.current?.scrollToIndex?.({ index: 0 })
