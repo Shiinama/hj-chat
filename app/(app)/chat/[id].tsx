@@ -304,6 +304,7 @@ function Chat({}) {
           if (item.replyUid === data.replyMessage?.replyUid) {
             have = true
             item = { ...data.replyMessage, type: 'LOADING' }
+            return item
           }
         })
         return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
