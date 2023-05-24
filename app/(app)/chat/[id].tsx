@@ -289,7 +289,13 @@ function Chat({}) {
       setChatData(list => {
         // 发送消息成功添加一个待回复的item
         return [
-          { type: 'LOADING', id: randomId, replyUid: currentSendMsgInfo.current?.data?.uid, botId: id },
+          {
+            type: 'LOADING',
+            id: randomId,
+            replyUid: currentSendMsgInfo.current?.data?.uid,
+            botId: id,
+            uid: currentSendMsgInfo.current?.data?.uid + id,
+          },
           data.data,
           ...list,
         ]
@@ -304,8 +310,8 @@ function Chat({}) {
           if (item.replyUid === data.replyMessage?.replyUid) {
             have = true
             item = { ...data.replyMessage, type: 'LOADING' }
-            return item
           }
+          return item
         })
         return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
       })
