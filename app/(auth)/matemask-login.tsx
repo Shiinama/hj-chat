@@ -1,21 +1,10 @@
-import {
-  Text,
-  View,
-  Image,
-  TouchableHighlight,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Linking,
-} from 'react-native'
+import { Text, View, Linking } from 'react-native'
 import React from 'react'
 import MetaMaskSDK from '@metamask/sdk'
 import BackgroundTimer from 'react-native-background-timer'
 import { useAuth } from '../../context/auth'
-import { generateNonce, particleLogin, verifySignature } from '../../api/auth'
-import { Button, TextInput, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { generateNonce, verifySignature } from '../../api/auth'
+import { Button } from '@fruits-chain/react-native-xiaoshu'
 
 export function MateMaskView() {
   const { signIn } = useAuth()

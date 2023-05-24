@@ -3,7 +3,6 @@ import { useFonts } from 'expo-font'
 import { SplashScreen } from 'expo-router'
 import { useEffect, useMemo } from 'react'
 import * as eva from '@eva-design/eva'
-
 import { Provider as XiaoshuProvider, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { Provider as AuthProvider } from '../context/auth'
 import NetInfo from '@react-native-community/netinfo'
