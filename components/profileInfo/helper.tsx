@@ -1,6 +1,6 @@
 import { Image } from 'expo-image'
 import systemConfig from '../../constants/System'
-import defaultAvatar from '../../assets/images/defaultAvatar.png'
+import { View } from 'react-native'
 
 export const genAvatarUrl = (avatar: string) => {
   if (!avatar)
@@ -15,7 +15,7 @@ export const genBotUrl = (avatar: string) => {
 }
 
 export const renderImage = (avatar: string, style) => {
-  if (!avatar) return <Image style={style} source={defaultAvatar}></Image>
+  if (!avatar) return <View style={{ ...style, backgroundColor: '#E2E8F0' }}></View>
   if (avatar?.startsWith('bot-logo/') || avatar?.startsWith('avatar/')) {
     return <Image style={style} source={{ uri: `${systemConfig?.avatarImgHost}${avatar}` }}></Image>
   }
