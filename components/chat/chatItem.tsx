@@ -50,6 +50,14 @@ function chatItem({ item, translationText, me, logo }: Props) {
         }
       })
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
+        if (item.index === 0) {
+          SocketStreamManager().getPlayFragment().onPositionChange = positionMillis => {
+            audioMessage.current?.playFragment?.({
+              dur: positionMillis,
+              end: false,
+            })
+          }
+        }
         console.log('收到item:', item)
         // AudioPayManagerSingle().currentAutoPlayUrl = url
         // 本地缓存mp3文件有更新就回调这个方法 url是本地的mp3路径
