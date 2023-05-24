@@ -84,14 +84,13 @@ export class SocketStream {
   }
 
   private onMessageSent(data: MesageSucessType) {
-    if (this.currentBot?.id !== data.data.botId) return
+    console.log(data, this.currentBot, 'onsend')
+    if (this.currentBot?.botBaseInfo.id !== data.data.botId) return
     if (data?.reqId) {
-      // addReqIds(data?.reqId)
       this.addReqIds(data?.reqId)
     }
     this.onSendMessage?.(data)
     CallBackManagerSingle().execute('botList')
-    // setMessage(data)
   }
 
   private onMessageTextStream(data: MessageStreamTextRes) {
