@@ -30,12 +30,12 @@ type Props = {
 }
 
 function chatItem({ item, translationText, me, logo }: Props) {
+  const botState = botStore.getState().botBaseInfo
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   const [messageStream, setMessageStream] = useState<MessageStreamText>()
   const [audioStream, setAudioStream] = useState<string>()
-  const [buttonIndex, setButtonIndex] = useState<number>(1)
+  const [buttonIndex, setButtonIndex] = useState<number>(botState?.botSetting?.textMasking ? 1 : 2)
   const audioMessage = useRef()
-  const botState = botStore.getState().botBaseInfo
   useEffect(() => {
     const msgKey = item.botId + '&BOT&' + item.replyUid
     // console.log('item.type:', item)
@@ -78,7 +78,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
       SocketStreamManager().removeAudioStreamCallBack(msgKey)
     }
   }, [item])
-  const isBlur = buttonIndex === 1
+  const isBlur = botState?.botSetting?.textMasking && buttonIndex === 1
   if (item.uid === '1231') return null
   const tag = item?.replyUid
   const renderMessageAudio = useMemo(() => {
@@ -136,7 +136,6 @@ function chatItem({ item, translationText, me, logo }: Props) {
       width: 10,
       height: 10,
     }
-    console.log(botState.botSetting)
     const data = [
       botState?.botSetting?.textMasking && {
         id: 1,
