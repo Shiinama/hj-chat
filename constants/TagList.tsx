@@ -12,7 +12,6 @@ export enum TagFromType {
 }
 
 export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
-  // console.log(botInfo, 111)
   const userStore = uInfo().profile
   const isMine = userStore?.id === botInfo?.userId
   const isRobotandChat = type === TagFromType.Chat || type === TagFromType.Robot
