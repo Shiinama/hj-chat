@@ -403,8 +403,6 @@ PODS:
     - ParticleAuthService
     - ParticleNetworkBase
     - React-Core
-  - react-native-randombytes (3.6.1):
-    - React-Core
   - react-native-safe-area-context (4.5.0):
     - RCT-Folly
     - RCTRequired
@@ -591,7 +589,6 @@ DEPENDENCIES:
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-particle-auth (from `../node_modules/react-native-particle-auth`)
-  - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-view-shot (from `../node_modules/react-native-view-shot`)
@@ -741,8 +738,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-particle-auth:
     :path: "../node_modules/react-native-particle-auth"
-  react-native-randombytes:
-    :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
@@ -854,7 +849,6 @@ SPEC CHECKSUMS:
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-netinfo: ccbe1085dffd16592791d550189772e13bf479e2
   react-native-particle-auth: 70753008104bf582c08925792e71561c31bd6c59
-  react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
   react-native-slider: 33b8d190b59d4f67a541061bb91775d53d617d9d
   react-native-view-shot: 705f999ac2a24e4e6c909c0ca65c732ed33ca2ff

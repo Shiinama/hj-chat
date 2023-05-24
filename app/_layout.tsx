@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { useFonts } from 'expo-font'
 import { SplashScreen } from 'expo-router'
 import { useEffect, useMemo } from 'react'
@@ -23,7 +22,6 @@ export const unstable_settings = {
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SF-Pro.ttf'),
-    ...FontAwesome.font,
   })
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
