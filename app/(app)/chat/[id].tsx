@@ -287,13 +287,26 @@ function Chat({}) {
       currentSendMsgInfo.current = data
       if (!data?.data) return
       setChatData(list => {
-        return [data.data, ...list]
+        // 发送消息成功添加一个待回复的item
+        return [
+          { type: 'LOADING', id: randomId, replyUid: currentSendMsgInfo.current?.data?.uid, botId: id },
+          data.data,
+          ...list,
+        ]
       })
       flatList.current?.scrollToIndex?.({ index: 0 })
     }
     SocketStreamManager().onMessageStreamStart = data => {
       setChatData(list => {
-        return [{ ...data.replyMessage, type: 'LOADING' }, ...list]
+        // 开始接收流 更新或新增一个回复的item
+        let have = false
+        const newList = list.map(item => {
+          if (item.replyUid === data.replyMessage?.replyUid) {
+            have = true
+            item = { ...data.replyMessage, type: 'LOADING' }
+          }
+        })
+        return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
       })
     }
     SocketStreamManager().onResMessage = resMessage => {
