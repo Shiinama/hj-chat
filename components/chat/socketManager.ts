@@ -84,7 +84,6 @@ export class SocketStream {
   }
 
   private onMessageSent(data: MesageSucessType) {
-    console.log(data, this.currentBot, 'onsend')
     if (this.currentBot?.botBaseInfo.id !== data.data.botId) return
     if (data?.reqId) {
       this.addReqIds(data?.reqId)
@@ -97,11 +96,6 @@ export class SocketStream {
     // console.log('onMessageTextStream-----', data, this.currentBot?.id !== data?.data?.data?.botId)
     // 其它机器人也接收，如果跟A发起会话，正在接收一个长文，现在又去喝B发起会话，再回到A还需要用到这个消息
     this.addTextStream(data)
-    // if (this.currentBot?.id !== data?.data?.replyMessage?.botId) {
-    //   return
-    // } else {
-    //   this.addTextStream(data)
-    // }
   }
   private async onMessageAudioStream(data: MessageStreamTextRes) {
     // console.log('----audio', data)
@@ -149,25 +143,22 @@ export class SocketStream {
     // if (this.currentBot?.id !== data.data.botId) return
   }
   private onMessageReplied({ data, reqId }: MesageSucessType) {
-    if (this.currentBot.id !== data.botId) return
+    if (this.currentBot?.botBaseInfo.id !== data.botId) return
     if (reqId) {
       // removeReqIds(reqId)
       this.removeReqIds(reqId)
     }
     this.onResMessage?.(data)
     CallBackManagerSingle().execute('botList')
-    // setResMessage(data)
   }
   private onMessageTranslated({ reqId, data }: MesageSucessType) {
-    if (this.currentBot.id !== data.botId) return
-    // setTranslation(data)
+    if (this.currentBot?.botBaseInfo.id !== data.botId) return
     this.onTransalteMessage(data)
   }
   private onEnergyInfo({ reqId, data }: MesageSucessType) {}
 
   private onMessageUpdated({ data }: MesageSucessType) {
-    if (this.currentBot.id !== data.botId) return
-    // setUpdateMessage(data)
+    if (this.currentBot?.botBaseInfo.id !== data.botId) return
     this.onUpdateMessage(data)
   }
 

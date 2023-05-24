@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   tagListItemText: {
-    fontWeight: '500',
+    marginLeft: 4,
+    fontWeight: '700',
     fontSize: 12,
     color: '#3A0D84',
   },

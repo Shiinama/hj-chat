@@ -289,12 +289,9 @@ function Chat({}) {
         return [
           {
             type: 'LOADING',
-            id: randomId,
-            replyUid: currentSendMsgInfo.current?.data?.uid,
-            botId: id,
+            ...data.data,
             uid: currentSendMsgInfo.current?.data?.uid + id,
           },
-          data.data,
           ...list,
         ]
       })
@@ -313,40 +310,6 @@ function Chat({}) {
         })
         return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
       })
-    }
-    SocketStreamManager().onResMessage = resMessage => {
-      if (!resMessage) return
-      // 新回复
-      // if (resMessage.type === 'REPLY' && resMessage.voiceUrl) {
-      //   AudioPayManagerSingle().currentAutoPlayUrl = resMessage.voiceUrl
-      // }
-      let have = false
-      setChatData(list => {
-        const newList = []
-        list.map(item => {
-          if (item.replyUid === resMessage.replyUid) {
-            console.log('reitem:', item, resMessage)
-            item = { ...resMessage }
-            if (!have) {
-              newList.push(item)
-            }
-            have = true
-          } else {
-            newList.push(item)
-          }
-        })
-        // console.log('reitem:', newList)
-        return have ? [...newList] : [resMessage, ...newList]
-      })
-      if (
-        !have &&
-        resMessage.type === 'REPLY' &&
-        resMessage?.voiceUrl?.length > 0 &&
-        !AudioPayManagerSingle().currentAutoPlayUrl
-      ) {
-        AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
-      }
-      flatList.current?.scrollToIndex?.({ index: 0 })
     }
     SocketStreamManager().onUpdateMessage = updateMessage => {
       if (!updateMessage) return
@@ -371,12 +334,8 @@ function Chat({}) {
         return [...pre]
       })
     }
-
     SocketStreamManager().currentBot = botStore.getState()
-    console.log('botStore.getState()', SocketStreamManager().currentBot)
   }, [])
-
-  console.log('chatData:', chatData)
 
   // useEffect(() => {
   //   if (!message) return

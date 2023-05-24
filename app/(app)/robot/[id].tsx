@@ -5,10 +5,11 @@ import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import { postAddBotToChatList, postPublishBot, setBotPrivate } from '../../../api/robot'
 import { styles } from './style'
-import editIcon from '../../../assets/images/edit.png'
-import publishIcon from '../../../assets/images/publish.png'
-import chat from '../../../assets/images/chat.png'
-import escape from '../../../assets/images/escape.png'
+import editIcon from '../../../assets/images/setting/edit.png'
+import publishIcon from '../../../assets/images/setting/publish.png'
+import xiajia from '../../../assets/images/setting/xiajia.png'
+import chat from '../../../assets/images/setting/chat.png'
+import share from '../../../assets/images/setting/share.png'
 import useBotStore from '../../../store/botStore'
 import useUserStore from '../../../store/userStore'
 import { renderImage } from '../../../components/profileInfo/helper'
@@ -58,7 +59,7 @@ export default function Robot() {
               style={styles.actionsItem}
             >
               <Image
-                source={publishIcon}
+                source={xiajia}
                 style={{
                   width: 30,
                   height: 30,
@@ -107,25 +108,6 @@ export default function Robot() {
               />
               <Text style={styles.actionsItemText}>Publish</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                getBotSharingCode({ botUid: botStore.uid }).then(res => {
-                  Clipboard.setString(`${System.botShareLink}${res}`)
-                  Toast('Copied')
-                })
-              }}
-              style={styles.actionsItem}
-            >
-              <Image
-                source={escape}
-                style={{
-                  // width: 25,
-                  // height: 25,
-                  marginTop: 5,
-                }}
-              />
-              <Text style={styles.actionsItemText}>Share</Text>
-            </TouchableOpacity>
           </>
         )
       }
@@ -170,6 +152,24 @@ export default function Robot() {
                 <Text style={styles.actionsItemText}>Chat</Text>
               </TouchableOpacity>
               {renderButton()}
+              <TouchableOpacity
+                onPress={() => {
+                  getBotSharingCode({ botUid: botStore.uid }).then(res => {
+                    Clipboard.setString(`${System.botShareLink}${res}`)
+                    Toast('Copied')
+                  })
+                }}
+                style={styles.actionsItem}
+              >
+                <Image
+                  source={share}
+                  style={{
+                    width: 30,
+                    height: 30,
+                  }}
+                />
+                <Text style={styles.actionsItemText}>Share</Text>
+              </TouchableOpacity>
             </>
           </View>
         }
