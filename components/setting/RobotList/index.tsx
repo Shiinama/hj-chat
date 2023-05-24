@@ -28,8 +28,6 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   }, [])
   useFocusEffect(
     useCallback(() => {
-      console.log('11111111111')
-
       setTrue()
       loadData()
     }, [])
