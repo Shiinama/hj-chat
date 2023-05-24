@@ -25,8 +25,8 @@ import useUserStore from '../../store/userStore'
 // import { createWeb3 } from '../../tmp/web3Demo'
 import { particleLogin } from '../../api/auth'
 // const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
-import { MateMaskView } from './matemask-login'
-import { WallectConnectView } from './wallect-login'
+// import { MateMaskView } from './matemask-login'
+// import { WallectConnectView } from './wallect-login'
 
 export default function SignIn() {
   const { signIn } = useAuth()
@@ -158,9 +158,9 @@ export default function SignIn() {
               </Button>
             </View>
 
-            <MateMaskView></MateMaskView>
+            {/* <MateMaskView></MateMaskView> */}
 
-            <WallectConnectView />
+            {/* <WallectConnectView /> */}
 
             <View style={{ width: '80%', marginTop: 20 }}>
               <Text

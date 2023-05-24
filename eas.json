@@ -47,7 +47,7 @@
     },
     "preview": {
       "env": {
-        "REACT_APP_ENV": "prod"
+        "REACT_APP_ENV": "test"
       },
       "android": {
         "buildType": "apk",
