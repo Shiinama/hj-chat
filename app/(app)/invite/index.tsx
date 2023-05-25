@@ -13,6 +13,7 @@ export default function Invite() {
   const navigation = useNavigation()
   const [loading, setLoading] = useState(false)
   const [validInvitationCount, setValidInvitationCount] = useState(false)
+
   useEffect(() => {
     navigation.setOptions({
       title: 'Invite To Earn',

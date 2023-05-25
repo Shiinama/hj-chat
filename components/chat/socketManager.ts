@@ -26,14 +26,15 @@ export class SocketStream {
 
   private onAudioStreamUpdate: { [key: string]: (item: MessageStreamText, url: string) => void } = {}
 
+  private onTransalteMessage: { [key: string]: (item: MessageDto) => void } = {}
+
+  private onUpdateMessage: { [key: string]: (item: MessageDto) => void } = {}
+
   private reqIds: Set<string> = new Set()
 
   onMessageStreamStart: (item: MessageStreamText) => void
 
   onResMessage: (item: MessageDto) => void
-
-  onUpdateMessage: (item: MessageDto) => void
-  onTransalteMessage: (item: MessageDto) => void
 
   onSendMessage: (item: MesageSucessType) => void
 
@@ -96,7 +97,6 @@ export class SocketStream {
     if (data?.reqId) {
       this.addReqIds(data?.reqId)
     }
-    console.log('onMessageSent:', data)
     this.onSendMessage?.(data)
     CallBackManagerSingle().execute('botList')
   }
@@ -122,7 +122,7 @@ export class SocketStream {
   }
 
   private async onMessageAudioStream(data: MessageStreamTextRes) {
-    // console.log('----audio', data)
+    console.log('----audio', data)
     try {
       const msg = data?.data
       // 待回复消息的机器人和哪一条消息
@@ -171,9 +171,9 @@ export class SocketStream {
     } catch (error) {
       console.log('error:', error)
     }
-    // if (this.currentBot?.id !== data.data.botId) return
   }
   private onMessageReplied({ data, reqId }: MesageSucessType) {
+    console.log(data)
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     if (reqId) {
       // removeReqIds(reqId)
@@ -183,14 +183,17 @@ export class SocketStream {
     CallBackManagerSingle().execute('botList')
   }
   private onMessageTranslated({ reqId, data }: MesageSucessType) {
+    console.log(data)
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
-    this.onTransalteMessage(data)
+    const msgKey = data?.botId + '&BOT&' + data?.replyUid
+    this.onTransalteMessage[msgKey](data)
   }
   private onEnergyInfo({ reqId, data }: MesageSucessType) {}
 
   private onMessageUpdated({ data }: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
-    this.onUpdateMessage(data)
+    const msgKey = data?.botId + '&BOT&' + data?.replyUid
+    this.onUpdateMessage[msgKey](data)
   }
 
   private removeReqIds(reqId: string) {
@@ -209,6 +212,7 @@ export class SocketStream {
   }
 
   sendMessage(ChatEvent, data) {
+    console.log(ChatEvent, data)
     if (!this.socket || !this.socket?.connected) {
       this.init()
     }
@@ -252,8 +256,25 @@ export class SocketStream {
     this.onAudioStreamUpdate[key] = callBack
   }
 
+  addTranslatedCallBack(key: string, callBack: (item: MessageDto) => void) {
+    delete this.onTransalteMessage[key]
+    this.onTransalteMessage[key] = callBack
+  }
+  addUpdateMessageCallBack(key: string, callBack: (item: MessageDto) => void) {
+    delete this.onUpdateMessage[key]
+    this.onUpdateMessage[key] = callBack
+  }
+
   removeTextStreamCallBack(key: string) {
     delete this.onTextStreamUpdate[key]
+  }
+
+  removeTranslatedCallBack(key: string) {
+    delete this.onTransalteMessage[key]
+  }
+
+  removeUpdateMessageCallBack(key: string) {
+    delete this.onUpdateMessage[key]
   }
 
   removeAudioStreamCallBack(key: string) {

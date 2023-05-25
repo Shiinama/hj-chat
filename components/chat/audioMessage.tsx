@@ -12,12 +12,11 @@ import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import SocketStreamManager from './socketManager'
 type AudioType = {
   audioFileUri: string
-  slideWidth?: number
   showControl?: boolean
   onPlay?: (playing: boolean) => void
 }
 
-const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, slideWidth = 140 }: AudioType, ref) => {
+const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: AudioType, ref) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const refPlaying = useRef<boolean>(false)
@@ -132,6 +131,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
   }
 
   useEffect(() => {
+    console.log(111)
     if (sound !== null) {
       sound.getStatusAsync().then(async status => {
         if (status.isLoaded) {
@@ -250,7 +250,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
           loadSound()
         }}
       >
-        <Text style={{ color: '#333' }}>Reload</Text>
+        <Text style={{ color: '#333' }}>AudioCannotPlay</Text>
       </TouchableOpacity>
     )
 
@@ -267,15 +267,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
       </View>
       <View
         style={{
-          // position: 'relative',
-          // left: -55,
-          // transform: [{ scale: 0.5 }],
           flex: 1,
           marginRight: 20,
         }}
       >
         <Slider
-          // style={styles.slider}
           minimumValue={0}
           minimumTrackTintColor={'black'}
           thumbTintColor={'black'}
@@ -283,7 +279,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
           value={currentPosition}
           thumbStyle={{ width: 5, height: 5 }}
           trackStyle={{ height: 2 }}
-          // onValueChange={handleChange}
           onValueChange={value => {
             handleChange(value[value.length - 1])
           }}

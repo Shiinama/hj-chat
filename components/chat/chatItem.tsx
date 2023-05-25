@@ -1,7 +1,8 @@
-import { Text, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
+import { Text, TouchableOpacity, View, TouchableWithoutFeedback, Alert } from 'react-native'
 import styles from './styles'
 import { genAvatarUrl, renderImage } from '../../components/profileInfo/helper'
 import { Image } from 'expo-image'
+import { v4 as uuidv4 } from 'uuid'
 import AudioMessage from './audioMessage'
 import Blur from '../../assets/images/chat/blur.svg'
 import imgPlaceholder from '../../assets/images/img_placeholder.png'
@@ -23,21 +24,23 @@ import { MessageDetail } from '../../types/MessageTyps'
 import botStore from '../../store/botStore'
 type Props = {
   item: MessageDetail & number
-  translationText
   children?: (() => React.ReactNode) | React.ReactNode
   logo: string
   me: string
 }
 
-function chatItem({ item, translationText, me, logo }: Props) {
+function chatItem({ item, me, logo }: Props) {
+  const msgKey = item.botId + '&BOT&' + item.replyUid
   const botState = botStore.getState().botBaseInfo
+  console.log(item)
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
   const [messageStream, setMessageStream] = useState<MessageStreamText>()
+  const [translateMessage, setTranslateMessage] = useState<string>()
+  const [updateMessage, setUpdateMessage] = useState<string>()
   const [audioStream, setAudioStream] = useState<string>()
   const [buttonIndex, setButtonIndex] = useState<number>(botState?.botSetting?.textMasking ? 1 : 2)
   const audioMessage = useRef()
   useEffect(() => {
-    const msgKey = item.botId + '&BOT&' + item.replyUid
     // console.log('item.type:', item)
     if (item.type === 'LOADING' && item.replyUid) {
       // console.log('注册:', item)
@@ -86,12 +89,23 @@ function chatItem({ item, translationText, me, logo }: Props) {
       SocketStreamManager().removeAudioStreamCallBack(msgKey)
     }
   }, [item])
+  useEffect(() => {
+    SocketStreamManager().addTranslatedCallBack(msgKey, data => {
+      setTranslateMessage(data.translation)
+    })
+    SocketStreamManager().addUpdateMessageCallBack(msgKey, data => {
+      setUpdateMessage(data.text)
+    })
+    return () => {
+      SocketStreamManager().removeTranslatedCallBack(msgKey)
+      SocketStreamManager().removeUpdateMessageCallBack(msgKey)
+    }
+  }, [])
   const isBlur = botState?.botSetting?.textMasking && buttonIndex === 1
   if (item.uid === '1231') return null
   const tag = item?.replyUid
   const renderMessageAudio = useMemo(() => {
     const url = audioStream || item?.voiceUrl
-    // console.log('renderMessageAudio:', url)
     if (!url) {
       return null
     }
@@ -102,7 +116,8 @@ function chatItem({ item, translationText, me, logo }: Props) {
     )
   }, [item?.voiceUrl, audioStream])
   const renderMessageText = ({ textMsg }: { textMsg?: boolean }) => {
-    const messageTxt = messageStream?.text || item.text
+    const messageTxt = messageStream?.text || updateMessage || item.text
+    const translation = translateMessage || item.translation
     if (!messageTxt) {
       return null
     }
@@ -134,7 +149,7 @@ function chatItem({ item, translationText, me, logo }: Props) {
         {buttonIndex === 1 && <Text>{messageTxt}</Text>}
         {buttonIndex === 2 && markdownRender(messageTxt)}
         {buttonIndex === 3 &&
-          (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
+          (translation ? <Text>{translation}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
     )
   }
@@ -176,8 +191,16 @@ function chatItem({ item, translationText, me, logo }: Props) {
         onPress={e => {
           setButtonIndex(id)
           if (id === 3) {
-            if (item.translation) return
-            translationText(item.uid)
+            if (translateMessage || item.translation) return
+            if (!AudioPayManagerSingle().netInfo?.isConnected) {
+              Alert.alert('Please check your network connection')
+              return
+            }
+            const reqId = uuidv4()
+            SocketStreamManager().sendMessage('translate_message', {
+              reqId,
+              messageUid: item.uid,
+            })
           }
         }}
       >

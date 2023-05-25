@@ -43,7 +43,6 @@ function Chat({}) {
   })
   const navigation = useNavigation()
   const isPending = useRef(false)
-  // const { message, resMessage, sendMessage, translationMessage, updateMessage } = useSocketIo()
   // 给loading生成一个随机id，这里是用replyUid来判断是否是回复的信息，loading展示为回复数据，所以随便弄一个id当id
   const randomId = useId()
 
@@ -184,11 +183,7 @@ function Chat({}) {
       return
     }
     const reqId = uuidv4()
-    // sendMessage('voice_chat', {
-    //   reqId,
-    //   botUid: uid,
-    //   voice,
-    // })
+
     SocketStreamManager().sendMessage('voice_chat', {
       reqId,
       botUid: uid,
@@ -196,17 +191,7 @@ function Chat({}) {
     })
     setVoice(null)
   }
-  const translationText = messageUid => {
-    if (!AudioPayManagerSingle().netInfo?.isConnected) {
-      Alert.alert('Please check your network connection')
-      return
-    }
-    const reqId = uuidv4()
-    SocketStreamManager().sendMessage('translate_message', {
-      reqId,
-      messageUid,
-    })
-  }
+
   useEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -311,80 +296,42 @@ function Chat({}) {
         return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
       })
     }
-    SocketStreamManager().onUpdateMessage = updateMessage => {
-      if (!updateMessage) return
-      setChatData(pre => {
-        const index = pre.findIndex(item => item.uid === updateMessage.uid)
-        if (index < 0) {
-          return pre
-        }
-        pre[index].text = updateMessage.text
-        return [...pre]
+    SocketStreamManager().onResMessage = resMessage => {
+      if (!resMessage) return
+      // 新回复
+      // if (resMessage.type === 'REPLY' && resMessage.voiceUrl) {
+      //   AudioPayManagerSingle().currentAutoPlayUrl = resMessage.voiceUrl
+      // }
+      let have = false
+      setChatData(list => {
+        const newList = []
+        list.map(item => {
+          if (item.replyUid === resMessage.replyUid) {
+            console.log('reitem:', item, resMessage)
+            item = { ...resMessage }
+            if (!have) {
+              newList.push(item)
+            }
+            have = true
+          } else {
+            newList.push(item)
+          }
+        })
+        // console.log('reitem:', newList)
+        return have ? [...newList] : [resMessage, ...newList]
       })
-    }
-    SocketStreamManager().onTransalteMessage = translationMessage => {
-      if (!translationMessage) return
-      const index = chatData.findIndex(item => item.id === translationMessage.id)
-      setChatData(pre => {
-        // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
-        if (index > -1) {
-          pre[index].translation = translationMessage.translation
-        }
-
-        return [...pre]
-      })
+      if (
+        !have &&
+        resMessage.type === 'REPLY' &&
+        resMessage?.voiceUrl?.length > 0 &&
+        !AudioPayManagerSingle().currentAutoPlayUrl
+      ) {
+        AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
+      }
+      flatList.current?.scrollToIndex?.({ index: 0 })
     }
     SocketStreamManager().currentBot = botStore.getState()
   }, [])
-
-  // useEffect(() => {
-  //   if (!message) return
-  //   setChatData([message.data, ...chatData])
-  //   flatList.current?.scrollToIndex?.({ index: 0 })
-  //   // 刷新聊天主页列表 加个延时  马上去请求数据可能还没更新，如果没有延时的问题可以去掉setTimeout
-  //   setTimeout(() => {
-  //     CallBackManagerSingle().execute('botList')
-  //   }, 300)
-  // }, [message])
-
-  // useEffect(() => {
-  //   if (!resMessage) return
-  //   setChatData([resMessage, ...chatData])
-  //   if (resMessage?.voiceUrl?.length > 0 && !AudioPayManagerSingle().currentAutoPlayUrl) {
-  //     AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
-  //   }
-  //   // 刷新聊天主页列表
-  //   setTimeout(() => {
-  //     CallBackManagerSingle().execute('botList')
-  //   }, 300)
-  //   flatList.current?.scrollToIndex?.({ index: 0 })
-  //   // 回复消息也需要刷新消息列表
-  //   if (chatData.length <= 1) {
-  //     CallBackManagerSingle().execute('botList')
-  //   }
-  // }, [resMessage])
-
-  // useEffect(() => {
-  //   if (!updateMessage) return
-  //   const index = chatData.findIndex(item => item.uid === updateMessage.uid)
-  //   setChatData(pre => {
-  //     pre[index].text = updateMessage.text
-  //     return [...pre]
-  //   })
-  // }, [updateMessage])
-
-  // useEffect(() => {
-  //   if (!translationMessage) return
-  //   const index = chatData.findIndex(item => item.id === translationMessage.id)
-  //   setChatData(pre => {
-  //     // fix TypeError: undefined is not an object (evaluating 'pre[translationTextIndex].translation = translationMessage.translation')
-  //     if (index > -1) {
-  //       pre[index].translation = translationMessage.translation
-  //     }
-
-  //     return [...pre]
-  //   })
-  // }, [translationMessage])
 
   const loadNextData = () => {
     try {
@@ -472,7 +419,7 @@ function Chat({}) {
           renderItem: ({ item }) => {
             return (
               <View key={item.id}>
-                <ChatItem me={profile?.avatar} logo={logo} translationText={translationText} item={item}></ChatItem>
+                <ChatItem me={profile?.avatar} logo={logo} item={item}></ChatItem>
               </View>
             )
           },
