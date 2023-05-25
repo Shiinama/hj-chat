@@ -15,26 +15,28 @@ export interface RobotListProps {
   /** 请求的参数 */
   requestParams: any
 }
+const wait = timeout => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout)
+  })
+}
 const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   const [robotListData, setRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(true)
   useEffect(() => {
     // 必须分一下，不然会在点到我的里面的时候把原来的替代了
-    CallBackManagerSingle().add('ugcbotAllList', botUid => {
-      loadData(botUid)
+    CallBackManagerSingle().add('ugcbotAllList', () => {
+      loadData()
     })
     return () => {
       CallBackManagerSingle().remove('ugcbotAllList')
     }
   }, [])
 
-  const loadData = (botUid?: string) => {
+  const loadData = async () => {
     setTrue()
     getUgcBotList(requestParams)
       .then((res: any) => {
-        if (botUid) {
-          botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
-        }
         setRobotListData(res)
       })
       .finally(() => {

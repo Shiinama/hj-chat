@@ -89,7 +89,7 @@ export default async function request<T>(options: RequestOptions) {
     Authorization = `Bearer ${token}`
   } else {
     const token = await AsyncStorage.getItem(authKey)
-    if (!token && (url !== '/auth/particleLogin' && url !== "/auth/generateNonce" && url !== "/auth/verifySignature")) {
+    if (!token && url !== '/auth/particleLogin' && url !== '/auth/generateNonce' && url !== '/auth/verifySignature') {
       return
     }
     Authorization = token ? `Bearer ${token}` : ''

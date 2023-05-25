@@ -50,7 +50,8 @@ export default function Robot() {
                 setBotPrivate({ botUid: botStore?.uid })
                   .then(() => {
                     setMessage('Unpublished successfully')
-                    CallBackManagerSingle().execute('ugcbotAllList', botStore?.uid)
+                    CallBackManagerSingle().execute('ugcbotAllList')
+                    CallBackManagerSingle().execute('ugcbotList', botStore?.uid)
                   })
                   .finally(() => {
                     close()
@@ -88,10 +89,12 @@ export default function Robot() {
             <TouchableOpacity
               onPress={() => {
                 const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
+                console.log(botStore, 111)
                 postPublishBot({ botUid: botStore?.uid })
                   .then(() => {
                     setMessage('Published successfully')
-                    CallBackManagerSingle().execute('ugcbotAllList', botStore?.uid)
+                    CallBackManagerSingle().execute('ugcbotAllList')
+                    CallBackManagerSingle().execute('ugcbotList')
                   })
                   .finally(() => {
                     close()
