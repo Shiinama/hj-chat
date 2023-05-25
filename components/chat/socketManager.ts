@@ -12,6 +12,8 @@ import useUserStore from '../../store/userStore'
 import { Alert } from 'react-native'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 import { arrayBufferToBase64, concatBuffer, deleteAll, getAudioFileUrl, saveAudio } from '../../utils/audioFile'
+import AudioFragmentPlay from './audioFragmentPlay'
+import AudioPayManagerSingle from './audioPlayManager'
 
 export class SocketStream {
   private socket: Socket
@@ -36,6 +38,8 @@ export class SocketStream {
   onSendMessage: (item: MesageSucessType) => void
 
   onPending: (pending: boolean) => void
+
+  private playFragment = new AudioFragmentPlay()
 
   private timeClearPending: NodeJS.Timeout
 
@@ -72,6 +76,10 @@ export class SocketStream {
     this.socket.on(MsgEvents.NO_ENOUGH_ENERGY, e => this.onNoEnoughEnergy(e))
   }
 
+  getPlayFragment() {
+    return this.playFragment
+  }
+
   private onMessageError({ message }: MeaageErrorType) {
     Alert.alert(message)
   }
@@ -88,6 +96,7 @@ export class SocketStream {
     if (data?.reqId) {
       this.addReqIds(data?.reqId)
     }
+    console.log('onMessageSent:', data)
     this.onSendMessage?.(data)
     CallBackManagerSingle().execute('botList')
   }
@@ -97,6 +106,21 @@ export class SocketStream {
     // 其它机器人也接收，如果跟A发起会话，正在接收一个长文，现在又去喝B发起会话，再回到A还需要用到这个消息
     this.addTextStream(data)
   }
+
+  async saveSingleAudio(data: MessageStreamTextRes) {
+    if (!data.data?.audio) {
+      return
+    }
+    try {
+      const res = await saveAudio({
+        audio: arrayBufferToBase64(data.data?.audio),
+        botId: data.data?.replyMessage?.botId,
+        replyUid: data?.data?.replyMessage?.replyUid + '_' + data?.data?.index,
+      })
+      this.playFragment.addSoundUrl(res)
+    } catch (error) {}
+  }
+
   private async onMessageAudioStream(data: MessageStreamTextRes) {
     // console.log('----audio', data)
     try {
@@ -105,11 +129,18 @@ export class SocketStream {
       const msgKey = msg.replyMessage?.botId + '&BOT&' + msg.replyMessage?.replyUid
       // 存储当前视频
       if (!msg.isFinal && msg.index === 0) {
+        if (this.playFragment.isPlaying()) {
+          AudioPayManagerSingle().stop()
+        }
+        this.playFragment = undefined
+        this.playFragment = new AudioFragmentPlay()
+
         // const base64 = await arrayBufferToBase64(msg.audio)
         this.currentAudioStream[msgKey] = msg.audio
       } else if (msg.audio) {
         this.currentAudioStream[msgKey] = concatBuffer(this.currentAudioStream[msgKey], msg.audio)
       }
+      this.saveSingleAudio(data)
       const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
       if (msg.audio) {
         try {

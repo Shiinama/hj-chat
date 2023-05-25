@@ -1,5 +1,5 @@
 import botStore from '../../../store/botStore'
-import { useBoolean, useDebounceEffect } from 'ahooks'
+import { useBoolean, useDebounceEffect, useDebounceFn } from 'ahooks'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
@@ -16,9 +16,6 @@ export interface RobotListProps {
   requestParams: any
 }
 const RobotList: FC<RobotListProps> = ({ requestParams }) => {
-  const a = botStore()
-  console.log({ a })
-
   const [robotListData, setRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(false)
   useEffect(() => {
@@ -35,20 +32,26 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       loadData()
     }, [])
   )
-  const loadData = (botUid?: string) => {
-    setTrue()
+  const { run: loadData } = useDebounceFn(
+    (botUid?: string) => {
+      setTrue()
 
-    getUgcBotList(requestParams)
-      .then((res: any) => {
-        if (botUid) {
-          botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
-        }
-        setRobotListData(res)
-      })
-      .finally(() => {
-        setFalse()
-      })
-  }
+      getUgcBotList(requestParams)
+        .then((res: any) => {
+          if (botUid) {
+            botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
+          }
+          setRobotListData(res)
+        })
+        .finally(() => {
+          setFalse()
+        })
+    },
+    {
+      wait: 500,
+    }
+  )
+
   useDebounceEffect(
     () => {
       loadData()

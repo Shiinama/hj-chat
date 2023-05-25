@@ -9,6 +9,7 @@ import ShellLoading from '../loading'
 import AudioPayManagerSingle from './audioPlayManager'
 import { formatTime } from '../../utils/time'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import SocketStreamManager from './socketManager'
 type AudioType = {
   audioFileUri: string
   slideWidth?: number
@@ -29,7 +30,14 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
   useImperativeHandle(ref, () => ({
     handlePlayPause,
     loadRefreshSound,
+    playFragment,
   }))
+
+  const playFragment = (params: { dur: number; end: boolean }) => {
+    setIsPlaying(params.end ? false : true)
+    setCurrentPosition(params?.end ? 0 : params.dur)
+  }
+
   const loadRefreshSound = async (finish?: boolean) => {
     if (sound) {
       try {
@@ -107,7 +115,12 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay, sli
 
   const playCurrentRecevice = async () => {
     console.log('playCurrentRecevice:', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
-    if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
+    // 如果当前片段没有播放再播放
+    if (
+      audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl &&
+      !SocketStreamManager().getPlayFragment()?.isPlaying()
+    ) {
+      setIsPlaying(false)
       console.log('playCurrentRecevice:to', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
       const success = await handlePlayPause()
       console.log('handlePlayPause-success:', success)

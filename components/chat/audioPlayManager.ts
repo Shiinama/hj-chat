@@ -60,7 +60,7 @@ export class AudioPayManager {
           this.currentSoundRePlayMethod?.()
           await this.currentSound.playAsync()
         } catch (error) {
-          console.log('appReActive', error)
+          // console.log('appReActive', error)
         }
       }
     }
@@ -73,7 +73,7 @@ export class AudioPayManager {
         isCallBack && this.currentSoundStopMethod?.()
         await this.currentSound.pauseAsync()
       } catch (error) {
-        console.log('pause', error)
+        // console.log('pause', error)
       }
     }
   }
@@ -100,10 +100,10 @@ export class AudioPayManager {
       try {
         this.currentSoundStopMethod?.()
         await this.currentSound.pauseAsync().catch(e => {
-          console.log('play-pauseAsync-catch', e)
+          // console.log('play-pauseAsync-catch', e)
         })
       } catch (e) {
-        console.log('play-pauseAsync', e)
+        // console.log('play-pauseAsync', e)
       }
     }
     this.isPlay = true
@@ -114,7 +114,7 @@ export class AudioPayManager {
       await sound.playAsync()
       return true
     } catch (e) {
-      console.log('play', e)
+      // console.log('play', e)
       return false
     }
   }

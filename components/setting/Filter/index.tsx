@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
-import { FC, useEffect, useMemo } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { FC, useMemo } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native'
 import FilterIcon from '../../../assets/images/setting/filter_icon.svg'
 import useFilterStore from './filterStore'
 export interface FilterProps {}
@@ -46,19 +46,33 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   filterBox: {
-    height: 50,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 99,
-    shadowRadius: 8,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 1,
-    shadowColor: 'rgba(0, 0, 0, 0.08)',
+    flexShrink: 0,
+    ...(Platform.OS === 'android'
+      ? {
+          paddingVertical: 12,
+          shadowRadius: 8,
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowColor: 'rgba(0, 0, 0, 0.08)',
+          shadowOpacity: 0.1,
+        }
+      : {
+          height: 50,
+          shadowRadius: 8,
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowOpacity: 1,
+          shadowColor: 'rgba(0, 0, 0, 0.08)',
+        }),
 
     // box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
   },
