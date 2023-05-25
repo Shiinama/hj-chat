@@ -267,7 +267,6 @@ function Chat({}) {
       isPending.current = pending
     }
     SocketStreamManager().onSendMessage = data => {
-      console.log('onSendMessagedata:', data)
       currentSendMsgInfo.current = data
       if (!data?.data) return
       setChatData(list => {

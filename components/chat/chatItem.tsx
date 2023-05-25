@@ -2,26 +2,18 @@ import { Text, TouchableOpacity, View, TouchableWithoutFeedback, Alert } from 'r
 import styles from './styles'
 import { genAvatarUrl, renderImage } from '../../components/profileInfo/helper'
 import { Image } from 'expo-image'
-import { v4 as uuidv4 } from 'uuid'
 import AudioMessage from './audioMessage'
-import Blur from '../../assets/images/chat/blur.svg'
 import imgPlaceholder from '../../assets/images/img_placeholder.png'
 import CheckIcon from '../../assets/images/chat/check.svg'
 import CheckedIcon from '../../assets/images/chat/checked.svg'
-import Svt from '../../assets/images/chat/svt.svg'
-import Translate from '../../assets/images/chat/translte.svg'
 import { memo, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
-import { BlurView } from '@react-native-community/blur'
-import Markdown from 'react-native-marked'
-import ShellLoading from '../loading'
-import { MessageStreamText, MessageStreamTextRes } from './type'
 import SocketStreamManager from './socketManager'
 import AudioPayManagerSingle from './audioPlayManager'
-import { deleteAudio } from '../../utils/audioFile'
 import { MessageDetail } from '../../types/MessageTyps'
 import botStore from '../../store/botStore'
+import ItemText from './itemText'
 type Props = {
   item: MessageDetail & number
   children?: (() => React.ReactNode) | React.ReactNode
@@ -32,26 +24,12 @@ type Props = {
 function chatItem({ item, me, logo }: Props) {
   const msgKey = item.botId + '&BOT&' + item.replyUid
   const botState = botStore.getState().botBaseInfo
-  console.log(item)
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
-  const [messageStream, setMessageStream] = useState<MessageStreamText>()
-  const [translateMessage, setTranslateMessage] = useState<string>()
-  const [updateMessage, setUpdateMessage] = useState<string>()
+
   const [audioStream, setAudioStream] = useState<string>()
-  const [buttonIndex, setButtonIndex] = useState<number>(botState?.botSetting?.textMasking ? 1 : 2)
   const audioMessage = useRef()
   useEffect(() => {
-    // console.log('item.type:', item)
     if (item.type === 'LOADING' && item.replyUid) {
-      // console.log('注册:', item)
-      setButtonIndex(() => 2)
-      SocketStreamManager().addTextStreamCallBack(msgKey, item => {
-        // console.log('收到item:', item)
-        setMessageStream({ ...item })
-        if (item.isFinal) {
-          SocketStreamManager().removeTextStreamCallBack(msgKey)
-        }
-      })
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
         if (item.index === 0) {
           SocketStreamManager().getPlayFragment().onPositionChange = positionMillis => {
@@ -62,7 +40,6 @@ function chatItem({ item, me, logo }: Props) {
             })
           }
         }
-        console.log('收到item:', item)
         // AudioPayManagerSingle().currentAutoPlayUrl = url
         // 本地缓存mp3文件有更新就回调这个方法 url是本地的mp3路径
         setAudioStream(url)
@@ -84,27 +61,12 @@ function chatItem({ item, me, logo }: Props) {
           SocketStreamManager().removeTextStreamCallBack(msgKey)
         }
       })
-    } else {
-      SocketStreamManager().removeTextStreamCallBack(msgKey)
     }
     return () => {
-      SocketStreamManager().removeTextStreamCallBack(msgKey)
       SocketStreamManager().removeAudioStreamCallBack(msgKey)
     }
   }, [item])
-  useEffect(() => {
-    SocketStreamManager().addTranslatedCallBack(msgKey, data => {
-      setTranslateMessage(data.translation)
-    })
-    SocketStreamManager().addUpdateMessageCallBack(msgKey, data => {
-      setUpdateMessage(data.text)
-    })
-    return () => {
-      SocketStreamManager().removeTranslatedCallBack(msgKey)
-      SocketStreamManager().removeUpdateMessageCallBack(msgKey)
-    }
-  }, [])
-  const isBlur = botState?.botSetting?.textMasking && buttonIndex === 1
+
   if (item.uid === '1231') return null
   const tag = item?.replyUid
   const renderMessageAudio = useMemo(() => {
@@ -118,109 +80,7 @@ function chatItem({ item, me, logo }: Props) {
       </View>
     )
   }, [item?.voiceUrl, audioStream])
-  const renderMessageText = ({ textMsg }: { textMsg?: boolean }) => {
-    const messageTxt = messageStream?.text || updateMessage || item.text
-    const translation = translateMessage || item.translation
-    if (!messageTxt) {
-      return null
-    }
-    const markdownRender = text => {
-      return (
-        <Markdown
-          styles={{ code: { backgroundColor: '#fff', padding: 16 }, paragraph: { backgroundColor: '#F6F6F6' } }}
-          value={text}
-          flatListProps={{
-            initialNumToRender: 8,
-          }}
-        />
-      )
-    }
 
-    // textMsg fix 纯文字消息上下全局加了两个分割线，这里把它去掉
-    return (
-      <View style={[styles.content, textMsg ? styles.textContent : {}]}>
-        {isBlur && item?.type === 'REPLY' && (
-          <TouchableWithoutFeedback onPress={() => setButtonIndex(2)}>
-            <BlurView
-              style={styles.absolute}
-              blurType="light"
-              blurAmount={2}
-              reducedTransparencyFallbackColor="white"
-            />
-          </TouchableWithoutFeedback>
-        )}
-        {buttonIndex === 1 && <Text>{messageTxt}</Text>}
-        {buttonIndex === 2 && markdownRender(messageTxt)}
-        {buttonIndex === 3 &&
-          (translation ? <Text>{translation}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
-      </View>
-    )
-  }
-  const renderReply = () => {
-    const param = {
-      style: { marginRight: 5 },
-      width: 10,
-      height: 10,
-    }
-    const data = [
-      botState?.botSetting?.textMasking && {
-        id: 1,
-        dText: 'Blur',
-        Icon: id => <Blur fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
-      },
-      {
-        id: 2,
-        dText: 'Text',
-        Icon: id => <Svt fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
-      },
-      botState?.botSetting?.textTranslation && {
-        id: 3,
-        dText: 'Translate',
-        Icon: id => (
-          <Translate
-            fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'}
-            width={14}
-            height={14}
-            style={{ marginRight: 5 }}
-          />
-        ),
-      },
-    ].filter(Boolean)
-    return data.map(({ Icon, id, dText }) => (
-      <TouchableOpacity
-        key={dText}
-        style={[styles.button, buttonIndex === id && styles.active]}
-        onPress={() => {
-          setButtonIndex(id)
-          if (id === 3) {
-            if (translateMessage || item.translation) return
-            if (!AudioPayManagerSingle().netInfo?.isConnected) {
-              Alert.alert('Please check your network connection')
-              return
-            }
-            const reqId = uuidv4()
-            SocketStreamManager().sendMessage('translate_message', {
-              reqId,
-              messageUid: item.uid,
-            })
-          }
-        }}
-      >
-        {Icon && Icon(id)}
-        <Text style={{ color: buttonIndex === id ? 'white' : 'black' }}>{dText}</Text>
-      </TouchableOpacity>
-    ))
-  }
-  const loadingRender = () => {
-    return (
-      <View style={styles.loadingBox}>
-        <Text style={styles.loadingText}>replying</Text>
-        <View style={styles.loadingIcon}>
-          <ShellLoading></ShellLoading>
-        </View>
-      </View>
-    )
-  }
   const checkboxJSX = chatValue.pageStatus === 'sharing' && (
     <Checkbox
       style={styles.checkbox}
@@ -261,9 +121,11 @@ function chatItem({ item, me, logo }: Props) {
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[styles.chatWrap, tag ? styles.youContent : styles.meContent]}>
             {renderMessageAudio}
-            {renderMessageText({ textMsg: audioStream || item?.voiceUrl ? false : true })}
-            {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
-            {item?.type === 'LOADING' && !item.text && !messageStream?.text && loadingRender()}
+            <ItemText
+              item={item}
+              textMsg={audioStream || item?.voiceUrl ? false : true}
+              botSetting={botState?.botSetting}
+            ></ItemText>
           </View>
           <View style={styles.placeholder} />
         </View>

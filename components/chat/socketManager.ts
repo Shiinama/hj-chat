@@ -122,7 +122,6 @@ export class SocketStream {
   }
 
   private async onMessageAudioStream(data: MessageStreamTextRes) {
-    console.log('----audio', data)
     try {
       const msg = data?.data
       // 待回复消息的机器人和哪一条消息
@@ -173,7 +172,6 @@ export class SocketStream {
     }
   }
   private onMessageReplied({ data, reqId }: MesageSucessType) {
-    console.log(data)
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     if (reqId) {
       // removeReqIds(reqId)
@@ -183,7 +181,6 @@ export class SocketStream {
     CallBackManagerSingle().execute('botList')
   }
   private onMessageTranslated({ reqId, data }: MesageSucessType) {
-    console.log(data)
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     const msgKey = data?.botId + '&BOT&' + data?.replyUid
     this.onTransalteMessage[msgKey](data)
@@ -212,7 +209,6 @@ export class SocketStream {
   }
 
   sendMessage(ChatEvent, data) {
-    console.log(ChatEvent, data)
     if (!this.socket || !this.socket?.connected) {
       this.init()
     }
@@ -228,6 +224,7 @@ export class SocketStream {
     this.currentTextStream[msgKey] += msg.text
     const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
     this.onTextStreamUpdate[msgKey]?.(resMsg)
+    // console.log(msgKey, 'msgKey')
     if (msg.index === 0) {
       this.onMessageStreamStart?.(resMsg)
     }
