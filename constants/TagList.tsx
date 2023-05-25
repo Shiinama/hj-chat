@@ -14,6 +14,37 @@ export enum TagFromType {
 export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
   const userStore = uInfo().profile
   const isMine = userStore?.id === botInfo?.userId
+  let shabitags =
+    botInfo?.tags?.length &&
+    botInfo.tags.map(i => {
+      if (i.label === 'tools') {
+        return {
+          name: i.label,
+          id: 5,
+          bgColor: '#DCF9F7',
+          tagColor: '#055752',
+          childrenEmoji: '🔨',
+        }
+      }
+      if (i.label === 'Entertainment') {
+        return {
+          name: i.label,
+          id: 7,
+          bgColor: '#FDF5DA',
+          tagColor: '#5F5207',
+          childrenEmoji: '🎮',
+        }
+      }
+      if (i.label === 'Education') {
+        return {
+          name: i.label,
+          id: 8,
+          bgColor: '#FDF5EA',
+          tagColor: '#5F5307',
+          childrenEmoji: '🏫',
+        }
+      }
+    })
   const isRobotandChat = type === TagFromType.Chat || type === TagFromType.Robot
   let tags = [
     (type === TagFromType.AllBot || isRobotandChat) && {
@@ -46,6 +77,10 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
         tagColor: '#05286F',
         childrenIcon: <Huatong width={14} height={14} />,
       },
-  ].filter(Boolean)
-  return tags
+  ]
+  let AllTags = tags.concat(shabitags).filter(Boolean)
+  if (type === TagFromType.AllBot || type === TagFromType.MyBot) {
+    AllTags = AllTags.slice(0, 3)
+  }
+  return AllTags
 }

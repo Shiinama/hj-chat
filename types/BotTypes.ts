@@ -34,7 +34,7 @@ export interface BotInfo {
   energyPerChat: number
   lastMessage?: MessageDetail
   status: BotStatusEnum
-  tags?: Array<{ id: number }>
+  tags?: Array<{ id: number; label: string }>
 }
 
 export interface UGCBotInfo {

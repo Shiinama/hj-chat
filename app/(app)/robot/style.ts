@@ -47,37 +47,13 @@ const styles = StyleSheet.create({
   },
   tagList: {
     marginTop: 16,
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     flexWrap: 'wrap',
     gap: 6,
   },
-  tagListItem: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 28,
-    paddingTop: 4,
-    paddingBottom: 4,
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderRadius: 6,
-    flexShrink: 1,
-  },
-  tagListItemTip: {
-    width: 10,
-    height: 10,
-    borderRadius: 100,
-    marginRight: 6,
-  },
-  tagListItemText: {
-    fontWeight: '500',
-    fontSize: 12,
-    lineHeight: 14,
-    color: '#3A0D84',
-  },
+
   actions: {
     width: '100%',
     display: 'flex',

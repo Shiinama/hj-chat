@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text } from 'react-native'
 
-export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon }: any) {
+export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon, childrenEmoji }: any) {
   return (
     <View
       style={{
@@ -8,7 +8,7 @@ export default function Tag({ bgColor, tagColor, name, keyValue, childrenIcon }:
         backgroundColor: bgColor,
       }}
     >
-      {childrenIcon}
+      {childrenIcon || <Text style={{ fontSize: 9 }}>{childrenEmoji}</Text>}
       <Text style={{ ...styles.tagListItemText, color: tagColor }}>{keyValue || name}</Text>
     </View>
   )
