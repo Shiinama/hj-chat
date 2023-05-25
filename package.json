@@ -10,6 +10,7 @@
     "android:dev": "cross-env REACT_APP_ENV=dev expo run:android",
     "android:test": "cross-env REACT_APP_ENV=test expo run:android",
     "android:prod": "cross-env REACT_APP_ENV=prod expo run:android",
+    "android:release": "cross-env expo run:android --variant release",
     "ios": "expo run:ios",
     "ios:dev": "cross-env REACT_APP_ENV=dev expo run:ios",
     "ios:test": "cross-env REACT_APP_ENV=test expo run:ios",

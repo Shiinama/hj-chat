@@ -118,6 +118,7 @@ function Chat({}) {
       limit: chatDataInfo.current.pageSize,
       beforeId: chatData.length > 0 && loadMore ? chatData[chatData.length - 1].id : undefined,
     })
+      // @ts-ignore
       .then(({ data }: { data: Array<MessageDto> }) => {
         // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
         // data.sort(
@@ -298,16 +299,11 @@ function Chat({}) {
     }
     SocketStreamManager().onResMessage = resMessage => {
       if (!resMessage) return
-      // 新回复
-      // if (resMessage.type === 'REPLY' && resMessage.voiceUrl) {
-      //   AudioPayManagerSingle().currentAutoPlayUrl = resMessage.voiceUrl
-      // }
       let have = false
       setChatData(list => {
         const newList = []
         list.map(item => {
           if (item.replyUid === resMessage.replyUid) {
-            console.log('reitem:', item, resMessage)
             item = { ...resMessage }
             if (!have) {
               newList.push(item)
@@ -317,7 +313,6 @@ function Chat({}) {
             newList.push(item)
           }
         })
-        // console.log('reitem:', newList)
         return have ? [...newList] : [resMessage, ...newList]
       })
       if (
@@ -346,16 +341,6 @@ function Chat({}) {
 
   const listData = useMemo(() => {
     return chatData
-    if (isPending.current && chatData?.length > 0) {
-      const newList = [
-        { type: 'LOADING', id: randomId, replyUid: currentSendMsgInfo.current?.data?.uid, botId: id },
-        ...chatData,
-      ]
-      console.log('addResponse:', newList)
-      return newList
-    } else {
-      return chatData
-    }
   }, [chatData, isPending.current, randomId])
   if (loading) return <ShellLoading></ShellLoading>
   return (

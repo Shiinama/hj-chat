@@ -32,6 +32,4 @@ const init = async () => {
   particleAuth.init(chainInfo, env)
 }
 setCustomText()
-setTimeout(() => {
-  init()
-}, 3000)
+init()

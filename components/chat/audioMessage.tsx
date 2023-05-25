@@ -50,6 +50,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
         const status = await sound.loadAsync({
           uri: audioFileUri,
         })
+        // @ts-ignore
         setDuration(status.durationMillis || 0)
         if (finish) {
           // 完成了就去播放一下

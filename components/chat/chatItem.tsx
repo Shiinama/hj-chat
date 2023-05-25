@@ -55,6 +55,7 @@ function chatItem({ item, me, logo }: Props) {
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
         if (item.index === 0) {
           SocketStreamManager().getPlayFragment().onPositionChange = positionMillis => {
+            // @ts-ignore
             audioMessage.current?.playFragment?.({
               dur: positionMillis,
               end: false,
@@ -67,12 +68,14 @@ function chatItem({ item, me, logo }: Props) {
         setAudioStream(url)
         if (item.index > 0) {
           // 刷新音频
+          // @ts-ignore
           audioMessage.current?.loadRefreshSound?.()
         }
 
         if (item.isFinal) {
           AudioPayManagerSingle().currentAutoPlayUrl = url
           setTimeout(() => {
+            // @ts-ignore
             audioMessage.current?.loadRefreshSound?.(true)
           }, 500)
           // 加载完再播放，不然每次load播放有卡顿
@@ -183,12 +186,11 @@ function chatItem({ item, me, logo }: Props) {
         ),
       },
     ].filter(Boolean)
-    console.log('data:', data)
     return data.map(({ Icon, id, dText }) => (
       <TouchableOpacity
         key={dText}
         style={[styles.button, buttonIndex === id && styles.active]}
-        onPress={e => {
+        onPress={() => {
           setButtonIndex(id)
           if (id === 3) {
             if (translateMessage || item.translation) return
