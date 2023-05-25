@@ -10,7 +10,7 @@ import publishIcon from '../../../assets/images/setting/publish.png'
 import xiajia from '../../../assets/images/setting/xiajia.png'
 import chat from '../../../assets/images/setting/chat.png'
 import share from '../../../assets/images/setting/share.png'
-import useBotStore from '../../../store/botStore'
+import usebotStore from '../../../store/botStore'
 import useUserStore from '../../../store/userStore'
 import { renderImage } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
@@ -27,7 +27,7 @@ export default function Robot() {
   const navigation = useNavigation()
   const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
-  const botStore = useBotStore().botBaseInfo
+  const botStore = usebotStore().botBaseInfo
   const userStore = useUserStore.getState().profile
   const tags = useTagList(botStore, TagFromType.Robot)
   const isMinme = userStore?.id === botStore?.userId
@@ -41,16 +41,16 @@ export default function Robot() {
   }, [navigation, name])
   const renderButton = () => {
     if (isMinme) {
-      if (botStore.privateBotId) {
-        if (botStore.status === 'Public') {
+      if (botStore?.privateBotId) {
+        if (botStore?.status === 'Public') {
           return (
             <TouchableOpacity
               onPress={() => {
                 const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
-                setBotPrivate({ botUid: botStore.uid })
+                setBotPrivate({ botUid: botStore?.uid })
                   .then(() => {
                     setMessage('Unpublished successfully')
-                    CallBackManagerSingle().execute('ugcbotList', botStore.uid)
+                    CallBackManagerSingle().execute('ugcbotAllList', botStore?.uid)
                   })
                   .finally(() => {
                     close()
@@ -88,10 +88,10 @@ export default function Robot() {
             <TouchableOpacity
               onPress={() => {
                 const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
-                postPublishBot({ botUid: botStore.uid })
+                postPublishBot({ botUid: botStore?.uid })
                   .then(() => {
                     setMessage('Published successfully')
-                    CallBackManagerSingle().execute('ugcbotList', botStore.uid)
+                    CallBackManagerSingle().execute('ugcbotAllList', botStore?.uid)
                   })
                   .finally(() => {
                     close()
@@ -117,17 +117,19 @@ export default function Robot() {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
-        {renderImage(botStore.logo, {
+        {renderImage(botStore?.logo, {
           width: 100,
           height: 100,
           borderRadius: 100,
         })}
         <View style={styles.user}>
-          <LinearText text={botStore.name} styles={styles.userName}></LinearText>
+          <LinearText text={botStore?.name} styles={styles.userName}></LinearText>
         </View>
         <View style={styles.tagList}>
           {tagList &&
-            tagList.map(item => <Tag key={item.bgColor} {...{ ...item, keyValue: botStore[item.key] }}></Tag>)}
+            tagList.map(item => (
+              <Tag key={item.bgColor} {...{ ...item, keyValue: botStore && botStore[item.key] }}></Tag>
+            ))}
         </View>
         {
           <View style={styles.actions}>
@@ -135,10 +137,10 @@ export default function Robot() {
               <TouchableOpacity
                 style={styles.actionsItem}
                 onPress={() => {
-                  postAddBotToChatList({ botUid: botStore.uid })
+                  postAddBotToChatList({ botUid: botStore?.uid })
                   CallBackManagerSingle().execute('botList')
                   router.push({
-                    pathname: `chat/${botStore.id}`,
+                    pathname: `chat/${botStore?.id}`,
                   })
                 }}
               >
@@ -154,7 +156,7 @@ export default function Robot() {
               {renderButton()}
               <TouchableOpacity
                 onPress={() => {
-                  getBotSharingCode({ botUid: botStore.uid }).then(res => {
+                  getBotSharingCode({ botUid: botStore?.uid }).then(res => {
                     Clipboard.setString(`${System.botShareLink}${res}`)
                     Toast('Copied')
                   })
@@ -175,7 +177,7 @@ export default function Robot() {
         }
         <ScrollView style={styles.description}>
           <Text style={styles.descriptionTitle}>Description</Text>
-          <Text style={styles.descriptionValue}>{botStore.description}</Text>
+          <Text style={styles.descriptionValue}>{botStore?.description}</Text>
         </ScrollView>
       </View>
     </View>

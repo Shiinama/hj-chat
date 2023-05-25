@@ -19,11 +19,12 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   const [robotListData, setRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(true)
   useEffect(() => {
-    CallBackManagerSingle().add('ugcbotList', botUid => {
+    // 必须分一下，不然会在点到我的里面的时候把原来的替代了
+    CallBackManagerSingle().add('ugcbotAllList', botUid => {
       loadData(botUid)
     })
     return () => {
-      CallBackManagerSingle().remove('ugcbotList')
+      CallBackManagerSingle().remove('ugcbotAllList')
     }
   }, [])
 

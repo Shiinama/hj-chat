@@ -158,4 +158,4 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
   )
 }
 
-export default MessageText
+export default memo(MessageText)

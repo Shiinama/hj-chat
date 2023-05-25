@@ -7,7 +7,6 @@ import UgcBotCard from '../UgcBotCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import { getUgcOwnList } from '../../../api/setting'
-import NoData from '../NoData'
 import CreateCard from '../CreateCard'
 import { TagFromType } from '../../../constants/TagList'
 
@@ -63,9 +62,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
       </View>
     )
   }
-  if (myRobotListData?.length === 0) {
-    return <NoData />
-  }
+
   return (
     <View>
       <CreateCard />

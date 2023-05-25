@@ -3,7 +3,7 @@ import { Audio } from 'expo-av'
 import { AppState, NativeEventSubscription } from 'react-native'
 
 export class AudioPayManager {
-  private currentSound: Audio.Sound
+  currentSound: Audio.Sound
   private currentSoundStopMethod
   private currentSoundRePlayMethod
   private pauseAppInBackground = false
@@ -98,6 +98,7 @@ export class AudioPayManager {
     }
     if (this.currentSound) {
       try {
+        console.log('currentSoundStopMethod 停止当前：')
         this.currentSoundStopMethod?.()
         await this.currentSound.pauseAsync().catch(e => {
           // console.log('play-pauseAsync-catch', e)
@@ -114,7 +115,7 @@ export class AudioPayManager {
       await sound.playAsync()
       return true
     } catch (e) {
-      // console.log('play', e)
+      // console.log('playerror', e)
       return false
     }
   }

@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av'
+import { AVPlaybackStatus, Audio } from 'expo-av'
 import AudioPayManagerSingle from './audioPlayManager'
 
 /**
@@ -6,10 +6,11 @@ import AudioPayManagerSingle from './audioPlayManager'
  * 多个音频文件轮流播放类
  * 1. 有一个url数组
  * 2. 两个sound类，一个是当前播放的，一个是下一个待播放的片段sound，就是类似喊121212这种口号一样，播放完url数组就停止
+ * 3. 一个Sound类，播放完加载下一个播放
  */
 export default class AudioFragmentPlay {
   private soundUrls: Array<string> = []
-  private currentSound: Audio.Sound
+  currentSound: Audio.Sound
   private nextSound: Audio.Sound
 
   private totalDurMill: number = 0
@@ -23,6 +24,8 @@ export default class AudioFragmentPlay {
 
   onPositionChange: (dur: number) => void
 
+  private forward = 0
+
   replyUid: string
 
   isPlaying() {
@@ -30,28 +33,148 @@ export default class AudioFragmentPlay {
   }
 
   async addSoundUrl(url: string) {
-    this.soundUrls.push(url)
-    if (this.soundUrls.length === 1 || (this.soundUrls.length > 0 && this.isPlayed && !this.playing)) {
-      // const audio = await Audio.Sound.createAsync({ uri: url })
-      // audio.sound.playAsync()
-      this.play()
+    if (!url || url?.length === 0) {
+      return
     }
+    this.soundUrls.push(url)
+    const startPlay = this.soundUrls.length === 1 || (this.soundUrls.length > 0 && this.isPlayed && !this.playing)
+    console.log('addSoundUrl:', this.soundUrls)
+    // 使用多个来播放
+    // if (startPlay) {
+    //   this.play()
+    // }
+    // 使用单个sound来播放
+    this.playSingleSound()
+  }
+
+  resetPlayIndex() {
+    if (this.currentIndex >= this.soundUrls.length - 1) {
+      this.currentIndex = 0
+      this.currentDur = 0
+      this.totalDurMill = 0
+    }
+    console.log('resetPlayIndex:', this.currentIndex)
+  }
+
+  isLoading = false
+  playSingleSound() {
+    if (!this.currentSound && !this.isLoading) {
+      this.isLoading = true
+      this.currentIndex = 0
+      Audio.Sound.createAsync({ uri: this.soundUrls[this.currentIndex] }, { shouldPlay: false }, status => {
+        const offDur = this.currentIndex < this.soundUrls.length ? 800 : 150
+        // console.log(status, offDur)
+
+        if (status.isLoaded && status.positionMillis - status.durationMillis >= 0 && status.durationMillis) {
+          this.playing = false
+
+          this.playNextUrl()
+          if (this.forward) {
+            this.addCurrentDurMill(status.positionMillis)
+          }
+
+          this.forward = 0
+        }
+        if (status.isLoaded && status.isPlaying) {
+          this.addCurrentDurMill(status.positionMillis)
+        }
+      })
+        .then(res => {
+          this.isLoading = false
+          this.currentSound = res.sound
+          this.currentIndex += 1
+          if (res.status.isLoaded && res.status.durationMillis) {
+            this.addTotalDurMill(res.status.durationMillis)
+            this.playing = true
+            // this.currentSound.playAsync()
+            // AudioPayManagerSingle().currentSound = this.currentSound
+            AudioPayManagerSingle().play(
+              this.currentSound,
+              () => {
+                console.log('then被停止')
+                this.playing = false
+              },
+              () => {
+                console.log('then重新播放')
+              }
+            )
+          }
+        })
+        .catch(e => {
+          this.isLoading = false
+          console.log('createAsync-error:', e)
+        })
+    } else {
+      this.playNextUrl()
+    }
+  }
+
+  async playNextUrl() {
+    console.log('playNextUrl:', this.currentIndex)
+    if (this.currentIndex >= this.soundUrls.length || this.playing || this.isLoading) {
+      console.log('playNextUrl false')
+
+      return
+    }
+    this.isLoading = true
+    console.log('playNextUrl true')
+    try {
+      await this.currentSound.stopAsync()
+      await this.currentSound.unloadAsync()
+    } catch (error) {
+      console.log('stop current error:', error)
+    }
+
+    this.playing = true
+    this.currentSound
+      .loadAsync({ uri: this.soundUrls[this.currentIndex] }, { shouldPlay: false })
+      .then(async res => {
+        this.currentIndex += 1
+        this.isLoading = false
+        if (res.isLoaded && res.durationMillis) {
+          this.addTotalDurMill(res.durationMillis)
+          // this.currentSound.playAsync()
+
+          const playRes = await AudioPayManagerSingle().play(
+            this.currentSound,
+            () => {
+              console.log('then被停止')
+              this.playing = false
+            },
+            () => {
+              console.log('then重新播放')
+            }
+          )
+          this.playing = playRes
+        }
+      })
+      .catch(e => {
+        this.isLoading = false
+        this.playing = false
+        console.log('加载下一个失败：', e)
+      })
   }
 
   addTotalDurMill(duration: number) {
     this.totalDurMill += duration
   }
 
-  private forward = 0
   addCurrentDurMill(duration: number) {
-    if (duration < this.forward) {
-      this.forward = 0
-    }
     this.currentDur += duration - this.forward
-    this.onPositionChange?.(this.currentDur)
+    console.log('this.currentDur:', this.currentDur)
+    this.onPositionChange?.(this.currentDur > this.totalDurMill ? this.totalDurMill : this.currentDur)
     this.forward = duration
   }
 
+  clear() {
+    this.soundUrls = []
+    this.currentIndex = -1
+    try {
+      this.currentSound?.stopAsync()
+    } catch (error) {}
+  }
+
+  // 多个播放开始
   async play() {
     if (this.soundUrls.length === 0 || this.currentIndex >= this.soundUrls.length) {
       console.log('结束播放', this)
@@ -60,6 +183,7 @@ export default class AudioFragmentPlay {
 
     const audio = await this.createAudio(this.soundUrls[this.currentIndex])
     this.currentSound = audio.sound
+
     this.addTotalDurMill(audio.status?.durationMillis || 0)
     console.log('currentIndex:', this.currentIndex)
 
@@ -73,27 +197,10 @@ export default class AudioFragmentPlay {
 
   private createAudio(url: string) {
     return Audio.Sound.createAsync({ uri: url }, null, status => {
-      if (status.isLoaded && status.positionMillis === 0 && !this.playing) {
-        setTimeout(() => {
-          AudioPayManagerSingle().play(
-            this.currentSound,
-            () => {
-              console.log('被停止')
-              this.playing = false
-            },
-            () => {
-              console.log('重新播放')
-            }
-          )
-          console.log('开始播放:', status, this.currentSound)
-        }, 100)
-        this.isPlayed = true
-        this.playing = true
-      } else if (status.isLoaded && status.positionMillis >= status.durationMillis) {
+      if (status.isLoaded && status.positionMillis >= status.durationMillis) {
         this.playing = false
         this.playNext()
-      }
-      if (
+      } else if (
         status.isLoaded &&
         status.positionMillis &&
         status.positionMillis !== status.durationMillis &&
@@ -102,14 +209,36 @@ export default class AudioFragmentPlay {
         console.log(status)
         this.addCurrentDurMill(status.positionMillis)
       }
-    }).catch(e => {
-      console.log('loaderror:', e)
-      return e
     })
+      .catch(e => {
+        console.log('loaderror:', e)
+        return e
+      })
+      .then((res: { sound: Audio.Sound; status: AVPlaybackStatus }) => {
+        const { status } = res
+        console.log('then:', res)
+        if (status.isLoaded && status.positionMillis === 0 && !this.playing) {
+          console.log('then开始播放:', status, this.currentSound)
+          this.currentSound = res.sound
+          this.isPlayed = true
+          this.playing = true
+          AudioPayManagerSingle().play(
+            this.currentSound,
+            () => {
+              console.log('then被停止')
+              this.playing = false
+            },
+            () => {
+              console.log('then重新播放')
+            }
+          )
+        }
+        return res
+      })
   }
 
   private async playNext() {
-    if (this.currentIndex + 1 >= this.soundUrls.length) {
+    if (this.currentIndex >= this.soundUrls.length) {
       console.log('结束播放', this)
       return
     }
@@ -124,7 +253,7 @@ export default class AudioFragmentPlay {
         } catch (error) {}
       }
       this.currentSound = this.nextSound
-
+      console.log('开始播放---')
       await AudioPayManagerSingle().play(
         this.currentSound,
         () => {
@@ -145,12 +274,5 @@ export default class AudioFragmentPlay {
       this.play()
     }
   }
-
-  clear() {
-    this.soundUrls = []
-    this.currentIndex = -1
-    try {
-      this.currentSound?.stopAsync()
-    } catch (error) {}
-  }
+  // 多个播放结束
 }

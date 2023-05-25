@@ -90,11 +90,9 @@ function Chat({}) {
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
       })
-      const defaultParam = Audio.RecordingOptionsPresets.HIGH_QUALITY
-      const { recording } = await Audio.Recording.createAsync(defaultParam, status => {
+      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY, status => {
         if (status.isRecording) {
           // 主界面不用关心录音的状态，造成过多无用的渲染，交给callBack，谁需要这个数据谁去执行回调
-          // setDurationMillis(status.durationMillis)
           CallBackManagerSingle().executeLike('recordingChange', status.durationMillis)
         }
       })
@@ -102,7 +100,6 @@ function Chat({}) {
       // setRecording(recording)
       return true
     } catch (err) {
-      console.log(err)
       Toast('Failed to start recording')
       return false
     }
@@ -290,7 +287,7 @@ function Chat({}) {
           return pre
         }
         pre[index].text = updateMessage.text
-        return [...pre]
+        return JSON.parse(JSON.stringify(pre))
       })
     }
     SocketStreamManager().onMessageStreamStart = data => {
