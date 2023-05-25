@@ -33,12 +33,25 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }))
 
   const playFragment = (params: { dur: number; end: boolean }) => {
-    setIsPlaying(params.end ? false : true)
-    setCurrentPosition(params?.end ? 0 : params.dur)
+    console.log('playFragment:', params)
+    setIsPlaying(params.dur - duration + 100 >= 0 ? false : true)
+    setCurrentPosition(params.dur - duration + 100 >= 0 ? 0 : params.dur)
+    isStartSoundRefresh.current.end = params.dur - duration + 100 >= 0
+    if (!isStartSoundRefresh.current.end) {
+      setIsPlaying(true)
+    }
   }
+
+  const isStartSoundRefresh = useRef({
+    start: false,
+    finish: false,
+    end: false,
+  })
 
   const loadRefreshSound = async (finish?: boolean) => {
     if (sound) {
+      isStartSoundRefresh.current.start = true
+      isStartSoundRefresh.current.finish = finish
       try {
         console.log('loadRefreshSound', finish)
         await sound.unloadAsync()
@@ -114,12 +127,12 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }, [])
 
   const playCurrentRecevice = async () => {
+    if (isStartSoundRefresh.current.start && !isStartSoundRefresh.current.end) {
+      return
+    }
     console.log('playCurrentRecevice:', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
     // 如果当前片段没有播放再播放
-    if (
-      audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl &&
-      !SocketStreamManager().getPlayFragment()?.isPlaying()
-    ) {
+    if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
       setIsPlaying(false)
       console.log('playCurrentRecevice:to', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
       const success = await handlePlayPause()
@@ -207,6 +220,28 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }
 
   const handlePlayPause = async () => {
+    if (isStartSoundRefresh.current.start) {
+      console.log(isStartSoundRefresh.current)
+      AudioPayManagerSingle()
+        .currentSound.getStatusAsync()
+        .then(status => {
+          if (status.isLoaded && status.isPlaying) {
+            AudioPayManagerSingle().currentSound.pauseAsync()
+            setIsPlaying(() => false)
+          } else if (status.isLoaded && !status.isPlaying) {
+            if (isStartSoundRefresh.current.end) {
+              SocketStreamManager().getPlayFragment().resetPlayIndex()
+              SocketStreamManager().getPlayFragment().playSingleSound()
+            } else {
+              AudioPayManagerSingle().currentSound = SocketStreamManager().getPlayFragment().currentSound
+              AudioPayManagerSingle().currentSound.playAsync()
+            }
+
+            setIsPlaying(() => true)
+          }
+        })
+      return
+    }
     let opSuccess = false
     soundInterval.current && clearInterval(soundInterval.current)
     if (AudioPayManagerSingle().isRecording) {
