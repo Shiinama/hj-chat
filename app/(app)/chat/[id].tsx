@@ -275,12 +275,23 @@ function Chat({}) {
           {
             type: 'LOADING',
             ...data.data,
-            uid: currentSendMsgInfo.current?.data?.uid + id,
           },
           ...list,
         ]
       })
       flatList.current?.scrollToIndex?.({ index: 0 })
+    }
+    SocketStreamManager().onUpdateMessage = updateMessage => {
+      if (!updateMessage) return
+      console.log('updateMessage11', updateMessage)
+      setChatData(pre => {
+        const index = pre.findIndex(item => item.uid === updateMessage.uid)
+        if (index < 0) {
+          return pre
+        }
+        pre[index].text = updateMessage.text
+        return [...pre]
+      })
     }
     SocketStreamManager().onMessageStreamStart = data => {
       setChatData(list => {

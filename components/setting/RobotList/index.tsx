@@ -1,7 +1,7 @@
 import botStore from '../../../store/botStore'
-import { useBoolean, useDebounceEffect, useDebounceFn } from 'ahooks'
-import { useFocusEffect, useRouter } from 'expo-router'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { useBoolean, useDebounceEffect } from 'ahooks'
+import { useRouter } from 'expo-router'
+import { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { getUgcBotList } from '../../../api/robot'
 import UgcBotCard from '../UgcBotCard'
@@ -17,7 +17,7 @@ export interface RobotListProps {
 }
 const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   const [robotListData, setRobotListData] = useState([])
-  const [loading, { setFalse, setTrue }] = useBoolean(false)
+  const [loading, { setFalse, setTrue }] = useBoolean(true)
   useEffect(() => {
     CallBackManagerSingle().add('ugcbotList', botUid => {
       loadData(botUid)
@@ -26,31 +26,20 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       CallBackManagerSingle().remove('ugcbotList')
     }
   }, [])
-  useFocusEffect(
-    useCallback(() => {
-      setTrue()
-      loadData()
-    }, [])
-  )
-  const { run: loadData } = useDebounceFn(
-    (botUid?: string) => {
-      setTrue()
 
-      getUgcBotList(requestParams)
-        .then((res: any) => {
-          if (botUid) {
-            botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
-          }
-          setRobotListData(res)
-        })
-        .finally(() => {
-          setFalse()
-        })
-    },
-    {
-      wait: 500,
-    }
-  )
+  const loadData = (botUid?: string) => {
+    setTrue()
+    getUgcBotList(requestParams)
+      .then((res: any) => {
+        if (botUid) {
+          botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
+        }
+        setRobotListData(res)
+      })
+      .finally(() => {
+        setFalse()
+      })
+  }
 
   useDebounceEffect(
     () => {

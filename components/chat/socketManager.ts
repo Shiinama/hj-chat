@@ -28,8 +28,6 @@ export class SocketStream {
 
   private onTransalteMessage: { [key: string]: (item: MessageDto) => void } = {}
 
-  private onUpdateMessage: { [key: string]: (item: MessageDto) => void } = {}
-
   private reqIds: Set<string> = new Set()
 
   onMessageStreamStart: (item: MessageStreamText) => void
@@ -39,6 +37,8 @@ export class SocketStream {
   onSendMessage: (item: MesageSucessType) => void
 
   onPending: (pending: boolean) => void
+
+  onUpdateMessage: (item: MessageDto) => void
 
   private playFragment = new AudioFragmentPlay()
 
@@ -188,9 +188,9 @@ export class SocketStream {
   private onEnergyInfo({ reqId, data }: MesageSucessType) {}
 
   private onMessageUpdated({ data }: MesageSucessType) {
-    if (this.currentBot?.botBaseInfo.id !== data.botId) return
-    const msgKey = data?.botId + '&BOT&' + data?.replyUid
-    this.onUpdateMessage[msgKey](data)
+    console.log(data, this.currentBot.botBaseInfo.id, 'updateMessage')
+    if (this.currentBot.botBaseInfo.id !== data.botId) return
+    this.onUpdateMessage(data)
   }
 
   private removeReqIds(reqId: string) {
@@ -257,10 +257,6 @@ export class SocketStream {
     delete this.onTransalteMessage[key]
     this.onTransalteMessage[key] = callBack
   }
-  addUpdateMessageCallBack(key: string, callBack: (item: MessageDto) => void) {
-    delete this.onUpdateMessage[key]
-    this.onUpdateMessage[key] = callBack
-  }
 
   removeTextStreamCallBack(key: string) {
     delete this.onTextStreamUpdate[key]
@@ -268,10 +264,6 @@ export class SocketStream {
 
   removeTranslatedCallBack(key: string) {
     delete this.onTransalteMessage[key]
-  }
-
-  removeUpdateMessageCallBack(key: string) {
-    delete this.onUpdateMessage[key]
   }
 
   removeAudioStreamCallBack(key: string) {
