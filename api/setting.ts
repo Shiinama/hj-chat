@@ -26,5 +26,6 @@ export const getBotSharingCode = params => {
   return request({
     url: `/bot/getBotSharingCode`,
     method: 'get',
+    params,
   })
 }

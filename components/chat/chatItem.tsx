@@ -24,8 +24,8 @@ type Props = {
 function chatItem({ item, me, logo }: Props) {
   const msgKey = item.botId + '&BOT&' + item.replyUid
   const botState = botStore.getState().botBaseInfo
+  console.log(botState)
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
-
   const [audioStream, setAudioStream] = useState<string>()
   const audioMessage = useRef()
   useEffect(() => {

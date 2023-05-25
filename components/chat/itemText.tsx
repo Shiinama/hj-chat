@@ -23,7 +23,6 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
   const [viewDisplayState, setViewDisplayState] = useState<number>(botSetting?.textMasking ? 1 : 2)
   const [messageStreamText, setMessageStreamText] = useState<string>()
   const [translateMessage, setTranslateMessage] = useState<string>()
-  const [updateMessage, setUpdateMessage] = useState<string>()
   const key = item.botId + '&BOT&' + item.replyUid
   const isBlur = botSetting?.textMasking && viewDisplayState === 1
   const renderReply = () => {
@@ -92,8 +91,8 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
     )
   }
   useEffect(() => {
+    setViewDisplayState(() => 2)
     if (item.type === 'LOADING' && item.replyUid) {
-      setViewDisplayState(2)
       SocketStreamManager().addTextStreamCallBack(key, data => {
         setMessageStreamText(data.text)
         if (data.isFinal) {
@@ -111,16 +110,13 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
     SocketStreamManager().addTranslatedCallBack(key, data => {
       setTranslateMessage(data.translation)
     })
-    SocketStreamManager().addUpdateMessageCallBack(key, data => {
-      setUpdateMessage(data.text)
-    })
+
     return () => {
       SocketStreamManager().removeTranslatedCallBack(key)
-      SocketStreamManager().removeUpdateMessageCallBack(key)
     }
   }, [])
   const renderText = useMemo(() => {
-    return messageStreamText || updateMessage || item.text
+    return messageStreamText || item.text
   }, [messageStreamText, item.text])
   const caluTranslate = useMemo(() => {
     return translateMessage || item.translation
@@ -142,7 +138,10 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
         {viewDisplayState === 1 && <Text>{renderText}</Text>}
         {viewDisplayState === 2 && (
           <Markdown
-            styles={{ code: { backgroundColor: '#fff', padding: 16 }, paragraph: { backgroundColor: '#F6F6F6' } }}
+            styles={{
+              code: { backgroundColor: '#fff', padding: 16 },
+              paragraph: { backgroundColor: item.replyUid ? '#F6F6F6' : '#F1EAFE' },
+            }}
             value={renderText}
             flatListProps={{
               initialNumToRender: 8,
@@ -152,10 +151,11 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
         {viewDisplayState === 3 &&
           (caluTranslate ? <Text>{caluTranslate}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
+
       {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
       {item?.type === 'LOADING' && !renderText && loadingRender()}
     </>
   )
 }
 
-export default memo(MessageText)
+export default MessageText
