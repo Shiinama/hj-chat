@@ -14,7 +14,7 @@ import { TagFromType } from '../../../constants/TagList'
 export interface MyRobotListProps {}
 const MyRobotList: FC<MyRobotListProps> = () => {
   const [myRobotListData, setMyRobotListData] = useState([])
-  const [loading, { setFalse, setTrue }] = useBoolean(false)
+  const [loading, { setFalse, setTrue }] = useBoolean(true)
   useEffect(() => {
     CallBackManagerSingle().add('ugcbotList', botUid => {
       loadData(botUid)
@@ -39,11 +39,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
         setFalse()
       })
   }
-  useFocusEffect(
-    useCallback(() => {
-      loadData()
-    }, [])
-  )
+
   const router = useRouter()
   const onShowDetail = event => {
     botStore.setState({ botBaseInfo: event })
