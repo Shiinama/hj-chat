@@ -135,8 +135,8 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
             />
           </TouchableWithoutFeedback>
         )}
-        {viewDisplayState === 1 && <Text>{renderText}</Text>}
-        {viewDisplayState === 2 && (
+
+        {(viewDisplayState === 1 || viewDisplayState === 2) && (
           <Markdown
             styles={{
               code: { backgroundColor: '#fff', padding: 16 },
