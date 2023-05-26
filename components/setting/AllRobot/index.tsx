@@ -1,27 +1,15 @@
 import { FC, useState, useCallback } from 'react'
-import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native'
+import { View, ScrollView, StyleSheet } from 'react-native'
 import RobotList from '../RobotList'
 import SearchInput from '../SearchInput'
 import { useDeepCompareEffect } from 'ahooks'
 import Filter from '../Filter'
 import useFilterStore from '../Filter/filterStore'
 
-const wait = timeout => {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout)
-  })
-}
 export interface AllRobotProps {}
 const AllRobot: FC<AllRobotProps> = () => {
   const [params, setParams] = useState<any>({})
   const { filterValue } = useFilterStore()
-  const [refreshing, setRefreshing] = useState(false)
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-
-    wait(2000).then(() => setRefreshing(false))
-  }, [])
 
   useDeepCompareEffect(() => {
     const nameObj = params?.name ? { name: params?.name } : {}
@@ -50,11 +38,7 @@ const AllRobot: FC<AllRobotProps> = () => {
           }}
         />
       </View>
-      <ScrollView
-        style={styles.page}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        keyboardDismissMode="on-drag"
-      >
+      <ScrollView style={styles.page} keyboardDismissMode="on-drag">
         <RobotList requestParams={params} />
       </ScrollView>
       <Filter />

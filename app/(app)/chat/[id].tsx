@@ -208,8 +208,9 @@ function Chat({}) {
               onPress={() => navigation.goBack()}
               style={{
                 position: 'absolute',
-                left: 0,
+                left: 5,
                 height: 24,
+                width: 24,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
