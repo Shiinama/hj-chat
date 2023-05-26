@@ -1,5 +1,5 @@
-import { FC, useState, useCallback } from 'react'
-import { View, ScrollView, StyleSheet } from 'react-native'
+import { FC, useState } from 'react'
+import { View } from 'react-native'
 import RobotList from '../RobotList'
 import SearchInput from '../SearchInput'
 import { useDeepCompareEffect } from 'ahooks'
@@ -38,18 +38,9 @@ const AllRobot: FC<AllRobotProps> = () => {
           }}
         />
       </View>
-      <ScrollView style={styles.page} keyboardDismissMode="on-drag">
-        <RobotList requestParams={params} />
-      </ScrollView>
+      <RobotList requestParams={params} />
       <Filter />
     </>
   )
 }
 export default AllRobot
-
-const styles = StyleSheet.create({
-  page: {
-    height: '100%',
-    paddingHorizontal: 16,
-  },
-})
