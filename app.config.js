@@ -50,7 +50,7 @@ export default {
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
   splash: {
-    image: './assets/images/myshell.png',
+    image: './assets/images/inch.png',
     resizeMode: 'contain',
     backgroundColor: '#ffffff',
   },
