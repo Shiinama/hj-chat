@@ -14,6 +14,7 @@ import CallBackManagerSingle from '../../utils/CallBackManager'
 import { arrayBufferToBase64, concatBuffer } from '../../utils/base64'
 import AudioFragmentPlay from './audioFragmentPlay'
 import AudioPayManagerSingle from './audioPlayManager'
+import { saveAudio } from '../../utils/audioFile'
 
 export class SocketStream {
   private socket: Socket
@@ -141,31 +142,31 @@ export class SocketStream {
       }
       // this.saveSingleAudio(data)
       const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
-      if (msg.audio) {
+      if (msg.isFinal) {
         try {
-          // const res = await saveAudio({
-          //   audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
-          //   botId: data.data?.replyMessage?.botId,
-          //   replyUid: data?.data?.replyMessage?.replyUid,
-          // })
+          const res = await saveAudio({
+            audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
+            botId: data.data?.replyMessage?.botId,
+            replyUid: data?.data?.replyMessage?.replyUid,
+          })
+          this.onAudioStreamUpdate[msgKey]?.(resMsg, res)
           // console.log('mp3res:', res)
         } catch (e) {
           console.log('mp3error:', e)
         }
+      } else {
+        this.onAudioStreamUpdate[msgKey]?.(
+          resMsg,
+          `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`
+        )
       }
       // 回调给单独某一条消息
       // this.onAudioStreamUpdate[msgKey]?.(
       //   resMsg,
       //   getAudioFileUrl(data.data?.replyMessage?.botId, data?.data?.replyMessage?.replyUid)
       // )
-      this.onAudioStreamUpdate[msgKey]?.(
-        resMsg,
-        `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`
-      )
-      this.playFragment.addSoundUrl(
-        `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`,
-        data.data?.isFinal
-      )
+
+      this.playFragment.addSoundUrl(msg.audio ? arrayBufferToBase64(msg.audio) : undefined, data.data?.isFinal)
       // if (msg.index === 0) {
       //   this.onMessageStreamStart?.(resMsg)
       // }

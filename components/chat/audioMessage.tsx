@@ -34,11 +34,14 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
 
   const playFragment = (params: { dur: number; total: number }) => {
     console.log('playFragment:', params)
-    setIsPlaying(params.dur - params.total >= 0 ? false : true)
-    setCurrentPosition(params.dur - params.total >= 0 ? 0 : params.dur)
-    isStartSoundRefresh.current.end = params.dur - params.total >= 0
+    setIsPlaying(params.dur - duration >= 0 ? false : true)
+    setCurrentPosition(params.dur - duration >= 0 ? 0 : params.dur)
+    isStartSoundRefresh.current.end = params.dur - duration >= 0
     if (!isStartSoundRefresh.current.end) {
       setIsPlaying(true)
+    }
+    if (duration < params.total) {
+      setDuration(params.total)
     }
   }
 
@@ -92,9 +95,15 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     !hideLoading && setLoading(true)
     setLoadFail(false)
     try {
-      const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
+      const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri }).then(res => {
+        if (res.status.isLoaded && res.status.durationMillis) {
+          setDuration(res.status.durationMillis)
+        }
+        return res
+      })
       setSound(sound)
       setLoadFail(false)
+      return true
     } catch (e) {
       // load sound fail [Error: com.google.android.exoplayer2.audio.AudioSink$InitializationException: AudioTrack init failed 0 Config(22050, 4, 11026)]
       /**
@@ -103,6 +112,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
        */
       console.log('load sound fail', e, 'url:', audioFileUri)
       setLoadFail(true)
+      return false
     }
     setLoading(false)
   }, [])
@@ -153,6 +163,27 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       }
     }
   }
+
+  const reLoadSound = async () => {
+    if (!sound) {
+      loadSound()
+    } else {
+      try {
+        await sound.unloadAsync()
+      } catch (error) {}
+      try {
+        const res = await sound.loadAsync({ uri: audioFileUri })
+        console.log('res:', res, audioFileUri.indexOf('base64') > 0)
+        if (res.isLoaded && res.durationMillis) {
+          setDuration(res.durationMillis)
+        }
+      } catch (error) {}
+    }
+  }
+
+  useEffect(() => {
+    reLoadSound()
+  }, [audioFileUri])
 
   useEffect(() => {
     if (sound !== null) {
