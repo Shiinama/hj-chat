@@ -74,7 +74,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
             loadData()
           }}
           tintColor="#7A2EF6"
-          title={refreshLoading ? '刷新中' : '下拉刷新'}
+          title="Pull refresh"
           titleColor="#7A2EF6"
         />
       }
