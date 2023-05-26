@@ -1,21 +1,10 @@
 import { FC } from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
 
 import MyRobotList from '../MyRobotList'
 
 export interface MyShellProps {}
+/** 看似这个组件就没什么用了，和allRobot风格保持一致吧 */
 const MyShell: FC<MyShellProps> = () => {
-  return (
-    <ScrollView style={styles.page}>
-      <MyRobotList />
-    </ScrollView>
-  )
+  return <MyRobotList />
 }
 export default MyShell
-
-const styles = StyleSheet.create({
-  page: {
-    height: '100%',
-    paddingHorizontal: 16,
-  },
-})

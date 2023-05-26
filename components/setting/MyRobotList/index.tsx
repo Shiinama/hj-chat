@@ -1,8 +1,8 @@
 import botStore from '../../../store/botStore'
 import { useBoolean } from 'ahooks'
-import { useFocusEffect, useRouter } from 'expo-router'
-import { FC, useCallback, useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { useRouter } from 'expo-router'
+import { FC, useEffect, useState } from 'react'
+import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native'
 import UgcBotCard from '../UgcBotCard'
 import ShellLoading from '../../loading'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
@@ -14,6 +14,7 @@ export interface MyRobotListProps {}
 const MyRobotList: FC<MyRobotListProps> = () => {
   const [myRobotListData, setMyRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(true)
+  const [refreshLoading, { set: setRefreshLoading }] = useBoolean(false)
   useEffect(() => {
     CallBackManagerSingle().add('ugcbotList', botUid => {
       loadData(botUid)
@@ -31,11 +32,11 @@ const MyRobotList: FC<MyRobotListProps> = () => {
         if (botUid) {
           botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
         }
-
         setMyRobotListData(res)
       })
       .finally(() => {
         setFalse()
+        setRefreshLoading(false)
       })
   }
 
@@ -62,23 +63,44 @@ const MyRobotList: FC<MyRobotListProps> = () => {
       </View>
     )
   }
-
   return (
-    <View>
-      <CreateCard />
-      {myRobotListData?.map((ld, i) => {
-        return (
-          <UgcBotCard
-            onShowDetail={e => {
-              onShowDetail(e)
-            }}
-            type={TagFromType.MyBot}
-            key={ld.id}
-            ld={ld}
-          />
-        )
-      })}
-    </View>
+    <ScrollView
+      style={styles.page}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshLoading}
+          onRefresh={() => {
+            setRefreshLoading(true)
+            loadData()
+          }}
+          tintColor="#7A2EF6"
+          title="Pull refresh"
+          titleColor="#7A2EF6"
+        />
+      }
+    >
+      <View>
+        <CreateCard />
+        {myRobotListData?.map((ld, i) => {
+          return (
+            <UgcBotCard
+              onShowDetail={e => {
+                onShowDetail(e)
+              }}
+              type={TagFromType.MyBot}
+              key={ld.id}
+              ld={ld}
+            />
+          )
+        })}
+      </View>
+    </ScrollView>
   )
 }
 export default MyRobotList
+const styles = StyleSheet.create({
+  page: {
+    height: '100%',
+    paddingHorizontal: 16,
+  },
+})
