@@ -11,7 +11,7 @@ import SysConfig from '../../constants/System'
 import useUserStore from '../../store/userStore'
 import { Alert } from 'react-native'
 import CallBackManagerSingle from '../../utils/CallBackManager'
-import { arrayBufferToBase64, concatBuffer, deleteAll, getAudioFileUrl, saveAudio } from '../../utils/audioFile'
+import { arrayBufferToBase64, concatBuffer } from '../../utils/base64'
 import AudioFragmentPlay from './audioFragmentPlay'
 import AudioPayManagerSingle from './audioPlayManager'
 
@@ -53,7 +53,6 @@ export class SocketStream {
 
   private init() {
     // 初始化删除本地mp3文件
-    deleteAll()
     const { userBaseInfo } = useUserStore.getState()
     const token = userBaseInfo?.token ?? SysConfig.token
     this.socket = io(`${SysConfig.baseUrl}/chat`, {
@@ -112,12 +111,13 @@ export class SocketStream {
       return
     }
     try {
-      const res = await saveAudio({
-        audio: arrayBufferToBase64(data.data?.audio),
-        botId: data.data?.replyMessage?.botId,
-        replyUid: data?.data?.replyMessage?.replyUid + '_' + data?.data?.index,
-      })
-      this.playFragment.addSoundUrl(res)
+      // const res = await saveAudio({
+      //   audio: arrayBufferToBase64(data.data?.audio),
+      //   botId: data.data?.replyMessage?.botId,
+      //   replyUid: data?.data?.replyMessage?.replyUid + '_' + data?.data?.index,
+      //   dir: data?.data?.index + '_' + data?.data?.replyMessage?.replyUid,
+      // })
+      this.playFragment.addSoundUrl(arrayBufferToBase64(data.data?.audio), data.data?.isFinal)
     } catch (error) {}
   }
 
@@ -139,24 +139,32 @@ export class SocketStream {
       } else if (msg.audio) {
         this.currentAudioStream[msgKey] = concatBuffer(this.currentAudioStream[msgKey], msg.audio)
       }
-      this.saveSingleAudio(data)
+      // this.saveSingleAudio(data)
       const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
       if (msg.audio) {
         try {
-          const res = await saveAudio({
-            audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
-            botId: data.data?.replyMessage?.botId,
-            replyUid: data?.data?.replyMessage?.replyUid,
-          })
+          // const res = await saveAudio({
+          //   audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
+          //   botId: data.data?.replyMessage?.botId,
+          //   replyUid: data?.data?.replyMessage?.replyUid,
+          // })
           // console.log('mp3res:', res)
         } catch (e) {
           console.log('mp3error:', e)
         }
       }
       // 回调给单独某一条消息
+      // this.onAudioStreamUpdate[msgKey]?.(
+      //   resMsg,
+      //   getAudioFileUrl(data.data?.replyMessage?.botId, data?.data?.replyMessage?.replyUid)
+      // )
       this.onAudioStreamUpdate[msgKey]?.(
         resMsg,
-        getAudioFileUrl(data.data?.replyMessage?.botId, data?.data?.replyMessage?.replyUid)
+        `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`
+      )
+      this.playFragment.addSoundUrl(
+        `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`,
+        data.data?.isFinal
       )
       // if (msg.index === 0) {
       //   this.onMessageStreamStart?.(resMsg)
@@ -284,7 +292,6 @@ const SocketStreamManager = (function () {
     if (destory && instance) {
       instance.destory()
       // 销毁删除本地mp3文件
-      deleteAll()
       return instance
     }
     if (instance) return instance
