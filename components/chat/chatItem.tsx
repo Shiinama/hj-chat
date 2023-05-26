@@ -31,21 +31,24 @@ function chatItem({ item, me, logo }: Props) {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
         if (item.index === 0) {
-          SocketStreamManager().getPlayFragment().onPositionChange = positionMillis => {
+          SocketStreamManager().getPlayFragment().onPositionChange = (positionMillis, total) => {
             // @ts-ignore
             audioMessage.current?.playFragment?.({
               dur: positionMillis,
-              end: false,
+              total: total,
             })
           }
         }
         // AudioPayManagerSingle().currentAutoPlayUrl = url
         // 本地缓存mp3文件有更新就回调这个方法 url是本地的mp3路径
         setAudioStream(url)
+        // @ts-ignore
+        audioMessage.current?.loadRefreshSound?.()
+        // audioMessage.current?.updateStreamAudio?.(url)
         if (item.index > 0) {
           // 刷新音频
           // @ts-ignore
-          audioMessage.current?.loadRefreshSound?.()
+          // audioMessage.current?.loadRefreshSound?.()
         }
 
         if (item.isFinal) {

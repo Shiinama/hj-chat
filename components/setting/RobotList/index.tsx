@@ -2,7 +2,7 @@ import botStore from '../../../store/botStore'
 import { useBoolean, useDebounceEffect } from 'ahooks'
 import { useRouter } from 'expo-router'
 import { FC, useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native'
 import { getUgcBotList } from '../../../api/robot'
 import UgcBotCard from '../UgcBotCard'
 import ShellLoading from '../../loading'
@@ -23,6 +23,7 @@ const wait = timeout => {
 const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   const [robotListData, setRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(true)
+  const [refreshLoading, { set: setRefreshLoading }] = useBoolean(false)
   useEffect(() => {
     // 必须分一下，不然会在点到我的里面的时候把原来的替代了
     CallBackManagerSingle().add('ugcbotAllList', () => {
@@ -41,6 +42,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       })
       .finally(() => {
         setFalse()
+        setRefreshLoading(false)
       })
   }
 
@@ -68,7 +70,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       },
     })
   }
-  if (loading) {
+  if (!refreshLoading && loading) {
     return (
       <View style={{ minHeight: 210, alignItems: 'center' }}>
         <ShellLoading></ShellLoading>
@@ -76,25 +78,49 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
     )
   }
 
-  if (robotListData?.length === 0) {
-    return <NoData />
-  }
   return (
-    <View>
-      <CreateCard />
-      {robotListData?.map((ld, i) => {
-        return (
-          <UgcBotCard
-            onShowDetail={e => {
-              onShowDetail(e)
-            }}
-            type={TagFromType.AllBot}
-            key={ld.id}
-            ld={ld}
-          />
-        )
-      })}
-    </View>
+    <ScrollView
+      style={styles.page}
+      keyboardDismissMode="on-drag"
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshLoading}
+          onRefresh={() => {
+            setRefreshLoading(true)
+            loadData()
+          }}
+          tintColor="#7A2EF6"
+          title="Pull refresh"
+          titleColor="#7A2EF6"
+        />
+      }
+    >
+      {robotListData?.length === 0 ? (
+        <NoData />
+      ) : (
+        <View>
+          <CreateCard />
+          {robotListData?.map((ld, i) => {
+            return (
+              <UgcBotCard
+                onShowDetail={e => {
+                  onShowDetail(e)
+                }}
+                type={TagFromType.AllBot}
+                key={ld.id}
+                ld={ld}
+              />
+            )
+          })}
+        </View>
+      )}
+    </ScrollView>
   )
 }
 export default RobotList
+const styles = StyleSheet.create({
+  page: {
+    height: '100%',
+    paddingHorizontal: 16,
+  },
+})
