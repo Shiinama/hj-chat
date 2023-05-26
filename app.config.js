@@ -98,8 +98,6 @@ export default {
         },
       },
     ],
-    ['./plugins/withAndroidNamespace.ts'],
-    ['./plugins/withAndroidGradeModifed.ts'],
     [
       'expo-image-picker',
       {
