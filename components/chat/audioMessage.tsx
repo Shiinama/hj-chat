@@ -30,6 +30,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     handlePlayPause,
     loadRefreshSound,
     playFragment,
+    setSound,
   }))
 
   const playFragment = (params: { dur: number; total: number }) => {
@@ -39,9 +40,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     // 会回弹
     setCurrentPosition(params.dur)
     isStartSoundRefresh.current.end = params.dur - duration >= 0
-    if (!isStartSoundRefresh.current.end) {
-      setIsPlaying(true)
-    }
+
     if (duration < params.total) {
       setDuration(params.total)
     }
@@ -63,48 +62,14 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       } catch (e) {
         console.log('loadRefreshSoundunloadAsyncerror:', e)
       }
-      try {
-        // console.log('loadRefreshSound')
-        // const status = await sound.getStatusAsync()
-        // console.log(status)
-        // if (!isPlaying && !base64Info.current.isLoading) {
-        //   reloadBase64()
-        // }
-        // const status = await sound.loadAsync(
-        //   {
-        //     uri: audioFileUri,
-        //   },
-        //   { shouldPlay: true, positionMillis: currentPosition }
-        // )
-        // // @ts-ignore
-        // setDuration(status.durationMillis || 0)
-        if (finish) {
-          // 完成了就去播放一下
-          // playCurrentRecevice()
-        }
-        // if (!isPlaying) {
-        //   const success = await playSound()
-        //   success && setIsPlaying(() => !isPlaying)
-        // }
-        // sound.playFromPositionAsync(currentPosition)
-        // loadSound(true)
-      } catch (error) {
-        // console.log('loadRefreshSoundloadAsyncerror:', error)
-      }
     }
   }
-  const loadSound = useCallback(async (hideLoading?: boolean) => {
+  const loadSound = useCallback(async () => {
     if (!audioFileUri) return
     try {
-      const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri }).then(res => {
-        if (res.status.isLoaded && res.status.durationMillis) {
-          setDuration(res.status.durationMillis)
-        }
-        return res
-      })
+      const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
       setSound(sound)
       setLoading(false)
-      return true
     } catch (e) {
       // load sound fail [Error: com.google.android.exoplayer2.audio.AudioSink$InitializationException: AudioTrack init failed 0 Config(22050, 4, 11026)]
       /**
@@ -114,29 +79,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       console.log('load sound fail', e, 'url:', audioFileUri)
       setLoading(false)
       setLoadFail(true)
-      return false
     }
   }, [])
 
-  const reLoadSound = async () => {
-    if (!sound) {
-      loadSound()
-    } else {
-      try {
-        await sound.unloadAsync()
-      } catch (error) {}
-      try {
-        const res = await sound.loadAsync({ uri: audioFileUri })
-        console.log('res:', res, audioFileUri.indexOf('base64') > 0)
-        if (res.isLoaded && res.durationMillis) {
-          setDuration(res.durationMillis)
-        }
-      } catch (error) {}
-    }
-  }
-
   useEffect(() => {
-    reLoadSound()
+    loadSound()
   }, [audioFileUri])
 
   useEffect(() => {
@@ -171,7 +118,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
         }
 
         // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
-        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 150 >= 0) {
+        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 50 >= 0) {
           setIsPlaying(() => false)
           soundManager.current.stop()
           soundInterval.current && clearInterval(soundInterval.current)
@@ -186,6 +133,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }
 
   const playSound = async () => {
+    setLoading(false)
     let opSuccess = false
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
@@ -207,41 +155,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }
 
   const handlePlayPause = async () => {
-    console.log('handlePlayPause', sound, audioFileUri)
-    let opSuccess = false
-    if (AudioPayManagerSingle().isRecording) {
-      Toast('Recording in progress')
-      return opSuccess
-    }
-    if (isStartSoundRefresh.current.start) {
-      console.log(isStartSoundRefresh.current)
-      AudioPayManagerSingle()
-        .currentSound.getStatusAsync()
-        .then(async status => {
-          if (status.isLoaded && status.isPlaying) {
-            AudioPayManagerSingle().currentSound.pauseAsync()
-            setIsPlaying(() => false)
-          } else if (status.isLoaded && !status.isPlaying) {
-            if (isStartSoundRefresh.current.end) {
-              // 文件下载完毕使用完整文件播放，不使用分段播放
-              if (sound !== null) {
-                AudioPayManagerSingle().currentSound = sound
-                await playSound()
-                setIsPlaying(() => true)
-              } else {
-                SocketStreamManager().getPlayFragment().resetPlayIndex()
-                SocketStreamManager().getPlayFragment().playSingleSound()
-              }
-            } else {
-              AudioPayManagerSingle().currentSound = SocketStreamManager().getPlayFragment().currentSound
-              AudioPayManagerSingle().currentSound.playAsync()
-            }
-
-            setIsPlaying(() => true)
-          }
-        })
-      return
-    }
     soundInterval.current && clearInterval(soundInterval.current)
 
     if (sound !== null) {
@@ -251,16 +164,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
         })
 
         soundManager.current.pause()
-        opSuccess = true
-        console.log('handlePlayPause-isPlayingtrue:')
       } else {
-        opSuccess = await playSound()
-        console.log('handlePlayPause-play:')
+        await playSound()
       }
-      opSuccess && setIsPlaying(() => !isPlaying)
+      setIsPlaying(() => !isPlaying)
     }
-    console.log('handlePlayPause:', opSuccess)
-    return opSuccess
   }
 
   useEffect(() => {

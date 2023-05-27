@@ -8,7 +8,7 @@ import CheckIcon from '../../assets/images/chat/check.svg'
 import CheckedIcon from '../../assets/images/chat/checked.svg'
 import { memo, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
-import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
+import { Checkbox } from '@fruits-chain/react-native-xiaoshu'
 import SocketStreamManager from './socketManager'
 import AudioPayManagerSingle from './audioPlayManager'
 import { MessageDetail } from '../../types/MessageTyps'
@@ -25,35 +25,26 @@ function chatItem({ item, me, logo }: Props) {
   const msgKey = item.botId + '&BOT&' + item.replyUid
   const botState = botStore.getState().botBaseInfo
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
-  const [audioStream, setAudioStream] = useState<string>()
   const audioMessage = useRef()
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
-        if (item.index === 0) {
-          SocketStreamManager().getPlayFragment().onPositionChange = (positionMillis, total) => {
-            // @ts-ignore
-            audioMessage.current?.playFragment?.({
-              dur: positionMillis,
-              total: total,
-            })
-          }
-        }
-
-        if (item.isFinal) {
-          AudioPayManagerSingle().currentAutoPlayUrl = url
-          console.log(url, 'urlurl')
-          setAudioStream(url)
-          setTimeout(() => {
-            // @ts-ignore
-            audioMessage.current?.loadRefreshSound?.(true)
-          }, 500)
-
-          SocketStreamManager().removeTextStreamCallBack(msgKey)
-        } else {
+        // SocketStreamManager().getPlayFragment().getSounds = sounds => {
+        //   // @ts-ignore
+        //   audioMessage.current?.setSound(sounds)
+        //   // @ts-ignore
+        //   // audioMessage.current?.handlePlayPause()
+        // }
+        SocketStreamManager().getPlayFragment().onPositionChange = (positionMillis, total) => {
           // @ts-ignore
-          audioMessage.current?.loadRefreshSound?.()
+          audioMessage.current?.playFragment?.({
+            dur: positionMillis,
+            total: total,
+          })
         }
+
+        // @ts-ignore
+        audioMessage.current?.loadRefreshSound?.(true)
       })
     }
     return () => {
@@ -63,10 +54,6 @@ function chatItem({ item, me, logo }: Props) {
 
   if (item.uid === '1231') return null
   const tag = item?.replyUid
-  const computedMessageAudio = useMemo(() => {
-    const url = audioStream || item?.voiceUrl
-    return url
-  }, [item?.voiceUrl, audioStream])
 
   const checkboxJSX = chatValue.pageStatus === 'sharing' && (
     <Checkbox
@@ -108,13 +95,9 @@ function chatItem({ item, me, logo }: Props) {
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[styles.chatWrap, tag ? styles.youContent : styles.meContent]}>
             {(item.type === 'VOICE' || (botState.botSetting.outputVoice && item.replyUid)) && (
-              <AudioMessage audioFileUri={computedMessageAudio} ref={audioMessage} />
+              <AudioMessage audioFileUri={item?.voiceUrl} ref={audioMessage} />
             )}
-            <ItemText
-              item={item}
-              textMsg={audioStream || item?.voiceUrl ? false : true}
-              botSetting={botState?.botSetting}
-            ></ItemText>
+            <ItemText item={item} textMsg={!item?.voiceUrl} botSetting={botState?.botSetting}></ItemText>
           </View>
           <View style={styles.placeholder} />
         </View>

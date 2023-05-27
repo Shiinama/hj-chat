@@ -22,6 +22,7 @@ export default class AudioFragmentPlay {
   private isPlayed: boolean = false
 
   onPositionChange: (dur: number, total: number) => void
+  getSounds: (sounds) => void
 
   base64: string = ''
 
@@ -83,7 +84,6 @@ export default class AudioFragmentPlay {
               await AudioPayManagerSingle().play(
                 this.currentSound,
                 () => {
-                  console.log('then被停止')
                   this.playing = false
                 },
                 () => {
@@ -105,7 +105,6 @@ export default class AudioFragmentPlay {
         const playRes = await AudioPayManagerSingle().play(
           this.currentSound,
           () => {
-            console.log('then被停止')
             this.playing = false
           },
           () => {
@@ -142,9 +141,8 @@ export default class AudioFragmentPlay {
         if (this.totalDurMill === res.durationMillis) {
           this.isLoadFinsh = true
           AudioPayManagerSingle().pause()
-          if (this.isAddFinish) {
-            this.currentDur = 0
-          }
+          this.playing = false
+          this.addCurrentDurMill(0)
           return
         }
         if (res.isLoaded && res.durationMillis) {
@@ -156,7 +154,6 @@ export default class AudioFragmentPlay {
             this.currentSound,
             () => {
               console.log('then被停止')
-              this.playing = false
             },
             () => {
               console.log('then重新播放')
@@ -168,7 +165,6 @@ export default class AudioFragmentPlay {
       })
       .catch(e => {
         this.isLoading = false
-        this.playing = false
         console.log('加载下一个失败：', e)
       })
   }
