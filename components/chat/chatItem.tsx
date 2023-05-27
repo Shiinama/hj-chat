@@ -42,8 +42,7 @@ function chatItem({ item, me, logo }: Props) {
         // AudioPayManagerSingle().currentAutoPlayUrl = url
         // 本地缓存mp3文件有更新就回调这个方法 url是本地的mp3路径
         setAudioStream(url)
-        // @ts-ignore
-        audioMessage.current?.loadRefreshSound?.()
+
         // audioMessage.current?.updateStreamAudio?.(url)
         if (item.index > 0) {
           // 刷新音频
@@ -57,10 +56,12 @@ function chatItem({ item, me, logo }: Props) {
             // @ts-ignore
             audioMessage.current?.loadRefreshSound?.(true)
           }, 500)
-          // 加载完再播放，不然每次load播放有卡顿
 
           // audioMessage.current?.handlePlayPause?.()
           SocketStreamManager().removeTextStreamCallBack(msgKey)
+        } else {
+          // @ts-ignore
+          audioMessage.current?.loadRefreshSound?.()
         }
       })
     }
