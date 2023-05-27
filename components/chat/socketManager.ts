@@ -9,7 +9,7 @@ import {
 } from './type'
 import SysConfig from '../../constants/System'
 import useUserStore from '../../store/userStore'
-import { Alert } from 'react-native'
+import { Alert, Platform } from 'react-native'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 import { arrayBufferToBase64, concatBuffer } from '../../utils/base64'
 import AudioFragmentPlay from './audioFragmentPlay'
@@ -107,19 +107,17 @@ export class SocketStream {
     this.addTextStream(data)
   }
 
-  async saveSingleAudio(data: MessageStreamTextRes) {
-    if (!data.data?.audio) {
-      return
+  async PlatformAudioSet(data, msgKey) {
+    if (Platform.OS === 'ios') {
+      return await saveAudio({
+        audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
+        botId: data.data?.replyMessage?.botId,
+        index: data.data?.index,
+        replyUid: data?.data?.replyMessage?.replyUid,
+      })
+    } else {
+      return `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`
     }
-    try {
-      // const res = await saveAudio({
-      //   audio: arrayBufferToBase64(data.data?.audio),
-      //   botId: data.data?.replyMessage?.botId,
-      //   replyUid: data?.data?.replyMessage?.replyUid + '_' + data?.data?.index,
-      //   dir: data?.data?.index + '_' + data?.data?.replyMessage?.replyUid,
-      // })
-      this.playFragment.addSoundUrl(arrayBufferToBase64(data.data?.audio), data.data?.isFinal)
-    } catch (error) {}
   }
 
   private async onMessageAudioStream(data: MessageStreamTextRes) {
@@ -127,7 +125,6 @@ export class SocketStream {
       const msg = data?.data
       // 待回复消息的机器人和哪一条消息
       const msgKey = msg.replyMessage?.botId + '&BOT&' + msg.replyMessage?.replyUid
-      // 存储当前视频
       if (!msg.isFinal && msg.index === 0) {
         if (this.playFragment.isPlaying()) {
           AudioPayManagerSingle().stop()
@@ -140,37 +137,28 @@ export class SocketStream {
       } else if (msg.audio) {
         this.currentAudioStream[msgKey] = concatBuffer(this.currentAudioStream[msgKey], msg.audio)
       }
-      // this.saveSingleAudio(data)
-      const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
+      const resMsg = { ...msg, msgLocalKey: msgKey }
+      // 当前消息的uri
+      const uri = await this.PlatformAudioSet(data, msgKey)
       if (msg.isFinal) {
+        // 结束后存储
         try {
           const res = await saveAudio({
             audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
             botId: data.data?.replyMessage?.botId,
+            index: data.data.index,
             replyUid: data?.data?.replyMessage?.replyUid,
           })
           this.onAudioStreamUpdate[msgKey]?.(resMsg, res)
-          // console.log('mp3res:', res)
         } catch (e) {
           console.log('mp3error:', e)
         }
       } else {
-        this.onAudioStreamUpdate[msgKey]?.(
-          resMsg,
-          `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`
-        )
+        this.onAudioStreamUpdate[msgKey]?.(resMsg, uri)
       }
-      // 回调给单独某一条消息
-      // this.onAudioStreamUpdate[msgKey]?.(
-      //   resMsg,
-      //   getAudioFileUrl(data.data?.replyMessage?.botId, data?.data?.replyMessage?.replyUid)
-      // )
 
-      this.playFragment.addSoundUrl(msg.audio ? arrayBufferToBase64(msg.audio) : undefined, data.data?.isFinal)
-      // if (msg.index === 0) {
-      //   this.onMessageStreamStart?.(resMsg)
-      // }
-      // console.log('addTextStream', msgKey, this.onTextStreamUpdate, resMsg)
+      this.playFragment.addSoundUrl(msg.audio ? uri : undefined, data.data?.isFinal)
+
       if (msg.isFinal) {
         // 下载完到本地就删除缓存
         delete this.currentAudioStream[msgKey]

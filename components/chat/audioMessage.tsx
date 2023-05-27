@@ -263,7 +263,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }
 
   const handlePlayPause = async () => {
-    console.log('handlePlayPause', sound)
+    console.log('handlePlayPause', AudioPayManagerSingle().currentSound)
     let opSuccess = false
     if (AudioPayManagerSingle().isRecording) {
       Toast('Recording in progress')

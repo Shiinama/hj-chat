@@ -1,17 +1,19 @@
 import * as FileSystem from 'expo-file-system'
 
-export const audioDir = FileSystem.documentDirectory + 'streamAudio/'
+export const audioDir = FileSystem.cacheDirectory + 'streamAudio/'
 
-export const saveAudio = async (params: { audio: string; botId: number; replyUid: string }) => {
-  const fileName = `${params.botId}_${params.replyUid}.mp3`
+export const saveAudio = async (params: { audio: string; index?: number; botId: number; replyUid: string }) => {
+  const fileName = `${params.botId}_${params.replyUid}_${params.index}.mp3`
   if (!params.audio || params?.audio?.length === 0) {
     return
   }
-  // console.log('saveAudio:', params)
-  try {
-    const res = await FileSystem.makeDirectoryAsync(audioDir)
-    console.log('createDir:', res)
-  } catch (error) {}
+  const dirInfo = await FileSystem.getInfoAsync(audioDir)
+  if (!dirInfo.exists) {
+    try {
+      await FileSystem.makeDirectoryAsync(audioDir, { intermediates: true })
+    } catch (error) {}
+  }
+
   try {
     await FileSystem.writeAsStringAsync(audioDir + fileName, params.audio, { encoding: 'base64' })
     return audioDir + fileName
