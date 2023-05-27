@@ -29,12 +29,8 @@ function chatItem({ item, me, logo }: Props) {
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
-        // SocketStreamManager().getPlayFragment().getSounds = sounds => {
-        //   // @ts-ignore
-        //   audioMessage.current?.setSound(sounds)
-        //   // @ts-ignore
-        //   // audioMessage.current?.handlePlayPause()
-        // }
+        // @ts-ignore
+        audioMessage.current?.setLoading?.(false)
         SocketStreamManager().getPlayFragment().onPositionChange = (positionMillis, total) => {
           // @ts-ignore
           audioMessage.current?.playFragment?.({
@@ -42,9 +38,6 @@ function chatItem({ item, me, logo }: Props) {
             total: total,
           })
         }
-
-        // @ts-ignore
-        audioMessage.current?.loadRefreshSound?.(true)
       })
     }
     return () => {

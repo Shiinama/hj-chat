@@ -57,16 +57,10 @@ export default class AudioFragmentPlay {
     if (!this.currentSound && !this.isLoading) {
       this.isLoading = true
       Audio.Sound.createAsync({ uri: this.base64 }, { shouldPlay: false }, status => {
-        // console.log('--:', status)
-
+        // 多加10早点回调下一个
         if (status.isLoaded && status.positionMillis - status.durationMillis >= 0 && status.durationMillis) {
           this.playing = false
-
           this.playNextUrl()
-          this.addCurrentDurMill(status.positionMillis)
-          // if (this.forward) {
-          // }
-          // this.forward = 0
         }
         if (status.isLoaded && status.isPlaying) {
           // console.log(status.positionMillis, 'loading')
@@ -141,8 +135,9 @@ export default class AudioFragmentPlay {
         if (this.totalDurMill === res.durationMillis) {
           this.isLoadFinsh = true
           AudioPayManagerSingle().pause()
-          this.playing = false
+          this.currentSound.setPositionAsync(0)
           this.addCurrentDurMill(0)
+          this.playing = false
           return
         }
         if (res.isLoaded && res.durationMillis) {

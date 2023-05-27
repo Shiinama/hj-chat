@@ -30,19 +30,21 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     handlePlayPause,
     loadRefreshSound,
     playFragment,
-    setSound,
+    setLoading,
   }))
 
   const playFragment = (params: { dur: number; total: number }) => {
-    setIsPlaying(params.dur - duration >= 0 ? false : true)
-    setLoading(false)
-    // setCurrentPosition(params.dur - duration >= 0 ? 0 : params.dur)
+    setIsPlaying(params.total - params.dur > 0)
     // 会回弹
+
     setCurrentPosition(params.dur)
     isStartSoundRefresh.current.end = params.dur - duration >= 0
 
     if (duration < params.total) {
       setDuration(params.total)
+    }
+    if (params.dur === 0) {
+      setIsPlaying(false)
     }
   }
 
@@ -168,6 +170,17 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
         await playSound()
       }
       setIsPlaying(() => !isPlaying)
+    } else {
+      if (isPlaying) {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+        })
+
+        soundManager.current.currentSound.pauseAsync()
+      } else {
+        await soundManager.current.currentSound.playAsync()
+      }
+      setIsPlaying(() => !isPlaying)
     }
   }
 
@@ -180,10 +193,13 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     if (sound !== null) {
       await sound.setPositionAsync(value)
       setCurrentPosition(value)
+    } else {
+      await soundManager.current.currentSound.setPositionAsync(value)
+      setCurrentPosition(value)
     }
   }
 
-  // console.log('dur-total', duration, currentPosition)
+  console.log('dur-total', duration, currentPosition)
 
   if (loadFail)
     return (
