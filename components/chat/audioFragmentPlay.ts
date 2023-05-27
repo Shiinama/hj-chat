@@ -62,13 +62,16 @@ export default class AudioFragmentPlay {
           this.playing = false
 
           this.playNextUrl()
-          if (this.forward) {
-            this.addCurrentDurMill(status.positionMillis)
-          }
-          this.forward = 0
+          this.addCurrentDurMill(status.positionMillis)
+          // if (this.forward) {
+          // }
+          // this.forward = 0
         }
         if (status.isLoaded && status.isPlaying) {
-          this.addCurrentDurMill(status.positionMillis)
+          // console.log(status.positionMillis, 'loading')
+          if (status.positionMillis > 0) {
+            this.addCurrentDurMill(status.positionMillis)
+          }
         }
       })
         .then(async res => {

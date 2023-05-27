@@ -17,13 +17,13 @@ type AudioType = {
 }
 
 const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: AudioType, ref) => {
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const refPlaying = useRef<boolean>(false)
   const [currentPosition, setCurrentPosition] = useState<number>(0)
   const [duration, setDuration] = useState<number>(0)
-  const [sound, setSound] = useState<Audio.Sound | null>(null)
   const [loadFail, setLoadFail] = useState(false)
+  const [sound, setSound] = useState<Audio.Sound | null>(null)
   // 全局录音单点播放控制
   const soundManager = useRef(AudioPayManagerSingle())
   useImperativeHandle(ref, () => ({
@@ -33,9 +33,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }))
 
   const playFragment = (params: { dur: number; total: number }) => {
-    console.log('playFragment:', params)
     setIsPlaying(params.dur - duration >= 0 ? false : true)
-    setCurrentPosition(params.dur - duration >= 0 ? 0 : params.dur)
+    setLoading(false)
+    // setCurrentPosition(params.dur - duration >= 0 ? 0 : params.dur)
+    // 会回弹
+    setCurrentPosition(params.dur)
     isStartSoundRefresh.current.end = params.dur - duration >= 0
     if (!isStartSoundRefresh.current.end) {
       setIsPlaying(true)
@@ -92,8 +94,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     }
   }
   const loadSound = useCallback(async (hideLoading?: boolean) => {
-    !hideLoading && setLoading(true)
-    setLoadFail(false)
+    if (!audioFileUri) return
     try {
       const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri }).then(res => {
         if (res.status.isLoaded && res.status.durationMillis) {
@@ -102,7 +103,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
         return res
       })
       setSound(sound)
-      setLoadFail(false)
+      setLoading(false)
       return true
     } catch (e) {
       // load sound fail [Error: com.google.android.exoplayer2.audio.AudioSink$InitializationException: AudioTrack init failed 0 Config(22050, 4, 11026)]
@@ -111,58 +112,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
        * https://zhuanlan.zhihu.com/p/627702119
        */
       console.log('load sound fail', e, 'url:', audioFileUri)
+      setLoading(false)
       setLoadFail(true)
       return false
     }
-    setLoading(false)
   }, [])
-
-  useEffect(() => {
-    if (!audioFileUri) return
-    const loadSounda = async () => {
-      setLoading(true)
-      setLoadFail(false)
-      console.log('createAsync')
-      try {
-        const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
-        setSound(sound)
-        setLoadFail(false)
-      } catch (e) {
-        console.log('load sound fail:', e)
-        setLoadFail(true)
-      }
-      setLoading(false)
-    }
-    loadSounda()
-
-    return () => {
-      soundInterval.current && clearInterval(soundInterval.current)
-      if (sound) {
-        try {
-          // sound.unloadAsync()
-          // sound.stopAsync()
-        } catch (error) {}
-      }
-    }
-  }, [])
-
-  const playCurrentRecevice = async () => {
-    if (isStartSoundRefresh.current.start && !isStartSoundRefresh.current.end) {
-      return
-    }
-    // console.log('playCurrentRecevice:', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
-    // 如果当前片段没有播放再播放
-    if (audioFileUri == AudioPayManagerSingle().currentAutoPlayUrl) {
-      setIsPlaying(false)
-      // console.log('playCurrentRecevice:to', audioFileUri, AudioPayManagerSingle().currentAutoPlayUrl)
-      const success = await handlePlayPause()
-      console.log('handlePlayPause-success:', success)
-      // 自动播放后清空自动播放的url
-      if (success) {
-        AudioPayManagerSingle().currentAutoPlayUrl = undefined
-      }
-    }
-  }
 
   const reLoadSound = async () => {
     if (!sound) {
@@ -189,18 +143,8 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     if (sound !== null) {
       sound.getStatusAsync().then(async status => {
         if (status.isLoaded) {
-          if (audioFileUri.indexOf('base64') > 0) {
-            console.log('status:', status)
-          }
-
           setCurrentPosition(status.positionMillis || 0)
           setDuration(status.durationMillis || 0)
-          // console.log(
-          //   'AudioPayManagerSingle().currentAutoPlayUrl:',
-          //   AudioPayManagerSingle().currentAutoPlayUrl,
-          //   audioFileUri,
-          //   status
-          // )
         }
       })
     }
@@ -263,7 +207,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }
 
   const handlePlayPause = async () => {
-    console.log('handlePlayPause', AudioPayManagerSingle().currentSound)
+    console.log('handlePlayPause', sound, audioFileUri)
     let opSuccess = false
     if (AudioPayManagerSingle().isRecording) {
       Toast('Recording in progress')
@@ -331,9 +275,9 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     }
   }
 
-  console.log('dur-total', duration, currentPosition)
+  // console.log('dur-total', duration, currentPosition)
 
-  if (!loading && loadFail)
+  if (loadFail)
     return (
       <TouchableOpacity
         activeOpacity={0.6}
@@ -346,13 +290,18 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       </TouchableOpacity>
     )
 
-  if (loading) return <ShellLoading></ShellLoading>
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {showControl && (
           <TouchableOpacity onPress={handlePlayPause}>
-            {isPlaying ? <Messagepause height={32} width={32} /> : <MessagePlay height={32} width={32} />}
+            {loading ? (
+              <ShellLoading></ShellLoading>
+            ) : isPlaying ? (
+              <Messagepause height={32} width={32} />
+            ) : (
+              <MessagePlay height={32} width={32} />
+            )}
           </TouchableOpacity>
         )}
         <Text style={styles.time}>{formatTime(currentPosition) + '/' + formatTime(duration)}</Text>
@@ -385,9 +334,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     paddingLeft: 15,
+    width: 263,
+    marginVertical: 5,
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    height: '100%',
 
     maxHeight: 38,
   },

@@ -39,25 +39,16 @@ function chatItem({ item, me, logo }: Props) {
             })
           }
         }
-        // AudioPayManagerSingle().currentAutoPlayUrl = url
-        // 本地缓存mp3文件有更新就回调这个方法 url是本地的mp3路径
-        setAudioStream(url)
-
-        // audioMessage.current?.updateStreamAudio?.(url)
-        if (item.index > 0) {
-          // 刷新音频
-          // @ts-ignore
-          // audioMessage.current?.loadRefreshSound?.()
-        }
 
         if (item.isFinal) {
           AudioPayManagerSingle().currentAutoPlayUrl = url
+          console.log(url, 'urlurl')
+          setAudioStream(url)
           setTimeout(() => {
             // @ts-ignore
             audioMessage.current?.loadRefreshSound?.(true)
           }, 500)
 
-          // audioMessage.current?.handlePlayPause?.()
           SocketStreamManager().removeTextStreamCallBack(msgKey)
         } else {
           // @ts-ignore
@@ -72,16 +63,9 @@ function chatItem({ item, me, logo }: Props) {
 
   if (item.uid === '1231') return null
   const tag = item?.replyUid
-  const renderMessageAudio = useMemo(() => {
+  const computedMessageAudio = useMemo(() => {
     const url = audioStream || item?.voiceUrl
-    if (!url) {
-      return null
-    }
-    return (
-      <View style={{ height: 50, justifyContent: 'center', width: 263 }}>
-        <AudioMessage audioFileUri={url} ref={audioMessage} />
-      </View>
-    )
+    return url
   }, [item?.voiceUrl, audioStream])
 
   const checkboxJSX = chatValue.pageStatus === 'sharing' && (
@@ -123,7 +107,9 @@ function chatItem({ item, me, logo }: Props) {
 
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[styles.chatWrap, tag ? styles.youContent : styles.meContent]}>
-            {renderMessageAudio}
+            {(item.type === 'VOICE' || (botState.botSetting.outputVoice && item.replyUid)) && (
+              <AudioMessage audioFileUri={computedMessageAudio} ref={audioMessage} />
+            )}
             <ItemText
               item={item}
               textMsg={audioStream || item?.voiceUrl ? false : true}
