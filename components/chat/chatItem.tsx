@@ -30,13 +30,25 @@ function chatItem({ item, me, logo }: Props) {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addAudioStreamCallBack(msgKey, (item, url) => {
         // @ts-ignore
-        audioMessage.current?.setLoading?.(false)
+
         SocketStreamManager().getPlayFragment().onPositionChange = (positionMillis, total) => {
           // @ts-ignore
           audioMessage.current?.playFragment?.({
             dur: positionMillis,
             total: total,
           })
+        }
+        SocketStreamManager().getPlayFragment().getSound = sound => {
+          // @ts-ignore
+          audioMessage.current?.setLoading?.(false)
+          // @ts-ignore
+          audioMessage.current?.setIsPlaying?.(true)
+          // @ts-ignore
+          audioMessage.current?.setSound?.(sound)
+        }
+        SocketStreamManager().getPlayFragment().finish = () => {
+          // @ts-ignore
+          audioMessage.current?.setIsPlaying?.(false)
         }
       })
     }

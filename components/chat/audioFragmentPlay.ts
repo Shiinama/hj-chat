@@ -22,7 +22,8 @@ export default class AudioFragmentPlay {
   private isPlayed: boolean = false
 
   onPositionChange: (dur: number, total: number) => void
-  getSounds: (sounds) => void
+  getSound: (sound) => void
+  finish: () => void
 
   base64: string = ''
 
@@ -56,22 +57,28 @@ export default class AudioFragmentPlay {
   async playSingleSound() {
     if (!this.currentSound && !this.isLoading) {
       this.isLoading = true
-      Audio.Sound.createAsync({ uri: this.base64 }, { shouldPlay: false }, status => {
+      Audio.Sound.createAsync({ uri: this.base64 }, { shouldPlay: false, progressUpdateIntervalMillis: 16 }, status => {
         // 多加10早点回调下一个
-        if (status.isLoaded && status.positionMillis - status.durationMillis >= 0 && status.durationMillis) {
+        if (
+          status.isLoaded &&
+          !this.isAddFinish &&
+          status.positionMillis - status.durationMillis >= 0 &&
+          status.durationMillis
+        ) {
           this.playing = false
           this.playNextUrl()
         }
         if (status.isLoaded && status.isPlaying) {
           // console.log(status.positionMillis, 'loading')
-          if (status.positionMillis > 0) {
+          // -20 防止回不到最初
+          if (status.positionMillis > 0 && status.positionMillis < this.totalDurMill - 20) {
             this.addCurrentDurMill(status.positionMillis)
           }
         }
       })
         .then(async res => {
           this.currentSound = res.sound
-
+          this.getSound(res.sound)
           if (res.status.isLoaded && res.status.durationMillis) {
             this.totalDurMill = res.status.durationMillis
             try {
@@ -129,7 +136,10 @@ export default class AudioFragmentPlay {
 
     this.playing = true
     this.currentSound
-      .loadAsync({ uri: this.base64 }, { shouldPlay: false, positionMillis: this.currentDur })
+      .loadAsync(
+        { uri: this.base64 },
+        { shouldPlay: false, positionMillis: this.currentDur, progressUpdateIntervalMillis: 16 }
+      )
       .then(async res => {
         // 如果当前加载的音频和上次加载的一样返回，说明都加载完了
         if (this.totalDurMill === res.durationMillis) {
@@ -137,6 +147,7 @@ export default class AudioFragmentPlay {
           AudioPayManagerSingle().pause()
           this.currentSound.setPositionAsync(0)
           this.addCurrentDurMill(0)
+          this.finish()
           this.playing = false
           return
         }
@@ -174,7 +185,6 @@ export default class AudioFragmentPlay {
   }
 
   clear() {
-    this.soundUrls = []
     try {
       this.currentSound?.stopAsync()
     } catch (error) {}

@@ -21,6 +21,7 @@ import { getBotSharingCode } from '../../../api/setting'
 import System from '../../../constants/System'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { TagFromType, useTagList } from '../../../constants/TagList'
+import Back from '../../../assets/images/tabbar/back.svg'
 
 export default function Robot() {
   const router = useRouter()
@@ -34,11 +35,26 @@ export default function Robot() {
   useEffect(() => {
     navigation.setOptions({
       title: 'Robot',
+      headerLeft: () => {
+        return (
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{
+              width: 24,
+              height: 24,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Back></Back>
+          </TouchableOpacity>
+        )
+      },
     })
   }, [])
   useEffect(() => {
     setTagList(tags)
-  }, [navigation, name])
+  }, [botStore])
   const renderButton = () => {
     if (isMinme) {
       if (botStore?.privateBotId) {
@@ -89,7 +105,6 @@ export default function Robot() {
             <TouchableOpacity
               onPress={() => {
                 const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
-                console.log(botStore, 111)
                 postPublishBot({ botUid: botStore?.uid })
                   .then(() => {
                     setMessage('Published successfully')

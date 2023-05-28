@@ -26,25 +26,20 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   const [sound, setSound] = useState<Audio.Sound | null>(null)
   // 全局录音单点播放控制
   const soundManager = useRef(AudioPayManagerSingle())
+
   useImperativeHandle(ref, () => ({
     handlePlayPause,
     loadRefreshSound,
     playFragment,
     setLoading,
+    setSound,
+    setIsPlaying,
   }))
 
   const playFragment = (params: { dur: number; total: number }) => {
-    setIsPlaying(params.total - params.dur > 0)
-    // 会回弹
-
     setCurrentPosition(params.dur)
-    isStartSoundRefresh.current.end = params.dur - duration >= 0
-
     if (duration < params.total) {
       setDuration(params.total)
-    }
-    if (params.dur === 0) {
-      setIsPlaying(false)
     }
   }
 
@@ -66,10 +61,33 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       }
     }
   }
+  const setSlideFnc = useCallback(status => {
+    if (status.isLoaded) {
+      setDuration(status.durationMillis || 0)
+    }
+    // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
+    if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 50 >= 0) {
+      setIsPlaying(() => false)
+      soundManager.current.stop()
+      setCurrentPosition(() => {
+        return 0
+      })
+    } else if (status.isLoaded && status.isPlaying) {
+      setCurrentPosition(status.positionMillis || 0)
+    }
+  }, [])
   const loadSound = useCallback(async () => {
     if (!audioFileUri) return
     try {
-      const { sound } = await Audio.Sound.createAsync({ uri: audioFileUri })
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: audioFileUri },
+        { progressUpdateIntervalMillis: 16 },
+        status => {
+          setSlideFnc(status)
+        }
+      )
+      soundManager.current.currentSound = sound
+      soundManager.current.currentAutoPlayUrl = audioFileUri
       setSound(sound)
       setLoading(false)
     } catch (e) {
@@ -82,12 +100,13 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       setLoading(false)
       setLoadFail(true)
     }
-  }, [])
+  }, [audioFileUri])
 
   useEffect(() => {
     loadSound()
   }, [audioFileUri])
 
+  // 每次进来获取状态
   useEffect(() => {
     if (sound !== null) {
       sound.getStatusAsync().then(async status => {
@@ -104,36 +123,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       : undefined
   }, [sound])
 
-  const soundInterval = useRef<NodeJS.Timer>()
-
-  /**
-   * 从sound初始化完成就开始计时器 修改为 只有当播放的时候一个才启用计时器，停止播放就注销计时器，
-   * 不然有多少条数据就会有多少个计时器，会卡主线程和内存持续上涨 会崩溃
-   */
-  const startPlayInterval = () => {
-    soundInterval.current && clearInterval(soundInterval.current)
-    soundInterval.current = setInterval(async () => {
-      if (sound !== null) {
-        const status: AVPlaybackStatus = await sound.getStatusAsync()
-        if (status.isLoaded) {
-          setDuration(status.durationMillis || 0)
-        }
-
-        // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
-        if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 50 >= 0) {
-          setIsPlaying(() => false)
-          soundManager.current.stop()
-          soundInterval.current && clearInterval(soundInterval.current)
-          setCurrentPosition(() => {
-            return 0
-          })
-        } else if (status.isLoaded && status.isPlaying) {
-          setCurrentPosition(status.positionMillis || 0)
-        }
-      }
-    }, 100)
-  }
-
   const playSound = async () => {
     setLoading(false)
     let opSuccess = false
@@ -145,20 +134,15 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
       sound,
       function () {
         setIsPlaying(false)
-        soundInterval.current && clearInterval(soundInterval.current)
       },
       function () {
         setIsPlaying(true)
-        startPlayInterval()
       }
     )
-    opSuccess && startPlayInterval()
     return opSuccess
   }
 
   const handlePlayPause = async () => {
-    soundInterval.current && clearInterval(soundInterval.current)
-
     if (sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({
@@ -168,17 +152,6 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
         soundManager.current.pause()
       } else {
         await playSound()
-      }
-      setIsPlaying(() => !isPlaying)
-    } else {
-      if (isPlaying) {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: true,
-        })
-
-        soundManager.current.currentSound.pauseAsync()
-      } else {
-        await soundManager.current.currentSound.playAsync()
       }
       setIsPlaying(() => !isPlaying)
     }
@@ -191,15 +164,9 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
 
   const handleChange = async (value: number) => {
     if (sound !== null) {
-      await sound.setPositionAsync(value)
-      setCurrentPosition(value)
-    } else {
       await soundManager.current.currentSound.setPositionAsync(value)
-      setCurrentPosition(value)
     }
   }
-
-  console.log('dur-total', duration, currentPosition)
 
   if (loadFail)
     return (

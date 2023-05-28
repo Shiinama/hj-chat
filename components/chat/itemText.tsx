@@ -152,7 +152,7 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
           (caluTranslate ? <Text>{caluTranslate}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
 
-      {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
+      {item?.replyUid && <View style={styles.buttonGroup}>{renderReply()}</View>}
       {item?.type === 'LOADING' && !renderText && loadingRender()}
     </>
   )

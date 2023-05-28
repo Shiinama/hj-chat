@@ -4,6 +4,7 @@ import Huatong from '../assets/images/setting/huatong.svg'
 import Mime from '../assets/images/setting/mime.svg'
 import uInfo from '../store/userStore'
 import { BotInfo } from '../types/BotTypes'
+
 export enum TagFromType {
   AllBot = 'AllBot',
   MyBot = 'MyBot',
@@ -62,13 +63,14 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
         name: 'Mine',
         childrenIcon: <Mime width={14} height={14} />,
       },
-    (type === TagFromType.MyBot || isRobotandChat) && {
-      id: 3,
-      name: botInfo?.privateBotId ? (botInfo?.status === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
-      bgColor: botInfo?.privateBotId ? (botInfo?.status === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
-      tagColor: botInfo?.privateBotId ? (botInfo?.status === 'Public' ? '#165B0B' : '#6b7280') : '#705A0C',
-      childrenIcon: <Wang width={14} height={14} />,
-    },
+    isMine &&
+      (type === TagFromType.MyBot || isRobotandChat) && {
+        id: 3,
+        name: botInfo?.privateBotId ? (botInfo?.status === 'Public' ? 'Mainnet' : 'Hidden') : 'Testnet',
+        bgColor: botInfo?.privateBotId ? (botInfo?.status === 'Public' ? '#CAF1B7' : '#d1d5db') : '#FAF4E1',
+        tagColor: botInfo?.privateBotId ? (botInfo?.status === 'Public' ? '#165B0B' : '#6b7280') : '#705A0C',
+        childrenIcon: <Wang width={14} height={14} />,
+      },
     (type === TagFromType.AllBot || isRobotandChat) &&
       botInfo?.language && {
         id: 4,
@@ -82,5 +84,6 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
   if (type === TagFromType.AllBot || type === TagFromType.MyBot) {
     AllTags = AllTags.slice(0, 3)
   }
+  console.log(AllTags, 'aa')
   return AllTags
 }

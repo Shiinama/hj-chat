@@ -1,5 +1,5 @@
 import { Stack, useNavigation } from 'expo-router'
-import { Platform, TouchableOpacity, StyleSheet } from 'react-native'
+import { TouchableOpacity, StyleSheet } from 'react-native'
 import Back from '../../assets/images/tabbar/back.svg'
 
 export default function AppLayout() {
