@@ -84,6 +84,5 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
   if (type === TagFromType.AllBot || type === TagFromType.MyBot) {
     AllTags = AllTags.slice(0, 3)
   }
-  console.log(AllTags, 'aa')
   return AllTags
 }
