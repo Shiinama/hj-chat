@@ -143,6 +143,8 @@ export default class AudioFragmentPlay {
       .then(async res => {
         // 如果当前加载的音频和上次加载的一样返回，说明都加载完了
         if (this.totalDurMill === res.durationMillis) {
+          // 以防加载完毕没法进行二次播放
+          this.isLoading = false
           this.isLoadFinsh = true
           AudioPayManagerSingle().pause()
           this.currentSound.setPositionAsync(0)
