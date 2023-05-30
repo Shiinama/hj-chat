@@ -345,7 +345,10 @@ const styles = StyleSheet.create({
     height: 18,
   },
   textInput: {
-    paddingTop: 8,
+    paddingTop: Platform.select({
+      ios: 8,
+      android: 0,
+    }),
     borderRadius: 6,
     backgroundColor: '#fff',
     paddingHorizontal: 12,

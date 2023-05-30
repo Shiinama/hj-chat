@@ -99,7 +99,7 @@ function chatItem({ item, me, logo }: Props) {
 
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[styles.chatWrap, tag ? styles.youContent : styles.meContent]}>
-            {(item.type === 'VOICE' || (botState.botSetting.outputVoice && item.replyUid)) && (
+            {(item.type === 'VOICE' || (botState?.botSetting?.outputVoice && item.replyUid)) && (
               <AudioMessage audioFileUri={item?.voiceUrl} ref={audioMessage} />
             )}
             <ItemText item={item} textMsg={!item?.voiceUrl} botSetting={botState?.botSetting}></ItemText>

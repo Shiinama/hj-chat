@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useRouter } from 'expo-router'
 import { DeviceEventEmitter } from 'react-native'
+import { HttpStatusCode } from '../../types/httpTypes'
 
 export type RequestOptions = AxiosRequestConfig & {
   url: string
@@ -56,25 +57,43 @@ _axios.interceptors.response.use(
     // 请求有响应
     if (response) {
       const { status, data, config } = response
-      if (status === 401) {
-        DeviceEventEmitter.emit('logout', 'exit')
-
-        // 状态码为401时，根据白名单来判断跳转与否
-        errorTip(data.message || '')
-        // router.replace('(auth)/login')
-        return Promise.reject(new Error(data.message))
+      let msg = 'Unknown error, please try again later'
+      if (status) {
+        if (status < HttpStatusCode.Ok) {
+          msg = `Network error, please try again later(${status})`
+        } else if (status === HttpStatusCode.Ok) {
+          msg = data?.message
+        } else if (status > HttpStatusCode.Ok && status < HttpStatusCode.MultipleChoices) {
+          msg = `Invalid server response(${status})`
+        } else if (status === HttpStatusCode.BadRequest) {
+          if (data?.message) {
+            if (Array.isArray(data.message)) {
+              msg = data.message.join('; ')
+            } else {
+              msg = data.message
+            }
+          } else {
+            msg = `Bad request, please try again(${status})`
+          }
+        } else if (status === HttpStatusCode.Unauthorized) {
+          msg = 'Not logged in or login timed out, please log in again.'
+          if (!config?.noRedirectToLogin) {
+            // TODO: remove identity info
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            DeviceEventEmitter.emit('logout', 'exit')
+          }
+        } else if (status > HttpStatusCode.BadRequest && status < HttpStatusCode.InternalServerError) {
+          msg = `Not available or timeout(${status})`
+        } else {
+          msg = `Server error(${status})`
+        }
+      } else {
+        msg = data.message || msg
       }
-      // 404 502 ..
-      errorTip(data.message || '')
+      errorTip(msg || data.message)
       return Promise.reject(data.message)
       // throw message;
     }
-    // 请求超时
-    if (error.code === 'ECONNABORTED') {
-      const timeoutMsg = MSG_LIST.timeout
-      return Promise.reject(timeoutMsg)
-    }
-    return Promise.reject(MSG_LIST.network)
   }
 )
 // TODO: 添加options 类型interface
