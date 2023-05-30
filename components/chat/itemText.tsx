@@ -91,7 +91,6 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
     )
   }
   useEffect(() => {
-    setViewDisplayState(() => 2)
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addTextStreamCallBack(key, data => {
         setMessageStreamText(data.text)
@@ -125,7 +124,7 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
   return (
     <>
       <View style={[styles.content, textMsg ? styles.textContent : {}]}>
-        {isBlur && item?.type === 'REPLY' && (
+        {isBlur && item?.replyUid && (
           <TouchableWithoutFeedback onPress={() => setViewDisplayState(2)}>
             <BlurView
               style={styles.absolute}
