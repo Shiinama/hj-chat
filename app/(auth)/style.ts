@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    width: '100%',
   },
   main: {
     flex: 1,
@@ -11,7 +12,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     top: 144,
-    left: 60,
+    left: 65,
   },
   name: {
     fontSize: 24,

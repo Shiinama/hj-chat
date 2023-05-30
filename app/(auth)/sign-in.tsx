@@ -55,10 +55,10 @@ export default function SignIn() {
     <>
       <View style={styles.container}>
         <View>
-          <Image source={loginBgLogo} style={{ height: 374 }}></Image>
+          <Image source={loginBgLogo} style={{ height: 374, width: '100%' }}></Image>
         </View>
         <View style={styles.main}>
-          <Image source={loginLogo} style={{ width: 110, height: 110, marginLeft: -5 }}></Image>
+          <Image source={loginLogo} style={{ width: 110, height: 110 }}></Image>
           <Text style={styles.name}>MyShell</Text>
           <Text style={styles.detail}>The most advanced AI chatbot platform</Text>
         </View>
