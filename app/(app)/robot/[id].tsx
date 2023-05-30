@@ -28,7 +28,7 @@ export default function Robot() {
   const navigation = useNavigation()
   const botStore = usebotStore().botBaseInfo
   const userStore = useUserStore.getState().profile
-  const tags = useTagList(botStore, TagFromType.Robot).slice(0, 5)
+  const tags = useTagList(botStore, TagFromType.Robot)
   const isMinme = userStore?.id === botStore?.userId
   useEffect(() => {
     navigation.setOptions({

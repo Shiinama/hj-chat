@@ -31,7 +31,7 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
         return {
           name: 'Entertainment',
           id: 7,
-          bgColor: '#DCF9F7',
+          bgColor: '#E2F2F6',
           tagColor: '#055752',
           childrenEmoji: '🎮',
         }
@@ -40,8 +40,8 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
         return {
           name: 'Education',
           id: 8,
-          bgColor: '#DCF9F7',
-          tagColor: '#055752',
+          bgColor: '#F5E1EF',
+          tagColor: '#DD0EA3',
           childrenEmoji: '🏫',
         }
       }
