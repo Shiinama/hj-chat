@@ -245,19 +245,20 @@ function InputToolsTar({
       </>
     )
   }, [isShow, showSend, text])
-  const handleContentSizeChange = ({
-    nativeEvent: { contentSize },
-  }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-    let height = contentSize.height
-    if (height === inputHeight) return
-    if (height < 35) {
-      setInputHeight(35)
-      return
-    }
-    if (height > 35 && height < 80) {
-      setInputHeight(height)
-    }
-  }
+  // 不用算，minHeight 35  maxHeight 80就可以了
+  // const handleContentSizeChange = ({
+  //   nativeEvent: { contentSize },
+  // }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
+  //   let height = contentSize.height
+  //   if (height === inputHeight) return
+  //   if (height < 35) {
+  //     setInputHeight(35)
+  //     return
+  //   }
+  //   if (height > 35 && height < 80) {
+  //     setInputHeight(height)
+  //   }
+  // }
   return (
     <View
       style={[styles.container, { position }, { paddingTop: isShow ? 0 : 10 }] as ViewStyle}
@@ -292,9 +293,9 @@ function InputToolsTar({
                       blurOnSubmit={false}
                       multiline={true}
                       maxLength={500}
-                      onContentSizeChange={handleContentSizeChange}
+                      // onContentSizeChange={handleContentSizeChange}
                       placeholder="Write a message"
-                      style={[styles.textInput, { height: inputHeight }]}
+                      style={[styles.textInput]}
                       onChangeText={setText}
                       value={text}
                       {...inputTextProps}
@@ -349,6 +350,8 @@ const styles = StyleSheet.create({
       ios: 8,
       android: 0,
     }),
+    minHeight: 35,
+    maxHeight: 80,
     borderRadius: 6,
     backgroundColor: '#fff',
     paddingHorizontal: 12,
