@@ -251,7 +251,7 @@ function Chat({}) {
           </View>
           <View style={{ flexDirection: 'row', marginVertical: 10, justifyContent: 'center' }}>
             {tags.map(tag => (
-              <Tag key={tag.bgColor} {...tag}></Tag>
+              <Tag key={tag.id} {...tag}></Tag>
             ))}
           </View>
         </View>

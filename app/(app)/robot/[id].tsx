@@ -26,7 +26,6 @@ import Back from '../../../assets/images/tabbar/back.svg'
 export default function Robot() {
   const router = useRouter()
   const navigation = useNavigation()
-  const [tagList, setTagList] = useState([])
   const botStore = usebotStore().botBaseInfo
   const userStore = useUserStore.getState().profile
   const tags = useTagList(botStore, TagFromType.Robot)
@@ -51,9 +50,7 @@ export default function Robot() {
       },
     })
   }, [])
-  useEffect(() => {
-    setTagList(tags)
-  }, [botStore])
+
   const renderButton = () => {
     if (isMinme) {
       if (botStore?.privateBotId) {
@@ -142,28 +139,27 @@ export default function Robot() {
         <View style={styles.user}>
           <LinearText text={botStore?.name} styles={styles.userName}></LinearText>
         </View>
-        <View style={styles.tagList}>
-          {tagList &&
-            tagList.map(item => (
-              <Tag key={item.bgColor} {...{ ...item, keyValue: botStore && botStore[item.key] }}></Tag>
-            ))}
-        </View>
+        <View style={styles.tagList}>{tags && tags.map(item => <Tag key={item.id} {...item}></Tag>)}</View>
         {
           <View style={styles.actions}>
             <>
               <TouchableOpacity
                 style={styles.actionsItem}
                 onPress={() => {
-                  postAddBotToChatList({ botUid: botStore?.uid }).then(res => {
-                    if (res) {
-                      usebotStore.setState({ botBaseInfo: res })
-                      router.push({
-                        pathname: `chat/${botStore?.id}`,
-                      })
-                      CallBackManagerSingle().execute('botList')
-                    }
-                  })
-                  return
+                  const { close } = Toast.loading({ message: 'Waiting', duration: 0 })
+                  postAddBotToChatList({ botUid: botStore?.uid })
+                    .then(res => {
+                      if (res) {
+                        usebotStore.setState({ botBaseInfo: res })
+                        router.push({
+                          pathname: `chat/${botStore?.id}`,
+                        })
+                        CallBackManagerSingle().execute('botList')
+                      }
+                    })
+                    .finally(() => {
+                      close()
+                    })
                 }}
               >
                 <Image

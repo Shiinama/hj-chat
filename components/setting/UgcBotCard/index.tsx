@@ -31,7 +31,7 @@ function UgcBotCard({ ld, onShowDetail, type }: any) {
           </View>
           <View style={styles.tagList}>
             {tags.map(tag => {
-              return <Tag key={tag.bgColor} {...tag}></Tag>
+              return <Tag key={tag.id} {...tag} textMaxWidth={70}></Tag>
             })}
           </View>
         </View>

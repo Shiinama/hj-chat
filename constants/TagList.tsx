@@ -18,30 +18,30 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
   let shabitags =
     botInfo?.tags?.length &&
     botInfo.tags.map(i => {
-      if (i.label === 'tools') {
+      if (i.id === 1) {
         return {
-          name: i.label,
+          name: 'Tools',
           id: 5,
           bgColor: '#DCF9F7',
           tagColor: '#055752',
           childrenEmoji: '🔨',
         }
       }
-      if (i.label === 'Entertainment') {
+      if (i.id === 2) {
         return {
-          name: i.label,
+          name: 'Entertainment',
           id: 7,
-          bgColor: '#FDF5DA',
-          tagColor: '#5F5207',
+          bgColor: '#DCF9F7',
+          tagColor: '#055752',
           childrenEmoji: '🎮',
         }
       }
-      if (i.label === 'Education') {
+      if (i.id === 3) {
         return {
-          name: i.label,
+          name: 'Education',
           id: 8,
-          bgColor: '#FDF5EA',
-          tagColor: '#5F5307',
+          bgColor: '#DCF9F7',
+          tagColor: '#055752',
           childrenEmoji: '🏫',
         }
       }
@@ -71,15 +71,15 @@ export const useTagList = (botInfo?: BotInfo, type?: TagFromType) => {
         tagColor: botInfo?.privateBotId ? (botInfo?.status === 'Public' ? '#165B0B' : '#6b7280') : '#705A0C',
         childrenIcon: <Wang width={14} height={14} />,
       },
-    (type === TagFromType.AllBot || isRobotandChat) &&
-      botInfo?.language && {
-        id: 4,
-        name: botInfo?.language,
-        bgColor: '#E7EFFF',
-        tagColor: '#05286F',
-        childrenIcon: <Huatong width={14} height={14} />,
-      },
+    (type === TagFromType.AllBot || isRobotandChat) && {
+      id: 4,
+      name: botInfo?.language || 'Multi Language',
+      bgColor: '#E7EFFF',
+      tagColor: '#05286F',
+      childrenIcon: <Huatong width={14} height={14} />,
+    },
   ]
+  // @ts-ignore
   let AllTags = tags.concat(shabitags).filter(Boolean)
   if (type === TagFromType.AllBot || type === TagFromType.MyBot) {
     AllTags = AllTags.slice(0, 3)

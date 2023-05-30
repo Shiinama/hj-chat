@@ -14,6 +14,7 @@
     "ios": "expo run:ios",
     "ios:dev": "cross-env REACT_APP_ENV=dev expo run:ios",
     "ios:test": "cross-env REACT_APP_ENV=test expo run:ios",
+    "ios:testd": "cross-env REACT_APP_ENV=test expo run:ios -d",
     "ios:prod": "cross-env REACT_APP_ENV=prod expo run:ios",
     "test": "jest --watchAll",
     "postinstall": "npx patch-package"
