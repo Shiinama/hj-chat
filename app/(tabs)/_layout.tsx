@@ -1,6 +1,6 @@
 import { Tabs, useFocusEffect } from 'expo-router'
 import { View, Image, Text } from 'react-native'
-import ProgressBar from '../../components/ProgressBar'
+import ProgressBar from '../../components/common/ProgressBar'
 import flashImg from '../../assets/images/tabbar/flash.png'
 import Chat from '../../assets/images/tabbar/chat.svg'
 import ChatAcitve from '../../assets/images/tabbar/chat_acitve.svg'

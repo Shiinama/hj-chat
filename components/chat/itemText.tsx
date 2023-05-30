@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid'
 import Svt from '../../assets/images/chat/svt.svg'
 import Blur from '../../assets/images/chat/blur.svg'
 import Translate from '../../assets/images/chat/translte.svg'
-import ShellLoading from '../loading'
+import ShellLoading from '../common/loading'
 
 type Props = {
   item: MessageDetail

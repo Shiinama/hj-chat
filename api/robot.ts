@@ -1,10 +1,11 @@
+import { BotInfo, UGCBotInfo } from '../types/BotTypes'
 import request from '../utils/request'
 
 /**
  * 工坊列表
  */
 export const getUgcBotList = params => {
-  return request({
+  return request<UGCBotInfo[]>({
     url: `/bot/getUgcBotList`,
     method: 'get',
     params,
@@ -26,7 +27,7 @@ export const queryCanCreateUgcBot = params => {
  * 工坊详情
  */
 export const getUgcBotDetail = params => {
-  return request({
+  return request<UGCBotInfo>({
     url: `/bot/getUgcBotDetail`,
     method: 'get',
     params,
@@ -34,7 +35,7 @@ export const getUgcBotDetail = params => {
 }
 
 export const postAddBotToChatList = data => {
-  return request({
+  return request<BotInfo>({
     url: `/bot/addBotToChatList`,
     method: 'post',
     data,

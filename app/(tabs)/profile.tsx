@@ -18,7 +18,7 @@ import CommunityIcon from '../../assets/images/profile/community.png'
 import * as WebBrowser from 'expo-web-browser'
 import useUserStore, { getConnections, getProfile, getUserEnergyInfo } from '../../store/userStore'
 import { genAvatarUrl } from '../../components/profileInfo/helper'
-import ProgressBar from '../../components/ProgressBar'
+import ProgressBar from '../../components/common/ProgressBar'
 
 export default function TabThreeScreen() {
   const router = useRouter()

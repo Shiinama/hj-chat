@@ -1,8 +1,8 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { renderImage } from '../../profileInfo/helper'
 import userStore from '../../../store/userStore'
-import LinearText from '../../linearText'
-import Tag from '../../tag'
+import LinearText from '../../common/linearText'
+import Tag from '../../common/tag'
 import { useTagList } from '../../../constants/TagList'
 import { memo } from 'react'
 function UgcBotCard({ ld, onShowDetail, type }: any) {

@@ -1,9 +1,9 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
-import RootStyles from '../constants/RootStyles'
-import Pined from '../assets/images/tabbar/pin.svg'
-import { renderImage } from './profileInfo/helper'
+import RootStyles from '../../constants/RootStyles'
+import Pined from '../../assets/images/tabbar/pin.svg'
+import { renderImage } from '../profileInfo/helper'
 import dayjs from 'dayjs'
-import userStore from '../store/userStore'
+import userStore from '../../store/userStore'
 
 function BotCard({ ld, onShowDetail, showPined }: any) {
   const userInfo = userStore.getState().profile

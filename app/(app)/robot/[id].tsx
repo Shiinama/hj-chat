@@ -14,8 +14,8 @@ import usebotStore from '../../../store/botStore'
 import useUserStore from '../../../store/userStore'
 import { renderImage } from '../../../components/profileInfo/helper'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
-import LinearText from '../../../components/linearText'
-import Tag from '../../../components/tag'
+import LinearText from '../../../components/common/linearText'
+import Tag from '../../../components/common/tag'
 import { ScrollView } from 'react-native'
 import { getBotSharingCode } from '../../../api/setting'
 import System from '../../../constants/System'
@@ -26,7 +26,6 @@ import Back from '../../../assets/images/tabbar/back.svg'
 export default function Robot() {
   const router = useRouter()
   const navigation = useNavigation()
-  const { name } = useSearchParams()
   const [tagList, setTagList] = useState([])
   const botStore = usebotStore().botBaseInfo
   const userStore = useUserStore.getState().profile
@@ -155,11 +154,16 @@ export default function Robot() {
               <TouchableOpacity
                 style={styles.actionsItem}
                 onPress={() => {
-                  postAddBotToChatList({ botUid: botStore?.uid })
-                  CallBackManagerSingle().execute('botList')
-                  router.push({
-                    pathname: `chat/${botStore?.id}`,
+                  postAddBotToChatList({ botUid: botStore?.uid }).then(res => {
+                    if (res) {
+                      usebotStore.setState({ botBaseInfo: res })
+                      router.push({
+                        pathname: `chat/${botStore?.id}`,
+                      })
+                      CallBackManagerSingle().execute('botList')
+                    }
                   })
+                  return
                 }}
               >
                 <Image

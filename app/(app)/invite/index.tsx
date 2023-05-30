@@ -5,7 +5,7 @@ import Copy from '../../../assets/images/profile/copy.svg'
 import Shim from '../../../components/full-image/shim'
 import { getInvitation } from '../../../api/proofile'
 import System from '../../../constants/System'
-import ShellLoading from '../../../components/loading'
+import ShellLoading from '../../../components/common/loading'
 import { useNavigation } from 'expo-router'
 import Clipboard from '@react-native-clipboard/clipboard'
 

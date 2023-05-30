@@ -1,3 +1,4 @@
+import { BotInfo } from '../types/BotTypes'
 import request from '../utils/request'
 import { getBotListLocal, setBotListLocal } from './botChatListCache'
 
@@ -5,7 +6,7 @@ export const botList = (flash?: boolean) => {
   return new Promise(async (resolve, reject) => {
     let localBotList = getBotListLocal()
     if (!localBotList || flash) {
-      request({
+      request<BotInfo[]>({
         url: '/bot/list',
         method: 'get',
       })
