@@ -12,7 +12,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     top: 144,
-    left: 65,
+    left: 55,
+    right: 55,
   },
   name: {
     fontSize: 24,
@@ -27,9 +28,10 @@ const styles = StyleSheet.create({
     color: '#5163A4',
   },
   bottom: {
-    marginHorizontal: 30,
     position: 'absolute',
     bottom: 58,
+    left: 30,
+    right: 30,
   },
   emailButton: {
     height: 48,
