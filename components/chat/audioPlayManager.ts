@@ -96,6 +96,11 @@ export class AudioPayManager {
     if (this.isRecording) {
       return false
     }
+    try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      })
+    } catch (error) {}
     if (this.currentSound) {
       try {
         console.log('currentSoundStopMethod 停止当前：')
