@@ -281,7 +281,6 @@ function Chat({}) {
     }
     SocketStreamManager().onUpdateMessage = updateMessage => {
       if (!updateMessage) return
-      console.log('updateMessage11', updateMessage)
       setChatData(pre => {
         const index = pre.findIndex(item => item.uid === updateMessage.uid)
         if (index < 0) {

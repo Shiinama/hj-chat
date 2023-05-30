@@ -27,7 +27,6 @@ export default function Robot() {
   const router = useRouter()
   const navigation = useNavigation()
   const botStore = usebotStore().botBaseInfo
-  console.log(botStore, 'botStore')
   const userStore = useUserStore.getState().profile
   const tags = useTagList(botStore, TagFromType.Robot).slice(0, 5)
   const isMinme = userStore?.id === botStore?.userId
