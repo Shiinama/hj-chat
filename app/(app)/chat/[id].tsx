@@ -34,7 +34,7 @@ function Chat({}) {
 
   const { profile } = useUserStore()
   const router = useRouter()
-  const tags = useTagList(botStore.getState().botBaseInfo, TagFromType.Chat)
+  const tags = useTagList(botStore.getState().botBaseInfo, TagFromType.Chat).slice(0, 4)
   const safeTop = useSafeAreaInsets().top
   /** 页面数据上下文 */
   const [chatPageValue, setChatPageValue] = useSetState<ChatPageState>({
