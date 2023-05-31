@@ -70,7 +70,10 @@ export default function Profile() {
         name: 'Telegram',
         icon: <Telegram />,
         isAcitve: userConnectedAccounts?.telegram?.id,
-        userName: userConnectedAccounts?.telegram?.firstName + userConnectedAccounts?.telegram?.lastName,
+        userName:
+          userConnectedAccounts?.telegram.username ||
+          userConnectedAccounts?.telegram?.firstName + userConnectedAccounts?.telegram?.lastName ||
+          '(Unnamed)',
         onPress: () => {
           setPageVisible(true)
         },

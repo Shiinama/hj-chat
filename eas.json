@@ -44,9 +44,6 @@
       }
     },
     "preview": {
-      "env": {
-        "REACT_APP_ENV": "test"
-      },
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"

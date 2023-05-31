@@ -2,7 +2,7 @@ import botStore from '../../../store/botStore'
 import { useBoolean, useDebounceEffect } from 'ahooks'
 import { useRouter } from 'expo-router'
 import { FC, useEffect, useState } from 'react'
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native'
+import { View, StyleSheet, FlatList, RefreshControl } from 'react-native'
 import { getUgcBotList } from '../../../api/robot'
 import UgcBotCard from '../UgcBotCard'
 import ShellLoading from '../../common/loading'
@@ -77,27 +77,15 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
       </View>
     )
   }
-
+  if (robotListData?.length === 0) {
+    return <NoData />
+  }
   return (
-    <ScrollView
+    <FlatList
       style={styles.page}
+      data={robotListData}
       keyboardDismissMode="on-drag"
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshLoading}
-          onRefresh={() => {
-            setRefreshLoading(true)
-            loadData()
-          }}
-          tintColor="#7A2EF6"
-          title="Pull refresh"
-          titleColor="#7A2EF6"
-        />
-      }
-    >
-      {robotListData?.length === 0 ? (
-        <NoData />
-      ) : (
+      renderItem={() => (
         <View>
           <CreateCard />
           {robotListData?.map((ld, i) => {
@@ -114,7 +102,19 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
           })}
         </View>
       )}
-    </ScrollView>
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshLoading}
+          onRefresh={() => {
+            setRefreshLoading(true)
+            loadData()
+          }}
+          tintColor="#7A2EF6"
+          title="Pull refresh"
+          titleColor="#7A2EF6"
+        />
+      }
+    ></FlatList>
   )
 }
 export default RobotList
