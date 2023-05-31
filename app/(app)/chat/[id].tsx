@@ -60,11 +60,12 @@ function Chat({}) {
     pageSize: 10, // 每页加载多少条数据
     hasMore: true,
   })
+
   const currentSendMsgInfo = useRef<MesageSucessType>()
   useEffect(() => {
     try {
+      Audio.requestPermissionsAsync()
       new Audio.Recording()
-
       Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
