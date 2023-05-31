@@ -60,6 +60,9 @@ export default {
     associatedDomains: ['pn6b6a232e-973a-405c-969a-a546189fda16'],
     supportsTablet: true,
     bundleIdentifier: 'ai.myshell.app',
+    infoPlist: {
+      UIBackgroundModes: ['audio'],
+    },
   },
   android: {
     icon: './assets/Android/Play_Store/App_Icon_512x512.png',
@@ -110,7 +113,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev',
+    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },

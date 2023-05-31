@@ -30,26 +30,23 @@ const RecordButton = ({
   const [buttonState, setButtonState] = useState('penddingRecording')
   const [isSound, setIsSound] = useState(false)
   const playing = useRef(false)
-
-  function handlestartRecording() {
-    Audio.requestPermissionsAsync().then(({ granted }) => {
-      if (!granted) {
-        alert('请允许访问麦克风以录制音频！请到设置中')
-      } else {
-        AudioPayManagerSingle().pause(true)
-        const success = startRecording()
-        if (success) {
-          AudioPayManagerSingle().isRecording = true
-          setShowAni(false)
-          setButtonState('recording')
-          setTimeout(() => {
-            AnimationRef?.current?.startAnimation()
-          }, 100)
-        }
+  async function handlestartRecording() {
+    const { granted } = await Audio.requestPermissionsAsync()
+    if (!granted) {
+      alert('Please allow access to the microphone to record audio! Please go to Settings')
+    } else {
+      AudioPayManagerSingle().pause(true)
+      const success = await startRecording()
+      if (success) {
+        AudioPayManagerSingle().isRecording = true
+        setShowAni(false)
+        setButtonState('recording')
+        setTimeout(() => {
+          AnimationRef?.current?.startAnimation()
+        }, 100)
       }
-    })
+    }
   }
-
   useEffect(() => {
     playing.current = isSound
   }, [isSound])

@@ -15,13 +15,7 @@ import ImgPlaceholder from '../../../assets/images/img_placeholder.png'
 import useUserStore, { getConnections, getProfile } from '../../../store/userStore'
 import { Button, Popup, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useBoolean, useDebounceEffect, useDeepCompareEffect } from 'ahooks'
-import {
-  getIsUserNameAvailable,
-  getUserConnectedAccounts,
-  postConnectToTelegram,
-  postUpdateUserName,
-  UserConnectedAccounts,
-} from '../../../api/proofile'
+import { getIsUserNameAvailable, postConnectToTelegram, postUpdateUserName } from '../../../api/proofile'
 import EditAvatarModal from '../../../components/profileInfo/EditAvatarModal'
 import { genAvatarUrl } from '../../../components/profileInfo/helper'
 
@@ -76,7 +70,7 @@ export default function Profile() {
         name: 'Telegram',
         icon: <Telegram />,
         isAcitve: userConnectedAccounts?.telegram?.id,
-        userName: userConnectedAccounts?.telegram?.firstName,
+        userName: userConnectedAccounts?.telegram?.firstName + userConnectedAccounts?.telegram?.lastName,
         onPress: () => {
           setPageVisible(true)
         },
@@ -157,13 +151,14 @@ export default function Profile() {
                       ...styles.connectionsItem,
                       ...(v?.isAcitve ? styles.connectionsActiveItem : {}),
                     }}
+                    disabled={!!v?.isAcitve}
                     onPress={v.onPress}
                     key={i}
                   >
                     <View style={styles.itemBody}>
                       {v?.isAcitve ? <ActiveIcon style={styles.activeIcon} /> : null}
                       <Text style={styles.connectionsItemText}>
-                        {v?.isAcitve ? v?.name : `Connect with ${v?.name}`}
+                        {v?.isAcitve ? v?.userName : `Connect with ${v?.name}`}
                       </Text>
                     </View>
                     {v?.icon}
@@ -194,7 +189,9 @@ export default function Profile() {
           }}
           onMessage={e => {
             setPageVisible(false)
-            postConnectToTelegram(JSON.parse(e.nativeEvent.data))
+            postConnectToTelegram(JSON.parse(e.nativeEvent.data)).then(res => {
+              getConnections()
+            })
           }}
         />
       </Popup.Page>

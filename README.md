@@ -50,7 +50,7 @@
 
 `eas build -p ios`
 
-跑 debug 包或者生产包(同理可以加 -d)
+跑 debug 包或者生产包(同理可以加 -d 自动签名)
 
 `npx expo run:android --variant debug`
 
