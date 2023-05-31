@@ -82,6 +82,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
         style={styles.page}
         data={robotListData}
         keyboardDismissMode="on-drag"
+        keyExtractor={item => item.id}
         ListHeaderComponent={() => <CreateCard />}
         renderItem={({ item }) => {
           return (
@@ -91,7 +92,6 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
                   onShowDetail(e)
                 }}
                 type={TagFromType.AllBot}
-                key={item.id}
                 ld={item}
               />
             </View>
