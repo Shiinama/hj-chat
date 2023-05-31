@@ -82,6 +82,7 @@ export default function Profile() {
   }, [userConnectedAccounts])
   const saveAction = () => {
     setSaveLoading(true)
+    setBtnDisabled(true)
     getIsUserNameAvailable({ name })
       .then(res => {
         if (res) {
