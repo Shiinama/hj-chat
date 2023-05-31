@@ -15,11 +15,7 @@ export interface RobotListProps {
   /** 请求的参数 */
   requestParams: any
 }
-const wait = timeout => {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout)
-  })
-}
+
 const RobotList: FC<RobotListProps> = ({ requestParams }) => {
   const [robotListData, setRobotListData] = useState([])
   const [loading, { setFalse, setTrue }] = useBoolean(true)
@@ -81,40 +77,40 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
     return <NoData />
   }
   return (
-    <FlatList
-      style={styles.page}
-      data={robotListData}
-      keyboardDismissMode="on-drag"
-      renderItem={() => (
-        <View>
-          <CreateCard />
-          {robotListData?.map((ld, i) => {
-            return (
+    <>
+      <FlatList
+        style={styles.page}
+        data={robotListData}
+        keyboardDismissMode="on-drag"
+        ListHeaderComponent={() => <CreateCard />}
+        renderItem={({ item }) => {
+          return (
+            <View>
               <UgcBotCard
                 onShowDetail={e => {
                   onShowDetail(e)
                 }}
                 type={TagFromType.AllBot}
-                key={ld.id}
-                ld={ld}
+                key={item.id}
+                ld={item}
               />
-            )
-          })}
-        </View>
-      )}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshLoading}
-          onRefresh={() => {
-            setRefreshLoading(true)
-            loadData()
-          }}
-          tintColor="#7A2EF6"
-          title="Pull refresh"
-          titleColor="#7A2EF6"
-        />
-      }
-    ></FlatList>
+            </View>
+          )
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshLoading}
+            onRefresh={() => {
+              setRefreshLoading(true)
+              loadData()
+            }}
+            tintColor="#7A2EF6"
+            title="Pull refresh"
+            titleColor="#7A2EF6"
+          />
+        }
+      ></FlatList>
+    </>
   )
 }
 export default RobotList
