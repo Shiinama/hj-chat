@@ -13,19 +13,25 @@ const AllRobot: FC<AllRobotProps> = () => {
 
   useDeepCompareEffect(() => {
     const nameObj = params?.name ? { name: params?.name } : {}
-    if (filterValue?.type?.includes(-1)) {
+    if (filterValue?.type?.includes(-2)) {
       setParams(nameObj)
     } else {
       let filterParams = {}
+      let tgSupported = {}
       for (const key in filterValue) {
         if (Object.prototype.hasOwnProperty.call(filterValue, key)) {
           const item = filterValue[key]
           if (item?.length > 0) {
-            filterParams[key] = item?.join()
+            if (key === 'type') {
+              filterParams[key] = item?.filter(v => v !== -1).join()
+              tgSupported = item?.includes(-1) ? { tgSupported: 1 } : {}
+            } else {
+              filterParams[key] = item?.join()
+            }
           }
         }
       }
-      setParams({ ...nameObj, ...(filterParams || {}) })
+      setParams({ ...nameObj, ...(filterParams || {}), ...tgSupported })
     }
   }, [filterValue])
   return (

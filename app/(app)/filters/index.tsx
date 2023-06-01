@@ -11,7 +11,7 @@ import CheckIcon from '../../../assets/images/press_no_icon.svg'
 import CheckedIcon from '../../../assets/images/press_yes_icon.svg'
 import { useTranslations } from '../../../hooks/useTranslations'
 import useFilterStore from '../../../components/setting/Filter/filterStore'
-import { useDeepCompareEffect, useSetState } from 'ahooks'
+import { useDeepCompareEffect } from 'ahooks'
 
 export interface FiltersProps {}
 
@@ -78,7 +78,7 @@ const Filters: FC<FiltersProps> = () => {
   }
   const addFilter = (name, key) => {
     // all type 的情况
-    if (key === -1) {
+    if (key === -2) {
       setCurrent(allSelectVal)
       return false
     }
@@ -86,7 +86,7 @@ const Filters: FC<FiltersProps> = () => {
   }
   const removeFilter = (name, key) => {
     // all type 的情况
-    if (key === -1) {
+    if (key === -2) {
       setCurrent({})
       return false
     }

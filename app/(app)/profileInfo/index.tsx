@@ -71,7 +71,7 @@ export default function Profile() {
         icon: <Telegram />,
         isAcitve: userConnectedAccounts?.telegram?.id,
         userName:
-          userConnectedAccounts?.telegram.username ||
+          userConnectedAccounts?.telegram?.username ||
           userConnectedAccounts?.telegram?.firstName + userConnectedAccounts?.telegram?.lastName ||
           '(Unnamed)',
         onPress: () => {

@@ -74,6 +74,7 @@ export default {
     purchase_on_tip: 'Purchase one on OpenSea:',
     all_robot: 'All Robot',
     my_shell: 'My Shell',
+    tg_supported: 'Telegram Supported',
     nothing_found: 'Nothing found',
     nothing_found_tips: "We couldn't find anything with this criteria",
     all: 'All Type',
