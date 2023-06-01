@@ -5,6 +5,8 @@ module.exports = (() => {
 
   const { transformer, resolver } = config
 
+  config.transformer.minifierConfig.compress.drop_console = true
+
   config.transformer = {
     ...transformer,
     babelTransformerPath: require.resolve('react-native-svg-transformer'),

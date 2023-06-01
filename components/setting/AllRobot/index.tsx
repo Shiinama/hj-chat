@@ -20,14 +20,13 @@ const AllRobot: FC<AllRobotProps> = () => {
       let tgSupported = {}
       for (const key in filterValue) {
         if (Object.prototype.hasOwnProperty.call(filterValue, key)) {
-          const item = filterValue[key]
+          let item = filterValue[key]
+          if (key === 'type') {
+            tgSupported = item?.includes(-1) ? { tgSupported: 1 } : {}
+            item = item?.filter(v => v !== -1).join()
+          }
           if (item?.length > 0) {
-            if (key === 'type') {
-              filterParams[key] = item?.filter(v => v !== -1).join()
-              tgSupported = item?.includes(-1) ? { tgSupported: 1 } : {}
-            } else {
-              filterParams[key] = item?.join()
-            }
+            filterParams[key] = item?.join()
           }
         }
       }
