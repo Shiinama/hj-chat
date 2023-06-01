@@ -45,8 +45,7 @@
     },
     "preview": {
       "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease"
+        "gradleCommand": ":app:bundleRelease"
       },
       "ios": {
         "resourceClass": "m-medium"
