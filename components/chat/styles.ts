@@ -52,6 +52,7 @@ export default StyleSheet.create({
     width: '100%',
     borderTopWidth: 1,
     fontSize: 14,
+
     borderColor: '#E2E8F0',
     overflow: 'hidden',
     // borderBottomWidth: 1,

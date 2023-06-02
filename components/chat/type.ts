@@ -56,6 +56,7 @@ export enum MsgEvents {
   EXCEPTION = 'exception',
   MSG_TEXT_STREAM = 'text_stream',
   MSG_AUDIO_STREAM = 'audio_stream',
+  REPLY_MESSAGE_CREATED = 'reply_message_created',
 }
 
 export type MeaageErrorType = {

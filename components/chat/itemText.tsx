@@ -82,8 +82,8 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
   }
   const loadingRender = () => {
     return (
-      <View style={styles.loadingBox}>
-        <Text style={styles.loadingText}>replying</Text>
+      <View style={{ ...styles.loadingBox, backgroundColor: item.replyUid ? '#F6F6F6' : '#F1EAFE' }}>
+        <Text style={styles.loadingText}>Replying</Text>
         <View style={styles.loadingIcon}>
           <ShellLoading></ShellLoading>
         </View>
@@ -120,7 +120,7 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
   const caluTranslate = useMemo(() => {
     return translateMessage || item.translation
   }, [translateMessage, item.translation])
-  if (!renderText) return null
+  if (!renderText) return loadingRender()
   return (
     <>
       <View style={[styles.content, textMsg ? styles.textContent : {}]}>
@@ -152,9 +152,8 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
       </View>
 
       {item?.replyUid && <View style={styles.buttonGroup}>{renderReply()}</View>}
-      {item?.type === 'LOADING' && !renderText && loadingRender()}
     </>
   )
 }
 
-export default memo(MessageText)
+export default MessageText

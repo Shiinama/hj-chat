@@ -42,9 +42,6 @@ function Chat({}) {
     selectedItems: [],
   })
   const navigation = useNavigation()
-  const isPending = useRef(false)
-  // 给loading生成一个随机id，这里是用replyUid来判断是否是回复的信息，loading展示为回复数据，所以随便弄一个id当id
-  const randomId = useId()
 
   // const [recording, setRecording] = useState(null)
   // 不需要重新渲染的无需存放useState,造成不必要的渲染
@@ -118,12 +115,6 @@ function Chat({}) {
     })
       // @ts-ignore
       .then(({ data }: { data: Array<MessageDto> }) => {
-        // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
-        // data.sort(
-        //   (a, b) =>
-        //     new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
-        // );
-        // chatDataInfo.current.data = data
         data?.map(item => {
           // 查找正在接收的内容，type置为loading
           const msgKey = item.botId + '&BOT&' + item.replyUid
@@ -262,9 +253,6 @@ function Chat({}) {
 
   // socket回调
   useEffect(() => {
-    SocketStreamManager().onPending = pending => {
-      isPending.current = pending
-    }
     SocketStreamManager().onSendMessage = data => {
       currentSendMsgInfo.current = data
       if (!data?.data) return
@@ -288,21 +276,36 @@ function Chat({}) {
           return pre
         }
         pre[index].text = updateMessage.text
-        return JSON.parse(JSON.stringify(pre))
+        return [...pre]
       })
     }
-    SocketStreamManager().onMessageStreamStart = data => {
+    // SocketStreamManager().onMessageStreamStart = data => {
+    //   setChatData(list => {
+    //     // 开始接收流 更新或新增一个回复的item
+    //     let have = false
+    //     const newList = list.map(item => {
+    //       if (item.replyUid === data.replyMessage?.replyUid) {
+    //         have = true
+    //         item = { ...data.replyMessage, type: 'LOADING' }
+    //       }
+    //       return item
+    //     })
+    //     return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
+    //   })
+    // }
+    SocketStreamManager().onResMessageCreated = data => {
+      if (!data) return
       setChatData(list => {
         // 开始接收流 更新或新增一个回复的item
         let have = false
         const newList = list.map(item => {
-          if (item.replyUid === data.replyMessage?.replyUid) {
+          if (item.replyUid === data?.replyUid) {
             have = true
-            item = { ...data.replyMessage, type: 'LOADING' }
+            item = { ...data, type: 'LOADING' }
           }
           return item
         })
-        return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
+        return !have ? [{ ...data, type: 'LOADING' }, ...newList] : [...newList]
       })
     }
     // SocketStreamManager().onResMessage = resMessage => {
@@ -347,9 +350,6 @@ function Chat({}) {
     }
   }
 
-  const listData = useMemo(() => {
-    return chatData
-  }, [chatData, isPending.current, randomId])
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <ChatContext.Provider value={{ value: chatPageValue, setValue: setChatPageValue }}>
@@ -384,7 +384,7 @@ function Chat({}) {
         }}
         flatListRef={flatList}
         flatListProps={{
-          data: listData,
+          data: chatData,
           inverted: true,
           onTouchStart: () => {
             // inverted: true 颠倒列表，往上滑就是加载更多了 上变为下，数据也是一样，加载完数据就无需排序和调用scrollEnd了，并且新增一条消息也无需调用scrollEnd

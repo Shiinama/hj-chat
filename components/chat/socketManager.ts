@@ -29,21 +29,17 @@ export class SocketStream {
 
   private onTransalteMessage: { [key: string]: (item: MessageDto) => void } = {}
 
-  private reqIds: Set<string> = new Set()
+  onResMessage: (item: MessageDto) => void
+
+  onResMessageCreated: (item: MessageDto) => void
 
   onMessageStreamStart: (item: MessageStreamText) => void
 
-  onResMessage: (item: MessageDto) => void
-
   onSendMessage: (item: MesageSucessType) => void
-
-  onPending: (pending: boolean) => void
 
   onUpdateMessage: (item: MessageDto) => void
 
   private playFragment = new AudioFragmentPlay()
-
-  private timeClearPending: NodeJS.Timeout
 
   currentBot
 
@@ -72,6 +68,7 @@ export class SocketStream {
     this.socket.on(MsgEvents.MSG_REPLIED, e => this.onMessageReplied(e))
     this.socket.on(MsgEvents.MSG_UPDATED, e => this.onMessageUpdated(e))
     this.socket.on(MsgEvents.MSG_TRANSLATED, e => this.onMessageTranslated(e))
+    this.socket.on(MsgEvents.REPLY_MESSAGE_CREATED, e => this.onMessageReplyCreated(e))
 
     this.socket.on(MsgEvents.ENERGY_INFO, e => this.onEnergyInfo(e))
     this.socket.on(MsgEvents.NO_ENOUGH_ENERGY, e => this.onNoEnoughEnergy(e))
@@ -94,9 +91,7 @@ export class SocketStream {
 
   private onMessageSent(data: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.data.botId) return
-    if (data?.reqId) {
-      this.addReqIds(data?.reqId)
-    }
+
     this.onSendMessage?.(data)
     CallBackManagerSingle().execute('botList')
   }
@@ -118,6 +113,11 @@ export class SocketStream {
     } else {
       return `data:audio/mp3;base64,${arrayBufferToBase64(this.currentAudioStream[msgKey])}`
     }
+  }
+
+  private async onMessageReplyCreated({ data }: MesageSucessType) {
+    if (this.currentBot?.botBaseInfo.id !== data.botId) return
+    this.onResMessageCreated(data)
   }
 
   private async onMessageAudioStream(data: MessageStreamTextRes) {
@@ -168,41 +168,21 @@ export class SocketStream {
       console.log('error:', error)
     }
   }
-  private onMessageReplied({ data, reqId }: MesageSucessType) {
+  private onMessageReplied({ data }: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
-    if (reqId) {
-      // removeReqIds(reqId)
-      this.removeReqIds(reqId)
-    }
     this.onResMessage?.(data)
     CallBackManagerSingle().execute('botList')
   }
-  private onMessageTranslated({ reqId, data }: MesageSucessType) {
+  private onMessageTranslated({ data }: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     const msgKey = data?.botId + '&BOT&' + data?.replyUid
     this.onTransalteMessage[msgKey](data)
   }
-  private onEnergyInfo({ reqId, data }: MesageSucessType) {}
+  private onEnergyInfo({ data }: MesageSucessType) {}
 
   private onMessageUpdated({ data }: MesageSucessType) {
-    console.log(data, this.currentBot.botBaseInfo.id, 'updateMessage')
     if (this.currentBot.botBaseInfo.id !== data.botId) return
     this.onUpdateMessage(data)
-  }
-
-  private removeReqIds(reqId: string) {
-    this.reqIds.delete(reqId)
-    this.onPending?.(this.reqIds.size > 0)
-  }
-
-  private addReqIds(reqId: string) {
-    this.reqIds.add(reqId)
-    this.onPending?.(true)
-    this.timeClearPending && clearTimeout(this.timeClearPending)
-    this.timeClearPending = setTimeout(() => {
-      this.reqIds.clear()
-      this.onPending?.(false)
-    }, 10000)
   }
 
   sendMessage(ChatEvent, data) {
@@ -221,11 +201,7 @@ export class SocketStream {
     this.currentTextStream[msgKey] += msg.text
     const resMsg = { ...msg, text: this.currentTextStream[msgKey], msgLocalKey: msgKey }
     this.onTextStreamUpdate[msgKey]?.(resMsg)
-    // console.log(msgKey, 'msgKey')
-    if (msg.index === 0) {
-      this.onMessageStreamStart?.(resMsg)
-    }
-    // console.log('addTextStream', msgKey, this.onTextStreamUpdate, resMsg)
+
     if (msg.isFinal) {
       delete this.currentTextStream[msgKey]
       delete this.onTextStreamUpdate[msgKey]

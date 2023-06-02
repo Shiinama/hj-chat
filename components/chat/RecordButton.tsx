@@ -71,7 +71,6 @@ const RecordButton = ({
       }
     })
     try {
-      console.log(sound)
       setSound(sound)
       setAudioFileUri(uri)
       setButtonState('playing')
