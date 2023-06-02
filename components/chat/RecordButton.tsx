@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, Animated, Easing, TouchableOpacity, Text, Alert } from 'react-native'
+import { StyleSheet, Animated, Easing, TouchableOpacity, Text, Alert, Keyboard } from 'react-native'
 import Huatong from '../../assets/images/chat/huatong.svg'
 import { Audio } from 'expo-av'
 import Delete from '../../assets/images/chat/delete.svg'
@@ -9,7 +9,6 @@ import Pause from '../../assets/images/chat/pause.svg'
 import Play from '../../assets/images/chat/play.svg'
 import Send from '../../assets/images/chat/send.svg'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import { useIntervalTime } from '../../utils/time'
 import AudioPayManagerSingle from './audioPlayManager'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 const RecordButton = ({
@@ -21,7 +20,6 @@ const RecordButton = ({
   setShowAni,
   setAudioFileUri,
   recordMaxSecond,
-  durationMillis,
   isShow,
   AnimationRef,
 }) => {

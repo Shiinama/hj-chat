@@ -1,16 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Keyboard,
-  View,
-  TextInput,
-  ViewStyle,
-  Platform,
-  Image,
-  TouchableOpacity,
-  NativeSyntheticEvent,
-  TextInputContentSizeChangeEventData,
-  TextInputProps,
-} from 'react-native'
+import { Keyboard, View, TextInput, ViewStyle, Platform, Image, TouchableOpacity, TextInputProps } from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -41,11 +30,9 @@ export interface MTextInputProps extends TextInputProps {
 type Props = {
   minInputToolbarHeight: number
   inputTextProps: MTextInputProps
-  inputHeight
   barHeight
   setBarHeight
   toolsBottm
-  setInputHeight
   onInputSizeChanged?: (layout: { width: number; height: number }) => void
   haveHistory?: boolean
 }
@@ -53,8 +40,6 @@ type Props = {
 function InputToolsTar({
   setBarHeight,
   barHeight,
-  inputHeight,
-  setInputHeight,
   inputTextProps,
   haveHistory,
   toolsBottm,
@@ -81,6 +66,7 @@ function InputToolsTar({
   // 控制话筒弹出
   const [isShow, setIsShow] = useState(false)
   const [showAni, setShowAni] = useState(true)
+  // 控制send按钮
   const [showSend, setShowSend] = useState(true)
   const inputRef = useRef(null)
   const router = useRouter()
@@ -88,25 +74,21 @@ function InputToolsTar({
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
       if (Platform.OS === 'android') return
-      setShowSend(false)
       setIsShow(true)
       setPosition('relative')
     })
     const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => {
       if (Platform.OS === 'android') return
-      setShowSend(true)
       setPosition('absolute')
     })
 
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       if (Platform.OS === 'ios') return
-      setShowSend(false)
       setIsShow(true)
       setPosition('relative')
     })
     const KeyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       if (Platform.OS === 'ios') return
-      setShowSend(true)
       setPosition('absolute')
     })
     return () => {
@@ -116,6 +98,10 @@ function InputToolsTar({
       keyboardWillHideListener?.remove()
     }
   }, [])
+
+  useEffect(() => {
+    setShowSend(!text.length)
+  }, [text, position])
   const handleButtonPress = () => {
     if (inputRef.current) {
       inputRef.current.focus()
@@ -165,8 +151,7 @@ function InputToolsTar({
       <RecordButton
         isShow={isShow}
         AnimationRef={AnimationRef}
-        recordMaxSecond={59}
-        durationMillis={durationMillis}
+        recordMaxSecond={129}
         setIsShow={setIsShow}
         setShowAni={setShowAni}
         setAudioFileUri={setAudioFileUri}
@@ -212,7 +197,13 @@ function InputToolsTar({
       <>
         {isShow ? (
           showSend ? (
-            <TouchableOpacity style={styles.toolsIcon} onPress={() => setIsShow(false)}>
+            <TouchableOpacity
+              style={styles.toolsIcon}
+              onPress={() => {
+                setIsShow(false)
+                Keyboard.dismiss()
+              }}
+            >
               <Image style={styles.Icon} source={audio}></Image>
             </TouchableOpacity>
           ) : (
@@ -245,20 +236,6 @@ function InputToolsTar({
       </>
     )
   }, [isShow, showSend, text])
-  // 不用算，minHeight 35  maxHeight 80就可以了
-  // const handleContentSizeChange = ({
-  //   nativeEvent: { contentSize },
-  // }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-  //   let height = contentSize.height
-  //   if (height === inputHeight) return
-  //   if (height < 35) {
-  //     setInputHeight(35)
-  //     return
-  //   }
-  //   if (height > 35 && height < 80) {
-  //     setInputHeight(height)
-  //   }
-  // }
   return (
     <View
       style={[styles.container, { position }, { paddingTop: isShow ? 0 : 10 }] as ViewStyle}
@@ -293,7 +270,6 @@ function InputToolsTar({
                       blurOnSubmit={false}
                       multiline={true}
                       maxLength={500}
-                      // onContentSizeChange={handleContentSizeChange}
                       placeholder="Write a message"
                       style={[styles.textInput]}
                       onChangeText={setText}
@@ -351,7 +327,7 @@ const styles = StyleSheet.create({
       android: 0,
     }),
     minHeight: 35,
-    maxHeight: 80,
+    maxHeight: 105,
     borderRadius: 6,
     backgroundColor: '#fff',
     paddingHorizontal: 12,

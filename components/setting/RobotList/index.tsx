@@ -83,7 +83,7 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
         data={robotListData}
         keyboardDismissMode="on-drag"
         keyExtractor={item => item.id}
-        ListHeaderComponent={() => <CreateCard />}
+        ListHeaderComponent={<CreateCard />}
         renderItem={({ item }) => {
           return (
             <View>

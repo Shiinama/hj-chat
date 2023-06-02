@@ -56,7 +56,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
       },
     })
   }
-  if (loading) {
+  if (!refreshLoading && loading) {
     return (
       <View style={{ minHeight: 210, alignItems: 'center' }}>
         <ShellLoading></ShellLoading>
