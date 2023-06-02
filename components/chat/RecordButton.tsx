@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, Animated, Easing, TouchableOpacity, Text, Alert, Keyboard } from 'react-native'
+import { StyleSheet, TouchableOpacity, Text, Alert } from 'react-native'
 import Huatong from '../../assets/images/chat/huatong.svg'
 import { Audio } from 'expo-av'
 import Delete from '../../assets/images/chat/delete.svg'
@@ -10,6 +10,7 @@ import Play from '../../assets/images/chat/play.svg'
 import Send from '../../assets/images/chat/send.svg'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import AudioPayManagerSingle from './audioPlayManager'
+import { AppState } from 'react-native'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 const RecordButton = ({
   audioFileUri,
@@ -70,6 +71,7 @@ const RecordButton = ({
       }
     })
     try {
+      console.log(sound)
       setSound(sound)
       setAudioFileUri(uri)
       setButtonState('playing')
@@ -84,6 +86,11 @@ const RecordButton = ({
   // }, [durationMillis])
 
   useEffect(() => {
+    const appState = AppState.addEventListener('change', state => {
+      if (state === 'background' && buttonState === 'recording') {
+        stopRecord()
+      }
+    })
     CallBackManagerSingle().add('recordingChangeBtn', (durationMill: number) => {
       AnimationRef?.current?.updateDurationMillis?.(durationMill)
       if (durationMill && recordMaxSecond && durationMill >= recordMaxSecond * 1000) {
@@ -93,8 +100,9 @@ const RecordButton = ({
     })
     return () => {
       CallBackManagerSingle().remove('recordingChangeBtn')
+      appState.remove()
     }
-  }, [])
+  }, [buttonState])
 
   const playSound = () => {
     if (!isSound) {

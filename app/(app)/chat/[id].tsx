@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, AppState, FlatList, Alert } from 'react-native'
+import { Text, View, TouchableOpacity, FlatList, Alert } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useNavigation } from 'expo-router'
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
