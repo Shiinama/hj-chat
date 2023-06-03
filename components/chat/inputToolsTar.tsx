@@ -20,7 +20,6 @@ export interface MTextInputProps extends TextInputProps {
   onEndEditText?: (value: string) => boolean
   startRecording: () => void
   stopRecording: () => void
-  durationMillis
   setAuInfo: (audioFileUri: string) => void
   uid: string
   userId: number
@@ -46,7 +45,6 @@ function InputToolsTar({
   minInputToolbarHeight,
 }: Props) {
   const {
-    durationMillis,
     startRecording,
     stopRecording,
     setAuInfo,
@@ -281,7 +279,7 @@ function InputToolsTar({
                   {renderRightInput}
                 </>
               ) : (
-                <AudioAnimation ref={AnimationRef} durationMillis={durationMillis}></AudioAnimation>
+                <AudioAnimation ref={AnimationRef}></AudioAnimation>
               )}
             </>
           }

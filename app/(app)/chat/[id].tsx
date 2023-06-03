@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity, FlatList, Alert } from 'react-native'
 import { v4 as uuidv4 } from 'uuid'
 import { useNavigation } from 'expo-router'
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import ChatItem from '../../../components/chat/chatItem'
@@ -48,7 +48,6 @@ function Chat({}) {
   const recordingRef = useRef<Audio.Recording>()
   const [loading, setLoading] = useState<boolean>(true)
   const [chatData, setChatData] = useState<ChatItem[]>([])
-  const [durationMillis, setDurationMillis] = useState(0)
   const [voice, setVoice] = useState(null)
   const flatList = useRef<FlatList>()
   const [showLoadMoring, setShowLoadMoring] = useState(false)
@@ -287,20 +286,6 @@ function Chat({}) {
         return [...pre]
       })
     }
-    // SocketStreamManager().onMessageStreamStart = data => {
-    //   setChatData(list => {
-    //     // 开始接收流 更新或新增一个回复的item
-    //     let have = false
-    //     const newList = list.map(item => {
-    //       if (item.replyUid === data.replyMessage?.replyUid) {
-    //         have = true
-    //         item = { ...data.replyMessage, type: 'LOADING' }
-    //       }
-    //       return item
-    //     })
-    //     return !have ? [{ ...data.replyMessage, type: 'LOADING' }, ...newList] : [...newList]
-    //   })
-    // }
     SocketStreamManager().onResMessageCreated = data => {
       if (!data) return
       setChatData(list => {
@@ -368,7 +353,6 @@ function Chat({}) {
           userId,
           pinned,
           setAuInfo,
-          durationMillis,
           startRecording,
           stopRecording,
           onSubmitEditing: v => {},

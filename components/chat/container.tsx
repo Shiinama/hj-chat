@@ -22,7 +22,6 @@ function Container({
   ...restProps
 }: FishChatProps): JSX.Element {
   const [maxHeight, setMaxHeight] = useState(0)
-  const [inputHeight, setInputHeight] = useState(35)
   const [barHeight, setBarHeight] = useState(0)
   // 工具栏高度
   const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(0)
@@ -48,9 +47,9 @@ function Container({
     setToolsBottm(10)
   }
   useEffect(() => {
-    setMinInputToolbarHeight(28 + inputHeight)
+    setMinInputToolbarHeight(63)
     setMessagesContainerHeight(maxHeight - barHeight - boardHeight)
-  }, [inputHeight, maxHeight, boardHeight, barHeight])
+  }, [maxHeight, boardHeight, barHeight])
   const InternalProps = {
     onKeyboardWillShow,
     onKeyboardWillHide,
@@ -72,12 +71,10 @@ function Container({
         </KeyboardAvoidingView>
         {/* inputToolbar下方输入框工具栏容器 */}
         <InputToolsTar
-          inputHeight={inputHeight}
           haveHistory={haveHistory}
           barHeight={barHeight}
           toolsBottm={toolsBottm}
           setBarHeight={setBarHeight}
-          setInputHeight={setInputHeight}
           inputTextProps={inputTextProps as any}
           minInputToolbarHeight={restProps.InputToolBarHeight || minInputToolbarHeight}
         ></InputToolsTar>

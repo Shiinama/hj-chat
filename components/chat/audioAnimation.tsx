@@ -4,9 +4,9 @@ import { Text, View, StyleSheet } from 'react-native'
 import { forwardRef } from 'react'
 import { formatTime } from '../../utils/time'
 
-function AudioAnimation(props, ref) {
+function AudioAnimation(_, ref) {
   // console.log('aare-render:', 'AudioAnimation')
-  const [durMills, setDurMills] = useState(props.durationMillis || 0)
+  const [durMills, setDurMills] = useState(0)
   const animationRef = useRef<Lottie>(null)
   useImperativeHandle(ref, () => ({
     stopAnimation,
@@ -14,10 +14,6 @@ function AudioAnimation(props, ref) {
     resumeAnimation,
     updateDurationMillis,
   }))
-
-  useEffect(() => {
-    setDurMills(props.durationMillis)
-  }, [props.durationMillis])
 
   function stopAnimation() {
     if (animationRef.current) {
