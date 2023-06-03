@@ -268,6 +268,14 @@ function Chat({}) {
       })
       flatList.current?.scrollToIndex?.({ index: 0 })
     }
+    SocketStreamManager().onMessageClear = data => {
+      if (!data) return
+      setChatData(list => {
+        // 发送消息成功添加一个待回复的item
+        return [data, ...list]
+      })
+      flatList.current?.scrollToIndex?.({ index: 0 })
+    }
     SocketStreamManager().onUpdateMessage = updateMessage => {
       if (!updateMessage) return
       setChatData(pre => {

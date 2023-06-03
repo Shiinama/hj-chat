@@ -31,6 +31,8 @@ export class SocketStream {
 
   onResMessage: (item: MessageDto) => void
 
+  onMessageClear: (item: MessageDto) => void
+
   onResMessageCreated: (item: MessageDto) => void
 
   onMessageStreamStart: (item: MessageStreamText) => void
@@ -69,6 +71,7 @@ export class SocketStream {
     this.socket.on(MsgEvents.MSG_UPDATED, e => this.onMessageUpdated(e))
     this.socket.on(MsgEvents.MSG_TRANSLATED, e => this.onMessageTranslated(e))
     this.socket.on(MsgEvents.REPLY_MESSAGE_CREATED, e => this.onMessageReplyCreated(e))
+    this.socket.on(MsgEvents.RESET_MEMORY, e => this.onMessageContextClear(e))
 
     this.socket.on(MsgEvents.ENERGY_INFO, e => this.onEnergyInfo(e))
     this.socket.on(MsgEvents.NO_ENOUGH_ENERGY, e => this.onNoEnoughEnergy(e))
@@ -97,6 +100,7 @@ export class SocketStream {
   }
 
   private onMessageTextStream(data: MessageStreamTextRes) {
+    if (this.currentBot?.botBaseInfo.id !== data.data?.replyMessage?.botId) return
     // console.log('onMessageTextStream-----', data, this.currentBot?.id !== data?.data?.data?.botId)
     // 其它机器人也接收，如果跟A发起会话，正在接收一个长文，现在又去喝B发起会话，再回到A还需要用到这个消息
     this.addTextStream(data)
@@ -121,6 +125,7 @@ export class SocketStream {
   }
 
   private async onMessageAudioStream(data: MessageStreamTextRes) {
+    if (this.currentBot?.botBaseInfo.id !== data.data?.replyMessage?.botId) return
     try {
       const msg = data?.data
       // 待回复消息的机器人和哪一条消息
@@ -177,6 +182,12 @@ export class SocketStream {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     const msgKey = data?.botId + '&BOT&' + data?.replyUid
     this.onTransalteMessage[msgKey](data)
+  }
+  private onMessageContextClear(data: MesageSucessType['data']) {
+    // @ts-ignore
+    if (this.currentBot?.botBaseInfo.id !== data.message.botId) return
+    // @ts-ignore
+    this.onMessageClear?.(data.message)
   }
   private onEnergyInfo({ data }: MesageSucessType) {}
 

@@ -52,6 +52,7 @@ export enum MsgEvents {
   MSG_TRANSLATED = 'message_translated',
   MSG_REPLIED = 'message_replied',
   ENERGY_INFO = 'energy_info',
+  RESET_MEMORY = 'reset_memory',
   NO_ENOUGH_ENERGY = 'no_enough_energy',
   EXCEPTION = 'exception',
   MSG_TEXT_STREAM = 'text_stream',

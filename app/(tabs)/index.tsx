@@ -1,7 +1,6 @@
 import { View, StyleSheet, ScrollView, Pressable, Text, DeviceEventEmitter } from 'react-native'
 import { useFocusEffect, useRouter } from 'expo-router'
 import RootStyles from '../../constants/RootStyles'
-import 'react-native-get-random-values'
 import { useCallback, useEffect, useState } from 'react'
 import { botList } from '../../api/index'
 import BotCard from '../../components/chat/botCard'
@@ -32,14 +31,12 @@ export default function TabOneScreen() {
   const [loading, setLoading] = useState<boolean>(true)
   const { signOut } = useAuth()
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     botList().then(res => {
-  //       setListData(res as ListDataItem[])
-  //       setLoading(false)
-  //     })
-  //   }, [])
-  // )
+  // 每次进入页面清除botBaseInfo
+  useFocusEffect(
+    useCallback(() => {
+      botStore.setState({ botBaseInfo: null })
+    }, [])
+  )
 
   const loadData = (flash?: boolean) => {
     botList(flash).then(res => {

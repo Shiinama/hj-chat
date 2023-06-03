@@ -115,8 +115,11 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
     }
   }, [])
   const renderText = useMemo(() => {
+    if (item.type === 'RESET') {
+      return 'The memory has been cleared, your chat history is still preserved for you, but the robot will no longer remember the content of these conversations.'
+    }
     return messageStreamText || item.text
-  }, [messageStreamText, item.text])
+  }, [messageStreamText, item.text, item.type])
   const caluTranslate = useMemo(() => {
     return translateMessage || item.translation
   }, [translateMessage, item.translation])
