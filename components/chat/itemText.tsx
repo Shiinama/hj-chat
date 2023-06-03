@@ -23,6 +23,7 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
   const [viewDisplayState, setViewDisplayState] = useState<number>(botSetting?.textMasking ? 1 : 2)
   const [messageStreamText, setMessageStreamText] = useState<string>()
   const [translateMessage, setTranslateMessage] = useState<string>()
+  const [isDone, setIsDone] = useState<boolean>(false)
   const key = item.botId + '&BOT&' + item.replyUid
   const isBlur = botSetting?.textMasking && viewDisplayState === 1
   const renderReply = () => {
@@ -91,6 +92,11 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
     )
   }
   useEffect(() => {
+    if (item.status === 'DONE') {
+      setIsDone(true)
+    }
+  }, [item.status])
+  useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addTextStreamCallBack(key, data => {
         setMessageStreamText(data.text)
@@ -98,6 +104,9 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
           SocketStreamManager().removeTextStreamCallBack(key)
         }
       })
+      SocketStreamManager().onResMessage = () => {
+        setIsDone(true)
+      }
     } else {
       SocketStreamManager().removeTextStreamCallBack(key)
     }
@@ -115,14 +124,12 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
     }
   }, [])
   const renderText = useMemo(() => {
-    if (item.type === 'RESET') {
-      return 'The memory has been cleared, your chat history is still preserved for you, but the robot will no longer remember the content of these conversations.'
-    }
     return messageStreamText || item.text
   }, [messageStreamText, item.text, item.type])
   const caluTranslate = useMemo(() => {
     return translateMessage || item.translation
   }, [translateMessage, item.translation])
+
   if (!renderText) return loadingRender()
   return (
     <>
@@ -154,7 +161,7 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
           (caluTranslate ? <Text>{caluTranslate}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
 
-      {item?.replyUid && <View style={styles.buttonGroup}>{renderReply()}</View>}
+      {item?.replyUid && isDone && <View style={styles.buttonGroup}>{renderReply()}</View>}
     </>
   )
 }

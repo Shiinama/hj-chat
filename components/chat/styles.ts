@@ -28,8 +28,7 @@ export default StyleSheet.create({
     flexDirection: 'row-reverse',
   },
   contentBox: {
-    marginLeft: 8,
-    marginRight: 8,
+    marginHorizontal: 8,
     width: 263,
   },
   button: {
@@ -69,7 +68,6 @@ export default StyleSheet.create({
     flexDirection: 'row',
     height: 50,
   },
-  chatWrap: {},
   youContent: {
     borderRadius: 6,
     backgroundColor: Colors.mainGrey,

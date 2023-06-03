@@ -308,7 +308,7 @@ function Chat({}) {
     //     const newList = []
     //     list.map(item => {
     //       if (item.replyUid === resMessage.replyUid) {
-    //         item = { ...resMessage }
+    //         item = { ...item, type: 'DONE' }
     //         if (!have) {
     //           newList.push(item)
     //         }

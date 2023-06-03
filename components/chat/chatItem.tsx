@@ -80,6 +80,20 @@ function chatItem({ item, me, logo }: Props) {
       }}
     />
   )
+  if (item.type === 'RESET') {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <View
+          style={[styles.contentBox, { padding: 12, borderRadius: 6, backgroundColor: '#FFF5E2', marginBottom: 20 }]}
+        >
+          <Text>
+            The memory has been cleared, your chat history is still preserved for you, but the robot will no longer
+            remember the content of these conversations.
+          </Text>
+        </View>
+      </View>
+    )
+  }
   return (
     <View style={styles.itemWrap}>
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
@@ -98,7 +112,7 @@ function chatItem({ item, me, logo }: Props) {
         </View>
 
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
-          <View style={[styles.chatWrap, tag ? styles.youContent : styles.meContent]}>
+          <View style={[tag ? styles.youContent : styles.meContent]}>
             {(item.type === 'VOICE' || (botState?.botSetting?.outputVoice && item.replyUid)) && (
               <AudioMessage audioFileUri={item?.voiceUrl} ref={audioMessage} />
             )}
