@@ -35,6 +35,7 @@ export default function TabOneScreen() {
   useFocusEffect(
     useCallback(() => {
       botStore.setState({ botBaseInfo: null })
+      SocketStreamManager().currentBot = botStore.getState()
     }, [])
   )
 
