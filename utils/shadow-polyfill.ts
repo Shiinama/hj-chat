@@ -24,9 +24,6 @@ View.render = function (props: ViewProps, ref: React.RefObject<View>) {
   delete _style.elevation
   const { outer, inner } = splitShadowProps(_style)
 
-  console.log('outer style: ', outer)
-  console.log('inner style: ', inner)
-
   return React.createElement(DropShadow, { style: outer }, __render.call(this, { ..._props, style: inner }, ref))
 }
 
