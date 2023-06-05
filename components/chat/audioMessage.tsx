@@ -17,9 +17,7 @@ type AudioType = {
   item?: MessageDetail
   onPlay?: (playing: boolean) => void
 }
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+
 function debounce(func, delay) {
   let timerId
 
@@ -57,10 +55,11 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   const [loadFail, setLoadFail] = useState(false)
   // 全局录音单点播放控制
   const soundManager = useRef(AudioPayManagerSingle())
-
+  useImperativeHandle(ref, () => ({
+    uri: SoundObj.current.uri,
+  }))
   const key = item.botId + '&BOT&' + item.replyUid
   const loadNext = async () => {
-    console.log(111)
     // 这里需要拿Ref上的
     const { positionMillis, Sound, uri } = SoundObj.current
     if (Sound && uri) {
@@ -79,12 +78,12 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     refPlaying.current = true
     await loadSound()
     setIsPlaying(true)
-    // 第一次由回调中心开启
+    // 第一次由控制中心开启
     playSound()
   }
 
   // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
-  const debouncedLoadNext = debounce(loadNext, 400)
+  const debouncedLoadNext = debounce(loadNext, 300)
 
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {

@@ -22,6 +22,7 @@ type Props = {
 
 function chatItem({ item, me, logo }: Props) {
   const msgKey = item.botId + '&BOT&' + item.replyUid
+  const AudioRef = useRef(null)
   const botState = botStore.getState().botBaseInfo
   // 回复状态是否已经完成
   const [isDone, setIsDone] = useState<boolean>(false)
@@ -102,12 +103,12 @@ function chatItem({ item, me, logo }: Props) {
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[tag ? styles.youContent : styles.meContent]}>
             {(item.type === 'VOICE' || (botState?.botSetting?.outputVoice && item.replyUid)) && (
-              <AudioMessage item={item} isDone={isDone} />
+              <AudioMessage item={item} isDone={isDone} ref={AudioRef} />
             )}
             <ItemText
               item={item}
               isDone={isDone}
-              textMsg={!item?.voiceUrl}
+              textMsg={!!AudioRef?.current?.uri}
               botSetting={botState?.botSetting}
             ></ItemText>
           </View>
