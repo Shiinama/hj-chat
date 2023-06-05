@@ -18,12 +18,12 @@ type Props = {
   item: MessageDetail
   botSetting: BotInfo['botSetting']
   textMsg: boolean
+  isDone: boolean
 }
-const MessageText = ({ item, textMsg, botSetting }: Props) => {
+const MessageText = ({ item, textMsg, botSetting, isDone }: Props) => {
   const [viewDisplayState, setViewDisplayState] = useState<number>(botSetting?.textMasking ? 1 : 2)
   const [messageStreamText, setMessageStreamText] = useState<string>()
   const [translateMessage, setTranslateMessage] = useState<string>()
-  const [isDone, setIsDone] = useState<boolean>(false)
   const key = item.botId + '&BOT&' + item.replyUid
   const isBlur = botSetting?.textMasking && viewDisplayState === 1
   const renderReply = () => {
@@ -91,11 +91,7 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
       </View>
     )
   }
-  useEffect(() => {
-    if (item.status === 'DONE') {
-      setIsDone(true)
-    }
-  }, [item.status])
+
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addTextStreamCallBack(key, data => {
@@ -104,9 +100,6 @@ const MessageText = ({ item, textMsg, botSetting }: Props) => {
           SocketStreamManager().removeTextStreamCallBack(key)
         }
       })
-      SocketStreamManager().onResMessage = () => {
-        setIsDone(true)
-      }
     } else {
       SocketStreamManager().removeTextStreamCallBack(key)
     }

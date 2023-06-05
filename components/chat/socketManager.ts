@@ -29,6 +29,8 @@ export class SocketStream {
 
   private onTransalteMessage: { [key: string]: (item: MessageDto) => void } = {}
 
+  private onMessageRes: { [key: string]: (item: MessageDto) => void } = {}
+
   onResMessage: (item: MessageDto) => void
 
   onMessageClear: (item: MessageDto) => void
@@ -125,6 +127,7 @@ export class SocketStream {
   }
 
   private async onMessageAudioStream(data: MessageStreamTextRes) {
+    // console.log(Object.keys(this.onAudioStreamUpdate), 'onMessageAudioStreamKeys')
     if (this.currentBot?.botBaseInfo.id !== data.data?.replyMessage?.botId) return
     try {
       const msg = data?.data
@@ -136,47 +139,27 @@ export class SocketStream {
         }
         this.playFragment = undefined
         this.playFragment = new AudioFragmentPlay()
-
-        // const base64 = await arrayBufferToBase64(msg.audio)
         this.currentAudioStream[msgKey] = msg.audio
       } else if (msg.audio) {
         this.currentAudioStream[msgKey] = concatBuffer(this.currentAudioStream[msgKey], msg.audio)
       }
       const resMsg = { ...msg, msgLocalKey: msgKey }
+
       // 当前消息的uri
       const uri = await this.PlatformAudioSet(data, msgKey)
-      if (msg.isFinal) {
-        // 结束后存储
-        try {
-          const res = await saveAudio({
-            audio: arrayBufferToBase64(this.currentAudioStream[msgKey]),
-            botId: data.data?.replyMessage?.botId,
-            index: data.data.index,
-            replyUid: data?.data?.replyMessage?.replyUid,
-          })
-          this.onAudioStreamUpdate[msgKey]?.(resMsg, res)
-        } catch (e) {
-          console.log('mp3error:', e)
-        }
-      } else {
-        this.onAudioStreamUpdate[msgKey]?.(resMsg, uri)
-      }
 
-      this.playFragment.addSoundUrl(msg.audio ? uri : undefined, data.data?.isFinal)
-
-      if (msg.isFinal) {
-        // 下载完到本地就删除缓存
-        delete this.currentAudioStream[msgKey]
-        delete this.onAudioStreamUpdate[msgKey]
-      }
+      this.onAudioStreamUpdate[msgKey]?.(resMsg, uri)
+      // if (Object.keys(this.currentAudioStream).length > 0) {
+      //   this.playFragment.addSoundUrl(msg.audio ? uri : undefined, data.data?.isFinal)
+      // }
     } catch (error) {
       console.log('error:', error)
     }
   }
   private onMessageReplied({ data }: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
-    this.onResMessage?.(data)
-    CallBackManagerSingle().execute('botList')
+    const msgKey = data?.botId + '&BOT&' + data?.replyUid
+    this.onMessageRes[msgKey](data)
   }
   private onMessageTranslated({ data }: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
@@ -237,6 +220,11 @@ export class SocketStream {
     this.onAudioStreamUpdate[key] = callBack
   }
 
+  addResMessagesCallBack(key: string, callBack: (item: MessageDto) => void) {
+    delete this.onMessageRes[key]
+    this.onMessageRes[key] = callBack
+  }
+
   addTranslatedCallBack(key: string, callBack: (item: MessageDto) => void) {
     delete this.onTransalteMessage[key]
     this.onTransalteMessage[key] = callBack
@@ -246,12 +234,17 @@ export class SocketStream {
     delete this.onTextStreamUpdate[key]
   }
 
+  removeresMessagesCallBack(key: string) {
+    delete this.onMessageRes[key]
+  }
+
   removeTranslatedCallBack(key: string) {
     delete this.onTransalteMessage[key]
   }
 
   removeAudioStreamCallBack(key: string) {
-    delete this.onTextStreamUpdate[key]
+    delete this.onAudioStreamUpdate[key]
+    delete this.currentAudioStream[key]
   }
 
   destory() {

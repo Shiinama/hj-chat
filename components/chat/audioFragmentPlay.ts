@@ -11,6 +11,7 @@ import AudioPayManagerSingle from './audioPlayManager'
 export default class AudioFragmentPlay {
   private soundUrls: Array<string> = []
   currentSound: Audio.Sound
+
   private nextSound: Audio.Sound
 
   private totalDurMill: number = 0
@@ -18,8 +19,6 @@ export default class AudioFragmentPlay {
   private currentDur: number = 0
 
   private playing: boolean = false
-
-  private isPlayed: boolean = false
 
   onPositionChange: (dur: number, total: number) => void
   getSound: (sound) => void
@@ -79,6 +78,8 @@ export default class AudioFragmentPlay {
         .then(async res => {
           this.currentSound = res.sound
           this.getSound(res.sound)
+          console.log(this.soundUrls)
+          if (this.soundUrls.length > 1) return
           if (res.status.isLoaded && res.status.durationMillis) {
             this.totalDurMill = res.status.durationMillis
             try {

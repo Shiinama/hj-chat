@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback, memo } from 'react'
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback, memo, useMemo } from 'react'
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 // import Slider from '@react-native-community/slider'
 import { Slider } from '@miblanchard/react-native-slider'
@@ -8,87 +8,114 @@ import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../common/loading'
 import AudioPayManagerSingle from './audioPlayManager'
 import { formatTime } from '../../utils/time'
-import { Toast } from '@fruits-chain/react-native-xiaoshu'
+import { MessageDetail } from '../../types/MessageTyps'
 import SocketStreamManager from './socketManager'
+
 type AudioType = {
-  audioFileUri: string
   showControl?: boolean
+  isDone?: boolean
+  item?: MessageDetail
   onPlay?: (playing: boolean) => void
 }
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: AudioType, ref) => {
+const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: AudioType, ref) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  const SoundObj = useRef<{
+    Sound: Audio.Sound | null
+    uri: string
+    positionMillis: number
+    durationMillis: number
+  }>({
+    Sound: null,
+    uri: '',
+    positionMillis: 0,
+    durationMillis: 0,
+  })
+  const [positionMillis, setPositionMillis] = useState<number>(0)
+  const [durationMillis, setDurationMillis] = useState<number>(0)
   const refPlaying = useRef<boolean>(false)
-  const [currentPosition, setCurrentPosition] = useState<number>(0)
-  const [duration, setDuration] = useState<number>(0)
   const [loadFail, setLoadFail] = useState(false)
-  const [sound, setSound] = useState<Audio.Sound | null>(null)
+  // const [Sound, setSound] = useState<Audio.Sound | null>(null)
   // 全局录音单点播放控制
   const soundManager = useRef(AudioPayManagerSingle())
 
-  useImperativeHandle(ref, () => ({
-    handlePlayPause,
-    loadRefreshSound,
-    playFragment,
-    setLoading,
-    setSound,
-    setIsPlaying,
-  }))
+  const key = item.botId + '&BOT&' + item.replyUid
 
-  const playFragment = (params: { dur: number; total: number }) => {
-    setCurrentPosition(params.dur)
-    if (duration < params.total) {
-      setDuration(params.total)
+  useEffect(() => {
+    if (item.type === 'LOADING' && item.replyUid) {
+      SocketStreamManager().addAudioStreamCallBack(key, (msg, uri) => {
+        SoundObj.current.uri = uri
+        if (!SoundObj.current.Sound) {
+          refPlaying.current = true
+          loadSound()
+          setIsPlaying(true)
+        } else {
+          loadNext()
+        }
+      })
     }
-  }
+    return () => {
+      SocketStreamManager().removeresMessagesCallBack(key)
+      SocketStreamManager().removeAudioStreamCallBack(key)
+    }
+  }, [item])
 
-  const isStartSoundRefresh = useRef({
-    start: false,
-    finish: false,
-    end: false,
-  })
-
-  const loadRefreshSound = async (finish?: boolean) => {
-    if (sound) {
-      isStartSoundRefresh.current.start = true
-      isStartSoundRefresh.current.finish = finish
+  const loadNext = async () => {
+    const { positionMillis, Sound, uri } = SoundObj.current
+    if (Sound && uri) {
       try {
-        console.log('loadRefreshSound', finish, audioFileUri.length)
-        // await sound.unloadAsync()
+        // setLoading(true)
+        await Sound.stopAsync()
+        await Sound.unloadAsync()
+        await Sound.loadAsync({ uri: uri }, { positionMillis: positionMillis, progressUpdateIntervalMillis: 16 })
+        await Sound.playAsync()
+        // setLoading(false)
       } catch (e) {
-        console.log('loadRefreshSoundunloadAsyncerror:', e)
+        console.log(e)
       }
     }
   }
-  const setSlideFnc = useCallback(status => {
+  const setSlideFnc = status => {
     if (status.isLoaded) {
-      setDuration(status.durationMillis || 0)
+      setDurationMillis(status.durationMillis || 0)
+      SoundObj.current.durationMillis = status.durationMillis || 0
     }
+    console.log(status.positionMillis, status.durationMillis)
     // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
-    if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 50 >= 0) {
+    if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis >= 0) {
+      // loadNext()
+
       setIsPlaying(() => false)
       soundManager.current.stop()
-      setCurrentPosition(() => {
-        return 0
-      })
+      setPositionMillis(0)
     } else if (status.isLoaded && status.isPlaying) {
-      setCurrentPosition(status.positionMillis || 0)
+      setPositionMillis(status.positionMillis || 0)
+      SoundObj.current.positionMillis = status.positionMillis || 0
     }
-  }, [])
-  const loadSound = useCallback(async () => {
-    if (!audioFileUri) return
+  }
+
+  const loadSound = async () => {
+    const { uri } = SoundObj.current
+    console.log(uri)
+    if (!uri) return
     try {
       const { sound } = await Audio.Sound.createAsync(
-        { uri: audioFileUri },
-        { progressUpdateIntervalMillis: 16 },
+        { uri },
+        {
+          progressUpdateIntervalMillis: 16,
+        },
         status => {
           setSlideFnc(status)
         }
       )
+
       soundManager.current.currentSound = sound
-      soundManager.current.currentAutoPlayUrl = audioFileUri
-      setSound(sound)
+      soundManager.current.currentAutoPlayUrl = uri
+      SoundObj.current.Sound = sound
       setLoading(false)
     } catch (e) {
       // load sound fail [Error: com.google.android.exoplayer2.audio.AudioSink$InitializationException: AudioTrack init failed 0 Config(22050, 4, 11026)]
@@ -96,32 +123,16 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
        * 音频解码错误，源于无法创建音轨。手机的音轨资源是有限的，如果每个视频都占用一个音轨并且不释放的话，就会导致上述问题。
        * https://zhuanlan.zhihu.com/p/627702119
        */
-      console.log('load sound fail', e, 'url:', audioFileUri)
+      console.log('load sound fail', e, 'url:', uri)
       setLoading(false)
       setLoadFail(true)
     }
-  }, [audioFileUri])
+  }
 
   useEffect(() => {
+    item.voiceUrl && (SoundObj.current.uri = item.voiceUrl)
     loadSound()
-  }, [audioFileUri])
-
-  // 每次进来获取状态
-  useEffect(() => {
-    if (sound !== null) {
-      sound.getStatusAsync().then(async status => {
-        if (status.isLoaded) {
-          setCurrentPosition(status.positionMillis || 0)
-          setDuration(status.durationMillis || 0)
-        }
-      })
-    }
-    return sound
-      ? () => {
-          sound.unloadAsync()
-        }
-      : undefined
-  }, [sound])
+  }, [item.voiceUrl])
 
   const playSound = async () => {
     setLoading(false)
@@ -131,7 +142,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
     })
     // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
     opSuccess = await soundManager.current.play(
-      sound,
+      SoundObj.current.Sound,
       function () {
         setIsPlaying(false)
       },
@@ -143,7 +154,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }
 
   const handlePlayPause = async () => {
-    if (sound !== null) {
+    if (SoundObj.current.Sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
@@ -163,11 +174,11 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
   }, [isPlaying])
 
   const handleChange = async (value: number) => {
-    if (sound !== null) {
+    if (SoundObj.current.Sound !== null) {
       await soundManager.current.currentSound.setPositionAsync(value)
     }
   }
-
+  if (isDone && loading) return null
   if (loadFail)
     return (
       <TouchableOpacity
@@ -195,7 +206,7 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
             )}
           </TouchableOpacity>
         )}
-        <Text style={styles.time}>{formatTime(currentPosition) + '/' + formatTime(duration)}</Text>
+        <Text style={styles.time}>{formatTime(positionMillis) + '/' + formatTime(durationMillis)}</Text>
       </View>
       <View
         style={{
@@ -207,8 +218,8 @@ const AudioMessage = forwardRef(({ audioFileUri, showControl = true, onPlay }: A
           minimumValue={0}
           minimumTrackTintColor={'black'}
           thumbTintColor={'black'}
-          maximumValue={duration}
-          value={currentPosition}
+          maximumValue={durationMillis}
+          value={positionMillis}
           thumbStyle={{ width: 5, height: 5 }}
           trackStyle={{ height: 2 }}
           onValueChange={value => {
