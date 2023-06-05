@@ -20,10 +20,26 @@ type AudioType = {
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
+function debounce(func, delay) {
+  let timerId
+
+  return function (...args) {
+    if (timerId) {
+      clearTimeout(timerId)
+    }
+    timerId = setTimeout(() => {
+      func(...args)
+      timerId = null
+    }, delay)
+  }
+}
 
 const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: AudioType, ref) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  // 两种Audio都共用一个Uri和Sound，因为要多条消息的管理，所以单例很难做，
+  // 每个AudioMessage里面有一个，然后外层去统一管理，就会很方便，
+  // 因此分为两部分一部分是需要统一管理的使用soundManager，一部分是组件内统一去维护的使用SoundObj
   const SoundObj = useRef<{
     Sound: Audio.Sound | null
     uri: string
@@ -39,22 +55,46 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   const [durationMillis, setDurationMillis] = useState<number>(0)
   const refPlaying = useRef<boolean>(false)
   const [loadFail, setLoadFail] = useState(false)
-  // const [Sound, setSound] = useState<Audio.Sound | null>(null)
   // 全局录音单点播放控制
   const soundManager = useRef(AudioPayManagerSingle())
 
   const key = item.botId + '&BOT&' + item.replyUid
+  const loadNext = async () => {
+    console.log(111)
+    // 这里需要拿Ref上的
+    const { positionMillis, Sound, uri } = SoundObj.current
+    if (Sound && uri) {
+      try {
+        await Sound.stopAsync()
+        await Sound.unloadAsync()
+        await Sound.loadAsync({ uri: uri }, { positionMillis, progressUpdateIntervalMillis: 16, shouldPlay: true })
+        setLoading(false)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+
+  const fLoadSteam = async () => {
+    refPlaying.current = true
+    await loadSound()
+    setIsPlaying(true)
+    // 第一次由回调中心开启
+    playSound()
+  }
+
+  // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
+  const debouncedLoadNext = debounce(loadNext, 400)
 
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addAudioStreamCallBack(key, (msg, uri) => {
         SoundObj.current.uri = uri
         if (!SoundObj.current.Sound) {
-          refPlaying.current = true
-          loadSound()
-          setIsPlaying(true)
+          fLoadSteam()
         } else {
-          loadNext()
+          setLoading(true)
+          debouncedLoadNext()
         }
       })
     }
@@ -64,31 +104,17 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     }
   }, [item])
 
-  const loadNext = async () => {
-    const { positionMillis, Sound, uri } = SoundObj.current
-    if (Sound && uri) {
-      try {
-        // setLoading(true)
-        await Sound.stopAsync()
-        await Sound.unloadAsync()
-        await Sound.loadAsync({ uri: uri }, { positionMillis: positionMillis, progressUpdateIntervalMillis: 16 })
-        await Sound.playAsync()
-        // setLoading(false)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }
   const setSlideFnc = status => {
     if (status.isLoaded) {
       setDurationMillis(status.durationMillis || 0)
       SoundObj.current.durationMillis = status.durationMillis || 0
     }
-    console.log(status.positionMillis, status.durationMillis)
     // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
-    if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis >= 0) {
-      // loadNext()
-
+    if (
+      status.isLoaded &&
+      refPlaying.current &&
+      status.positionMillis - status.durationMillis + (item.replyUid ? 0 : 50) >= 0
+    ) {
       setIsPlaying(() => false)
       soundManager.current.stop()
       setPositionMillis(0)
@@ -100,7 +126,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
 
   const loadSound = async () => {
     const { uri } = SoundObj.current
-    console.log(uri)
     if (!uri) return
     try {
       const { sound } = await Audio.Sound.createAsync(
@@ -178,7 +203,8 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       await soundManager.current.currentSound.setPositionAsync(value)
     }
   }
-  if (isDone && loading) return null
+  // 已经完成了，却没有给Uri赋值
+  if (isDone && !SoundObj.current.uri) return null
   if (loadFail)
     return (
       <TouchableOpacity

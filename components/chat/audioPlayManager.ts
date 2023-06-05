@@ -29,6 +29,10 @@ export class AudioPayManager {
     })
   }
 
+  setIsPlay(isPlay: boolean) {
+    this.isPlay = isPlay
+  }
+
   async destory() {
     this.isRecording = false
     this.currentAutoPlayUrl = undefined
