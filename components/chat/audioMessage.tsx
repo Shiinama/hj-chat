@@ -1,6 +1,5 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback, memo, useMemo } from 'react'
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
-// import Slider from '@react-native-community/slider'
 import { Slider } from '@miblanchard/react-native-slider'
 import { Audio, AVPlaybackStatus } from 'expo-av'
 import MessagePlay from '../../assets/images/chat/message_play.svg'

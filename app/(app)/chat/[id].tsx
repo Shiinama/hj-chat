@@ -301,34 +301,6 @@ function Chat({}) {
         return !have ? [{ ...data, type: 'LOADING' }, ...newList] : [...newList]
       })
     }
-    // SocketStreamManager().onResMessage = resMessage => {
-    //   if (!resMessage) return
-    //   let have = false
-    //   setChatData(list => {
-    //     const newList = []
-    //     list.map(item => {
-    //       if (item.replyUid === resMessage.replyUid) {
-    //         item = { ...item, type: 'DONE' }
-    //         if (!have) {
-    //           newList.push(item)
-    //         }
-    //         have = true
-    //       } else {
-    //         newList.push(item)
-    //       }
-    //     })
-    //     return have ? [...newList] : [resMessage, ...newList]
-    //   })
-    //   if (
-    //     !have &&
-    //     resMessage.type === 'REPLY' &&
-    //     resMessage?.voiceUrl?.length > 0 &&
-    //     !AudioPayManagerSingle().currentAutoPlayUrl
-    //   ) {
-    //     AudioPayManagerSingle().currentAutoPlayUrl = resMessage?.voiceUrl
-    //   }
-    //   flatList.current?.scrollToIndex?.({ index: 0 })
-    // }
     SocketStreamManager().currentBot = botStore.getState()
   }, [])
 

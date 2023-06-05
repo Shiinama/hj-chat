@@ -149,6 +149,11 @@ export class SocketStream {
       const uri = await this.PlatformAudioSet(data, msgKey)
 
       this.onAudioStreamUpdate[msgKey]?.(resMsg, uri)
+      if (msg.isFinal) {
+        // 下载完到本地就删除缓存
+        delete this.currentAudioStream[msgKey]
+        delete this.onAudioStreamUpdate[msgKey]
+      }
       // if (Object.keys(this.currentAudioStream).length > 0) {
       //   this.playFragment.addSoundUrl(msg.audio ? uri : undefined, data.data?.isFinal)
       // }
