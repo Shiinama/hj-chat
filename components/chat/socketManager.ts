@@ -25,7 +25,7 @@ export class SocketStream {
 
   private onTextStreamUpdate: { [key: string]: (item: MessageStreamText) => void } = {}
 
-  private onAudioStreamUpdate: { [key: string]: (item: MessageStreamText, url: string) => void } = {}
+  private onAudioStreamUpdate: { [key: string]: (item: MessageStreamText, url: string, timeout?: boolean) => void } = {}
 
   private onTransalteMessage: { [key: string]: (item: MessageDto) => void } = {}
 
@@ -48,6 +48,8 @@ export class SocketStream {
   private audioStreamPlayKeys: Array<string> = []
 
   private audioStreamIndex = -1
+
+  private streamTimeout: { [key: string]: NodeJS.Timeout } = {}
 
   currentBot
 
@@ -151,6 +153,17 @@ export class SocketStream {
       } else if (msg.audio) {
         this.currentAudioStream[msgKey] = concatBuffer(this.currentAudioStream[msgKey], msg.audio)
       }
+      if (this.streamTimeout[msgKey]) {
+        clearTimeout(this.streamTimeout[msgKey])
+        this.streamTimeout[msgKey] = undefined
+      }
+      // 如果没完成继续添加超时检测
+      if (!msg.isFinal) {
+        this.streamTimeout[msgKey] = setTimeout(() => {
+          this.onAudioStreamUpdate[msgKey]?.(resMsg, uri, true)
+        }, 1000 * 120)
+      }
+
       const resMsg = { ...msg, msgLocalKey: msgKey }
 
       // 当前消息的uri
@@ -257,7 +270,7 @@ export class SocketStream {
     this.onTextStreamUpdate[key] = callBack
   }
 
-  addAudioStreamCallBack(key: string, callBack: (item: MessageStreamText, url: string) => void) {
+  addAudioStreamCallBack(key: string, callBack: (item: MessageStreamText, url: string, timeout?: boolean) => void) {
     delete this.onAudioStreamUpdate[key]
     this.onAudioStreamUpdate[key] = callBack
   }

@@ -97,10 +97,10 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
 
   // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
   const debouncedLoadNext = debounce(loadNext, 300)
-
+  const [isTimeout, setIsTimeout] = useState(false)
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
-      SocketStreamManager().addAudioStreamCallBack(key, (msg, uri) => {
+      SocketStreamManager().addAudioStreamCallBack(key, (msg, uri, timeout) => {
         SoundObj.current.uri = uri
         if (!SoundObj.current.Sound) {
           fLoadSteam()
@@ -108,6 +108,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
           setLoading(true)
           debouncedLoadNext()
         }
+        setIsTimeout(timeout)
       })
     }
     return () => {
@@ -224,7 +225,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   }
   // 已经完成了，却没有给Uri赋值
   if (isDone && !SoundObj.current.uri) return null
-  if (loadFail)
+  if (loadFail || isTimeout)
     return (
       <TouchableOpacity
         activeOpacity={0.6}
@@ -233,7 +234,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
           loadSound()
         }}
       >
-        <Text style={{ color: '#333' }}>AudioCannotPlay</Text>
+        <Text style={{ color: '#333' }}>{isTimeout ? 'Connection timed out' : 'AudioCannotPlay'}</Text>
       </TouchableOpacity>
     )
 
