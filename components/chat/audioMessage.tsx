@@ -9,6 +9,7 @@ import AudioPayManagerSingle from './audioPlayManager'
 import { formatTime } from '../../utils/time'
 import { MessageDetail } from '../../types/MessageTyps'
 import SocketStreamManager from './socketManager'
+import CallBackManagerSingle from '../../utils/CallBackManager'
 
 type AudioType = {
   showControl?: boolean
@@ -65,7 +66,15 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       try {
         await Sound.stopAsync()
         await Sound.unloadAsync()
-        await Sound.loadAsync({ uri: uri }, { positionMillis, progressUpdateIntervalMillis: 16, shouldPlay: true })
+        // shouldPlay 当前正在播放的流才自动播放
+        await Sound.loadAsync(
+          { uri: uri },
+          {
+            positionMillis,
+            progressUpdateIntervalMillis: 16,
+            shouldPlay: SocketStreamManager().getCurrentPlayStream() === key ? true : false,
+          }
+        )
         setLoading(false)
       } catch (e) {
         console.log(e)
@@ -76,9 +85,14 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   const fLoadSteam = async () => {
     refPlaying.current = true
     await loadSound()
-    setIsPlaying(true)
-    // 第一次由控制中心开启
-    playSound()
+    CallBackManagerSingle().add('play_' + key, () => {
+      setIsPlaying(true)
+      // 第一次由控制中心开启
+      playSound()
+    })
+    if (!SocketStreamManager().isPlayStreaming()) {
+      SocketStreamManager().playStreamNext()
+    }
   }
 
   // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
@@ -116,7 +130,9 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       setIsPlaying(() => false)
       soundManager.current.stop()
       setPositionMillis(0)
+      SocketStreamManager().playStreamNext()
     } else if (status.isLoaded && status.isPlaying) {
+      setIsPlaying(() => true)
       setPositionMillis(status.positionMillis || 0)
       SoundObj.current.positionMillis = status.positionMillis || 0
     }
@@ -135,8 +151,8 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
           setSlideFnc(status)
         }
       )
-
-      soundManager.current.currentSound = sound
+      // 每次加载会造成当前播放的不是当前sound,只有播放才保存当前sound到单列模式
+      // soundManager.current.currentSound = sound
       soundManager.current.currentAutoPlayUrl = uri
       SoundObj.current.Sound = sound
       setLoading(false)
@@ -167,16 +183,17 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     opSuccess = await soundManager.current.play(
       SoundObj.current.Sound,
       function () {
-        setIsPlaying(false)
+        setIsPlaying(() => false)
       },
       function () {
-        setIsPlaying(true)
+        setIsPlaying(() => true)
       }
     )
     return opSuccess
   }
 
   const handlePlayPause = async () => {
+    SocketStreamManager().resetPlayStream()
     if (SoundObj.current.Sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({
@@ -184,10 +201,14 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
         })
 
         soundManager.current.pause()
+        // 加个延迟，播放中会设置为true，停止需要一点时间
+        setTimeout(() => {
+          setIsPlaying(res => false)
+        }, 300)
       } else {
         await playSound()
+        setIsPlaying(res => true)
       }
-      setIsPlaying(() => !isPlaying)
     }
   }
 

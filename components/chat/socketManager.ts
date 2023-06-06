@@ -45,6 +45,10 @@ export class SocketStream {
 
   private playFragment = new AudioFragmentPlay()
 
+  private audioStreamPlayKeys: Array<string> = []
+
+  private audioStreamIndex = -1
+
   currentBot
 
   constructor() {
@@ -134,9 +138,13 @@ export class SocketStream {
       // 待回复消息的机器人和哪一条消息
       const msgKey = msg.replyMessage?.botId + '&BOT&' + msg.replyMessage?.replyUid
       if (!msg.isFinal && msg.index === 0) {
-        if (this.playFragment.isPlaying()) {
+        if (this.playFragment.isPlaying() && this.audioStreamIndex < 0) {
           AudioPayManagerSingle().stop()
         }
+        if (!this.audioStreamPlayKeys.includes(msgKey)) {
+          this.audioStreamPlayKeys.push(msgKey)
+        }
+
         this.playFragment = undefined
         this.playFragment = new AudioFragmentPlay()
         this.currentAudioStream[msgKey] = msg.audio
@@ -189,6 +197,35 @@ export class SocketStream {
       this.init()
     }
     this.socket.emit(ChatEvent, data)
+  }
+
+  playStreamNext() {
+    if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length - 1) {
+      this.audioStreamIndex += 1
+      console.log('this.audioStreamPlayKeys:', this.audioStreamPlayKeys, this.audioStreamIndex)
+
+      AudioPayManagerSingle().stop()
+      CallBackManagerSingle().execute('play_' + this.audioStreamPlayKeys[this.audioStreamIndex])
+    } else {
+      this.audioStreamIndex = -1
+      this.audioStreamPlayKeys = []
+    }
+  }
+
+  isPlayStreaming() {
+    return this.audioStreamIndex >= 0
+  }
+
+  getCurrentPlayStream() {
+    if (this.audioStreamIndex < this.audioStreamPlayKeys.length) {
+      return this.audioStreamPlayKeys[this.audioStreamIndex]
+    }
+    return undefined
+  }
+
+  resetPlayStream() {
+    this.audioStreamIndex = -1
+    this.audioStreamPlayKeys = []
   }
 
   private addTextStream(msgRes: MessageStreamTextRes) {
