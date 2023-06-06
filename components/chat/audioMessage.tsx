@@ -101,12 +101,18 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addAudioStreamCallBack(key, (msg, uri, timeout) => {
-        SoundObj.current.uri = uri
-        if (!SoundObj.current.Sound) {
-          fLoadSteam()
+        if (!timeout) {
+          SoundObj.current.uri = uri
+          if (!SoundObj.current.Sound) {
+            fLoadSteam()
+          } else {
+            setLoading(true)
+            debouncedLoadNext()
+          }
         } else {
-          setLoading(true)
-          debouncedLoadNext()
+          // 超时了就移除
+          SocketStreamManager().removeresMessagesCallBack(key)
+          SocketStreamManager().removeAudioStreamCallBack(key)
         }
         setIsTimeout(timeout)
       })
