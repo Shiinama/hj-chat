@@ -252,6 +252,7 @@ function Chat({}) {
 
   // socket回调
   useEffect(() => {
+    SocketStreamManager().resetPlayStream()
     SocketStreamManager().onSendMessage = data => {
       currentSendMsgInfo.current = data
       if (!data?.data) return
@@ -302,6 +303,9 @@ function Chat({}) {
       })
     }
     SocketStreamManager().currentBot = botStore.getState()
+    return () => {
+      SocketStreamManager().resetPlayStream()
+    }
   }, [])
 
   const loadNextData = () => {
