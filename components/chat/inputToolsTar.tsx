@@ -187,32 +187,32 @@ function InputToolsTar({
   }
 
   const renderRightInput = useMemo(() => {
+    if (!showSend)
+      return (
+        <TouchableOpacity
+          style={styles.toolsIcon}
+          onPress={() => {
+            if (onEndEditText) {
+              const clear = onEndEditText?.(text)
+              clear && setText('')
+            }
+          }}
+        >
+          <Send></Send>
+        </TouchableOpacity>
+      )
     return (
       <>
         {isShow ? (
-          showSend ? (
-            <TouchableOpacity
-              style={styles.toolsIcon}
-              onPress={() => {
-                setIsShow(false)
-                Keyboard.dismiss()
-              }}
-            >
-              <Image style={styles.Icon} source={audio}></Image>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.toolsIcon}
-              onPress={() => {
-                if (onEndEditText) {
-                  const clear = onEndEditText?.(text)
-                  clear && setText('')
-                }
-              }}
-            >
-              <Send></Send>
-            </TouchableOpacity>
-          )
+          <TouchableOpacity
+            style={styles.toolsIcon}
+            onPress={() => {
+              setIsShow(false)
+              Keyboard.dismiss()
+            }}
+          >
+            <Image style={styles.Icon} source={audio}></Image>
+          </TouchableOpacity>
         ) : (
           <TouchableOpacity
             style={styles.toolsIcon}
@@ -263,9 +263,9 @@ function InputToolsTar({
                       maxLength={500}
                       placeholder="Write a message"
                       style={[styles.textInput]}
+                      onChangeText={setText}
                       onTextInput={e => {
                         setShowSend(!e.nativeEvent.text)
-                        setText(e.nativeEvent.text)
                       }}
                       value={text}
                       {...inputTextProps}
