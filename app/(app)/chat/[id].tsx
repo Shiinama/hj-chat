@@ -327,7 +327,6 @@ function Chat({}) {
           setAuInfo,
           startRecording,
           stopRecording,
-          onSubmitEditing: v => {},
           onEndEditText: (value: any) => {
             if (value.length === 0) {
               Alert.alert('Please enter your message')

@@ -17,7 +17,9 @@ type AudioType = {
   item?: MessageDetail
   onPlay?: (playing: boolean) => void
 }
-
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 function debounce(func, delay) {
   let timerId
 
@@ -64,7 +66,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     const { positionMillis, Sound, uri } = SoundObj.current
     if (Sound && uri) {
       try {
-        await Sound.stopAsync()
+        // await Sound.stopAsync()
         await Sound.unloadAsync()
         // shouldPlay 当前正在播放的流才自动播放
         await Sound.loadAsync(
@@ -152,7 +154,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         {
-          progressUpdateIntervalMillis: 16,
+          progressUpdateIntervalMillis: 32,
         },
         status => {
           setSlideFnc(status)

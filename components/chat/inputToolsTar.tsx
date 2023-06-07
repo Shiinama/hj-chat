@@ -48,7 +48,6 @@ function InputToolsTar({
     startRecording,
     stopRecording,
     setAuInfo,
-    onSubmitEditing,
     onEndEditText,
     pinned: originalPinned,
     uid,
@@ -97,9 +96,6 @@ function InputToolsTar({
     }
   }, [])
 
-  useEffect(() => {
-    setShowSend(!text.length)
-  }, [text, position])
   const handleButtonPress = () => {
     if (inputRef.current) {
       inputRef.current.focus()
@@ -211,9 +207,6 @@ function InputToolsTar({
                 if (onEndEditText) {
                   const clear = onEndEditText?.(text)
                   clear && setText('')
-                } else {
-                  onSubmitEditing(text as any)
-                  setText('')
                 }
               }}
             >
@@ -270,7 +263,10 @@ function InputToolsTar({
                       maxLength={500}
                       placeholder="Write a message"
                       style={[styles.textInput]}
-                      onChangeText={setText}
+                      onTextInput={e => {
+                        setShowSend(!e.nativeEvent.text)
+                        setText(e.nativeEvent.text)
+                      }}
                       value={text}
                       {...inputTextProps}
                       {...inputProps}
