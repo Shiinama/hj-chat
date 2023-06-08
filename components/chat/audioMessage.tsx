@@ -77,7 +77,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
             shouldPlay: SocketStreamManager().getCurrentPlayStream() === key ? true : false,
           }
         )
-        setLoading(false)
+        // setLoading(false)
       } catch (e) {
         console.log(e)
       }
@@ -98,7 +98,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   }
 
   // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
-  const debouncedLoadNext = debounce(loadNext, 300)
+  const debouncedLoadNext = debounce(loadNext, 400)
   const [isTimeout, setIsTimeout] = useState(false)
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
@@ -108,7 +108,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
           if (!SoundObj.current.Sound) {
             fLoadSteam()
           } else {
-            setLoading(true)
+            // setLoading(true)
             debouncedLoadNext()
           }
         } else {
@@ -291,10 +291,11 @@ const styles = StyleSheet.create({
     position: 'relative',
     paddingLeft: 15,
     width: 263,
+    borderColor: '#E2E8F0',
+    borderBottomWidth: 1,
     marginVertical: 5,
     flexDirection: 'row',
     justifyContent: 'flex-start',
-
     maxHeight: 38,
   },
   slider: {

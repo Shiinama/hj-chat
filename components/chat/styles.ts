@@ -49,17 +49,11 @@ export default StyleSheet.create({
   content: {
     padding: 12,
     width: '100%',
-    borderTopWidth: 1,
     fontSize: 14,
-
     borderColor: '#E2E8F0',
     overflow: 'hidden',
-    // borderBottomWidth: 1,
   },
-  textContent: {
-    borderTopWidth: 0,
-    borderBottomWidth: 0,
-  },
+
   buttonGroup: {
     borderColor: '#E2E8F0',
     borderTopWidth: 1,

@@ -105,12 +105,7 @@ function chatItem({ item, me, logo }: Props) {
             {(item.type === 'VOICE' || (botState?.botSetting?.outputVoice && item.replyUid)) && (
               <AudioMessage item={item} isDone={isDone} ref={AudioRef} />
             )}
-            <ItemText
-              item={item}
-              isDone={isDone}
-              textMsg={!!AudioRef?.current?.uri}
-              botSetting={botState?.botSetting}
-            ></ItemText>
+            <ItemText item={item} isDone={isDone} botSetting={botState?.botSetting}></ItemText>
           </View>
           <View style={styles.placeholder} />
         </View>

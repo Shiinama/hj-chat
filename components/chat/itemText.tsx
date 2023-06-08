@@ -17,10 +17,9 @@ import ShellLoading from '../common/loading'
 type Props = {
   item: MessageDetail
   botSetting: BotInfo['botSetting']
-  textMsg: boolean
   isDone: boolean
 }
-const MessageText = ({ item, textMsg, botSetting, isDone }: Props) => {
+const MessageText = ({ item, botSetting, isDone }: Props) => {
   const [viewDisplayState, setViewDisplayState] = useState<number>(botSetting?.textMasking ? 1 : 2)
   const [messageStreamText, setMessageStreamText] = useState<string>()
   const [translateMessage, setTranslateMessage] = useState<string>()
@@ -126,7 +125,7 @@ const MessageText = ({ item, textMsg, botSetting, isDone }: Props) => {
   if (!renderText) return loadingRender()
   return (
     <>
-      <View style={[styles.content, textMsg ? styles.textContent : {}]}>
+      <View style={[styles.content]}>
         {isBlur && item?.replyUid && (
           <TouchableWithoutFeedback onPress={() => setViewDisplayState(2)}>
             <BlurView

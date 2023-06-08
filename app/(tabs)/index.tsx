@@ -24,13 +24,14 @@ type ListDataItem = {
 import CallBackManagerSingle from '../../utils/CallBackManager'
 import { removeBotListLocal } from '../../api/botChatListCache'
 import SocketStreamManager from '../../components/chat/socketManager'
+import useUserStore from '../../store/userStore'
 
 export default function TabOneScreen() {
+  if (!useUserStore.getState().userBaseInfo) return
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const { signOut } = useAuth()
-
   // 每次进入页面清除botBaseInfo
   useFocusEffect(
     useCallback(() => {
@@ -58,7 +59,6 @@ export default function TabOneScreen() {
       setListData([])
       signOut()
     })
-    // 初始化socket
     SocketStreamManager()
     return () => {
       CallBackManagerSingle().remove('botList')

@@ -61,7 +61,7 @@ export class SocketStream {
   private init() {
     // 初始化删除本地mp3文件
     const { userBaseInfo } = useUserStore.getState()
-    const token = userBaseInfo?.token ?? SysConfig.token
+    const token = userBaseInfo?.token
     this.socket = io(`${SysConfig.baseUrl}/chat`, {
       path: '/ws',
       transports: ['websocket'],
@@ -90,13 +90,16 @@ export class SocketStream {
   }
 
   private onMessageError({ message }: MeaageErrorType) {
+    console.log(message, 'onMessageError')
     Alert.alert(message)
   }
 
   private onException({ message }: MeaageErrorType) {
+    console.log(message, 'onException')
     Alert.alert(message)
   }
   private onNoEnoughEnergy({ message }: MeaageErrorType) {
+    console.log(message, 'onNoEnoughEnergy')
     Alert.alert(message)
   }
 
@@ -313,6 +316,7 @@ export class SocketStream {
 const SocketStreamManager = (function () {
   let instance: SocketStream
   return function (destory?: boolean) {
+    // 没有用户信息就取消初始化
     if (destory && instance) {
       instance.destory()
       // 销毁删除本地mp3文件

@@ -227,6 +227,9 @@ function InputToolsTar({
       </>
     )
   }, [isShow, showSend, text])
+  useEffect(() => {
+    setShowSend(!text.length)
+  }, [text])
   return (
     <View
       style={[styles.container, { position }, { paddingTop: isShow ? 0 : 10 }] as ViewStyle}
@@ -263,10 +266,12 @@ function InputToolsTar({
                       maxLength={500}
                       placeholder="Write a message"
                       style={[styles.textInput]}
-                      onChangeText={setText}
                       onTextInput={e => {
-                        setShowSend(!e.nativeEvent.text)
+                        if (!text.length) {
+                          setText(e.nativeEvent.text)
+                        }
                       }}
+                      onChangeText={setText}
                       value={text}
                       {...inputTextProps}
                       {...inputProps}
