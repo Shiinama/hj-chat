@@ -63,10 +63,10 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   const key = item.botId + '&BOT&' + item.replyUid
   const loadNext = async () => {
     // 这里需要拿Ref上的
-    const { positionMillis, Sound, uri } = SoundObj.current
+    const { Sound, uri } = SoundObj.current
     if (Sound && uri) {
       try {
-        // await Sound.stopAsync()
+        const { positionMillis } = (await Sound.getStatusAsync()) as AVPlaybackStatus & { positionMillis: number }
         await Sound.unloadAsync()
         // shouldPlay 当前正在播放的流才自动播放
         await Sound.loadAsync(
@@ -98,7 +98,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   }
 
   // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
-  const debouncedLoadNext = debounce(loadNext, 2000)
+  const debouncedLoadNext = debounce(loadNext, 400)
   const [isTimeout, setIsTimeout] = useState(false)
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
