@@ -3,6 +3,7 @@ import { useEffect, useContext, createContext, useState } from 'react'
 import useUserStore from '../store/userStore'
 import Constants from 'expo-constants'
 import Clipboard from '@react-native-clipboard/clipboard'
+import SocketStreamManager from '../components/chat/socketManager'
 const AuthContext = createContext(null)
 
 export function useAuth() {
@@ -55,6 +56,8 @@ export function Provider(props) {
         signIn: async value => {
           setAuth(value)
           useUserStore.setState({ userBaseInfo: value })
+          // 有了UserInfo之后再去初始化socket
+          SocketStreamManager()
           router.replace('(tabs)')
         },
         signOut: async () => {
