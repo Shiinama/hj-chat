@@ -17,7 +17,7 @@ import ThunderIcon from '../../assets/images/profile/Thunder.png'
 import CommunityIcon from '../../assets/images/profile/community.png'
 import * as WebBrowser from 'expo-web-browser'
 import useUserStore, { getConnections, getProfile, getUserEnergyInfo } from '../../store/userStore'
-import { genAvatarUrl } from '../../components/profileInfo/helper'
+import { renderImage } from '../../components/profileInfo/helper'
 import ProgressBar from '../../components/common/ProgressBar'
 
 export default function TabThreeScreen() {
@@ -46,14 +46,7 @@ export default function TabThreeScreen() {
       >
         <View style={styles.profile}>
           <View style={styles.profileInfo}>
-            <Image
-              cachePolicy="disk"
-              placeholderContentFit="cover"
-              placeholder={ImgPlaceholder}
-              source={{ uri: genAvatarUrl(profile?.avatar) }}
-              style={{ width: 80, height: 80, borderRadius: 12 }}
-            />
-
+            {renderImage(profile?.avatar, { width: 80, height: 80, borderRadius: 12 })}
             <EditIcon></EditIcon>
           </View>
           <View style={styles.profileDetail}>

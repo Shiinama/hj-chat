@@ -9,7 +9,7 @@ import request from '../../utils/request'
 
 import ImgPlaceholder from '../../assets/images/img_placeholder.png'
 import CustomSlider from './Slider'
-import { genAvatarUrl } from './helper'
+import { renderImage } from './helper'
 import ViewShot, { captureRef } from 'react-native-view-shot'
 import { useBoolean } from 'ahooks'
 const uploadFile = async uri => {
@@ -166,24 +166,12 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
                   }}
                   ref={viewRef}
                 >
-                  <Image
-                    cachePolicy="disk"
-                    placeholderContentFit="cover"
-                    placeholder={ImgPlaceholder}
-                    source={{
-                      uri: genAvatarUrl(inputImage?.uri ? inputImage?.uri : profile?.avatar),
-                    }}
-                    style={{
-                      width: zoomSize,
-                      height: zoomSize,
-                      transform: [{ scale: zoom }],
-                    }}
-                  />
-                  <Image
-                    source={{
-                      uri: genAvatarUrl(inputImage?.uri ? inputImage?.uri : profile?.avatar),
-                    }}
-                  />
+                  {renderImage(inputImage?.uri ? inputImage?.uri : profile?.avatar, {
+                    width: zoomSize,
+                    height: zoomSize,
+                    transform: [{ scale: zoom }],
+                  })}
+                  {renderImage(inputImage?.uri ? inputImage?.uri : profile?.avatar)}
                 </View>
               </View>
             </TouchableOpacity>

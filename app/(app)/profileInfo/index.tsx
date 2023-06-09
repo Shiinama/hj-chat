@@ -17,7 +17,7 @@ import { Button, Popup, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useBoolean, useDebounceEffect, useDeepCompareEffect } from 'ahooks'
 import { getIsUserNameAvailable, postConnectToTelegram, postUpdateUserName } from '../../../api/proofile'
 import EditAvatarModal from '../../../components/profileInfo/EditAvatarModal'
-import { genAvatarUrl } from '../../../components/profileInfo/helper'
+import { renderImage } from '../../../components/profileInfo/helper'
 
 export default function Profile() {
   const navigation = useNavigation()
@@ -115,13 +115,7 @@ export default function Profile() {
               setVisible(true)
             }}
           >
-            <Image
-              cachePolicy="disk"
-              placeholderContentFit="cover"
-              placeholder={ImgPlaceholder}
-              source={{ uri: genAvatarUrl(profile?.avatar) }}
-              style={styles.avatarImg}
-            />
+            {renderImage(profile?.avatar, styles.avatarImg)}
             <View style={styles.mask}>
               <Camera />
             </View>

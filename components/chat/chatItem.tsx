@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 import styles from './styles'
-import { genAvatarUrl, renderImage } from '../../components/profileInfo/helper'
+import { renderImage } from '../../components/profileInfo/helper'
 import { Image } from 'expo-image'
 import AudioMessage from './audioMessage'
 import imgPlaceholder from '../../assets/images/img_placeholder.png'
@@ -86,19 +86,7 @@ function chatItem({ item, me, logo }: Props) {
   return (
     <View style={styles.itemWrap}>
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
-        <View style={styles.avatar}>
-          {tag ? (
-            renderImage(logo, styles.avatar)
-          ) : (
-            <Image
-              placeholder={imgPlaceholder}
-              source={{
-                uri: genAvatarUrl(me),
-              }}
-              style={styles.avatar}
-            />
-          )}
-        </View>
+        <View style={styles.avatar}>{renderImage(tag ? logo : me, styles.avatar)}</View>
 
         <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
           <View style={[tag ? styles.youContent : styles.meContent]}>

@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Image } from 'expo-image'
 import systemConfig from '../constants/System'
 import { profile, getUserEnergyInfo as queryUserEnergyInfo } from '../api/index'
-import { genAvatarUrl } from '../components/profileInfo/helper'
 import { getUserConnectedAccounts, UserConnectedAccounts } from '../api/proofile'
 export type UserProfile = {
   id: number
@@ -80,13 +79,6 @@ useUserStore.subscribe(
 export const getProfile = () => {
   return profile()
     .then((res: any) => {
-      try {
-        if (res?.avatar) {
-          Image.prefetch(genAvatarUrl(res?.avatar))
-        }
-      } catch (error) {
-        console.log(error)
-      }
       useUserStore.setState({ profile: res })
     })
     .catch(e => {
