@@ -10,6 +10,8 @@ import { CustomStack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'
 import { ensureDirExists } from '../utils/filesystem'
 import AudioPayManagerSingle from '../components/chat/audioPlayManager'
+import * as Updates from 'expo-updates'
+import { Alert } from 'react-native'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -23,7 +25,9 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SF-Pro.ttf'),
   })
-
+  const runTypeMessage = Updates.isEmbeddedLaunch
+    ? 'This app is running from built-in code'
+    : 'This app is running an update'
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error
@@ -38,6 +42,7 @@ export default function RootLayout() {
       }
     })
     ensureDirExists()
+    Alert.prompt(runTypeMessage)
     return () => unsubscribe()
   }, [])
 

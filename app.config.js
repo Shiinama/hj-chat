@@ -65,6 +65,9 @@ export default {
     supportsTablet: true,
     bundleIdentifier: 'ai.myshell.app',
     infoPlist: {
+      PROJECT_UUID: '$(PROJECT_UUID)',
+      PROJECT_CLIENT_KEY: '$(PROJECT_CLIENT_KEY)',
+      PROJECT_APP_UUID: '$(PROJECT_APP_UUID)',
       UIBackgroundModes: ['audio'],
     },
   },
@@ -111,7 +114,7 @@ export default {
         photosPermission: 'The app accesses your photos to let you share them with your friends.',
       },
     ],
-    ['./plugins/withiOSInfo'],
+    // ['./plugins/withiOSInfo'],
   ],
   extra: {
     eas: {
