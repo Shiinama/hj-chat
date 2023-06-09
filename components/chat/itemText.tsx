@@ -45,6 +45,7 @@ const MessageText = ({ item, botSetting, isDone }: Props) => {
       botSetting?.textTranslation && {
         id: 3,
         dText: 'Translate',
+        disabled: !isDone,
         Icon: id => (
           <Translate
             fill={id === viewDisplayState ? '#FFFFFF' : '#6C7275'}
@@ -55,10 +56,11 @@ const MessageText = ({ item, botSetting, isDone }: Props) => {
         ),
       },
     ].filter(Boolean)
-    return data.map(({ Icon, id, dText }) => (
+    return data.map(({ Icon, id, dText, disabled }) => (
       <TouchableOpacity
         key={dText}
-        style={[styles.button, viewDisplayState === id && styles.active]}
+        disabled={disabled}
+        style={[styles.button, viewDisplayState === id && styles.active, { opacity: disabled && 0.5 }]}
         onPress={() => {
           setViewDisplayState(id)
           if (id === 3) {
@@ -153,7 +155,7 @@ const MessageText = ({ item, botSetting, isDone }: Props) => {
           (caluTranslate ? <Text>{caluTranslate}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
       </View>
 
-      {item?.replyUid && isDone && <View style={styles.buttonGroup}>{renderReply()}</View>}
+      {item?.replyUid && <View style={styles.buttonGroup}>{renderReply()}</View>}
     </>
   )
 }
