@@ -13,7 +13,6 @@ import {
 } from 'react-native'
 
 import { styles } from './style'
-import userLogo from '../../assets/images/login_icon.png'
 import facebookLogo from '../../assets/images/login/facebook_icon2.png'
 import googleLogo from '../../assets/images/login/google_icon2.png'
 import loginBgLogo from '../../assets/images/login/login_bg.png'

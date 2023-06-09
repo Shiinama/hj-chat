@@ -7,7 +7,6 @@ import { Image } from 'expo-image'
 import ArrowLeft from '../../assets/images/profile/arrow-left.svg'
 import request from '../../utils/request'
 
-import ImgPlaceholder from '../../assets/images/img_placeholder.png'
 import CustomSlider from './Slider'
 import { renderImage } from './helper'
 import ViewShot, { captureRef } from 'react-native-view-shot'

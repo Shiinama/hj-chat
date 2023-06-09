@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 import { useRouter, useFocusEffect } from 'expo-router'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
-import ImgPlaceholder from '../../assets/images/img_placeholder.png'
 import { Image } from 'expo-image'
 import arrowIcon from '../../assets/images/profile/arrow.png'
 import EditIcon from '../../assets/images/profile/edit.svg'

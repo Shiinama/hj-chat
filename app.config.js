@@ -48,7 +48,6 @@ export default {
   version: '1.0.0',
   orientation: 'portrait',
   scheme: 'myapp',
-  userInterfaceStyle: 'automatic',
   splash: {
     image: './assets/images/inch.png',
     resizeMode: 'contain',
