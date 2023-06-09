@@ -36,7 +36,6 @@ export function Provider(props) {
       Clipboard.getString().then(res => {
         const regex = /(?:bot\/)([a-zA-Z0-9_-]+)/
         const [, botId] = res.match(regex) ?? []
-        console.log(res, botId, 111)
         if (botId) {
           router.push({
             pathname: `robot/${botId}`,

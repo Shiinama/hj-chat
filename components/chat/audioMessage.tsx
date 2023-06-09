@@ -17,20 +17,28 @@ type AudioType = {
   item?: MessageDetail
   onPlay?: (playing: boolean) => void
 }
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-function debounce(func, delay) {
-  let timerId
+type ThrottleFunc<T extends any[]> = (...args: T) => void
 
-  return function (...args) {
-    if (timerId) {
-      clearTimeout(timerId)
+function throttle<T extends any[]>(callback: ThrottleFunc<T>, delay: number): ThrottleFunc<T> {
+  let isThrottled = false
+  let lastArgs: T = [] as T
+
+  return function throttled(...args: T) {
+    lastArgs = args
+
+    if (!isThrottled) {
+      isThrottled = true
+      callback(...args)
+
+      setTimeout(() => {
+        isThrottled = false
+
+        if (lastArgs.length) {
+          throttled(...lastArgs)
+          lastArgs = [] as T
+        }
+      }, delay)
     }
-    timerId = setTimeout(() => {
-      func(...args)
-      timerId = null
-    }, delay)
   }
 }
 
@@ -63,16 +71,18 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   const key = item.botId + '&BOT&' + item.replyUid
   const loadNext = async () => {
     // 这里需要拿Ref上的
-    const { Sound, uri } = SoundObj.current
+    const { Sound, uri, positionMillis } = SoundObj.current
     if (Sound && uri) {
       try {
-        const { positionMillis } = (await Sound.getStatusAsync()) as AVPlaybackStatus & { positionMillis: number }
+        const { positionMillis: originpositionMillis } = (await Sound.getStatusAsync()) as AVPlaybackStatus & {
+          positionMillis: number
+        }
         await Sound.unloadAsync()
         // shouldPlay 当前正在播放的流才自动播放
         await Sound.loadAsync(
           { uri: uri },
           {
-            positionMillis,
+            positionMillis: originpositionMillis || positionMillis,
             progressUpdateIntervalMillis: 16,
             shouldPlay: SocketStreamManager().getCurrentPlayStream() === key ? true : false,
           }
@@ -96,9 +106,8 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       SocketStreamManager().playStreamNext()
     }
   }
-
-  // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
-  const debouncedLoadNext = debounce(loadNext, 400)
+  // TODO
+  const debouncedLoadNext = throttle(loadNext, 1000)
   const [isTimeout, setIsTimeout] = useState(false)
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
@@ -108,6 +117,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
           if (!SoundObj.current.Sound) {
             fLoadSteam()
           } else {
+            // loadNext()
             // setLoading(true)
             debouncedLoadNext()
           }
