@@ -53,6 +53,7 @@ export default {
     resizeMode: 'contain',
     backgroundColor: '#ffffff',
   },
+  jsEngine: 'hermes',
   assetBundlePatterns: ['**/*'],
   ios: {
     icon: './assets/iOS/App Store - 1x.png',
@@ -112,7 +113,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev',
+    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },

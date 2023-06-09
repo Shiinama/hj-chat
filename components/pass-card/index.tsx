@@ -11,12 +11,13 @@ type Iprops = {
   level: number
   id: number
   Sea?: boolean
+  buttonText: string
   subView: {
     subTitle: string
     subText: string
   }[]
 }
-export default function PassCardItem({ title, subView, level, id, Sea }: Iprops) {
+export default function PassCardItem({ title, subView, level, id, buttonText }: Iprops) {
   const cardTitle = () => {
     return (
       <View style={styles.viewItem}>
@@ -68,28 +69,11 @@ export default function PassCardItem({ title, subView, level, id, Sea }: Iprops)
   }
 
   const buttonGroupRender = () => {
-    if (Sea) {
-      return (
-        <Button
-          onPress={e => {
-            e.preventDefault()
-            WebBrowser.openBrowserAsync('https://opensea.io/collection/myshellgenesispass')
-          }}
-          style={styles.bottomButton}
-        >
-          OpenSea
-        </Button>
-      )
+    if (id < level) {
+      return null
     }
 
-    if (id === level) {
-      return (
-        <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
-          Current Level
-        </Button>
-      )
-    }
-    if (id === level + 1) {
+    if (id === 2 && id !== level) {
       return (
         <Button
           onPress={() => {
@@ -101,6 +85,36 @@ export default function PassCardItem({ title, subView, level, id, Sea }: Iprops)
           style={styles.bottomButton}
         >
           <Text>Invite</Text>
+        </Button>
+      )
+    }
+
+    if (id === level) {
+      return (
+        <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
+          Current Level
+        </Button>
+      )
+    }
+
+    if (id > level) {
+      return (
+        <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
+          Coming Soon
+        </Button>
+      )
+    }
+
+    if (buttonText === 'OpenSea') {
+      return (
+        <Button
+          onPress={e => {
+            e.preventDefault()
+            WebBrowser.openBrowserAsync('https://opensea.io/collection/myshellgenesispass')
+          }}
+          style={styles.bottomButton}
+        >
+          OpenSea
         </Button>
       )
     }

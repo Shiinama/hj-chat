@@ -1,10 +1,11 @@
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import { renderImage } from '../../profileInfo/helper'
 import userStore from '../../../store/userStore'
 import LinearText from '../../common/linearText'
 import Tag from '../../common/tag'
 import { useTagList } from '../../../constants/TagList'
 import { memo } from 'react'
+const windowWidth = Dimensions.get('window').width
 function UgcBotCard({ ld, onShowDetail, type }: any) {
   const tags = useTagList(ld, type)
   const userInfo = userStore.getState().profile
@@ -31,7 +32,7 @@ function UgcBotCard({ ld, onShowDetail, type }: any) {
           </View>
           <View style={styles.tagList}>
             {tags.map(tag => {
-              return <Tag key={tag.id} {...tag} textMaxWidth={70}></Tag>
+              return <Tag key={tag.id} {...tag} textMaxWidth={windowWidth / 6}></Tag>
             })}
           </View>
         </View>

@@ -23,6 +23,7 @@ const DATA = [
         subText: '40 ⚡️ Per Day.',
       },
     ],
+    buttonText: 'Basic',
   },
   {
     id: 2,
@@ -37,6 +38,7 @@ const DATA = [
         subText: '60 ⚡️ Per Day',
       },
     ],
+    buttonText: 'Invite',
   },
   {
     id: 3,
@@ -51,6 +53,7 @@ const DATA = [
         subTextArray: ['120 ⚡️ Per Day', 'One Private Bot'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
   {
     id: 4,
@@ -65,6 +68,7 @@ const DATA = [
         subTextArray: ['200 ⚡️ Per Day', 'One Public Bot'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
   {
     id: 5,
@@ -79,6 +83,7 @@ const DATA = [
         subTextArray: ['300 ⚡️ Per Day', 'Bots with External Knowledge and Docs', 'More Benefits Coming…'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
 ]
 const DATA1 = [
@@ -95,6 +100,7 @@ const DATA1 = [
         subTextArray: ['200 ⚡️ Per Day', 'One Public Bot', 'Beta Feature Preview'],
       },
     ],
+    buttonText: 'OpenSea',
   },
   {
     title: 'Lv.4',
@@ -108,6 +114,7 @@ const DATA1 = [
         subTextArray: ['300 ⚡️ Per Day', 'Bots with External Knowledge and Docs', 'One More Pubic Bot'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
   {
     title: 'Lv.5',
@@ -126,6 +133,7 @@ const DATA1 = [
         ],
       },
     ],
+    buttonText: 'Coming Soon',
   },
 ]
 
