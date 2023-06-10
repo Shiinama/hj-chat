@@ -61,7 +61,7 @@ export class SocketStream {
   private init() {
     // 初始化删除本地mp3文件
     const { userBaseInfo } = useUserStore.getState()
-    const token = userBaseInfo?.token
+    const token = userBaseInfo?.token ?? SysConfig.token
     this.socket = io(`${SysConfig.baseUrl}/chat`, {
       path: '/ws',
       transports: ['websocket'],
