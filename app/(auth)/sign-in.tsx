@@ -1,16 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
-import {
-  Text,
-  View,
-  Image,
-  TouchableHighlight,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Linking,
-} from 'react-native'
+import { Text, View, Image, TouchableOpacity } from 'react-native'
 
 import { styles } from './style'
 import facebookLogo from '../../assets/images/login/facebook_icon2.png'
@@ -32,6 +20,7 @@ import { particleLogin } from '../../api/auth'
 export default function SignIn() {
   const { signIn } = useAuth()
   const login = async loginType => {
+    const { close } = Toast.loading({ message: 'Loging', duration: 0 })
     const type = loginType
     const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
     const result = await particleAuth.login(type, '', _supportAuthType as any, true)
@@ -42,12 +31,12 @@ export default function SignIn() {
         uuid: userInfo.uuid,
         token: userInfo.token,
       })
-
       signIn(info)
     } else {
       const error = result.data
       Toast(error)
     }
+    close()
   }
 
   return (
