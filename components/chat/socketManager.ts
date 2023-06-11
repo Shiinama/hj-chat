@@ -218,9 +218,9 @@ export class SocketStream {
   playStreamNext1 = debounce(this.playStreamNext, 100)
 
   playStreamNext() {
+    console.log(this.audioStreamPlayKeys, this.audioStreamIndex, '触发下一个')
     if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length - 1) {
       this.audioStreamIndex += 1
-      AudioPayManagerSingle().stop()
       CallBackManagerSingle().execute('play_' + this.audioStreamPlayKeys[this.audioStreamIndex])
     } else {
       this.audioStreamIndex = -1

@@ -27,7 +27,7 @@ import SocketStreamManager from '../../components/chat/socketManager'
 import useUserStore from '../../store/userStore'
 
 export default function TabOneScreen() {
-  if (!useUserStore.getState().userBaseInfo) return
+  // if (!useUserStore.getState().userBaseInfo) return
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)

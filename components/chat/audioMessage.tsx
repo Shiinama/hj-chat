@@ -14,10 +14,9 @@ type AudioType = {
   showControl?: boolean
   isDone?: boolean
   item?: MessageDetail
-  onPlay?: (playing: boolean) => void
 }
 
-const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: AudioType, ref) => {
+const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType, ref) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   // 两种Audio都共用一个Uri和Sound，因为要多条消息的管理，所以单例很难做，
@@ -123,17 +122,12 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       SoundObj.current.durationMillis = status.durationMillis || 0
     }
     // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
-    if (
-      status.isLoaded &&
-      refPlaying.current &&
-      status.positionMillis - status.durationMillis + (item.replyUid ? 0 : 50) >= 0
-    ) {
+    if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 50 >= 0) {
       setIsPlaying(() => false)
       soundManager.current.stop()
       setPositionMillis(0)
       SocketStreamManager().playStreamNext()
     } else if (status.isLoaded && status.isPlaying) {
-      setIsPlaying(() => true)
       setPositionMillis(status.positionMillis || 0)
       SoundObj.current.positionMillis = status.positionMillis || 0
     }
@@ -153,12 +147,13 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       if (!SoundObj.current.canLoadNextStream) {
         loadNext()
       } else {
+        console.log('连续触发2次', item.replyUid)
         setIsPlaying(() => false)
+        soundManager.current.stop()
         setPositionMillis(0)
         SocketStreamManager().playStreamNext1()
       }
     } else if (status.isLoaded && status.isPlaying) {
-      setIsPlaying(() => true)
       setPositionMillis(status.positionMillis || 0)
       SoundObj.current.positionMillis = status.positionMillis || 0
     }
@@ -210,6 +205,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     opSuccess = await soundManager.current.play(
       SoundObj.current.Sound,
       function () {
+        console.log(1111)
         setIsPlaying(() => false)
       },
       function () {
@@ -221,6 +217,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
 
   const handlePlayPause = async () => {
     // 为什么这里一定要Reset那？
+
     SocketStreamManager().resetPlayStream()
     if (SoundObj.current.Sound !== null) {
       if (isPlaying) {
@@ -241,7 +238,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   }
 
   useEffect(() => {
-    onPlay?.(isPlaying)
     refPlaying.current = isPlaying
   }, [isPlaying])
 
