@@ -10,12 +10,7 @@ import { useAuth } from '../../context/auth'
 import { SupportAuthType } from 'react-native-particle-auth'
 import * as particleAuth from 'react-native-particle-auth'
 import useUserStore from '../../store/userStore'
-
-// import { createWeb3 } from '../../tmp/web3Demo'
 import { particleLogin } from '../../api/auth'
-// const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
-// import { MateMaskView } from './matemask-login'
-// import { WallectConnectView } from './wallect-login'
 
 export default function SignIn() {
   const { signIn } = useAuth()

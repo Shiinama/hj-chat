@@ -114,10 +114,10 @@ export class AudioPayManager {
         console.log('currentSoundStopMethod 停止当前：')
         this.currentSoundStopMethod?.()
         await this.currentSound.pauseAsync().catch(e => {
-          // console.log('play-pauseAsync-catch', e)
+          console.log('play-pauseAsync-catch', e)
         })
       } catch (e) {
-        // console.log('play-pauseAsync', e)
+        console.log('play-pauseAsync', e)
       }
     }
     this.isPlay = true
@@ -128,7 +128,7 @@ export class AudioPayManager {
       await sound.playAsync()
       return true
     } catch (e) {
-      // console.log('playerror', e)
+      console.log('playerror', e)
       return false
     }
   }

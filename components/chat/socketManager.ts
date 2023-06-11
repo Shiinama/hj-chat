@@ -15,7 +15,7 @@ import { arrayBufferToBase64, concatBuffer } from '../../utils/base64'
 import AudioFragmentPlay from './audioFragmentPlay'
 import AudioPayManagerSingle from './audioPlayManager'
 import { saveAudio } from '../../utils/audioFile'
-
+import debounce from 'lodash/debounce'
 export class SocketStream {
   private socket: Socket
 
@@ -107,7 +107,6 @@ export class SocketStream {
     if (this.currentBot?.botBaseInfo.id !== data.data.botId) return
 
     this.onSendMessage?.(data)
-    CallBackManagerSingle().execute('botList')
   }
 
   private onMessageTextStream(data: MessageStreamTextRes) {
@@ -189,6 +188,7 @@ export class SocketStream {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     const msgKey = data?.botId + '&BOT&' + data?.replyUid
     this.onMessageRes[msgKey](data)
+    CallBackManagerSingle().execute('botList')
   }
   private onMessageTranslated({ data }: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
@@ -215,11 +215,11 @@ export class SocketStream {
     this.socket.emit(ChatEvent, data)
   }
 
+  playStreamNext1 = debounce(this.playStreamNext, 100)
+
   playStreamNext() {
     if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length - 1) {
       this.audioStreamIndex += 1
-      console.log('this.audioStreamPlayKeys:', this.audioStreamPlayKeys, this.audioStreamIndex)
-
       AudioPayManagerSingle().stop()
       CallBackManagerSingle().execute('play_' + this.audioStreamPlayKeys[this.audioStreamIndex])
     } else {
@@ -233,6 +233,7 @@ export class SocketStream {
   }
 
   getCurrentPlayStream() {
+    console.log(this.audioStreamPlayKeys, this.audioStreamIndex, 'getCurrentPlayStream')
     if (this.audioStreamIndex < this.audioStreamPlayKeys.length) {
       return this.audioStreamPlayKeys[this.audioStreamIndex]
     }
@@ -240,6 +241,7 @@ export class SocketStream {
   }
 
   resetPlayStream() {
+    console.log('reset')
     this.audioStreamIndex = -1
     this.audioStreamPlayKeys = []
   }
