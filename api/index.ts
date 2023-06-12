@@ -47,7 +47,7 @@ export const profile = () => {
   })
 }
 export const getUserEnergyInfo = () => {
-  return request({
+  return request<{ dailyEnergy: number; energy: number }>({
     url: `/user/getUserEnergyInfo`,
     method: 'get',
   })

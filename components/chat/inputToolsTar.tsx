@@ -17,7 +17,7 @@ import AudioAnimation from './audioAnimation'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 
 export interface MTextInputProps extends TextInputProps {
-  onEndEditText?: (value: string) => boolean
+  onEndEditText?: (value: string) => Promise<boolean>
   startRecording: () => void
   stopRecording: () => void
   setAuInfo: (audioFileUri: string) => void
@@ -191,9 +191,9 @@ function InputToolsTar({
       return (
         <TouchableOpacity
           style={styles.toolsIcon}
-          onPress={() => {
+          onPress={async () => {
             if (onEndEditText) {
-              const clear = onEndEditText?.(text)
+              const clear = await onEndEditText?.(text)
               clear && setText('')
             }
           }}

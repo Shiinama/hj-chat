@@ -31,6 +31,7 @@ export default function RootLayout() {
   // 添加useMemo
 
   useEffect(() => {
+    // 虽然这里没有问题，但是如果使用了Vpn后，判断就失效了,只能接口检查
     const unsubscribe = NetInfo.addEventListener(state => {
       AudioPayManagerSingle().netInfo = state
       if (!state.isConnected) {
