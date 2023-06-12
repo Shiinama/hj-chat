@@ -61,6 +61,7 @@ export function Provider(props) {
         },
         signOut: async () => {
           setAuth(null)
+          SocketStreamManager().destory()
           useUserStore.setState({
             userBaseInfo: null,
             profile: null,
