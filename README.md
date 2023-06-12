@@ -34,4 +34,37 @@
 
 `expo start --offline`
 
-还是比较简单有问题就问。
+打安卓 dev 包
+
+`eas build --platform android --local --profile development`
+
+打安卓 release
+
+`eas build --platform android --local --profile preview`
+
+跑设备 debug 包 就是后面加 -d 直接可以选择链接设备跑（自动签名）
+
+`cross-env REACT_APP_ENV=test expo run:ios -d`
+
+云构建（但我们项目应该不需要，这个就是给没有 xcode 用）
+
+`eas build -p ios`
+
+跑 debug 包或者生产包(同理可以加 -d 自动签名)
+
+`npx expo run:android --variant debug`
+
+`npx expo run:android --variant release`
+
+`npx expo run:ios --configuration Release`(无签名)
+
+导出 js-bundler
+
+`npx expo export`
+
+The project base architecture to do
+
+- ios/android fastlane to testflight or google bate
+- eas update or CodePush
+- github ci/cd
+- audio？

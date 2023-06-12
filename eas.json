@@ -14,14 +14,21 @@
         "simulator": true
       }
     },
-    "y": {
+    "dev": {
+      "env": {
+        "REACT_APP_ENV": "test"
+      },
       "android": {
         "buildType": "apk"
       },
-      "distribution": "internal",
-      "ios": {
-        "simulator": true
-      }
+      "ios": {}
+    },
+    "prod": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "ios": {}
     },
     "development": {
       "distribution": "internal",
@@ -34,7 +41,9 @@
       }
     },
     "preview": {
-      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:bundleRelease"
+      },
       "ios": {
         "resourceClass": "m-medium"
       }

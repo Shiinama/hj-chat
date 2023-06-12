@@ -16,11 +16,13 @@ const ToolsModal = forwardRef(
     {
       userId,
       toolsAction,
-      closePopover,
+      bottom,
+      pinned,
     }: {
       userId: number;
+      bottom: number;
+      pinned: boolean;
       toolsAction: (val: ActionType) => void;
-      closePopover?: () => void;
     },
     ref
   ) => {
@@ -28,7 +30,7 @@ const ToolsModal = forwardRef(
       return [
         ...(userId
           ? [
-              { name: "Pin", icon: <Pin />, key: "Pin" },
+              { name: pinned ? "Unpin" : "Pin", icon: <Pin />, key: "Pin" },
               {
                 name: "Remove from list",
                 icon: <Remove />,
@@ -46,18 +48,14 @@ const ToolsModal = forwardRef(
       ];
     }, [userId]);
     return (
-      <View
-        style={{
-          width: "100%",
-        }}
-      >
+      <View style={{ bottom, ...styles.popupWrap }}>
         <View style={styles.popupBody}>
           {actionList?.map((v) => {
             return (
               <TouchableOpacity
+                key={v?.key}
                 onPress={() => {
                   toolsAction(v?.key as ActionType);
-                  closePopover();
                 }}
                 style={styles.iconC}
               >
@@ -69,13 +67,18 @@ const ToolsModal = forwardRef(
             );
           })}
         </View>
-        <View style={{ height: 22 }} />
+        <View style={{ height: 6 }} />
       </View>
     );
   }
 );
 
 const styles = StyleSheet.create({
+  popupWrap: {
+    position: "absolute",
+    width: "100%",
+    paddingHorizontal: 20,
+  },
   iconC: {
     padding: 8,
     alignItems: "center",

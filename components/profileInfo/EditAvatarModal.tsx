@@ -1,30 +1,33 @@
-import { UserProfile } from '@/../store/userStore'
+import { getProfile, UserProfile } from '../../store/userStore'
 import { Button, Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { Image } from 'expo-image'
 import ArrowLeft from '../../assets/images/profile/arrow-left.svg'
 import request from '../../utils/request'
+
 import CustomSlider from './Slider'
-import { genAvatarUrl } from './helper'
+import { renderImage } from './helper'
 import ViewShot, { captureRef } from 'react-native-view-shot'
-import { getPageInfo } from '../../app/(app)/profileInfo'
+import { useBoolean } from 'ahooks'
 const uploadFile = async uri => {
   const filePath = uri
+  const regex = /\/([\w-]+)\.\w+$/
+  const match = regex.exec(uri)
+  const filename = match[1]
   const formData = new FormData()
   formData.append('file', {
     uri: filePath,
-    type: 'application/octet-stream',
-    name: 'file',
-  })
-
-  const boundary = '----WebKitFormBoundaryKuaSUT6xPZeD4B8b'
+    type: 'image/png',
+    name: filename,
+  } as any)
   return await request({
     url: '/user/uploadAvatar',
     method: 'post',
     data: formData,
     headers: {
-      'Content-Type': `multipart/form-data; boundary=${boundary}`,
+      'Content-Type': `multipart/form-data`,
     },
   })
 }
@@ -37,45 +40,65 @@ export interface EditAvatarModalProps {
 const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profile }) => {
   const viewRef = useRef()
   const [imgSize, setImgSize] = useState(0)
+  const [inputImage, setInputImage] = useState<ImagePicker.ImagePickerAsset>(null)
   const [zoom, setZoom] = useState(1)
   const [zoomSize, setZoomSize] = useState(0)
+  const [updateLoading, { set: setUpdateLoading }] = useBoolean(false)
+  const canEdit = useMemo(() => {
+    if (inputImage) {
+      return true
+    } else {
+      if (zoom !== 1) {
+        return true
+      }
+    }
+    return false
+  }, [zoom, inputImage])
   useEffect(() => {
     setZoomSize(imgSize)
   }, [imgSize])
   useEffect(() => {
     if (visible) {
       setInputImage(null)
+      setZoom(1)
     }
   }, [visible])
-  const [inputImage, setInputImage] = useState<ImagePicker.ImagePickerAsset>(null)
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     })
-
     if (!result.canceled) {
       setInputImage(result.assets[0])
     }
   }
 
   const updateAvatar = async () => {
+    setUpdateLoading(true)
     try {
       captureRef(viewRef, {
         format: 'png',
         quality: 1,
       }).then(
         uri => {
-          uploadFile(uri).then(() => {
-            Toast('update successfully!')
-            setVisible(false)
-            getPageInfo()
-          })
+          uploadFile(uri)
+            .then(res => {
+              Toast('Update successfully!')
+              setVisible(false)
+              getProfile()
+            })
+            .finally(() => {
+              setUpdateLoading(false)
+            })
         },
-        error => console.error('Oops, snapshot failed', error)
+        error => {
+          console.log(error)
+          setUpdateLoading(false)
+        }
       )
       // if (inputImage?.fileSize > 1048576) {
       //   Toast("The image size cannot exceed 1M");
@@ -102,6 +125,8 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
               <Text style={styles.headerTitle}>Update avatar</Text>
             </View>
             <Button
+              disabled={!canEdit}
+              loading={updateLoading}
               color="#1F1F1F"
               size="s"
               style={{ borderRadius: 12, paddingHorizontal: 14 }}
@@ -140,16 +165,12 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
                   }}
                   ref={viewRef}
                 >
-                  <Image
-                    source={{
-                      uri: genAvatarUrl(inputImage?.uri ? inputImage?.uri : profile?.avatar),
-                    }}
-                    style={{
-                      width: zoomSize,
-                      height: zoomSize,
-                      transform: [{ scale: zoom }],
-                    }}
-                  />
+                  {renderImage(inputImage?.uri ? inputImage?.uri : profile?.avatar, {
+                    width: zoomSize,
+                    height: zoomSize,
+                    transform: [{ scale: zoom }],
+                  })}
+                  {renderImage(inputImage?.uri ? inputImage?.uri : profile?.avatar)}
                 </View>
               </View>
             </TouchableOpacity>

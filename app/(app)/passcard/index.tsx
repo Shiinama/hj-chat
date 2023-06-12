@@ -1,15 +1,17 @@
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Text, View, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
-
+import useUserStore from '../../../store/userStore'
 import Carousel from 'react-native-snap-carousel' // Version can be specified in package.json
 import PassCardItem from '../../../components/pass-card'
-import { Button } from '@ui-kitten/components'
+import { useNavigation } from 'expo-router'
 
 const SLIDER_WIDTH = Dimensions.get('window').width
+const ITEM_HEIGHT = Dimensions.get('window').height
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
 const DATA = [
   {
+    id: 1,
     title: 'Lv.1',
     subView: [
       {
@@ -18,180 +20,163 @@ const DATA = [
       },
       {
         subTitle: 'Level benefits:',
-        subText: 'Restores 30 energy daily',
+        subText: '40 ⚡️ Per Day.',
       },
     ],
+    buttonText: 'Basic',
   },
   {
+    id: 2,
     title: 'Lv.2',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Invite three valid users, or register yourself as an invited user',
+        subText: 'Invite three valid users or signup with invitation link.',
       },
       {
         subTitle: 'Level benefits:',
-        subText: 'Recharge 60 units of electricity daily',
+        subText: '60 ⚡️ Per Day',
       },
     ],
+    buttonText: 'Invite',
   },
   {
+    id: 3,
     title: 'Lv.3',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Invite ten active users',
+        subText: 'Purchase MyShell Pass',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recovery of 100 energy',
-          'You can create a private robot ',
-          'Pay 100U to publish it publicly',
-        ],
+        subTextArray: ['120 ⚡️ Per Day', 'One Private Bot'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
   {
+    id: 4,
     title: 'Lv.4',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 50U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recharge of 200 units of electricity',
-          'You can create a private robot ',
-          'Knowledge base integration (one update opportunity per day)',
-          'More benefits are being planned...',
-        ],
+        subTextArray: ['200 ⚡️ Per Day', 'One Public Bot'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
   {
+    id: 5,
     title: 'Lv.5',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 100U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: ['Daily recovery of 300 electricity', 'More benefits are being planned...'],
+        subTextArray: ['300 ⚡️ Per Day', 'Bots with External Knowledge and Docs', 'More Benefits Coming…'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
 ]
 const DATA1 = [
   {
     title: 'Lv.3',
+    Sea: true,
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Buy Genesis NFT',
+        subText: 'Holder of MyShell Genesis Pass',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Recover 200 electricity per day',
-          'Can create a private robot',
-          'Free public release',
-          'Priority review at high speed',
-        ],
+        subTextArray: ['200 ⚡️ Per Day', 'One Public Bot', 'Beta Feature Preview'],
       },
     ],
+    buttonText: 'OpenSea',
   },
   {
     title: 'Lv.4',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 50U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recharge of 300 power.',
-          'Access to knowledge base (one update opportunity per day).',
-          'More privileges are being planned…',
-          '(Adding an additional private robot.)',
-        ],
+        subTextArray: ['300 ⚡️ Per Day', 'Bots with External Knowledge and Docs', 'One More Pubic Bot'],
       },
     ],
+    buttonText: 'Coming Soon',
   },
   {
     title: 'Lv.5',
     subView: [
       {
         subTitle: 'Achievement conditions:',
-        subText: 'Payment of 100U',
+        subText: 'TBD',
       },
       {
         subTitle: 'Level benefits:',
         subTextArray: [
-          'Daily recharge of 600 units of electricity',
-          'Personalized TTS',
-          'More benefits are under development...',
-          '(Draw a Genesis passcard)',
-          '(Add an extra public robot)',
+          '600 ⚡️ Per Day',
+          'Bots with External Knowledge and Docs',
+          'One More Pubic Bot',
+          'Bots with Personalized Voice and Coming Advanced Features',
         ],
       },
     ],
-  },
-  {
-    title: 'Lv.4',
-    subView: [
-      {
-        subTitle: 'Achievement conditions:',
-        subText: 'Payment of 50U',
-      },
-      {
-        subTitle: 'Level benefits:',
-        subTextArray: [
-          'Daily recharge of 200 units of electricity',
-          'You can create a private robot ',
-          'Knowledge base integration (one update opportunity per day)',
-          'More benefits are being planned...',
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Lv.5',
-    subView: [
-      {
-        subTitle: 'Achievement conditions:',
-        subText: 'Payment of 100U',
-      },
-      {
-        subTitle: 'Level benefits:',
-        subTextArray: ['Daily recovery of 300 electricity', 'More benefits are being planned...'],
-      },
-    ],
+    buttonText: 'Coming Soon',
   },
 ]
 
 export default function Passcard() {
-  const carouselRef = useRef(null)
+  const navigation = useNavigation()
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Passcard',
+      headerTitleAlign: 'center',
+    })
+  }, [])
   const [tab, setTab] = useState(1)
-  const astyles = {}
+  const userInfo = useUserStore().profile
   const _renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <PassCardItem {...item}></PassCardItem>
+    <View
+      style={[
+        styles.itemContainer,
+        { borderColor: userInfo.level === item.id ? '#7A2EF6' : '#F6F6F6', borderWidth: 1 },
+      ]}
+    >
+      <PassCardItem {...item} level={userInfo.level}></PassCardItem>
     </View>
   )
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          marginTop: 20,
+          borderRadius: 8,
+          marginHorizontal: 20,
+          backgroundColor: '#f6f6f6',
+          padding: 5,
+        }}
+      >
         <TouchableOpacity
           style={{
             backgroundColor: tab == 1 ? '#7A2EF6' : '#f6f6f6',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 166,
-            height: 40,
+            flex: 1,
+            height: 30,
             borderRadius: 8,
           }}
           onPress={() => setTab(1)}
@@ -203,19 +188,21 @@ export default function Passcard() {
             backgroundColor: tab == 2 ? '#7A2EF6' : '#f6f6f6',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 166,
-            height: 40,
+            flex: 1,
+            height: 30,
             borderRadius: 4,
           }}
-          onPress={() => setTab(2)}
+          onPress={() => {
+            setTab(2)
+          }}
         >
           <Text style={{ color: tab == 2 ? 'white' : 'black' }}>Genesis</Text>
         </TouchableOpacity>
       </View>
       {tab === 1 ? (
         <Carousel
+          key={'1'}
           data={DATA}
-          loop={true}
           contentContainerCustomStyle={{ alignItems: 'flex-start' }}
           renderItem={_renderItem}
           sliderWidth={SLIDER_WIDTH}
@@ -225,8 +212,8 @@ export default function Passcard() {
         />
       ) : (
         <Carousel
+          key={'2'}
           data={DATA1}
-          loop={true}
           contentContainerCustomStyle={{ alignItems: 'flex-start' }}
           renderItem={_renderItem}
           sliderWidth={SLIDER_WIDTH}
@@ -245,9 +232,9 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: ITEM_WIDTH,
-    height: 600,
-    boderRadius: 30,
+    height: ITEM_HEIGHT - 200,
     alignItems: 'center',
+    borderRadius: 12,
     justifyContent: 'center',
     backgroundColor: '#F6F6F6',
   },

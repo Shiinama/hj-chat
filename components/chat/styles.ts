@@ -6,6 +6,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     width: 32,
     height: 32,
+    marginHorizontal: 2,
     borderRadius: 16,
   },
 
@@ -16,6 +17,7 @@ export default StyleSheet.create({
   msgBox: {
     flexShrink: 1,
     flexGrow: 1,
+    paddingHorizontal: 10,
     marginBottom: 24,
     alignItems: 'flex-start',
   },
@@ -26,20 +28,18 @@ export default StyleSheet.create({
     flexDirection: 'row-reverse',
   },
   contentBox: {
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 8,
-    marginRight: 8,
-    maxWidth: 263,
+    marginHorizontal: 8,
+    width: 263,
   },
   button: {
     borderRadius: 12,
     flexDirection: 'row',
-    margin: 12,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
+    marginHorizontal: 4,
+    height: 28,
+    alignContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 12,
+
     backgroundColor: Colors.mainWhite,
   },
   active: {
@@ -48,49 +48,30 @@ export default StyleSheet.create({
   },
   content: {
     padding: 12,
-    borderTopWidth: 1,
+    width: '100%',
     fontSize: 14,
     borderColor: '#E2E8F0',
-    borderBottomWidth: 1,
+    overflow: 'hidden',
   },
+
   buttonGroup: {
+    borderColor: '#E2E8F0',
+    borderTopWidth: 1,
+    alignContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
+    height: 50,
   },
   youContent: {
+    borderRadius: 6,
     backgroundColor: Colors.mainGrey,
   },
   meContent: {
+    borderRadius: 6,
     backgroundColor: '#F1EAFE',
   },
-  triangleLeft: {
-    position: 'absolute',
-    left: -5,
-    top: 14,
-    zIndex: 666,
-    borderTopWidth: 5,
-    borderBottomWidth: 5,
-    borderRightWidth: 6,
-    borderColor: '#FFF8DC',
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-  },
-  triangleRight: {
-    position: 'absolute',
-    right: -5,
-    top: 14,
-    zIndex: 666,
-    borderTopWidth: 5,
-    borderBottomWidth: 5,
-    borderLeftWidth: 6,
-    borderColor: '#9F9F5F',
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-  },
-  time: {
-    textAlign: 'center',
-    color: 'rgba(0,0,0,.5)',
-    fontSize: 12,
-    margin: 10,
+  placeholder: {
+    flexGrow: 1,
   },
   footer: {
     backgroundColor: '#f5f5f5',
@@ -125,5 +106,19 @@ export default StyleSheet.create({
     bottom: 0,
     right: 0,
     zIndex: 999,
+  },
+  loadingBox: {
+    height: 42,
+    backgroundColor: Colors.mainGrey,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 14,
+  },
+  loadingIcon: {
+    marginLeft: 8,
   },
 })

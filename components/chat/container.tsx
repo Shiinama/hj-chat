@@ -1,66 +1,67 @@
 import { KeyboardAvoidingView, View } from 'react-native'
-import { useState } from 'react'
+import { LegacyRef, useEffect, useState } from 'react'
 import MessagesContainer from './messagesContainer'
-import InputToolsTar from './inputToolsTar'
-import type { FlatList, StyleProp, TextInput, ViewStyle } from 'react-native'
+import InputToolsTar, { MTextInputProps } from './inputToolsTar'
+import type { FlatList, StyleProp, ViewStyle } from 'react-native'
 
 export interface FishChatProps {
-  inputTextProps: TextInput['props']
+  haveHistory?: boolean
+  inputTextProps: MTextInputProps
   flatListProps: FlatList['props']
   InputToolBarHeight?: number
   messagesContainerStyle?: StyleProp<ViewStyle>
+  flatListRef?: LegacyRef<FlatList>
 }
-// 工具栏高度
-const minInputToolbarHeight = 80
 
-//  一个自定义距离偏移距离
-const bottomOffset = 1
 function Container({
   messagesContainerStyle,
+  haveHistory,
   inputTextProps,
+  flatListRef,
   flatListProps,
   ...restProps
 }: FishChatProps): JSX.Element {
   const [maxHeight, setMaxHeight] = useState(0)
+  const [barHeight, setBarHeight] = useState(0)
+  // 工具栏高度
+  const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(0)
   const [messagesContainerHeight, setMessagesContainerHeight] = useState(0)
-
-  const getBasicMessagesContainerHeight = (layoutHeight: number) => {
-    return layoutHeight - minInputToolbarHeight
-  }
-  const getMessagesContainerHeightWithKeyboard = (layoutHeight: number, keyboardHeight: number) => {
-    return getBasicMessagesContainerHeight(layoutHeight) - keyboardHeight + bottomOffset
-  }
+  const [boardHeight, setBoardHeight] = useState(0)
+  const [toolsBottm, setToolsBottm] = useState(10)
   const onInitialLayoutViewLayout = (e: any) => {
     const { layout } = e.nativeEvent
     if (layout.height <= 0) {
       return
     }
     setMaxHeight(layout.height)
-    const newMessagesContainerHeight = getBasicMessagesContainerHeight(layout.height)
-    setMessagesContainerHeight(newMessagesContainerHeight)
   }
 
   const onKeyboardWillShow = (e: any) => {
     const keyboardHeight = e.endCoordinates ? e.endCoordinates.height : e.end.height
-    const newMessagesContainerHeight = getMessagesContainerHeightWithKeyboard(maxHeight, keyboardHeight)
-    setMessagesContainerHeight(newMessagesContainerHeight)
-  }
-  const onKeyboardWillHide = () => {
-    const newMessagesContainerHeight = getBasicMessagesContainerHeight(maxHeight)
-    setMessagesContainerHeight(newMessagesContainerHeight)
+    setBoardHeight(keyboardHeight)
+    setToolsBottm(0)
   }
 
+  const onKeyboardWillHide = () => {
+    setBoardHeight(0)
+    setToolsBottm(10)
+  }
+  useEffect(() => {
+    setMinInputToolbarHeight(63)
+    setMessagesContainerHeight(maxHeight - barHeight - boardHeight)
+  }, [maxHeight, boardHeight, barHeight])
   const InternalProps = {
     onKeyboardWillShow,
     onKeyboardWillHide,
   }
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={{ flex: 1 }} onLayout={onInitialLayoutViewLayout}>
         <KeyboardAvoidingView enabled>
           {/* message容器 */}
           <View>
             <MessagesContainer
+              flatListRef={flatListRef}
               flatListProps={flatListProps}
               InternalProps={InternalProps}
               messagesContainerStyle={messagesContainerStyle}
@@ -70,6 +71,10 @@ function Container({
         </KeyboardAvoidingView>
         {/* inputToolbar下方输入框工具栏容器 */}
         <InputToolsTar
+          haveHistory={haveHistory}
+          barHeight={barHeight}
+          toolsBottm={toolsBottm}
+          setBarHeight={setBarHeight}
           inputTextProps={inputTextProps as any}
           minInputToolbarHeight={restProps.InputToolBarHeight || minInputToolbarHeight}
         ></InputToolsTar>

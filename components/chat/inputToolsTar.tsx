@@ -1,344 +1,337 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import {
-  Keyboard,
-  View,
-  TextInput,
-  ViewStyle,
-  NativeSyntheticEvent,
-  TextInputContentSizeChangeEventData,
-  Platform,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { MenuItem, OverflowMenu } from "@ui-kitten/components";
-import audio from "../../assets/images/audio.jpg";
-import Lines from "../../assets/images/chat/lines.svg";
-import Keyborad from "../../assets/images/chat/keyborad.svg";
-import Send from "../../assets/images/chat/send.svg";
-import Delete from "../../assets/images/chat/delete.svg";
-import MessagePlay from "../../assets/images/chat/message_play.svg";
-import Messagepause from "../../assets/images/chat/message_pause.svg";
-import RecordButton from "./RecordButton";
-import { StyleSheet } from "react-native";
-import { useCallbackOne } from "use-memo-one";
-import AudioMessage from "./audioMessage";
-import * as FileSystem from "expo-file-system";
-import ToolsModal, { ActionType } from "./toolsModal";
-import ShareToPopup from "./shareToPopup";
-import { ChatContext } from "../../app/(app)/chat/chatContext";
-import { Popover, Toast } from "@fruits-chain/react-native-xiaoshu";
-import {
-  removeBotFromChatList,
-  resetHistory,
-  setBotPinnedStatus,
-} from "../../api";
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Keyboard, View, TextInput, ViewStyle, Platform, Image, TouchableOpacity, TextInputProps } from 'react-native'
+import audio from '../../assets/images/audio.jpg'
+import Lines from '../../assets/images/chat/lines.svg'
+import Keyborad from '../../assets/images/chat/keyborad.svg'
+import Send from '../../assets/images/chat/send.svg'
+import RecordButton from './RecordButton'
+import { StyleSheet } from 'react-native'
+import { useRouter } from 'expo-router'
+import ToolsModal, { ActionType } from './toolsModal'
+import ShareToPopup from './shareToPopup'
+import { ChatContext } from '../../app/(app)/chat/chatContext'
+import { Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
+import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
+import { useBoolean } from 'ahooks'
+import AudioAnimation from './audioAnimation'
+import CallBackManagerSingle from '../../utils/CallBackManager'
+
+export interface MTextInputProps extends TextInputProps {
+  onEndEditText?: (value: string) => boolean
+  startRecording: () => void
+  stopRecording: () => void
+  setAuInfo: (audioFileUri: string) => void
+  uid: string
+  userId: number
+  pinned: boolean
+}
+
 type Props = {
-  minInputToolbarHeight: number;
-  inputTextProps: TextInput["props"] & {
-    startRecording: () => void;
-    stopRecording: () => void;
-    setAuInfo: (audioFileUri: string) => void;
-    uid: string;
-    userId: number;
-  };
-  onInputSizeChanged?: (layout: { width: number; height: number }) => void;
-};
+  minInputToolbarHeight: number
+  inputTextProps: MTextInputProps
+  barHeight
+  setBarHeight
+  toolsBottm
+  onInputSizeChanged?: (layout: { width: number; height: number }) => void
+  haveHistory?: boolean
+}
 
 function InputToolsTar({
+  setBarHeight,
+  barHeight,
   inputTextProps,
-  onInputSizeChanged,
+  haveHistory,
+  toolsBottm,
   minInputToolbarHeight,
 }: Props) {
   const {
-    value,
-    onChangeText,
     startRecording,
     stopRecording,
     setAuInfo,
-    onSubmitEditing,
+    onEndEditText,
+    pinned: originalPinned,
     uid,
     userId,
     ...inputProps
-  } = inputTextProps;
-
-  const { setValue: setChatValue } = useContext(ChatContext);
-
-  const [position, setPosition] = useState("absolute");
-  const [audioFileUri, setAudioFileUri] = useState("");
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isShow, setIsShow] = useState(false);
-  const [showSend, setShowSend] = useState(false);
-  const inputRef = useRef(null);
-  const audioMessageRef = useRef(null);
+  } = inputTextProps
+  const { setValue: setChatValue } = useContext(ChatContext)
+  const [pinned, setPinned] = useState(originalPinned)
+  const [position, setPosition] = useState('absolute')
+  const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
+  const [audioFileUri, setAudioFileUri] = useState('')
+  const [text, setText] = useState('')
+  // 控制话筒弹出
+  const [isShow, setIsShow] = useState(false)
+  const [showAni, setShowAni] = useState(true)
+  // 控制send按钮
+  const [showSend, setShowSend] = useState(true)
+  const inputRef = useRef(null)
+  const router = useRouter()
+  const AnimationRef = useRef(null)
   useEffect(() => {
-    const keyboardWillShowListener = Keyboard.addListener(
-      "keyboardWillShow",
-      () => {
-        setShowSend(false);
-        setPosition("relative");
-      }
-    );
-    const keyboardWillHideListener = Keyboard.addListener(
-      "keyboardWillHide",
-      () => {
-        setShowSend(true);
-        setPosition("absolute");
-      }
-    );
+    const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
+      if (Platform.OS === 'android') return
+      setIsShow(true)
+      setPosition('relative')
+    })
+    const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      if (Platform.OS === 'android') return
+      setPosition('absolute')
+    })
+
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      if (Platform.OS === 'ios') return
+      setIsShow(true)
+      setPosition('relative')
+    })
+    const KeyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      if (Platform.OS === 'ios') return
+      setPosition('absolute')
+    })
     return () => {
-      keyboardWillShowListener?.remove();
-      keyboardWillHideListener?.remove();
-    };
-  }, []);
-  const dimensionsRef = useRef<{ width: number; height: number }>();
+      keyboardDidShowListener?.remove()
+      KeyboardDidHideListener?.remove()
+      keyboardWillShowListener?.remove()
+      keyboardWillHideListener?.remove()
+    }
+  }, [])
+
   const handleButtonPress = () => {
     if (inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus()
     }
-  };
-
-  const determineInputSizeChange = useCallbackOne(
-    (dimensions: { width: number; height: number }) => {
-      if (!onInputSizeChanged) return;
-      if (!dimensions) {
-        return;
-      }
-
-      if (
-        !dimensionsRef ||
-        !dimensionsRef.current ||
-        (dimensionsRef.current &&
-          (dimensionsRef.current.width !== dimensions.width ||
-            dimensionsRef.current.height !== dimensions.height))
-      ) {
-        dimensionsRef.current = dimensions;
-        onInputSizeChanged(dimensions);
-      }
-    },
-    [onInputSizeChanged]
-  );
+  }
 
   const toolsAction = (key: ActionType) => {
+    if (!haveHistory && key !== 'RemoveFromList' && key !== 'Pin') {
+      Toast('No chat content')
+      return
+    }
     switch (key) {
-      case "Pin":
-        const { close: pinnedClose } = Toast.loading("Pinned");
-        setBotPinnedStatus({ botUid: uid, pinned: true }).then(() => {
-          pinnedClose();
-        });
-        break;
-      case "RemoveFromList":
-        const { close: removeClose } = Toast.loading("Move...");
+      case 'Pin':
+        const { close: pinnedClose } = Toast.loading(pinned ? 'Unpin' : 'Pinned')
+        setBotPinnedStatus({ botUid: uid, pinned: !pinned }).then(() => {
+          setPinned(!pinned)
+          pinnedClose()
+          CallBackManagerSingle().execute('botList')
+        })
+        break
+      case 'RemoveFromList':
+        const { close: removeClose } = Toast.loading('Move...')
         removeBotFromChatList({ botUid: uid }).then(() => {
-          removeClose();
-        });
-        break;
-      case "ClearMemory":
-        const { close: clearClose } = Toast.loading("Clear Contenxt");
+          removeClose()
+          CallBackManagerSingle().execute('botList')
+          router.push({ pathname: '(tabs)' })
+        })
+        break
+      case 'ClearMemory':
+        const { close: clearClose } = Toast.loading('Clear Contenxt')
         resetHistory({ botUid: uid }).then(() => {
-          clearClose();
-        });
-        break;
-      case "ShareChatRecords":
-        setChatValue({ pageStatus: "sharing" });
-        break;
+          clearClose()
+        })
+        break
+      case 'ShareChatRecords':
+        setChatValue({ pageStatus: 'sharing' })
+        break
 
       default:
-        break;
+        break
     }
-  };
-  const handleContentSizeChange = ({
-    nativeEvent: { contentSize },
-  }: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) =>
-    determineInputSizeChange(contentSize);
-  return (
-    <View style={[styles.container, { position }] as ViewStyle}>
-      <View>
-        {!audioFileUri ? (
-          <View style={{ ...styles.primary, height: minInputToolbarHeight }}>
-            <Popover
-              arrow={false}
-              popoverStyle={{
-                backgroundColor: "transparent",
-                width: Dimensions.get("window").width,
-              }}
-              renderContentComponent={(node, closePopover) => {
-                return (
-                  <ToolsModal
-                    userId={userId}
-                    toolsAction={toolsAction}
-                    closePopover={closePopover}
-                  />
-                );
-              }}
-              content={null}
-            >
-              <View style={styles.toolsIcon}>
-                <Lines></Lines>
-              </View>
-            </Popover>
-            <ShareToPopup />
-            {isShow ? (
-              <TextInput
-                ref={inputRef}
-                returnKeyType="default"
-                blurOnSubmit={false}
-                multiline={true}
-                maxLength={500}
-                placeholder="Wite a message"
-                style={styles.textInput}
-                enablesReturnKeyAutomatically
-                onChangeText={(inputText) => {
-                  onChangeText(inputText);
-                }}
-                onContentSizeChange={handleContentSizeChange}
-                {...inputTextProps}
-                {...inputProps}
-              />
-            ) : (
-              <RecordButton
-                setAudioFileUri={setAudioFileUri}
-                startRecording={startRecording}
-                stopRecording={stopRecording}
-              ></RecordButton>
-            )}
-            <TouchableOpacity
-              style={styles.toolsIcon}
-              onPress={() => {
-                setIsShow((pre) => {
-                  if (!pre) {
-                    setTimeout(() => handleButtonPress());
-                  }
-                  return !pre;
-                });
-              }}
-            >
-              {isShow ? (
-                showSend ? (
-                  <Image style={styles.Icon} source={audio}></Image>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => onSubmitEditing(value as any)}
-                  >
-                    <Send></Send>
-                  </TouchableOpacity>
-                )
-              ) : (
-                <Keyborad fill={"#2D3748"}></Keyborad>
-              )}
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View>
-            <AudioMessage
-              ref={audioMessageRef}
-              showControl={false}
-              audioFileUri={audioFileUri}
-            ></AudioMessage>
-            <View style={styles.accessory}>
-              <TouchableOpacity
-                onPress={async () => {
-                  const { exists } = await FileSystem.getInfoAsync(
-                    audioFileUri
-                  );
+    setToolsVisible(false)
+  }
 
-                  if (exists) {
-                    try {
-                      await FileSystem.deleteAsync(audioFileUri);
-                      Toast("Deleted recording file");
-                    } catch (error) {
-                      Toast("Failed to delete recording file");
-                    }
-                  }
-                  setAudioFileUri("");
-                }}
-              >
-                <Delete></Delete>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  setIsPlaying((pre) => {
-                    audioMessageRef.current.handlePlayPause();
-                    return !pre;
-                  })
-                }
-              >
-                {isPlaying ? <Messagepause /> : <MessagePlay />}
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setAuInfo(audioFileUri);
-                  setAudioFileUri("");
-                }}
-              >
-                <Send></Send>
-              </TouchableOpacity>
-            </View>
-          </View>
+  const inputBottmTollsBar = () => {
+    return (
+      <RecordButton
+        isShow={isShow}
+        AnimationRef={AnimationRef}
+        recordMaxSecond={90}
+        setIsShow={setIsShow}
+        setShowAni={setShowAni}
+        setAudioFileUri={setAudioFileUri}
+        audioFileUri={audioFileUri}
+        setAuInfo={setAuInfo}
+        startRecording={startRecording}
+        stopRecording={stopRecording}
+      ></RecordButton>
+    )
+  }
+
+  const renderLeftInput = () => {
+    return (
+      <>
+        <Overlay
+          visible={toolsVisible}
+          backgroundColor="transparent"
+          onPress={() => {
+            setToolsVisible(false)
+          }}
+        >
+          <ToolsModal bottom={barHeight} userId={userId} pinned={pinned} toolsAction={toolsAction} />
+        </Overlay>
+        <ShareToPopup />
+        <TouchableOpacity
+          style={styles.toolsIcon}
+          onPress={() => {
+            setToolsVisible(true)
+            /** 底部高度ios获取不正确 */
+            if (Platform.OS === 'ios') {
+              inputRef.current?.blur()
+            }
+          }}
+        >
+          <Lines></Lines>
+        </TouchableOpacity>
+      </>
+    )
+  }
+
+  const renderRightInput = useMemo(() => {
+    if (!showSend)
+      return (
+        <TouchableOpacity
+          style={styles.toolsIcon}
+          onPress={() => {
+            if (onEndEditText) {
+              const clear = onEndEditText?.(text)
+              clear && setText('')
+            }
+          }}
+        >
+          <Send></Send>
+        </TouchableOpacity>
+      )
+    return (
+      <>
+        {isShow ? (
+          <TouchableOpacity
+            style={styles.toolsIcon}
+            onPress={() => {
+              setIsShow(false)
+              Keyboard.dismiss()
+            }}
+          >
+            <Image style={styles.Icon} source={audio}></Image>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.toolsIcon}
+            onPress={() => {
+              setIsShow(true)
+              handleButtonPress()
+            }}
+          >
+            <Keyborad fill={'#2D3748'}></Keyborad>
+          </TouchableOpacity>
         )}
-      </View>
+      </>
+    )
+  }, [isShow, showSend, text])
+  useEffect(() => {
+    setShowSend(!text.length)
+  }, [text])
+  return (
+    <View
+      style={[styles.container, { position }, { paddingTop: isShow ? 0 : 10 }] as ViewStyle}
+      onLayout={e => {
+        setBarHeight(e.nativeEvent.layout.height)
+      }}
+    >
+      <>
+        <View
+          style={{
+            ...styles.primary,
+            height: isShow ? minInputToolbarHeight : minInputToolbarHeight / 2,
+            marginBottom: toolsBottm,
+          }}
+        >
+          {
+            <>
+              {showAni ? (
+                <>
+                  {renderLeftInput()}
+                  <View
+                    style={{
+                      flex: 1,
+                      marginHorizontal: 10,
+                      borderRadius: 6,
+                      backgroundColor: 'white',
+                    }}
+                  >
+                    <TextInput
+                      ref={inputRef}
+                      returnKeyType="default"
+                      blurOnSubmit={false}
+                      multiline={true}
+                      maxLength={500}
+                      placeholder="Write a message"
+                      style={[styles.textInput]}
+                      onTextInput={e => {
+                        if (!text.length) {
+                          setText(e.nativeEvent.text)
+                        }
+                      }}
+                      onChangeText={setText}
+                      value={text}
+                      {...inputTextProps}
+                      {...inputProps}
+                    />
+                  </View>
+                  {renderRightInput}
+                </>
+              ) : (
+                <AudioAnimation ref={AnimationRef}></AudioAnimation>
+              )}
+            </>
+          }
+        </View>
+        {inputBottmTollsBar()}
+      </>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#b2b2b2",
-    backgroundColor: "#F6F6F6",
+    borderTopColor: '#b2b2b2',
+    backgroundColor: '#F6F6F6',
     bottom: 0,
     left: 0,
     right: 0,
   },
   primary: {
-    flexDirection: "row",
-    marginTop: 10,
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 20,
-    height: 40,
-  },
-  accessory: {
-    height: 60,
-    flexDirection: "row",
-    justifyContent: "space-around",
+    // marginBottom: 10,
   },
   toolsIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    position: "relative",
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
+    width: 35,
+    height: 35,
+    borderRadius: 6,
+    position: 'relative',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   Icon: {
     width: 18,
     height: 18,
   },
   textInput: {
-    flex: 1,
-    marginHorizontal: 8,
-    // marginVertical: 12,
-    textAlignVertical: "center",
-    fontSize: 16,
-    backgroundColor: "#FFFFFF",
-    lineHeight: 26,
-    height: Platform.select({
-      ios: 40,
-      android: 40,
-      web: 34,
+    paddingTop: Platform.select({
+      ios: 8,
+      android: 0,
     }),
-    // marginTop: Platform.select({
-    //   ios: 6,
-    //   android: 0,
-    //   web: 6,
-    // }),
-    // marginBottom: Platform.select({
-    //   ios: 8,
-    //   android: 8,
-    //   web: 4,
-    // }),
+    minHeight: 35,
+    maxHeight: 105,
+    borderRadius: 6,
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    fontSize: 16,
   },
-});
+})
 
-export default InputToolsTar;
+export default InputToolsTar

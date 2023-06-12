@@ -1,8 +1,9 @@
 {
-  "expo.jsEngine": "jsc",
+  "expo.jsEngine": "hermes",
   "ffmpeg-kit-react-native.subspecs": [
     "audio"
   ],
   "ios.deploymentTarget": "13.0",
-  "ios.useFrameworks": "static"
+  "ios.useFrameworks": "static",
+  "ios.newArchEnabled": true
 }

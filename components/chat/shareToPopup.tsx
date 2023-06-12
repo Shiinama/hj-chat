@@ -8,39 +8,68 @@ import CopyLinkIcon from '../../assets/images/chat/copy_link.svg'
 import SaveIcon from '../../assets/images/chat/save_img.svg'
 import TwitterIcon from '../../assets/images/chat/twitter.svg'
 import Clipboard from '@react-native-clipboard/clipboard'
+import * as MediaLibrary from 'expo-media-library'
+import * as WebBrowser from 'expo-web-browser'
 
 import { createSharedConversation } from '../../api'
+import { ensureDirExists, imageDir } from '../../utils/filesystem'
+// import { ensureDirExists } from '../../utils/filesystem
 export interface ShareToPopupProps {}
 type shareAction = 'save' | 'link' | 'twitter'
 const ShareToPopup: FC<ShareToPopupProps> = () => {
   const { value, setValue } = useContext(ChatContext)
-  console.log(value.selectedItems)
+  const saveImage = async uri => {
+    // try {
+    //   const asset = await MediaLibrary.createAssetAsync(uri)
+    //   const album = await MediaLibrary.getAlbumAsync('Download')
+    //   if (album == null) {
+    //     await MediaLibrary.createAlbumAsync('Download', asset, false)
+    //     Toast('Image successfully saved')
+    //   } else {
+    //     await MediaLibrary.addAssetsToAlbumAsync([asset], album, false)
+    //     Toast('Image successfully saved')
+    //   }
+    // } catch (e) {
+    //   console.log(e)
+    // }
+    const { status } = await MediaLibrary.requestPermissionsAsync()
+    if (status != 'granted') {
+      return
+    }
+    await MediaLibrary.saveToLibraryAsync(uri)
+    Toast('Image successfully saved')
+  }
   const action = (key: shareAction) => {
     if (value?.selectedItems?.length <= 0) {
       Toast('Please select at least one chat!')
       return false
     }
+    const { close: clearClose } = Toast.loading('Sharing')
     // https://share.vinstic.com/share/101952a812444b22a83fd4e4dcb99a46/download
-    createSharedConversation(value.selectedItems).then(res => {
-      console.log({ res })
+    createSharedConversation(value.selectedItems).then(async res => {
       switch (key) {
         case 'save':
-          FileSystem.downloadAsync(
+          const isExists = await ensureDirExists()
+          if (!isExists) {
+            Toast('File system error!')
+            return
+          }
+          const { uri } = await FileSystem.downloadAsync(
             `${systemConfig.downloadHost}/${res}/download`,
-            FileSystem.documentDirectory + `${res}.png`
+            `${imageDir}` + `${res}.png`
           )
-            .then(({ uri }) => {
-              Toast('download successfully!')
-            })
-            .catch(error => {
-              console.error(error)
-            })
+          await saveImage(uri)
+
           break
         case 'link':
           Clipboard.setString(`${systemConfig.shareLink}${res}`)
+          clearClose()
           Toast('Copied!')
           break
         case 'twitter':
+          WebBrowser.openBrowserAsync(
+            `https://twitter.com/intent/tweet?url=${systemConfig.shareLink}${res}&text=@myshell_ai`
+          )
           break
         default:
           break

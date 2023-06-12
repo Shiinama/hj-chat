@@ -1,130 +1,47 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'expo-router'
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
-import BotCard from '../../components/botCard'
-import { getUgcBotList, queryCanCreateUgcBot } from '../../api/robot'
-import addIcon from '../../assets/images/add.png'
-import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import ugcStore from '../../store/ugcBotstroe'
-import ShellLoading from '../../components/loading'
-type ListDataItem = {
-  id: string | number
-  uid: string
-  status: string
-  name: string
-  description: string
-  userId: string | number
-  logo: string
-  language: string
-  createdDate: any
-  updatedDate: any
-  energyPerChat: string | number
+import Tabs from '../../components/setting/Tabs'
+import { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import AllRobot from '../../components/setting/AllRobot'
+import MyShell from '../../components/setting/MyShell'
+/** page tabs 的value */
+export const pageTypes = {
+  allRobot: 'AllRobot',
+  myShell: 'MyShell',
 }
-
+const tabsData = [
+  { label: 'All Robot', value: pageTypes.allRobot },
+  { label: 'My Shell', value: pageTypes.myShell },
+]
 export default function TabTwoScreen() {
-  const router = useRouter()
-  const [listData, setListData] = useState<ListDataItem[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = () => {
-    setLoading(true)
-    getUgcBotList({}).then(res => {
-      setLoading(false)
-      setListData(res as ListDataItem[])
-    })
-  }
-
-  const onShowDetail = event => {
-    console.log(event)
-    ugcStore.setState(event)
-    router.push({
-      pathname: `robot/${event.id}`,
-      params: {
-        id: event.id,
-        userId: event.userId,
-        status: event.status,
-        name: event.name,
-        language: event.language,
-        uid: event.uid,
-      },
-    })
-  }
-
-  const onCreate = () => {
-    queryCanCreateUgcBot({}).then(() => {
-      Toast('Please use a desktop browser to create a robot')
-    })
-  }
-  if (loading) return <ShellLoading></ShellLoading>
+  /** 当前页面处于哪一个tab */
+  const [tabVal, setTabVal] = useState(pageTypes.allRobot)
   return (
-    <ScrollView style={styles.container}>
-      <TouchableOpacity
-        style={styles.action}
-        onPress={() => {
-          onCreate()
-        }}
-      >
-        <Image source={addIcon} style={{ width: 20, height: 20 }} />
-        <Text style={styles.title}>Creat a Robot</Text>
-        <Text style={styles.desc}>Robot creator, expert in robotics</Text>
-      </TouchableOpacity>
-      <View style={styles.mt12}>
-        {listData?.map(ld => (
-          <BotCard
-            onShowDetail={e => {
-              onShowDetail(e)
-            }}
-            key={ld.id}
-            ld={ld}
-            showTime={false}
-          />
-        ))}
+    <>
+      <View style={styles.container}>
+        <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+          <Tabs data={tabsData} value={tabVal} onChange={setTabVal} />
+        </View>
+        <View style={tabVal === pageTypes.allRobot ? styles.body : { display: 'none' }}>
+          <AllRobot />
+        </View>
+        <View style={tabVal === pageTypes.myShell ? styles.body : { display: 'none' }}>
+          <MyShell />
+        </View>
+        {/* {tabVal === pageTypes.allRobot ? <AllRobot /> : null}
+        {tabVal === pageTypes.myShell ? <MyShell /> : null} */}
       </View>
-    </ScrollView>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 16,
-    paddingRight: 16,
-    flex: 1,
-    backgroundColor: '#ffffff',
-    width: '100%',
+    backgroundColor: '#fff',
+    paddingTop: 8,
     height: '100%',
-    boxSizing: 'border-box',
   },
-  action: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: 132,
-    backgroundColor: '#F6F6F6',
-    borderRadius: 12,
-  },
-  title: {
-    fontStyle: 'normal',
-    fontWeight: '600',
-    fontSize: 18,
-    lineHeight: 28,
-    marginTop: 20,
-    color: '#1F1F1F',
-  },
-  desc: {
-    fontSize: 14,
-    fontStyle: 'normal',
-    fontWeight: '400',
-    lineHeight: 22,
-    color: '#797979',
-  },
-  mt12: {
-    marginTop: 12,
+  body: {
+    flexShrink: 1,
+    flexGrow: 1,
   },
 })

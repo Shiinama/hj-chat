@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { useRef, useState } from 'react'
 
 /**
  * 时间戳转时间字符串
@@ -136,4 +137,50 @@ export const convertTime = minutes => {
 
     return `${minute}:${sec}`
   }
+}
+
+export const useIntervalTime = () => {
+  const time = useRef({ ms: 0, s: 0 })
+  const [interv, setInterv] = useState()
+
+  const start = () => {
+    run()
+    setInterv(setInterval(run, 10) as any)
+  }
+
+  const pause = () => {
+    clearInterval(interv)
+  }
+
+  const resume = () => start()
+
+  const reset = () => {
+    clearInterval(interv)
+    time.current = { ms: 0, s: 0 }
+  }
+
+  const run = () => {
+    const times = time.current
+    let ms = times.ms,
+      s = times.s
+
+    if (ms === 100) {
+      s++
+      ms = 0
+    }
+    if (s === 60) {
+      s = 0
+    }
+
+    ms++
+    time.current = { ms, s }
+    return [time.current, start, pause, resume, reset]
+  }
+}
+
+export const formatTime = (ms: number): string => {
+  const minutes: number = Math.floor(ms / 60000)
+  // @ts-ignore
+  const seconds: number = ((ms % 60000) / 1000).toFixed(0)
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 }

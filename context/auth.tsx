@@ -1,8 +1,9 @@
 import { useRouter, useSegments } from 'expo-router'
 import { useEffect, useContext, createContext, useState } from 'react'
-import { useAsyncStorage } from '@react-native-async-storage/async-storage'
-import { particleLogin } from '../api/auth'
-
+import useUserStore from '../store/userStore'
+import Constants from 'expo-constants'
+import Clipboard from '@react-native-clipboard/clipboard'
+import SocketStreamManager from '../components/chat/socketManager'
 const AuthContext = createContext(null)
 
 export function useAuth() {
@@ -16,24 +17,34 @@ function useProtectedRoute(user) {
     if (user === undefined) {
       return
     }
-    if (!user && rootSegment !== '(auth)/sign-in') {
-      router.replace('(auth)/sign-in')
+    const notNeedLogin = Constants.manifest.extra.isLogin
+    if (!notNeedLogin) {
+      if (!user && rootSegment !== '(auth)/sign-in') {
+        router.replace('(auth)/sign-in')
+      }
     }
   }, [user, rootSegment])
 }
 
 export function Provider(props) {
-  const { getItem, setItem, removeItem } = useAsyncStorage('USER')
+  const router = useRouter()
   const [user, setAuth] = useState(undefined)
-  console.log(user)
   useEffect(() => {
-    getItem().then(json => {
-      if (json != null) {
-        setAuth(JSON.parse(json))
-      } else {
-        setAuth(null)
-      }
-    })
+    const userInfo = useUserStore.getState()?.userBaseInfo
+    if (userInfo != null) {
+      setAuth(userInfo)
+      Clipboard.getString().then(res => {
+        const regex = /(?:bot\/)([a-zA-Z0-9_-]+)/
+        const [, botId] = res.match(regex) ?? []
+        if (botId) {
+          router.push({
+            pathname: `robot/${botId}`,
+          })
+        }
+      })
+    } else {
+      setAuth(null)
+    }
   }, [])
 
   useProtectedRoute(user)
@@ -42,21 +53,15 @@ export function Provider(props) {
     <AuthContext.Provider
       value={{
         signIn: async value => {
-          console.log({
-            uuid: value.token,
-            token: value.uuid,
-          })
-          const info = await particleLogin({
-            uuid: value.uuid,
-            token: value.token,
-          })
-          console.log(info)
-          setAuth(info)
-          setItem(JSON.stringify(info))
+          setAuth(value)
+          useUserStore.setState({ userBaseInfo: value })
+          // 有了UserInfo之后再去初始化socket
+          SocketStreamManager()
+          router.replace('(tabs)')
         },
-        signOut: () => {
+        signOut: async () => {
           setAuth(null)
-          removeItem()
+          useUserStore.setState({ userBaseInfo: null })
         },
         user,
       }}

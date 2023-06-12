@@ -1,84 +1,51 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native'
+import { Text, View } from 'react-native'
 import styles from './styles'
-import you from '../../assets/images/flash.jpg'
-import me from '../../assets/images/me.jpg'
-import { ChatItem } from '../../app/(app)/chat/[id]'
+import { renderImage } from '../../components/profileInfo/helper'
 import AudioMessage from './audioMessage'
-import Blur from '../../assets/images/chat/blur.svg'
 import CheckIcon from '../../assets/images/chat/check.svg'
 import CheckedIcon from '../../assets/images/chat/checked.svg'
-import Svt from '../../assets/images/chat/svt.svg'
-import Translate from '../../assets/images/chat/translte.svg'
-import { useContext, useState } from 'react'
+import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
-import { Checkbox, Loading } from '@fruits-chain/react-native-xiaoshu'
-import { BlurView } from '@react-native-community/blur'
+import { Checkbox } from '@fruits-chain/react-native-xiaoshu'
+import SocketStreamManager from './socketManager'
+import { MessageDetail } from '../../types/MessageTyps'
+import botStore from '../../store/botStore'
+import ItemText from './itemText'
 type Props = {
-  item: ChatItem & number
-  translationText
+  item: MessageDetail & number
   children?: (() => React.ReactNode) | React.ReactNode
   logo: string
+  me: string
 }
 
-function chatItem({ item, translationText, logo }: Props) {
+function chatItem({ item, me, logo }: Props) {
+  const msgKey = item.botId + '&BOT&' + item.replyUid
+  const AudioRef = useRef(null)
+  const botState = botStore.getState().botBaseInfo
+  // 回复状态是否已经完成
+  const [isDone, setIsDone] = useState<boolean>(false)
   const { value: chatValue, setValue: setChatValue } = useContext(ChatContext)
-  const [buttonIndex, setButtonIndex] = useState<number>(1)
-  const isBlur = buttonIndex === 1
-  if (item === 123) return null
-  const tag = item?.replyUid
-  const renderMessageAudio = () => <AudioMessage audioFileUri={item?.voiceUrl} />
-  const renderMessageText = () => {
-    return (
-      <View style={[styles.content]}>
-        {isBlur && item?.type === 'REPLY' && (
-          <BlurView style={styles.absolute} blurType="light" blurAmount={2} reducedTransparencyFallbackColor="white" />
-        )}
-        {buttonIndex === 1 && <Text>{item.text}</Text>}
-        {buttonIndex === 2 && <Text>{item.text}</Text>}
-        {buttonIndex === 3 &&
-          (item.translation ? <Text>{item.translation}</Text> : <Loading color="#7A2EF6">Translating</Loading>)}
-      </View>
-    )
-  }
-  const renderReply = () => {
-    const param = {
-      style: { marginRight: 5 },
-      width: 10,
-      height: 10,
+
+  useEffect(() => {
+    if (item.status === 'DONE') {
+      setIsDone(true)
     }
-    const data = [
-      {
-        id: 1,
-        dText: 'Blur',
-        Icon: id => <Blur fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
-      },
-      {
-        id: 2,
-        dText: 'Text',
-        Icon: id => <Svt fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
-      },
-      {
-        id: 3,
-        dText: 'Translate',
-        Icon: id => <Translate fill={id === buttonIndex ? '#FFFFFF' : '#6C7275'} {...param} />,
-      },
-    ]
-    return data.map(({ Icon, id, dText }) => (
-      <TouchableOpacity
-        key={dText}
-        style={[styles.button, buttonIndex === id && styles.active]}
-        onPress={() => {
-          setButtonIndex(id)
-          if (id === 3) {
-            translationText(item.uid)
-          }
-        }}
-      >
-        {Icon && Icon(id)}
-        <Text style={{ color: buttonIndex === id ? 'white' : 'black' }}>{dText}</Text>
-      </TouchableOpacity>
-    ))
-  }
+  }, [item.status])
+  useEffect(() => {
+    if (item.type === 'LOADING' && item.replyUid) {
+      SocketStreamManager().addResMessagesCallBack(msgKey, item => {
+        if (item.status === 'DONE') {
+          setIsDone(true)
+        }
+      })
+    }
+    return () => {
+      SocketStreamManager().removeresMessagesCallBack(msgKey)
+    }
+  }, [item])
+
+  if (item.uid === '1231') return null
+  const tag = item?.replyUid
 
   const checkboxJSX = chatValue.pageStatus === 'sharing' && (
     <Checkbox
@@ -100,23 +67,33 @@ function chatItem({ item, translationText, logo }: Props) {
       }}
     />
   )
+  if (item.type === 'RESET') {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <View
+          style={[styles.contentBox, { padding: 12, borderRadius: 6, backgroundColor: '#FFF5E2', marginBottom: 20 }]}
+        >
+          <Text>
+            The memory has been cleared, your chat history is still preserved for you, but the robot will no longer
+            remember the content of these conversations.
+          </Text>
+        </View>
+      </View>
+    )
+  }
   return (
     <View style={styles.itemWrap}>
       <View style={[styles.msgBox, tag ? styles.you : styles.me]}>
-        <Image
-          source={{
-            uri: tag
-              ? logo
-              : 'https://www.bhmpics.com/downloads/isla-plastic-memories-Wallpapers/1.thumb-1920-657801.jpg',
-          }}
-          style={styles.avatar}
-        />
-        <View
-          style={[styles.contentBox, tag ? styles.youContent : { ...styles.meContent, width: item?.voiceUrl && 243 }]}
-        >
-          {item?.voiceUrl && renderMessageAudio()}
-          {item?.text && renderMessageText()}
-          {item?.type === 'REPLY' && <View style={styles.buttonGroup}>{renderReply()}</View>}
+        <View style={styles.avatar}>{renderImage(tag ? logo : me, styles.avatar)}</View>
+
+        <View style={[styles.contentBox, { flexDirection: tag ? 'row' : 'row-reverse' }]}>
+          <View style={[tag ? styles.youContent : styles.meContent]}>
+            {(item.type === 'VOICE' || (botState?.botSetting?.outputVoice && item.replyUid)) && (
+              <AudioMessage item={item} isDone={isDone} ref={AudioRef} />
+            )}
+            <ItemText item={item} isDone={isDone} botSetting={botState?.botSetting}></ItemText>
+          </View>
+          <View style={styles.placeholder} />
         </View>
       </View>
       {checkboxJSX}
@@ -124,4 +101,4 @@ function chatItem({ item, translationText, logo }: Props) {
   )
 }
 
-export default chatItem
+export default memo(chatItem)

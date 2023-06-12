@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>ai-myshell</string>
+	<string>MyShell</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -40,7 +40,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>pn6b6a232e-973a-405c-969a-a546189fda16</string>
+				<string>pn$(PROJECT_APP_UUID)</string>
 			</array>
 		</dict>
 	</array>
@@ -65,14 +65,16 @@
 	<string>Allow $(PRODUCT_NAME) to access your camera</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to access your microphone</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Give $(PRODUCT_NAME) permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>The app accesses your photos to let you share them with your friends.</string>
+	<string>Give $(PRODUCT_NAME) permission to access your photos</string>
 	<key>PROJECT_APP_UUID</key>
-	<string>6b6a232e-973a-405c-969a-a546189fda16</string>
+	<string>$(PROJECT_APP_UUID)</string>
 	<key>PROJECT_CLIENT_KEY</key>
-	<string>cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk</string>
+	<string>$(PROJECT_CLIENT_KEY)</string>
 	<key>PROJECT_UUID</key>
-	<string>c9aa126d-8db2-45cc-8898-60e3a69d5050</string>
+	<string>$(PROJECT_UUID)</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -96,7 +98,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIUserInterfaceStyle</key>
-	<string>Automatic</string>
+	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

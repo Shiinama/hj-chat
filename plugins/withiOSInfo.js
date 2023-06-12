@@ -1,4 +1,5 @@
 const withMySDK = config => {
+  const myConfg = JSON.parse(JSON.stringify(config))
   // Ensure the objects exist
   if (!config.ios) {
     config.ios = {}
@@ -6,17 +7,10 @@ const withMySDK = config => {
   if (!config.ios.infoPlist) {
     config.ios.infoPlist = {}
   }
-
-  config.ios.infoPlist['PROJECT_UUID'] = 'c9aa126d-8db2-45cc-8898-60e3a69d5050'
-  config.ios.infoPlist['PROJECT_CLIENT_KEY'] = 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk'
-  config.ios.infoPlist['PROJECT_APP_UUID'] = '6b6a232e-973a-405c-969a-a546189fda16'
-
+  config.ios.infoPlist['PROJECT_UUID'] = myConfg.extra.systemConfig.PARTICLE_PROJECT_ID
+  config.ios.infoPlist['PROJECT_CLIENT_KEY'] = myConfg.extra.systemConfig.PARTICLE_CLIENT_ID
+  config.ios.infoPlist['PROJECT_APP_UUID'] = myConfg.extra.systemConfig.PARTICLE_APP_ID
   return config
-}
-
-/// Create a config
-const config = {
-  name: 'my app',
 }
 
 /// Use the plugin

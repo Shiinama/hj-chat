@@ -1,13 +1,13 @@
-import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native'
-import { useRouter } from 'expo-router'
+import { View, StyleSheet, ScrollView, Pressable, Text, DeviceEventEmitter } from 'react-native'
+import { useFocusEffect, useRouter } from 'expo-router'
 import RootStyles from '../../constants/RootStyles'
-import 'react-native-get-random-values'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { botList } from '../../api/index'
-import BotCard from '../../components/botCard'
-import ShellLoading from '../../components/loading'
+import BotCard from '../../components/chat/botCard'
+import ShellLoading from '../../components/common/loading'
 import botStore from '../../store/botStore'
-import { ChainInfo, LoginType, SupportAuthType, iOSModalPresentStyle, Env } from 'react-native-particle-auth'
+import { useAuth } from '../../context/auth'
+
 type ListDataItem = {
   id: number
   uid: string
@@ -20,32 +20,56 @@ type ListDataItem = {
   lastInteractionDate: string
 }
 
-import { createWeb3 } from '../../tmp/web3Demo'
+// import { createWeb3 } from '../../tmp/web3Demo'
+import CallBackManagerSingle from '../../utils/CallBackManager'
+import { removeBotListLocal } from '../../api/botChatListCache'
+import SocketStreamManager from '../../components/chat/socketManager'
+import useUserStore from '../../store/userStore'
 
 export default function TabOneScreen() {
+  // if (!useUserStore.getState().userBaseInfo) return
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const { signOut } = useAuth()
+  // 每次进入页面清除botBaseInfo
+  useFocusEffect(
+    useCallback(() => {
+      botStore.setState({ botBaseInfo: null })
+      SocketStreamManager().currentBot = botStore.getState()
+    }, [])
+  )
 
-  useEffect(() => {
-    botList().then(res => {
+  const loadData = (flash?: boolean) => {
+    botList(flash).then(res => {
       setListData(res as ListDataItem[])
       setLoading(false)
     })
+  }
+
+  useEffect(() => {
+    // 冷启动App强制刷新缓存 请求接口获取数据  flash 为  true
+    loadData(true)
+    CallBackManagerSingle().add('botList', () => {
+      loadData(true)
+    })
+    DeviceEventEmitter.addListener('logout', item => {
+      // 会话超时清楚本地缓存
+      removeBotListLocal()
+      setListData([])
+      signOut()
+    })
+    SocketStreamManager()
+    return () => {
+      CallBackManagerSingle().remove('botList')
+      SocketStreamManager(true)
+    }
   }, [])
 
   const onShowDetail = event => {
-    botStore.setState(event)
+    botStore.setState({ botBaseInfo: event })
     router.push({
-      pathname: `chat/${event.id}`,
-      params: {
-        id: event.id,
-        energyPerChat: event.energyPerChat,
-        userId: event.userId,
-        name: event.name,
-        language: event.language,
-        uid: event.uid,
-      },
+      pathname: `chat/${event.uid}`,
     })
   }
 
