@@ -185,10 +185,10 @@ export class SocketStream {
     }
   }
   private onMessageReplied({ data }: MesageSucessType) {
+    CallBackManagerSingle().execute('botList')
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     const msgKey = data?.botId + '&BOT&' + data?.replyUid
     this.onMessageRes[msgKey](data)
-    CallBackManagerSingle().execute('botList')
   }
   private onMessageTranslated({ data }: MesageSucessType) {
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
@@ -215,7 +215,7 @@ export class SocketStream {
     this.socket.emit(ChatEvent, data)
   }
 
-  playStreamNext1 = debounce(this.playStreamNext, 100)
+  playStreamNext1 = debounce(this.playStreamNext, 200)
 
   playStreamNext() {
     console.log(this.audioStreamPlayKeys, this.audioStreamIndex, '触发下一个')

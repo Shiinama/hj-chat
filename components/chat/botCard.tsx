@@ -3,15 +3,13 @@ import RootStyles from '../../constants/RootStyles'
 import Pined from '../../assets/images/tabbar/pin.svg'
 import { renderImage } from '../profileInfo/helper'
 import dayjs from 'dayjs'
-import userStore from '../../store/userStore'
 
 function BotCard({ ld, onShowDetail, showPined }: any) {
-  const userInfo = userStore.getState().profile
   return (
     <TouchableOpacity
       style={styles.listItem}
       onPress={() => {
-        onShowDetail({ ...ld, tag: userInfo?.id === ld.userId })
+        onShowDetail(ld)
       }}
     >
       {renderImage(ld.logo, styles.avatar)}

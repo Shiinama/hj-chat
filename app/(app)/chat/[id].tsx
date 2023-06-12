@@ -30,7 +30,7 @@ import { MesageSucessType, MessageDto } from '../../../components/chat/type'
 
 export type ChatItem = MessageDto
 function Chat({}) {
-  const { pinned, logo, name, uid, userId, id } = botStore.getState().botBaseInfo
+  const { pinned, logo, name, uid, userId } = botStore.getState().botBaseInfo
 
   const { profile } = useUserStore()
   const router = useRouter()
