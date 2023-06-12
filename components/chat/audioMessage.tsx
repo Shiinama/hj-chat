@@ -217,8 +217,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
 
   const handlePlayPause = async () => {
     // 为什么这里一定要Reset那？
-
-    SocketStreamManager().resetPlayStream()
+    // SocketStreamManager().resetPlayStream()
     if (SoundObj.current.Sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({

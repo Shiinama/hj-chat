@@ -61,7 +61,13 @@ export function Provider(props) {
         },
         signOut: async () => {
           setAuth(null)
-          useUserStore.setState({ userBaseInfo: null })
+          useUserStore.setState({
+            userBaseInfo: null,
+            profile: null,
+            userEnergyInfo: null,
+            userConnectedAccounts: null,
+            particleInfo: null,
+          })
         },
         user,
       }}

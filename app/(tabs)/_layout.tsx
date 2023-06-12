@@ -9,11 +9,8 @@ import ProfileAcitve from '../../assets/images/tabbar/profile_acitve.svg'
 import Bot from '../../assets/images/tabbar/bot.svg'
 import BotAcitve from '../../assets/images/tabbar/bot_active.svg'
 import myshell from '../../assets/images/myshell.png'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import useUserStore, { getUserEnergyInfo } from '../../store/userStore'
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
 
 export default function TabLayout() {
   const { userEnergyInfo: energy } = useUserStore()
