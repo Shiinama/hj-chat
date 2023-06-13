@@ -330,20 +330,13 @@ function Chat({}) {
           setAuInfo,
           startRecording,
           stopRecording,
-          onEndEditText: async (value: any) => {
-            return checkEnergy(function (value) {
-              if (value.length === 0) {
-                Alert.alert('Please enter your message')
-                return true
-              }
-              const reqId = uuidv4()
-              SocketStreamManager().sendMessage('text_chat', {
-                reqId,
-                botUid: uid,
-                text: value,
-              })
-              return true
-            }, value)
+          onEndEditText: async (value: string) => {
+            const reqId = uuidv4()
+            SocketStreamManager().sendMessage('text_chat', {
+              reqId,
+              botUid: uid,
+              text: value,
+            })
           },
         }}
         flatListRef={flatList}

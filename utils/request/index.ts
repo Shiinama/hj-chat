@@ -19,8 +19,8 @@ export type RequestOptions = AxiosRequestConfig & {
 
 let pendingMap = new Map()
 
-function getRequestKey(config: AxiosRequestConfig) {
-  return (config.method || '') + config.url
+function getRequestKey<T>(config: AxiosRequestConfig<T>) {
+  return config.method + config.url
 }
 
 function setPendingMap(config: AxiosRequestConfig) {
@@ -28,7 +28,6 @@ function setPendingMap(config: AxiosRequestConfig) {
   config.signal = controller.signal
   const key = getRequestKey(config)
   if (pendingMap.has(key)) {
-    console.log('被取消')
     pendingMap.get(key).abort()
     pendingMap.delete(key)
   } else {
@@ -55,7 +54,6 @@ _axios.interceptors.request.use(
     return config
   },
   (error: AxiosError) => {
-    console.log(error)
     return Promise.reject()
   }
 )
@@ -68,7 +66,7 @@ _axios.interceptors.response.use(
     const key = getRequestKey(response.config)
     pendingMap.delete(key)
     // TODO fix it
-    const result: { errCode: number; errMsg: string; data: unknown } = response.data
+    const result: { errCode: number; errMsg: string } = response?.data
     // 图片上传简易判断
     if (!result.errCode) {
       return response
@@ -80,12 +78,14 @@ _axios.interceptors.response.use(
         message: errText,
         duration: 2500,
       })
+      console.log(errText)
       return Promise.reject(errText)
     }
     return response
   },
   error => {
     const { response } = error
+    console.log(error, response, 'error')
     // 请求有响应
     if (response) {
       const { status, data, config } = response
@@ -123,7 +123,7 @@ _axios.interceptors.response.use(
         msg = data.message || msg
       }
       errorTip(msg || data.message)
-      return Promise.reject(data.message)
+      return Promise.reject(error || data.message)
       // throw message;
     }
   }
@@ -154,9 +154,6 @@ export default async function request<T>(options: RequestOptions) {
     credentials: 'include',
     timeout: 10000,
     withCredentials: true,
-    validateStatus(status: number) {
-      return status >= 200 && status < 300 // default
-    },
   }
   const newOptions: RequestOptions = Object.assign({}, defaultOptions, options)
   newOptions.headers = {
@@ -181,5 +178,5 @@ export default async function request<T>(options: RequestOptions) {
       ...newOptions,
       url: newUrl,
     })
-    .then(data => data.data)
+    .then(data => data?.data ?? data)
 }

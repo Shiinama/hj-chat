@@ -1,5 +1,15 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Keyboard, View, TextInput, ViewStyle, Platform, Image, TouchableOpacity, TextInputProps } from 'react-native'
+import {
+  Keyboard,
+  View,
+  TextInput,
+  ViewStyle,
+  Platform,
+  Image,
+  TouchableOpacity,
+  TextInputProps,
+  Alert,
+} from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -15,9 +25,10 @@ import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../a
 import { useBoolean } from 'ahooks'
 import AudioAnimation from './audioAnimation'
 import CallBackManagerSingle from '../../utils/CallBackManager'
+import { checkEnergy } from '../../utils/check'
 
 export interface MTextInputProps extends TextInputProps {
-  onEndEditText?: (value: string) => Promise<boolean>
+  onEndEditText?: (value: string) => void
   startRecording: () => void
   stopRecording: () => void
   setAuInfo: (audioFileUri: string) => void
@@ -60,6 +71,7 @@ function InputToolsTar({
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
   const [text, setText] = useState('')
+  const [flag, setFlag] = useState<boolean>(false)
   // 控制话筒弹出
   const [isShow, setIsShow] = useState(false)
   const [showAni, setShowAni] = useState(true)
@@ -191,11 +203,21 @@ function InputToolsTar({
       return (
         <TouchableOpacity
           style={styles.toolsIcon}
+          disabled={flag}
           onPress={async () => {
-            if (onEndEditText) {
-              const clear = await onEndEditText?.(text)
-              clear && setText('')
+            setFlag(true)
+            if (text.length === 0) {
+              Alert.alert('Please enter your message')
+              setFlag(false)
+              return
             }
+            setText('')
+            await checkEnergy(async function () {
+              if (onEndEditText) {
+                onEndEditText?.(text)
+              }
+            })
+            setFlag(false)
           }}
         >
           <Send></Send>
