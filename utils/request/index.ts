@@ -1,13 +1,10 @@
-import type { AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
-import useUserStore from '../../store/userStore'
 import Constants from 'expo-constants'
 import systemConfig from '../../constants/System'
-import MSG_LIST from './message'
 import debounce from 'lodash/debounce'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import { useRouter } from 'expo-router'
 import { DeviceEventEmitter } from 'react-native'
 import { HttpStatusCode } from '../../types/httpTypes'
 
@@ -20,6 +17,25 @@ export type RequestOptions = AxiosRequestConfig & {
   headers?: any
 }
 
+let pendingMap = new Map()
+
+function getRequestKey(config: AxiosRequestConfig) {
+  return (config.method || '') + config.url
+}
+
+function setPendingMap(config: AxiosRequestConfig) {
+  const controller = new AbortController()
+  config.signal = controller.signal
+  const key = getRequestKey(config)
+  if (pendingMap.has(key)) {
+    console.log('被取消')
+    pendingMap.get(key).abort()
+    pendingMap.delete(key)
+  } else {
+    pendingMap.set(key, controller)
+  }
+}
+
 const toastError = (msg: string) => {
   Toast({
     message: msg,
@@ -29,12 +45,28 @@ const toastError = (msg: string) => {
 const errorTip = debounce(toastError, 500)
 
 const { baseUrl, authKey, token } = systemConfig
-const _axios = axios.create()
+const _axios: AxiosInstance = axios.create()
+/**
+ * 请求拦截器
+ */
+_axios.interceptors.request.use(
+  config => {
+    setPendingMap(config)
+    return config
+  },
+  (error: AxiosError) => {
+    console.log(error)
+    return Promise.reject()
+  }
+)
+
 /**
  * 响应拦截器
  */
 _axios.interceptors.response.use(
   (response: AxiosResponse) => {
+    const key = getRequestKey(response.config)
+    pendingMap.delete(key)
     // TODO fix it
     const result: { errCode: number; errMsg: string; data: unknown } = response.data
     // 图片上传简易判断

@@ -87,8 +87,8 @@ export const getProfile = () => {
 }
 /** 获取用户电力值 */
 export const getUserEnergyInfo = () => {
-  return queryUserEnergyInfo().then((res: any) => {
-    useUserStore.setState({ userEnergyInfo: res as UserEnergyInfo })
+  return queryUserEnergyInfo().then(res => {
+    useUserStore.setState({ userEnergyInfo: res })
   })
 }
 

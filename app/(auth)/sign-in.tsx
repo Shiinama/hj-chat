@@ -26,12 +26,12 @@ export default function SignIn() {
         uuid: userInfo.uuid,
         token: userInfo.token,
       })
+      close()
       signIn(info)
     } else {
       const error = result.data
       Toast(error)
     }
-    close()
   }
 
   return (

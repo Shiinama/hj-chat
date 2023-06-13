@@ -144,9 +144,9 @@ android {
             keyPassword 'android'
         }
         config {
-            storeFile file('../myShell.keystore')
+            storeFile file('../my-shell.keystore')
             storePassword "19981008xyz"
-            keyAlias "my-key-alias"
+            keyAlias "my-shell"
             keyPassword "19981008xyz"
         }
     }
