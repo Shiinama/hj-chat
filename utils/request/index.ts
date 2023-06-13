@@ -5,7 +5,7 @@ import systemConfig from '../../constants/System'
 import debounce from 'lodash/debounce'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import { DeviceEventEmitter } from 'react-native'
+import { Alert, DeviceEventEmitter } from 'react-native'
 import { HttpStatusCode } from '../../types/httpTypes'
 
 export type RequestOptions = AxiosRequestConfig & {
@@ -54,7 +54,7 @@ _axios.interceptors.request.use(
     return config
   },
   (error: AxiosError) => {
-    return Promise.reject()
+    return Promise.reject(error)
   }
 )
 
@@ -85,7 +85,6 @@ _axios.interceptors.response.use(
   },
   error => {
     const { response } = error
-    console.log(error, response, 'error')
     // 请求有响应
     if (response) {
       const { status, data, config } = response
@@ -126,6 +125,10 @@ _axios.interceptors.response.use(
       return Promise.reject(error || data.message)
       // throw message;
     }
+    if (error.code === 'ERR_NETWORK') {
+      Alert.alert('Please check your network connection or server error')
+    }
+    return Promise.reject(error.code || error)
   }
 )
 // TODO: 添加options 类型interface

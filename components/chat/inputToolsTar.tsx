@@ -21,7 +21,7 @@ import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
-import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
+import { getUserEnergyInfo, removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
 import { useBoolean } from 'ahooks'
 import AudioAnimation from './audioAnimation'
 import CallBackManagerSingle from '../../utils/CallBackManager'
@@ -209,15 +209,22 @@ function InputToolsTar({
             if (text.length === 0) {
               Alert.alert('Please enter your message')
               setFlag(false)
-              return
             }
-            setText('')
-            await checkEnergy(async function () {
-              if (onEndEditText) {
+            try {
+              const { energy } = await getUserEnergyInfo()
+              if (energy > 0) {
                 onEndEditText?.(text)
+                setText('')
+                setFlag(false)
+              } else {
+                Alert.alert('You have no energy left, please recharge')
+                return true
               }
-            })
-            setFlag(false)
+            } catch (e: any) {
+              if (e.code === 'ERR_NETWORK') {
+                Alert.alert('Please check your network connection or server error')
+              }
+            }
           }}
         >
           <Send></Send>
@@ -251,6 +258,7 @@ function InputToolsTar({
   }, [isShow, showSend, text])
   useEffect(() => {
     setShowSend(!text.length)
+    setFlag(!text.length)
   }, [text])
   return (
     <View
