@@ -203,19 +203,17 @@ function InputToolsTar({
       return (
         <TouchableOpacity
           style={styles.toolsIcon}
-          disabled={flag}
           onPress={async () => {
-            setFlag(true)
+            if (flag) return
             if (text.length === 0) {
               Alert.alert('Please enter your message')
-              setFlag(false)
             }
             try {
+              setFlag(true)
               const { energy } = await getUserEnergyInfo()
               if (energy > 0) {
                 onEndEditText?.(text)
                 setText('')
-                setFlag(false)
               } else {
                 Alert.alert('You have no energy left, please recharge')
                 return true
@@ -224,6 +222,8 @@ function InputToolsTar({
               if (e.code === 'ERR_NETWORK') {
                 Alert.alert('Please check your network connection or server error')
               }
+            } finally {
+              setFlag(false)
             }
           }}
         >
@@ -258,7 +258,6 @@ function InputToolsTar({
   }, [isShow, showSend, text])
   useEffect(() => {
     setShowSend(!text.length)
-    setFlag(!text.length)
   }, [text])
   return (
     <View
