@@ -29,6 +29,7 @@ export default function SignIn() {
       close()
       signIn(info)
     } else {
+      close()
       const error = result.data
       Toast(error)
     }
