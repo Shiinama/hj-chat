@@ -45,7 +45,7 @@ const envConfig = {
 export default {
   name: 'MyShell',
   slug: 'yu-chat',
-  version: '1.1.0',
+  version: '1.1.1',
   orientation: 'portrait',
   scheme: 'myapp',
   splash: {
