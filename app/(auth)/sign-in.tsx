@@ -5,6 +5,7 @@ import facebookLogo from '../../assets/images/login/facebook_icon2.png'
 import googleLogo from '../../assets/images/login/google_icon2.png'
 import loginBgLogo from '../../assets/images/login/login_bg.png'
 import loginLogo from '../../assets/images/login/login_logo.png'
+import loginIos from '../../assets/images/login/login_ios.png'
 import { Button, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useAuth } from '../../context/auth'
 import { SupportAuthType } from 'react-native-particle-auth'
@@ -17,7 +18,12 @@ export default function SignIn() {
   const login = async loginType => {
     const { close } = Toast.loading({ message: 'Loging', duration: 0 })
     const type = loginType
-    const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
+    const _supportAuthType = [
+      SupportAuthType.Email,
+      SupportAuthType.Google,
+      SupportAuthType.Facebook,
+      SupportAuthType.Apple,
+    ]
     const result = await particleAuth.login(type, '', _supportAuthType as any, true)
     if (result.status) {
       const userInfo = result.data
@@ -63,6 +69,9 @@ export default function SignIn() {
           <View style={styles.googleAndFacebook}>
             <TouchableOpacity onPress={() => login('Google')}>
               <Image source={googleLogo} style={styles.google}></Image>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => login('Apple')}>
+              <Image source={loginIos} style={styles.google}></Image>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => login('Facebook')}>
               <Image source={facebookLogo} style={styles.facebook}></Image>
