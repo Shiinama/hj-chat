@@ -24,20 +24,26 @@ export default function SignIn() {
       SupportAuthType.Facebook,
       SupportAuthType.Apple,
     ]
-    const result = await particleAuth.login(type, '', _supportAuthType as any, true)
-    if (result.status) {
-      const userInfo = result.data
-      useUserStore.setState({ particleInfo: userInfo })
-      const info = await particleLogin({
-        uuid: userInfo.uuid,
-        token: userInfo.token,
-      })
+    try {
+      const result = await particleAuth.login(type, '', _supportAuthType as any, true)
+      if (result.status) {
+        const userInfo = result.data
+        useUserStore.setState({ particleInfo: userInfo })
+        const info = await particleLogin({
+          uuid: userInfo.uuid,
+          token: userInfo.token,
+        })
+        close()
+        signIn(info)
+      } else {
+        close()
+        const error = result.data
+        Toast(error)
+      }
+    } catch (e) {
       close()
-      signIn(info)
-    } else {
+    } finally {
       close()
-      const error = result.data
-      Toast(error)
     }
   }
 
