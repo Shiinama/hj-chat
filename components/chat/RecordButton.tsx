@@ -12,6 +12,7 @@ import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import AudioPayManagerSingle from './audioPlayManager'
 import { AppState } from 'react-native'
 import CallBackManagerSingle from '../../utils/CallBackManager'
+import { checkEnergy } from '../../utils/check'
 const RecordButton = ({
   audioFileUri,
   startRecording,
@@ -182,13 +183,15 @@ const RecordButton = ({
             <TouchableOpacity
               style={styles.smallButton}
               onPress={async () => {
-                if (!AudioPayManagerSingle().netInfo?.isConnected) {
-                  Alert.alert('Please check your network connection')
-                  return
-                }
-                setAuInfo()
-                setIsShow(true)
-                setShowAni(true)
+                checkEnergy(function () {
+                  if (!AudioPayManagerSingle().netInfo?.isConnected) {
+                    Alert.alert('Please check your network connection')
+                    return
+                  }
+                  setAuInfo()
+                  setIsShow(true)
+                  setShowAni(true)
+                })
               }}
             >
               <Send height={20} width={20}></Send>

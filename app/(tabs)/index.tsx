@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, Pressable, Text, DeviceEventEmitter } from 'react-native'
+import { View, StyleSheet, ScrollView, DeviceEventEmitter, RefreshControl } from 'react-native'
 import { useFocusEffect, useRouter } from 'expo-router'
 import RootStyles from '../../constants/RootStyles'
 import { useCallback, useEffect, useState } from 'react'
@@ -20,16 +20,18 @@ type ListDataItem = {
   lastInteractionDate: string
 }
 
-// import { createWeb3 } from '../../tmp/web3Demo'
 import CallBackManagerSingle from '../../utils/CallBackManager'
 import { removeBotListLocal } from '../../api/botChatListCache'
 import SocketStreamManager from '../../components/chat/socketManager'
 import useUserStore from '../../store/userStore'
+import { useBoolean } from 'ahooks'
 
 export default function TabOneScreen() {
   if (!useUserStore.getState().userBaseInfo) return
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
+  const [refreshLoading, { set: setRefreshLoading }] = useBoolean(false)
+
   const [loading, setLoading] = useState<boolean>(true)
   const { signOut } = useAuth()
   // 每次进入页面清除botBaseInfo
@@ -41,10 +43,14 @@ export default function TabOneScreen() {
   )
 
   const loadData = (flash?: boolean) => {
-    botList(flash).then(res => {
-      setListData(res as ListDataItem[])
-      setLoading(false)
-    })
+    botList(flash)
+      .then(res => {
+        setListData(res as ListDataItem[])
+      })
+      .finally(() => {
+        setLoading(false)
+        setRefreshLoading(false)
+      })
   }
 
   useEffect(() => {
@@ -76,18 +82,34 @@ export default function TabOneScreen() {
   if (loading) return <ShellLoading></ShellLoading>
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.listContainer}>
-        {listData?.map(ld => (
-          <BotCard
-            onShowDetail={e => {
-              onShowDetail(e)
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshLoading}
+            onRefresh={() => {
+              setRefreshLoading(true)
+              loadData(true)
             }}
-            key={ld.id}
-            showPined={ld.pinned}
-            ld={ld}
-            showTime={true}
+            tintColor="#7A2EF6"
+            title="Pull refresh"
+            titleColor="#7A2EF6"
           />
-        ))}
+        }
+        style={styles.listContainer}
+      >
+        {listData?.map(ld => {
+          return (
+            <BotCard
+              onShowDetail={e => {
+                onShowDetail(e)
+              }}
+              key={ld?.id}
+              showPined={ld.pinned}
+              ld={ld}
+              showTime={true}
+            />
+          )
+        })}
       </ScrollView>
     </View>
   )

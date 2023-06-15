@@ -15,7 +15,7 @@ import { arrayBufferToBase64, concatBuffer } from '../../utils/base64'
 import AudioFragmentPlay from './audioFragmentPlay'
 import AudioPayManagerSingle from './audioPlayManager'
 import { saveAudio } from '../../utils/audioFile'
-
+import debounce from 'lodash/debounce'
 export class SocketStream {
   private socket: Socket
 
@@ -61,7 +61,7 @@ export class SocketStream {
   private init() {
     // 初始化删除本地mp3文件
     const { userBaseInfo } = useUserStore.getState()
-    const token = userBaseInfo?.token
+    const token = userBaseInfo?.token ?? SysConfig.token
     this.socket = io(`${SysConfig.baseUrl}/chat`, {
       path: '/ws',
       transports: ['websocket'],
@@ -107,7 +107,6 @@ export class SocketStream {
     if (this.currentBot?.botBaseInfo.id !== data.data.botId) return
 
     this.onSendMessage?.(data)
-    CallBackManagerSingle().execute('botList')
   }
 
   private onMessageTextStream(data: MessageStreamTextRes) {
@@ -186,6 +185,7 @@ export class SocketStream {
     }
   }
   private onMessageReplied({ data }: MesageSucessType) {
+    CallBackManagerSingle().execute('botList')
     if (this.currentBot?.botBaseInfo.id !== data.botId) return
     const msgKey = data?.botId + '&BOT&' + data?.replyUid
     this.onMessageRes[msgKey](data)
@@ -215,12 +215,12 @@ export class SocketStream {
     this.socket.emit(ChatEvent, data)
   }
 
+  playStreamNext1 = debounce(this.playStreamNext, 200)
+
   playStreamNext() {
+    console.log(this.audioStreamPlayKeys, this.audioStreamIndex, '触发下一个')
     if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length - 1) {
       this.audioStreamIndex += 1
-      console.log('this.audioStreamPlayKeys:', this.audioStreamPlayKeys, this.audioStreamIndex)
-
-      AudioPayManagerSingle().stop()
       CallBackManagerSingle().execute('play_' + this.audioStreamPlayKeys[this.audioStreamIndex])
     } else {
       this.audioStreamIndex = -1
@@ -233,6 +233,7 @@ export class SocketStream {
   }
 
   getCurrentPlayStream() {
+    console.log(this.audioStreamPlayKeys, this.audioStreamIndex, 'getCurrentPlayStream')
     if (this.audioStreamIndex < this.audioStreamPlayKeys.length) {
       return this.audioStreamPlayKeys[this.audioStreamIndex]
     }
@@ -240,6 +241,7 @@ export class SocketStream {
   }
 
   resetPlayStream() {
+    console.log('reset')
     this.audioStreamIndex = -1
     this.audioStreamPlayKeys = []
   }

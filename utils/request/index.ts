@@ -1,14 +1,11 @@
-import type { AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
-import useUserStore from '../../store/userStore'
 import Constants from 'expo-constants'
 import systemConfig from '../../constants/System'
-import MSG_LIST from './message'
 import debounce from 'lodash/debounce'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import { useRouter } from 'expo-router'
-import { DeviceEventEmitter } from 'react-native'
+import { Alert, DeviceEventEmitter } from 'react-native'
 import { HttpStatusCode } from '../../types/httpTypes'
 
 export type RequestOptions = AxiosRequestConfig & {
@@ -20,6 +17,24 @@ export type RequestOptions = AxiosRequestConfig & {
   headers?: any
 }
 
+let pendingMap = new Map()
+
+function getRequestKey<T>(config: AxiosRequestConfig<T>) {
+  return config.method + config.url
+}
+
+function setPendingMap(config: AxiosRequestConfig) {
+  const controller = new AbortController()
+  config.signal = controller.signal
+  const key = getRequestKey(config)
+  if (pendingMap.has(key)) {
+    pendingMap.get(key).abort()
+    pendingMap.delete(key)
+  } else {
+    pendingMap.set(key, controller)
+  }
+}
+
 const toastError = (msg: string) => {
   Toast({
     message: msg,
@@ -29,14 +44,29 @@ const toastError = (msg: string) => {
 const errorTip = debounce(toastError, 500)
 
 const { baseUrl, authKey, token } = systemConfig
-const _axios = axios.create()
+const _axios: AxiosInstance = axios.create()
+/**
+ * 请求拦截器
+ */
+_axios.interceptors.request.use(
+  config => {
+    setPendingMap(config)
+    return config
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error)
+  }
+)
+
 /**
  * 响应拦截器
  */
 _axios.interceptors.response.use(
   (response: AxiosResponse) => {
+    const key = getRequestKey(response.config)
+    pendingMap.delete(key)
     // TODO fix it
-    const result: { errCode: number; errMsg: string; data: unknown } = response.data
+    const result: { errCode: number; errMsg: string } = response?.data
     // 图片上传简易判断
     if (!result.errCode) {
       return response
@@ -48,6 +78,7 @@ _axios.interceptors.response.use(
         message: errText,
         duration: 2500,
       })
+      console.log(errText)
       return Promise.reject(errText)
     }
     return response
@@ -91,9 +122,13 @@ _axios.interceptors.response.use(
         msg = data.message || msg
       }
       errorTip(msg || data.message)
-      return Promise.reject(data.message)
+      return Promise.reject(error || data.message)
       // throw message;
     }
+    if (error.code === 'ERR_NETWORK') {
+      Alert.alert('Please check your network connection or server error')
+    }
+    return Promise.reject(error.code || error)
   }
 )
 // TODO: 添加options 类型interface
@@ -122,9 +157,6 @@ export default async function request<T>(options: RequestOptions) {
     credentials: 'include',
     timeout: 10000,
     withCredentials: true,
-    validateStatus(status: number) {
-      return status >= 200 && status < 300 // default
-    },
   }
   const newOptions: RequestOptions = Object.assign({}, defaultOptions, options)
   newOptions.headers = {
@@ -149,5 +181,5 @@ export default async function request<T>(options: RequestOptions) {
       ...newOptions,
       url: newUrl,
     })
-    .then(data => data.data)
+    .then(data => data?.data ?? data)
 }

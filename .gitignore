@@ -76,5 +76,6 @@ web-build/
 dist/
 
 # @end expo-cli
+*.aab
 *.apk
 *.ipa

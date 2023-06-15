@@ -1,52 +1,49 @@
-import { useState, useEffect, useMemo } from 'react'
-import {
-  Text,
-  View,
-  Image,
-  TouchableHighlight,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Linking,
-} from 'react-native'
+import { Text, View, Image, TouchableOpacity } from 'react-native'
 
 import { styles } from './style'
 import facebookLogo from '../../assets/images/login/facebook_icon2.png'
 import googleLogo from '../../assets/images/login/google_icon2.png'
 import loginBgLogo from '../../assets/images/login/login_bg.png'
 import loginLogo from '../../assets/images/login/login_logo.png'
+import loginIos from '../../assets/images/login/login_ios.png'
 import { Button, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { useAuth } from '../../context/auth'
 import { SupportAuthType } from 'react-native-particle-auth'
 import * as particleAuth from 'react-native-particle-auth'
 import useUserStore from '../../store/userStore'
-
-// import { createWeb3 } from '../../tmp/web3Demo'
 import { particleLogin } from '../../api/auth'
-// const web3 = createWeb3('c135c555-a871-4ec2-ac8c-5209ded4bfd1', 'clAJtavacSBZtWHNVrxYA8aXXk4dgO7azAMTd0eI')
-// import { MateMaskView } from './matemask-login'
-// import { WallectConnectView } from './wallect-login'
 
 export default function SignIn() {
   const { signIn } = useAuth()
   const login = async loginType => {
+    const { close } = Toast.loading({ message: 'Loging', duration: 0 })
     const type = loginType
-    const _supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Facebook]
-    const result = await particleAuth.login(type, '', _supportAuthType as any, true)
-    if (result.status) {
-      const userInfo = result.data
-      useUserStore.setState({ particleInfo: userInfo })
-      const info = await particleLogin({
-        uuid: userInfo.uuid,
-        token: userInfo.token,
-      })
-
-      signIn(info)
-    } else {
-      const error = result.data
-      Toast(error)
+    const _supportAuthType = [
+      SupportAuthType.Email,
+      SupportAuthType.Google,
+      SupportAuthType.Facebook,
+      SupportAuthType.Apple,
+    ]
+    try {
+      const result = await particleAuth.login(type, '', _supportAuthType as any, true)
+      if (result.status) {
+        const userInfo = result.data
+        useUserStore.setState({ particleInfo: userInfo })
+        const info = await particleLogin({
+          uuid: userInfo.uuid,
+          token: userInfo.token,
+        })
+        close()
+        signIn(info)
+      } else {
+        close()
+        const error = result.data
+        Toast(error)
+      }
+    } catch (e) {
+      close()
+    } finally {
+      close()
     }
   }
 
@@ -78,6 +75,9 @@ export default function SignIn() {
           <View style={styles.googleAndFacebook}>
             <TouchableOpacity onPress={() => login('Google')}>
               <Image source={googleLogo} style={styles.google}></Image>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => login('Apple')}>
+              <Image source={loginIos} style={styles.google}></Image>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => login('Facebook')}>
               <Image source={facebookLogo} style={styles.facebook}></Image>

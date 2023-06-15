@@ -1,5 +1,15 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Keyboard, View, TextInput, ViewStyle, Platform, Image, TouchableOpacity, TextInputProps } from 'react-native'
+import {
+  Keyboard,
+  View,
+  TextInput,
+  ViewStyle,
+  Platform,
+  Image,
+  TouchableOpacity,
+  TextInputProps,
+  Alert,
+} from 'react-native'
 import audio from '../../assets/images/audio.jpg'
 import Lines from '../../assets/images/chat/lines.svg'
 import Keyborad from '../../assets/images/chat/keyborad.svg'
@@ -11,13 +21,14 @@ import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
-import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
+import { getUserEnergyInfo, removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
 import { useBoolean } from 'ahooks'
 import AudioAnimation from './audioAnimation'
 import CallBackManagerSingle from '../../utils/CallBackManager'
+import { checkEnergy } from '../../utils/check'
 
 export interface MTextInputProps extends TextInputProps {
-  onEndEditText?: (value: string) => boolean
+  onEndEditText?: (value: string) => void
   startRecording: () => void
   stopRecording: () => void
   setAuInfo: (audioFileUri: string) => void
@@ -60,6 +71,7 @@ function InputToolsTar({
   const [toolsVisible, { set: setToolsVisible }] = useBoolean(false)
   const [audioFileUri, setAudioFileUri] = useState('')
   const [text, setText] = useState('')
+  const [flag, setFlag] = useState<boolean>(false)
   // 控制话筒弹出
   const [isShow, setIsShow] = useState(false)
   const [showAni, setShowAni] = useState(true)
@@ -191,10 +203,27 @@ function InputToolsTar({
       return (
         <TouchableOpacity
           style={styles.toolsIcon}
-          onPress={() => {
-            if (onEndEditText) {
-              const clear = onEndEditText?.(text)
-              clear && setText('')
+          onPress={async () => {
+            if (flag) return
+            if (text.length === 0) {
+              Alert.alert('Please enter your message')
+            }
+            try {
+              setFlag(true)
+              const { energy } = await getUserEnergyInfo()
+              if (energy > 0) {
+                onEndEditText?.(text)
+                setText('')
+              } else {
+                Alert.alert('You have no energy left, please recharge')
+                return true
+              }
+            } catch (e: any) {
+              if (e.code === 'ERR_NETWORK') {
+                Alert.alert('Please check your network connection or server error')
+              }
+            } finally {
+              setFlag(false)
             }
           }}
         >

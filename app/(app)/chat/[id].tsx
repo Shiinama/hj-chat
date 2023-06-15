@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { useNavigation } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 import ChatItem from '../../../components/chat/chatItem'
 import Container from '../../../components/chat/container'
 import { chatHistory } from '../../../api'
@@ -21,17 +20,17 @@ import botStore from '../../../store/botStore'
 import Back from '../../../assets/images/tabbar/back.svg'
 import To from '../../../assets/images/chat/to.svg'
 import useUserStore from '../../../store/userStore'
-import AudioPayManagerSingle, { AudioPayManager } from '../../../components/chat/audioPlayManager'
+import AudioPayManagerSingle from '../../../components/chat/audioPlayManager'
 import CallBackManagerSingle from '../../../utils/CallBackManager'
 import { TagFromType, useTagList } from '../../../constants/TagList'
 import Tag from '../../../components/common/tag'
 import SocketStreamManager from '../../../components/chat/socketManager'
 import { MesageSucessType, MessageDto } from '../../../components/chat/type'
+import { checkEnergy } from '../../../utils/check'
 
 export type ChatItem = MessageDto
 function Chat({}) {
-  const { pinned, logo, name, uid, userId, id } = botStore.getState().botBaseInfo
-
+  const { pinned, logo, name, uid, userId } = botStore.getState().botBaseInfo
   const { profile } = useUserStore()
   const router = useRouter()
   const tags = useTagList(botStore.getState().botBaseInfo, TagFromType.Chat).slice(0, 4)
@@ -166,7 +165,7 @@ function Chat({}) {
     sendAudio()
   }
 
-  const sendAudio = () => {
+  const sendAudio = async () => {
     if (!AudioPayManagerSingle().netInfo?.isConnected) {
       Alert.alert('Please check your network connection')
       return
@@ -331,22 +330,13 @@ function Chat({}) {
           setAuInfo,
           startRecording,
           stopRecording,
-          onEndEditText: (value: any) => {
-            if (value.length === 0) {
-              Alert.alert('Please enter your message')
-              return true
-            }
-            if (!AudioPayManagerSingle().netInfo?.isConnected) {
-              Alert.alert('Please check your network connection')
-              return false
-            }
+          onEndEditText: async (value: string) => {
             const reqId = uuidv4()
             SocketStreamManager().sendMessage('text_chat', {
               reqId,
               botUid: uid,
               text: value,
             })
-            return true
           },
         }}
         flatListRef={flatList}

@@ -13,6 +13,7 @@ import Svt from '../../assets/images/chat/svt.svg'
 import Blur from '../../assets/images/chat/blur.svg'
 import Translate from '../../assets/images/chat/translte.svg'
 import ShellLoading from '../common/loading'
+import { checkEnergy } from '../../utils/check'
 
 type Props = {
   item: MessageDetail
@@ -64,15 +65,17 @@ const MessageText = ({ item, botSetting, isDone }: Props) => {
         onPress={() => {
           setViewDisplayState(id)
           if (id === 3) {
-            if (caluTranslate) return
-            if (!AudioPayManagerSingle().netInfo?.isConnected) {
-              Alert.alert('Please check your network connection')
-              return
-            }
-            const reqId = uuidv4()
-            SocketStreamManager().sendMessage('translate_message', {
-              reqId,
-              messageUid: item.uid,
+            checkEnergy(function () {
+              if (caluTranslate) return
+              if (!AudioPayManagerSingle().netInfo?.isConnected) {
+                Alert.alert('Please check your network connection')
+                return
+              }
+              const reqId = uuidv4()
+              SocketStreamManager().sendMessage('translate_message', {
+                reqId,
+                messageUid: item.uid,
+              })
             })
           }
         }}

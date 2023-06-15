@@ -10,39 +10,13 @@ import { formatTime } from '../../utils/time'
 import { MessageDetail } from '../../types/MessageTyps'
 import SocketStreamManager from './socketManager'
 import CallBackManagerSingle from '../../utils/CallBackManager'
-
 type AudioType = {
   showControl?: boolean
   isDone?: boolean
   item?: MessageDetail
-  onPlay?: (playing: boolean) => void
-}
-type ThrottleFunc<T extends any[]> = (...args: T) => void
-
-function throttle<T extends any[]>(callback: ThrottleFunc<T>, delay: number): ThrottleFunc<T> {
-  let isThrottled = false
-  let lastArgs: T = [] as T
-
-  return function throttled(...args: T) {
-    lastArgs = args
-
-    if (!isThrottled) {
-      isThrottled = true
-      callback(...args)
-
-      setTimeout(() => {
-        isThrottled = false
-
-        if (lastArgs.length) {
-          throttled(...lastArgs)
-          lastArgs = [] as T
-        }
-      }, delay)
-    }
-  }
 }
 
-const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: AudioType, ref) => {
+const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType, ref) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   // 两种Audio都共用一个Uri和Sound，因为要多条消息的管理，所以单例很难做，
@@ -53,11 +27,15 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     uri: string
     positionMillis: number
     durationMillis: number
+    isFinish: boolean
+    canLoadNextStream: boolean
   }>({
     Sound: null,
     uri: '',
+    isFinish: false,
     positionMillis: 0,
     durationMillis: 0,
+    canLoadNextStream: false,
   })
   const [positionMillis, setPositionMillis] = useState<number>(0)
   const [durationMillis, setDurationMillis] = useState<number>(0)
@@ -74,19 +52,21 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     const { Sound, uri, positionMillis } = SoundObj.current
     if (Sound && uri) {
       try {
-        const { positionMillis: originpositionMillis } = (await Sound.getStatusAsync()) as AVPlaybackStatus & {
-          positionMillis: number
-        }
+        // await Sound.stopAsync()
         await Sound.unloadAsync()
         // shouldPlay 当前正在播放的流才自动播放
         await Sound.loadAsync(
           { uri: uri },
           {
-            positionMillis: originpositionMillis || positionMillis,
+            positionMillis,
             progressUpdateIntervalMillis: 16,
             shouldPlay: SocketStreamManager().getCurrentPlayStream() === key ? true : false,
           }
         )
+
+        if (SoundObj.current.isFinish) {
+          SoundObj.current.canLoadNextStream = true
+        }
         // setLoading(false)
       } catch (e) {
         console.log(e)
@@ -106,21 +86,22 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       SocketStreamManager().playStreamNext()
     }
   }
-  // TODO
-  const debouncedLoadNext = throttle(loadNext, 1000)
+
+  // TODO 这里简单做一个可以加减少资源加载的频次，比如后端发3次合并后再进行一次加载，然后让给一个Loading
   const [isTimeout, setIsTimeout] = useState(false)
   useEffect(() => {
     if (item.type === 'LOADING' && item.replyUid) {
       SocketStreamManager().addAudioStreamCallBack(key, (msg, uri, timeout) => {
+        SoundObj.current.isFinish = msg.isFinal
         if (!timeout) {
           SoundObj.current.uri = uri
           if (!SoundObj.current.Sound) {
             fLoadSteam()
-          } else {
-            // loadNext()
-            // setLoading(true)
-            debouncedLoadNext()
           }
+          // else {
+          //   // setLoading(true)
+          //   debouncedLoadNext()
+          // }
         } else {
           // 超时了就移除
           SocketStreamManager().removeresMessagesCallBack(key)
@@ -141,22 +122,42 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       SoundObj.current.durationMillis = status.durationMillis || 0
     }
     // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
-    if (
-      status.isLoaded &&
-      refPlaying.current &&
-      status.positionMillis - status.durationMillis + (item.replyUid ? 0 : 50) >= 0
-    ) {
+    if (status.isLoaded && refPlaying.current && status.positionMillis - status.durationMillis + 50 >= 0) {
       setIsPlaying(() => false)
       soundManager.current.stop()
       setPositionMillis(0)
       SocketStreamManager().playStreamNext()
     } else if (status.isLoaded && status.isPlaying) {
-      setIsPlaying(() => true)
       setPositionMillis(status.positionMillis || 0)
       SoundObj.current.positionMillis = status.positionMillis || 0
     }
   }
 
+  const setStreamSlideFnc = status => {
+    if (!status.isLoaded) {
+      return
+    }
+    if (status.isLoaded) {
+      setDurationMillis(status.durationMillis || 0)
+      SoundObj.current.durationMillis = status.durationMillis || 0
+    }
+    // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
+    if (status.isLoaded && status.positionMillis - status.durationMillis >= 0) {
+      setPositionMillis(status.positionMillis || 0)
+      if (!SoundObj.current.canLoadNextStream) {
+        loadNext()
+      } else {
+        console.log('连续触发2次', item.replyUid)
+        setIsPlaying(() => false)
+        soundManager.current.stop()
+        setPositionMillis(0)
+        SocketStreamManager().playStreamNext1()
+      }
+    } else if (status.isLoaded && status.isPlaying) {
+      setPositionMillis(status.positionMillis || 0)
+      SoundObj.current.positionMillis = status.positionMillis || 0
+    }
+  }
   const loadSound = async () => {
     const { uri } = SoundObj.current
     if (!uri) return
@@ -164,14 +165,16 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
       const { sound } = await Audio.Sound.createAsync(
         { uri },
         {
-          progressUpdateIntervalMillis: 32,
+          progressUpdateIntervalMillis: 16,
         },
         status => {
-          setSlideFnc(status)
+          if (item.voiceUrl) {
+            setSlideFnc(status)
+          } else {
+            setStreamSlideFnc(status)
+          }
         }
       )
-      // 每次加载会造成当前播放的不是当前sound,只有播放才保存当前sound到单列模式
-      // soundManager.current.currentSound = sound
       soundManager.current.currentAutoPlayUrl = uri
       SoundObj.current.Sound = sound
       setLoading(false)
@@ -202,6 +205,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
     opSuccess = await soundManager.current.play(
       SoundObj.current.Sound,
       function () {
+        console.log(1111)
         setIsPlaying(() => false)
       },
       function () {
@@ -212,7 +216,8 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   }
 
   const handlePlayPause = async () => {
-    SocketStreamManager().resetPlayStream()
+    // 为什么这里一定要Reset那？
+    // SocketStreamManager().resetPlayStream()
     if (SoundObj.current.Sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({
@@ -232,7 +237,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true, onPlay }: A
   }
 
   useEffect(() => {
-    onPlay?.(isPlaying)
     refPlaying.current = isPlaying
   }, [isPlaying])
 
