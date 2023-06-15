@@ -36,11 +36,11 @@
         </array>
       </dict>
       <dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>pn$(PROJECT_APP_UUID)</string>
-			</array>
-			</dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>pn$(PROJECT_APP_UUID)</string>
+        </array>
+      </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
