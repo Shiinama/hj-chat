@@ -69,6 +69,11 @@ export default {
       PROJECT_CLIENT_KEY: '$(PROJECT_CLIENT_KEY)',
       PROJECT_APP_UUID: '$(PROJECT_APP_UUID)',
       UIBackgroundModes: ['audio'],
+      CFBundleURLTypes: [
+        {
+          CFBundleURLSchemes: ['pn$(PROJECT_APP_UUID)'],
+        },
+      ],
     },
   },
   android: {
