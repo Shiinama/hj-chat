@@ -17,7 +17,7 @@ function useProtectedRoute(user) {
     if (user === undefined) {
       return
     }
-    const notNeedLogin = Constants.manifest.extra.isLogin
+    const notNeedLogin = Constants.expoConfig.extra.isLogin
     if (!notNeedLogin) {
       if (!user && rootSegment !== '(auth)/sign-in') {
         router.replace('(auth)/sign-in')

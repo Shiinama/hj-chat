@@ -137,7 +137,7 @@ export default async function request<T>(options: RequestOptions) {
   const opt: RequestOptions = options
   delete opt.url
 
-  const notNeedLogin = Constants.manifest.extra.isLogin
+  const notNeedLogin = Constants.expoConfig.extra.isLogin
   let Authorization = ''
   if (notNeedLogin) {
     Authorization = `Bearer ${token}`
