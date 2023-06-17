@@ -46,7 +46,7 @@
 
 `cross-env REACT_APP_ENV=test expo run:ios -d`
 
-云构建（但我们项目应该不需要，这个就是给没有 xcode 用）
+云构建
 
 `eas build -p ios`
 

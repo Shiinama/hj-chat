@@ -332,7 +332,7 @@ function Chat({}) {
           stopRecording,
           onEndEditText: async (value: string) => {
             const reqId = uuidv4()
-            SocketStreamManager().sendMessage('text_chat', {
+            await SocketStreamManager().sendMessage('text_chat', {
               reqId,
               botUid: uid,
               text: value,

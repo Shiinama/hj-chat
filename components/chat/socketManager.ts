@@ -208,7 +208,7 @@ export class SocketStream {
     this.onUpdateMessage(data)
   }
 
-  sendMessage(ChatEvent, data) {
+  async sendMessage(ChatEvent, data) {
     if (!this.socket || !this.socket?.connected) {
       this.init()
     }

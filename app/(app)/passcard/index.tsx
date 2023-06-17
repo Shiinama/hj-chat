@@ -100,7 +100,7 @@ const DATA1 = [
         subTextArray: ['200 ⚡️ Per Day', 'One Public Bot', 'Beta Feature Preview'],
       },
     ],
-    buttonText: 'OpenSea',
+    buttonText: 'Find more on DC',
   },
   {
     title: 'Lv.4',

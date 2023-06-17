@@ -61,6 +61,12 @@
     }
   },
   "submit": {
+    "preview": {
+      "android": {
+        "serviceAccountKeyPath": "./pc-api-6088263975948881360-435-e93a3b280ea2.json",
+        "track": "internal"
+      }
+    },
     "production": {}
   }
 }

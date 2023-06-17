@@ -203,28 +203,16 @@ function InputToolsTar({
       return (
         <TouchableOpacity
           style={styles.toolsIcon}
+          disabled={flag}
           onPress={async () => {
             if (flag) return
             if (text.length === 0) {
               Alert.alert('Please enter your message')
             }
-            try {
-              setFlag(true)
-              const { energy } = await getUserEnergyInfo()
-              if (energy > 0) {
-                onEndEditText?.(text)
-                setText('')
-              } else {
-                Alert.alert('You have no energy left, please recharge')
-                return true
-              }
-            } catch (e: any) {
-              if (e.code === 'ERR_NETWORK') {
-                Alert.alert('Please check your network connection or server error')
-              }
-            } finally {
-              setFlag(false)
-            }
+            setFlag(true)
+            await onEndEditText?.(text)
+            setText('')
+            setFlag(false)
           }}
         >
           <Send></Send>

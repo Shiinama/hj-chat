@@ -105,16 +105,16 @@ export default function PassCardItem({ title, subView, level, id, buttonText }: 
       )
     }
 
-    if (buttonText === 'OpenSea') {
+    if (buttonText === 'Find more on DC') {
       return (
         <Button
           onPress={e => {
             e.preventDefault()
-            WebBrowser.openBrowserAsync('https://opensea.io/collection/myshellgenesispass')
+            WebBrowser.openBrowserAsync('https://discord.gg/5XHBzGcE')
           }}
           style={styles.bottomButton}
         >
-          OpenSea
+          Find more on DC
         </Button>
       )
     }

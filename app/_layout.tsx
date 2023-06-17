@@ -28,7 +28,6 @@ export default function RootLayout() {
   const runTypeMessage = Updates.isEmbeddedLaunch
     ? 'This app is running from built-in code'
     : 'This app is running an update'
-  console.log(Updates, 11)
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error
