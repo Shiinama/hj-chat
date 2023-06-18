@@ -45,13 +45,13 @@ const envConfig = {
 export default {
   name: 'MyShell',
   slug: 'yu-chat',
-  version: '1.1.1',
+  version: '1.1.2',
   orientation: 'portrait',
   scheme: 'myapp',
   updates: {
     url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
   },
-  runtimeVersion: '1.1.1',
+  runtimeVersion: '1.1.2',
   splash: {
     image: './assets/images/inch.png',
     resizeMode: 'contain',

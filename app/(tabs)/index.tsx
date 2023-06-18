@@ -27,7 +27,7 @@ import useUserStore from '../../store/userStore'
 import { useBoolean } from 'ahooks'
 
 export default function TabOneScreen() {
-  // if (!useUserStore.getState().userBaseInfo) return
+  if (!useUserStore.getState().userBaseInfo) return
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [refreshLoading, { set: setRefreshLoading }] = useBoolean(false)
