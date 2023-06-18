@@ -129,7 +129,7 @@ const DATA1 = [
           '600 ⚡️ Per Day',
           'Bots with External Knowledge and Docs',
           'One More Pubic Bot',
-          'Bots with Personalized Voice and Coming Advanced Features',
+          'Bots with Personalized Voice and Coming Advanced Feature',
         ],
       },
     ],
