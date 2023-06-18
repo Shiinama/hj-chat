@@ -69,6 +69,7 @@ export default {
       PROJECT_CLIENT_KEY: '$(PROJECT_CLIENT_KEY)',
       PROJECT_APP_UUID: '$(PROJECT_APP_UUID)',
       UIBackgroundModes: ['audio'],
+      NSMicrophoneUsageDescription: 'The app uses the microphone to send voice messages',
       CFBundleURLTypes: [
         {
           CFBundleURLSchemes: ['pn$(PROJECT_APP_UUID)'],

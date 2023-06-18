@@ -97,7 +97,7 @@ const DATA1 = [
       },
       {
         subTitle: 'Level benefits:',
-        subTextArray: ['200 ⚡️ Per Day', 'One Public Bot', 'Beta Feature Preview'],
+        subTextArray: ['200 ⚡️ Per Day', 'One Public Bot'],
       },
     ],
     buttonText: 'Find more on DC',
