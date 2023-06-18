@@ -40,9 +40,8 @@ export default function Settings() {
           }).then(action => {
             if (action === 'confirm') {
               const { close } = Toast.loading({ message: 'Deactivating', duration: 0 })
-              setTimeout(() => {
-                close()
-              }, 1000)
+              signOut()
+              close()
             }
           })
         }}
