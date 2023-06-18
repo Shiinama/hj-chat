@@ -15,26 +15,11 @@
       },
       "channel": "development-simulator"
     },
-    "dev": {
+    "development": {
+      "distribution": "internal",
       "env": {
         "REACT_APP_ENV": "test"
       },
-      "android": {
-        "buildType": "apk"
-      },
-      "ios": {},
-      "channel": "dev"
-    },
-    "prod": {
-      "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease"
-      },
-      "ios": {},
-      "channel": "prod"
-    },
-    "development": {
-      "distribution": "internal",
       "android": {
         "gradleCommand": ":app:assembleDebug"
       },
@@ -45,8 +30,9 @@
       "channel": "development"
     },
     "preview": {
+      "distribution": "internal",
       "android": {
-        "gradleCommand": ":app:bundleRelease"
+        "gradleCommand": ":app:assembleRelease"
       },
       "ios": {
         "resourceClass": "m-medium"
@@ -54,6 +40,9 @@
       "channel": "preview"
     },
     "production": {
+      "android": {
+        "gradleCommand": ":app:bundleRelease"
+      },
       "ios": {
         "resourceClass": "m-medium"
       },
@@ -67,6 +56,10 @@
         "track": "internal"
       }
     },
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./pc-api-6088263975948881360-435-e93a3b280ea2.json"
+      }
+    }
   }
 }

@@ -45,13 +45,13 @@ const envConfig = {
 export default {
   name: 'MyShell',
   slug: 'yu-chat',
-  version: '1.1.2',
+  version: '1.1.3',
   orientation: 'portrait',
   scheme: 'myapp',
   updates: {
     url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
   },
-  runtimeVersion: '1.1.2',
+  runtimeVersion: '1.1.3',
   splash: {
     image: './assets/images/inch.png',
     resizeMode: 'contain',
@@ -62,7 +62,7 @@ export default {
   ios: {
     icon: './assets/iOS/App Store - 1x.png',
     associatedDomains: ['pn6b6a232e-973a-405c-969a-a546189fda16'],
-    supportsTablet: true,
+    supportsTablet: false,
     bundleIdentifier: 'ai.myshell.app',
     infoPlist: {
       PROJECT_UUID: '$(PROJECT_UUID)',
