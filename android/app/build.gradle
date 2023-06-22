@@ -119,7 +119,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 4
-        versionName "1.1.3"
+        versionName "1.1.5"
         manifestPlaceholders["PN_PROJECT_ID"] = "cb5e91db-f37b-4e53-8107-b97e36f78072"
         manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] = "cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx"
         manifestPlaceholders["PN_APP_ID"] = "f34c6ee8-a870-447e-aa86-3400c12c8f22"
