@@ -1,4 +1,4 @@
-import { Button } from '@ui-kitten/components'
+import { Button } from '@fruits-chain/react-native-xiaoshu'
 import { View, Text, StyleSheet } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { getInvitation } from '../../api/proofile'
@@ -76,6 +76,7 @@ export default function PassCardItem({ title, subView, level, id, buttonText }: 
     if (id === 2 && id !== level) {
       return (
         <Button
+          textStyle={{ fontWeight: '700' }}
           onPress={() => {
             getInvitation({}).then(({ code }: any) => {
               Clipboard.setString(`${System.inviteLink}${code}`)
@@ -91,7 +92,7 @@ export default function PassCardItem({ title, subView, level, id, buttonText }: 
 
     if (id === level) {
       return (
-        <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
+        <Button textStyle={styles.textStyle} disabled={true} style={[styles.bottomButton, styles.greyColor]}>
           Current Level
         </Button>
       )
@@ -99,7 +100,7 @@ export default function PassCardItem({ title, subView, level, id, buttonText }: 
 
     if (id > level) {
       return (
-        <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
+        <Button textStyle={styles.textStyle} disabled={true} style={[styles.bottomButton, styles.greyColor]}>
           Coming Soon
         </Button>
       )
@@ -108,6 +109,7 @@ export default function PassCardItem({ title, subView, level, id, buttonText }: 
     if (buttonText === 'Find more on DC') {
       return (
         <Button
+          textStyle={{ fontWeight: '700' }}
           onPress={e => {
             e.preventDefault()
             WebBrowser.openBrowserAsync('https://discord.gg/5XHBzGcE')
@@ -120,7 +122,7 @@ export default function PassCardItem({ title, subView, level, id, buttonText }: 
     }
 
     return (
-      <Button disabled={true} style={[styles.bottomButton, styles.greyColor]}>
+      <Button textStyle={styles.textStyle} disabled={true} style={[styles.bottomButton, styles.greyColor]}>
         Coming Soon
       </Button>
     )
@@ -153,8 +155,13 @@ const styles = StyleSheet.create({
     borderColor: '#7A2EF6',
   },
   greyColor: {
+    // color: 'black',
     backgroundColor: '#E0E0E0',
     borderColor: '#E0E0E0',
+  },
+  textStyle: {
+    fontWeight: '700',
+    color: '#B9B9B9',
   },
   viewItem: {
     flexDirection: 'row',

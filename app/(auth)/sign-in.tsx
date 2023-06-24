@@ -12,6 +12,7 @@ import { SupportAuthType } from 'react-native-particle-auth'
 import * as particleAuth from 'react-native-particle-auth'
 import useUserStore from '../../store/userStore'
 import { particleLogin } from '../../api/auth'
+import * as WebBrowser from 'expo-web-browser'
 
 export default function SignIn() {
   const { signIn } = useAuth()
@@ -64,6 +65,17 @@ export default function SignIn() {
           </Button>
 
           <Text style={styles.emailDetail}>If you haven't registered before, we will help you create an account.</Text>
+          <TouchableOpacity>
+            <Text
+              style={styles.service}
+              onPress={e => {
+                e.preventDefault()
+                WebBrowser.openBrowserAsync('https://app.myshell.ai/privacy')
+              }}
+            >
+              Term of Service
+            </Text>
+          </TouchableOpacity>
 
           <View style={{ marginTop: 30 }}>
             <View style={styles.lineBackground}></View>
@@ -87,136 +99,4 @@ export default function SignIn() {
       </View>
     </>
   )
-
-  // return (
-  //   <>
-  //     <ScrollView style={styles.main}>
-  //       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-  //         <View style={styles.container}>
-  //           <Image
-  //             source={userLogo}
-  //             style={{
-  //               width: 150,
-  //               height: 150,
-  //             }}
-  //           />
-  //           <View>
-  //             <Text
-  //               style={{
-  //                 fontWeight: '600',
-  //                 fontSize: 20,
-  //                 lineHeight: 30,
-  //                 textAlign: 'center',
-  //                 color: '#000000',
-  //               }}
-  //             >
-  //               The most advanced AI chatbot platform
-  //             </Text>
-  //           </View>
-
-  //           <View style={{ marginTop: 30, width: '80%' }}>
-  //             <View style={{ backgroundColor: '#cccccc', height: 0.5 }}></View>
-  //             <View
-  //               style={{
-  //                 backgroundColor: '#ffffff',
-  //                 width: 108,
-  //                 marginTop: -8,
-  //                 marginHorizontal: 90,
-  //               }}
-  //             >
-  //               <Text
-  //                 style={{
-  //                   color: '#cccccc',
-  //                   fontSize: 12,
-  //                   textAlign: 'center',
-  //                 }}
-  //               >
-  //                 connect using
-  //               </Text>
-  //             </View>
-  //           </View>
-
-  //           <View
-  //             style={{
-  //               marginTop: 25,
-  //               display: 'flex',
-  //               flexDirection: 'row',
-  //               width: '80%',
-  //               justifyContent: 'space-between',
-  //             }}
-  //           >
-  //             <TouchableOpacity
-  //               onPress={() => login('Facebook')}
-  //               style={{
-  //                 width: '48%',
-  //                 borderColor: '#000000',
-  //                 borderWidth: 1,
-  //                 borderRadius: 20,
-  //                 height: 35,
-  //                 alignItems: 'center',
-  //                 justifyContent: 'center',
-  //               }}
-  //             >
-  //               <Image source={facebookLogo} style={{ width: 24, height: 24 }}></Image>
-  //             </TouchableOpacity>
-  //             <TouchableOpacity
-  //               onPress={() => login('Google')}
-  //               style={{
-  //                 width: '48%',
-  //                 borderColor: '#000000',
-  //                 borderWidth: 1,
-  //                 borderRadius: 20,
-  //                 height: 35,
-  //                 alignItems: 'center',
-  //                 justifyContent: 'center',
-  //               }}
-  //             >
-  //               <Image source={googleLogo} style={{ width: 24, height: 24 }}></Image>
-  //             </TouchableOpacity>
-  //           </View>
-
-  //           <View
-  //             style={{
-  //               display: 'flex',
-  //               flexDirection: 'row',
-  //               marginTop: 20,
-  //               justifyContent: 'center',
-  //             }}
-  //           >
-  //             <Button
-  //               style={{
-  //                 width: 200,
-  //                 borderRadius: 20,
-  //                 borderColor: '#000000',
-  //                 borderWidth: 1,
-  //                 backgroundColor: 'white',
-  //               }}
-  //               onPress={() => login('Email')}
-  //             >
-  //               <Text style={{ color: 'black', fontSize: 18, fontWeight: '500' }}>Email Login</Text>
-  //             </Button>
-  //           </View>
-
-  //           {/* <MateMaskView></MateMaskView> */}
-
-  //           {/* <WallectConnectView /> */}
-
-  //           <View style={{ width: '80%', marginTop: 20 }}>
-  //             <Text
-  //               style={{
-  //                 textAlign: 'center',
-  //                 fontSize: 15,
-  //                 color: '#aaaaaa',
-  //                 lineHeight: 20,
-  //               }}
-  //             >
-  //               If you haven't registered before, we will help you create an account.
-  //             </Text>
-  //           </View>
-  //         </View>
-  //       </TouchableWithoutFeedback>
-  //     </ScrollView>
-  //     {/* <Shim /> */}
-  //   </>
-  // )
 }

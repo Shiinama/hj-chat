@@ -1,11 +1,9 @@
 import { useFonts } from 'expo-font'
 import { SplashScreen } from 'expo-router'
 import { useEffect, useMemo } from 'react'
-import * as eva from '@eva-design/eva'
 import { Provider as XiaoshuProvider, Toast } from '@fruits-chain/react-native-xiaoshu'
 import { Provider as AuthProvider } from '../context/auth'
 import NetInfo from '@react-native-community/netinfo'
-import { ApplicationProvider } from '@ui-kitten/components'
 import { CustomStack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'
 import { ensureDirExists } from '../utils/filesystem'
@@ -16,7 +14,7 @@ export {
 } from 'expo-router'
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  initialRouteName: '(auth)',
 }
 
 export default function RootLayout() {
@@ -57,17 +55,15 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <AuthProvider>
-      <ApplicationProvider {...eva} theme={eva.light}>
-        <XiaoshuProvider theme={customThemeVar}>
-          <CustomStack
-            screenOptions={{
-              header: () => null,
-              headerShown: false,
-            }}
-          />
-        </XiaoshuProvider>
-      </ApplicationProvider>
-    </AuthProvider>
+    <XiaoshuProvider theme={customThemeVar}>
+      <AuthProvider>
+        <CustomStack
+          screenOptions={{
+            header: () => null,
+            headerShown: false,
+          }}
+        />
+      </AuthProvider>
+    </XiaoshuProvider>
   )
 }

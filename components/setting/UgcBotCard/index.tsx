@@ -1,17 +1,22 @@
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity, Dimensions, Alert } from 'react-native'
 import { renderImage } from '../../profileInfo/helper'
 import userStore from '../../../store/userStore'
 import LinearText from '../../common/linearText'
 import Tag from '../../common/tag'
 import { useTagList } from '../../../constants/TagList'
-import { memo } from 'react'
+import { memo, useState } from 'react'
+import { Dialog, Button, Row, Col } from '@fruits-chain/react-native-xiaoshu'
 const windowWidth = Dimensions.get('window').width
 function UgcBotCard({ ld, onShowDetail, type }: any) {
   const tags = useTagList(ld, type)
+  const [report, setReport] = useState(false)
   const userInfo = userStore.getState().profile
   return (
     <TouchableOpacity
       style={styles.listItem}
+      onLongPress={() => {
+        setReport(true)
+      }}
       onPress={() => {
         onShowDetail(ld)
       }}
@@ -48,6 +53,38 @@ function UgcBotCard({ ld, onShowDetail, type }: any) {
           </Text>
         </View>
       )}
+      <Dialog.Component
+        style={{ paddingHorizontal: 16 }}
+        onPressClose={() => setReport(false)}
+        showConfirmButton={false}
+        onPressOverlay={() => setReport(false)}
+        visible={report}
+      >
+        <View style={styles.dialog}>
+          <Text style={styles.title}>Select a reason and hide robot</Text>
+          <Row justify="space-between">
+            {['Dislike', 'Sick Content', 'Offensive', 'Other reasons'].map(i => {
+              return (
+                <Col span={12}>
+                  <Button
+                    size="m"
+                    textColor={'black'}
+                    style={{ margin: 8, backgroundColor: '#fff', borderColor: 'black', borderWidth: 1 }}
+                    onPress={() => setReport(false)}
+                  >
+                    {i}
+                  </Button>
+                </Col>
+              )
+            })}
+          </Row>
+
+          {/* <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Button onPress={() => setReport(false)}>Offensive</Button>
+            <Button onPress={() => setReport(false)}>Other reasons</Button>
+          </View> */}
+        </View>
+      </Dialog.Component>
     </TouchableOpacity>
   )
 }
@@ -91,6 +128,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#0A0A0AA3',
   },
+  dialog: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingBottom: 16,
+  },
+  title: {
+    fontSize: 18,
+    marginBottom: 8,
+    fontWeight: 'bold',
+  },
+  buttonGroup: {},
 })
 
 export default memo(UgcBotCard)
