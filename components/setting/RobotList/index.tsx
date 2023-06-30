@@ -86,15 +86,15 @@ const RobotList: FC<RobotListProps> = ({ requestParams }) => {
         ListHeaderComponent={<CreateCard />}
         renderItem={({ item }) => {
           return (
-            <View>
-              <UgcBotCard
-                onShowDetail={e => {
-                  onShowDetail(e)
-                }}
-                type={TagFromType.AllBot}
-                ld={item}
-              />
-            </View>
+            <UgcBotCard
+              key={item.id}
+              loadData={loadData}
+              onShowDetail={e => {
+                onShowDetail(e)
+              }}
+              type={TagFromType.AllBot}
+              ld={item}
+            />
           )
         }}
         refreshControl={

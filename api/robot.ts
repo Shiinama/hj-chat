@@ -56,3 +56,11 @@ export const setBotPrivate = data => {
     data,
   })
 }
+
+export const addBanned = data => {
+  return request({
+    url: `/bot/banned`,
+    method: 'post',
+    data,
+  })
+}

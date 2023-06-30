@@ -81,9 +81,10 @@ const MyRobotList: FC<MyRobotListProps> = () => {
     >
       <View>
         <CreateCard />
-        {myRobotListData?.map((ld, i) => {
+        {myRobotListData?.map(ld => {
           return (
             <UgcBotCard
+              loadData={loadData}
               onShowDetail={e => {
                 onShowDetail(e)
               }}

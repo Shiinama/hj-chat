@@ -6,8 +6,9 @@ import Tag from '../../common/tag'
 import { useTagList } from '../../../constants/TagList'
 import { memo, useState } from 'react'
 import { Dialog, Button, Row, Col } from '@fruits-chain/react-native-xiaoshu'
+import { addBanned } from '../../../api/robot'
 const windowWidth = Dimensions.get('window').width
-function UgcBotCard({ ld, onShowDetail, type }: any) {
+function UgcBotCard({ ld, onShowDetail, type, loadData }: any) {
   const tags = useTagList(ld, type)
   const [report, setReport] = useState(false)
   const userInfo = userStore.getState().profile
@@ -70,7 +71,15 @@ function UgcBotCard({ ld, onShowDetail, type }: any) {
                     size="m"
                     textColor={'black'}
                     style={{ margin: 8, backgroundColor: '#fff', borderColor: 'black', borderWidth: 1 }}
-                    onPress={() => setReport(false)}
+                    onPress={() => {
+                      addBanned({ botId: ld.id })
+                        .then(() => {
+                          loadData()
+                        })
+                        .finally(() => {
+                          setReport(false)
+                        })
+                    }}
                   >
                     {i}
                   </Button>
