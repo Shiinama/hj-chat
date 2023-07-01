@@ -42,12 +42,13 @@ const envConfig = {
     avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
   },
 }
+const IS_TEST = process.env.REACT_APP_ENV === 'test'
+
 export default {
   name: 'MyShell',
   slug: 'yu-chat',
   version: '1.1.6',
   orientation: 'portrait',
-  scheme: 'myapp',
   updates: {
     url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
   },
@@ -63,15 +64,15 @@ export default {
     icon: './assets/iOS/App Store - 1x.png',
     associatedDomains: ['pn6b6a232e-973a-405c-969a-a546189fda16'],
     supportsTablet: false,
-    bundleIdentifier: 'ai.myshell.app',
+    bundleIdentifier: IS_TEST ? 'ai.myshell.app3' : 'ai.myshell.app',
     infoPlist: {
-      PROJECT_UUID: '$(PROJECT_UUID)',
-      PROJECT_CLIENT_KEY: '$(PROJECT_CLIENT_KEY)',
-      PROJECT_APP_UUID: '$(PROJECT_APP_UUID)',
+      PROJECT_UUID: envConfig?.[process.env.REACT_APP_ENV].PARTICLE_PROJECT_ID,
+      PROJECT_CLIENT_KEY: envConfig?.[process.env.REACT_APP_ENV].PARTICLE_CLIENT_ID,
+      PROJECT_APP_UUID: envConfig?.[process.env.REACT_APP_ENV].PARTICLE_APP_ID,
       NSMicrophoneUsageDescription: 'The app uses the microphone to send voice messages',
       CFBundleURLTypes: [
         {
-          CFBundleURLSchemes: ['pn$(PROJECT_APP_UUID)'],
+          CFBundleURLSchemes: [`pn${envConfig?.[process.env.REACT_APP_ENV].PARTICLE_APP_ID}`],
         },
       ],
     },
@@ -126,7 +127,7 @@ export default {
     eas: {
       projectId: '1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     },
-    isLogin: process.env.REACT_APP_ENV === 'dev' || process.env.REACT_APP_ENV === 'test',
+    isLogin: process.env.REACT_APP_ENV === 'dev',
     systemConfig: {
       ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
     },

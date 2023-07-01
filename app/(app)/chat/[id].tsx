@@ -26,7 +26,6 @@ import { TagFromType, useTagList } from '../../../constants/TagList'
 import Tag from '../../../components/common/tag'
 import SocketStreamManager from '../../../components/chat/socketManager'
 import { MesageSucessType, MessageDto } from '../../../components/chat/type'
-import { checkEnergy } from '../../../utils/check'
 
 export type ChatItem = MessageDto
 function Chat({}) {
@@ -42,7 +41,6 @@ function Chat({}) {
   })
   const navigation = useNavigation()
 
-  // const [recording, setRecording] = useState(null)
   // 不需要重新渲染的无需存放useState,造成不必要的渲染
   const recordingRef = useRef<Audio.Recording>()
   const [loading, setLoading] = useState<boolean>(true)

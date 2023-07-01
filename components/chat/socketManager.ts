@@ -233,7 +233,6 @@ export class SocketStream {
   }
 
   getCurrentPlayStream() {
-    console.log(this.audioStreamPlayKeys, this.audioStreamIndex, 'getCurrentPlayStream')
     if (this.audioStreamIndex < this.audioStreamPlayKeys.length) {
       return this.audioStreamPlayKeys[this.audioStreamIndex]
     }
@@ -241,7 +240,6 @@ export class SocketStream {
   }
 
   resetPlayStream() {
-    console.log('reset')
     this.audioStreamIndex = -1
     this.audioStreamPlayKeys = []
   }

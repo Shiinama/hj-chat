@@ -98,17 +98,7 @@ export default function TabOneScreen() {
         style={styles.listContainer}
       >
         {listData?.map(ld => {
-          return (
-            <BotCard
-              onShowDetail={e => {
-                onShowDetail(e)
-              }}
-              key={ld?.id}
-              showPined={ld.pinned}
-              ld={ld}
-              showTime={true}
-            />
-          )
+          return <BotCard onShowDetail={onShowDetail} key={ld?.id} showPined={ld.pinned} ld={ld} showTime={true} />
         })}
       </ScrollView>
     </View>

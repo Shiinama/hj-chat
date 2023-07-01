@@ -3,10 +3,11 @@ import { renderImage } from '../../profileInfo/helper'
 import userStore from '../../../store/userStore'
 import LinearText from '../../common/linearText'
 import Tag from '../../common/tag'
-import { useTagList } from '../../../constants/TagList'
+import { TagFromType, useTagList } from '../../../constants/TagList'
 import { memo, useState } from 'react'
 import { Dialog, Button, Row, Col } from '@fruits-chain/react-native-xiaoshu'
 import { addBanned } from '../../../api/robot'
+import CallBackManagerSingle from '../../../utils/CallBackManager'
 const windowWidth = Dimensions.get('window').width
 function UgcBotCard({ ld, onShowDetail, type, loadData }: any) {
   const tags = useTagList(ld, type)
@@ -16,7 +17,9 @@ function UgcBotCard({ ld, onShowDetail, type, loadData }: any) {
     <TouchableOpacity
       style={styles.listItem}
       onLongPress={() => {
-        setReport(true)
+        if (type === TagFromType.AllBot) {
+          setReport(true)
+        }
       }}
       onPress={() => {
         onShowDetail(ld)
@@ -66,7 +69,7 @@ function UgcBotCard({ ld, onShowDetail, type, loadData }: any) {
           <Row justify="space-between">
             {['Dislike', 'Sick Content', 'Offensive', 'Other reasons'].map(i => {
               return (
-                <Col span={12}>
+                <Col key={i} span={12}>
                   <Button
                     size="m"
                     textColor={'black'}
@@ -75,6 +78,7 @@ function UgcBotCard({ ld, onShowDetail, type, loadData }: any) {
                       addBanned({ botId: ld.id })
                         .then(() => {
                           loadData()
+                          CallBackManagerSingle().execute('botList')
                         })
                         .finally(() => {
                           setReport(false)

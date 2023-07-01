@@ -83,15 +83,7 @@ const MyRobotList: FC<MyRobotListProps> = () => {
         <CreateCard />
         {myRobotListData?.map(ld => {
           return (
-            <UgcBotCard
-              loadData={loadData}
-              onShowDetail={e => {
-                onShowDetail(e)
-              }}
-              type={TagFromType.MyBot}
-              key={ld.id}
-              ld={ld}
-            />
+            <UgcBotCard loadData={loadData} onShowDetail={onShowDetail} type={TagFromType.MyBot} key={ld.id} ld={ld} />
           )
         })}
       </View>

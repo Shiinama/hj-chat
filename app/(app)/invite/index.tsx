@@ -42,7 +42,7 @@ export default function Invite() {
               <Text style={{ fontSize: 18, fontWeight: '700' }}>Your valid invite</Text>
               <Text style={{ fontSize: 70, fontWeight: '600', color: '#7A2EF6' }}>{validInvitationCount || 0}</Text>
               <Text style={{ fontSize: 16, width: 263, color: '#797979' }}>
-                Share Myshell with Friends and instantly enjoy high rebate benefits.
+                Share MyShell with Friends and instantly enjoy high rebate benefits.
               </Text>
             </View>
             <View style={styles.inputView}>

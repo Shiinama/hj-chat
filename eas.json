@@ -29,6 +29,21 @@
       },
       "channel": "development"
     },
+    "test": {
+      "distribution": "internal",
+      "env": {
+        "REACT_APP_ENV": "test"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "ios": {
+        "schema": "test",
+        "resourceClass": "m-medium"
+      },
+      "channel": "test"
+    },
     "preview": {
       "distribution": "internal",
       "android": {
@@ -44,6 +59,7 @@
         "gradleCommand": ":app:bundleRelease"
       },
       "ios": {
+        "schema": "aimyshell",
         "resourceClass": "m-medium"
       },
       "channel": "production"
