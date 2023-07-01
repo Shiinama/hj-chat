@@ -39,7 +39,6 @@
         "gradleCommand": ":app:assembleRelease"
       },
       "ios": {
-        "schema": "test",
         "resourceClass": "m-medium"
       },
       "channel": "test"
@@ -59,7 +58,6 @@
         "gradleCommand": ":app:bundleRelease"
       },
       "ios": {
-        "schema": "aimyshell",
         "resourceClass": "m-medium"
       },
       "channel": "production"

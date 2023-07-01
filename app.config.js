@@ -1,9 +1,9 @@
 // 多环境变量
 const envConfig = {
   dev: {
-    PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
-    PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
-    PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
+    PROJECT_UUID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
+    PROJECT_CLIENT_KEY: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    PROJECT_APP_UUID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api-staging.myshell.ai',
     token:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsU3RhZ2luZyIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsU3RhZ2luZyIsIm5iZiI6MCwiaWF0IjoxNjg0NTA3MTE1NTk4LCJqdGkiOiIxMWNmNjFhNTY5Yzc0MjRlOTVlMzYxNTg1OTNmZjc1ZSIsInNlY3VyaXR5U3RhbXAiOiJmOTRkMDE5OGY2OTA0ODUwODIwYjJjMDkxYTFiODQwNCIsImV4cCI6MTY4NDUwOTcwNzU5OH0.nNaN7MafVAr8XF5XLz0JOAfjvRQgOBRcpnQOn9Gt7ig',
@@ -13,11 +13,13 @@ const envConfig = {
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   test: {
-    PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
-    PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    name: 'MyShellTest',
+    bundleIdentifier: 'ai.myshell.app3',
+    PROJECT_UUID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
+    PROJECT_CLIENT_KEY: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
+    PROJECT_APP_UUID: '6b6a232e-973a-405c-969a-a546189fda16',
     token:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNeVNoZWxsVGVzdCIsInN1YiI6MzA2LCJhdWQiOiJNeVNoZWxsVGVzdCIsIm5iZiI6MCwiaWF0IjoxNjg0OTEzMzIxNTc1LCJqdGkiOiI1ZGM5Zjg4YmQ5MmQ0MmVkODgyMmZiYjU3OWY5MzUzNyIsInNlY3VyaXR5U3RhbXAiOiI1NGMwYWY2Mzk5NTQ0M2EzYjViNGU0MzU4MGNhYjU3NSIsImV4cCI6MTY4NDkxNTkxMzU3NX0.TfJXgyB_m4LO9-L_yDAIYkjBWsx83xyRNBX8luc6EW4',
-    PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api-test.myshell.ai',
     authKey: 'Authorization',
     botShareLink: 'https://app-test.myshell.ai/en/bot/',
@@ -27,12 +29,11 @@ const envConfig = {
     avatarImgHost: 'https://d33slbe5e7735s.cloudfront.net/',
   },
   prod: {
+    name: 'MyShell',
+    bundleIdentifier: 'ai.myshell.app',
     PROJECT_UUID: 'cb5e91db-f37b-4e53-8107-b97e36f78072',
     PROJECT_CLIENT_KEY: 'cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx',
     PROJECT_APP_UUID: 'f34c6ee8-a870-447e-aa86-3400c12c8f22',
-    // PARTICLE_PROJECT_ID: 'c9aa126d-8db2-45cc-8898-60e3a69d5050',
-    // PARTICLE_CLIENT_ID: 'cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk',
-    // PARTICLE_APP_ID: '6b6a232e-973a-405c-969a-a546189fda16',
     baseUrl: 'https://api.myshell.ai',
     inviteLink: 'https://app.myshell.ai/invite/',
     botShareLink: 'https://app.myshell.ai/en/bot/',
@@ -41,12 +42,12 @@ const envConfig = {
     shareLink: 'https://app.myshell.ai/share/',
     avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
   },
-}
-const IS_TEST = process.env.REACT_APP_ENV === 'test'
+}['prod']
 
 export default {
-  name: 'MyShell',
+  name: envConfig?.name,
   slug: 'yu-chat',
+  scheme: 'myapp',
   version: '1.1.6',
   orientation: 'portrait',
   updates: {
@@ -64,17 +65,12 @@ export default {
     icon: './assets/iOS/App Store - 1x.png',
     associatedDomains: ['pn6b6a232e-973a-405c-969a-a546189fda16'],
     supportsTablet: false,
-    bundleIdentifier: IS_TEST ? 'ai.myshell.app3' : 'ai.myshell.app',
+    bundleIdentifier: envConfig?.bundleIdentifier,
     infoPlist: {
-      PROJECT_UUID: envConfig?.[process.env.REACT_APP_ENV].PARTICLE_PROJECT_ID,
-      PROJECT_CLIENT_KEY: envConfig?.[process.env.REACT_APP_ENV].PARTICLE_CLIENT_ID,
-      PROJECT_APP_UUID: envConfig?.[process.env.REACT_APP_ENV].PARTICLE_APP_ID,
+      PROJECT_UUID: envConfig?.PROJECT_UUID,
+      PROJECT_CLIENT_KEY: envConfig?.PROJECT_CLIENT_KEY,
+      PROJECT_APP_UUID: envConfig?.PROJECT_APP_UUID,
       NSMicrophoneUsageDescription: 'The app uses the microphone to send voice messages',
-      CFBundleURLTypes: [
-        {
-          CFBundleURLSchemes: [`pn${envConfig?.[process.env.REACT_APP_ENV].PARTICLE_APP_ID}`],
-        },
-      ],
     },
   },
   android: {
@@ -129,7 +125,7 @@ export default {
     },
     isLogin: process.env.REACT_APP_ENV === 'dev',
     systemConfig: {
-      ...(envConfig?.[process.env.REACT_APP_ENV] || envConfig.prod),
+      ...envConfig,
     },
   },
 }

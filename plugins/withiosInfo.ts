@@ -1,7 +1,7 @@
 const { IOSConfig, withInfoPlist } = require('@expo/config-plugins')
 const appendScheme = IOSConfig.Scheme.appendScheme
 const setInfoPilist = config => {
-  const infoList = appendScheme('pn$(PROJECT_APP_UUID)', config.ios.infoPlist)
+  const infoList = appendScheme(`pn${config.modResults.PROJECT_APP_UUID}`, config.ios.infoPlist)
   return infoList
 }
 
