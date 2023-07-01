@@ -1,5 +1,4 @@
 const fs = require('fs')
-console.log(process.env.REACT_APP_ENV, '221')
 const Map =
   process.env.REACT_APP_ENV === 'test'
     ? {
