@@ -58,7 +58,15 @@ export class SocketStream {
     this.init()
   }
 
-  private init() {
+  ready(): boolean {
+    return this.socket && this.socket.connected
+  }
+
+  init() {
+    if (this.ready()) {
+      return
+    }
+    this.socket?.disconnect()
     // 初始化删除本地mp3文件
     const { userBaseInfo } = useUserStore.getState()
     const token = userBaseInfo?.token ?? SysConfig.token
@@ -90,16 +98,13 @@ export class SocketStream {
   }
 
   private onMessageError({ message }: MeaageErrorType) {
-    console.log(message, 'onMessageError')
     Alert.alert(message)
   }
 
   private onException({ message }: MeaageErrorType) {
-    console.log(message, 'onException')
     Alert.alert(message)
   }
   private onNoEnoughEnergy({ message }: MeaageErrorType) {
-    console.log(message, 'onNoEnoughEnergy')
     Alert.alert(message)
   }
 
@@ -111,7 +116,6 @@ export class SocketStream {
 
   private onMessageTextStream(data: MessageStreamTextRes) {
     if (this.currentBot?.botBaseInfo.id !== data.data?.replyMessage?.botId) return
-    // console.log('onMessageTextStream-----', data, this.currentBot?.id !== data?.data?.data?.botId)
     // 其它机器人也接收，如果跟A发起会话，正在接收一个长文，现在又去喝B发起会话，再回到A还需要用到这个消息
     this.addTextStream(data)
   }
@@ -135,7 +139,6 @@ export class SocketStream {
   }
 
   private async onMessageAudioStream(data: MessageStreamTextRes) {
-    // console.log(Object.keys(this.onAudioStreamUpdate), 'onMessageAudioStreamKeys')
     if (this.currentBot?.botBaseInfo.id !== data.data?.replyMessage?.botId) return
     try {
       const msg = data?.data
@@ -180,9 +183,7 @@ export class SocketStream {
       // if (Object.keys(this.currentAudioStream).length > 0) {
       //   this.playFragment.addSoundUrl(msg.audio ? uri : undefined, data.data?.isFinal)
       // }
-    } catch (error) {
-      console.log('error:', error)
-    }
+    } catch (error) {}
   }
   private onMessageReplied({ data }: MesageSucessType) {
     CallBackManagerSingle().execute('botList')
@@ -218,7 +219,6 @@ export class SocketStream {
   playStreamNext1 = debounce(this.playStreamNext, 200)
 
   playStreamNext() {
-    console.log(this.audioStreamPlayKeys, this.audioStreamIndex, '触发下一个')
     if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length - 1) {
       this.audioStreamIndex += 1
       CallBackManagerSingle().execute('play_' + this.audioStreamPlayKeys[this.audioStreamIndex])

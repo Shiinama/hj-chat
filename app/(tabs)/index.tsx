@@ -23,11 +23,9 @@ type ListDataItem = {
 import CallBackManagerSingle from '../../utils/CallBackManager'
 import { removeBotListLocal } from '../../api/botChatListCache'
 import SocketStreamManager from '../../components/chat/socketManager'
-import useUserStore from '../../store/userStore'
 import { useBoolean } from 'ahooks'
 
 export default function TabOneScreen() {
-  if (!useUserStore.getState().userBaseInfo) return
   const router = useRouter()
   const [listData, setListData] = useState<ListDataItem[]>([])
   const [refreshLoading, { set: setRefreshLoading }] = useBoolean(false)

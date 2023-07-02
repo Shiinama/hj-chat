@@ -26,5 +26,3 @@ const content = `<?xml version="1.0" encoding="UTF-8"?>
 </plist>`
 
 fs.writeFileSync(filePath, content)
-
-console.log('File written successfully.')

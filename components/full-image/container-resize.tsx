@@ -34,7 +34,6 @@ const ContainerResize: React.FC<React.PropsWithChildren<{}>> = ({ children }) =>
   return (
     <Animated.View
       onLayout={e => {
-        // console.log('xxxx -=> ', e.nativeEvent.layout)
         setHeight(e.nativeEvent.layout.height)
       }}
       // eslint-disable-next-line react-native/no-inline-styles

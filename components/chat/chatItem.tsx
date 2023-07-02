@@ -101,4 +101,4 @@ function chatItem({ item, me, logo }: Props) {
   )
 }
 
-export default chatItem
+export default memo(chatItem)

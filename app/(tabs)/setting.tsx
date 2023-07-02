@@ -27,8 +27,6 @@ export default function TabTwoScreen() {
         <View style={tabVal === pageTypes.myShell ? styles.body : { display: 'none' }}>
           <MyShell />
         </View>
-        {/* {tabVal === pageTypes.allRobot ? <AllRobot /> : null}
-        {tabVal === pageTypes.myShell ? <MyShell /> : null} */}
       </View>
     </>
   )

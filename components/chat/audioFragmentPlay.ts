@@ -68,7 +68,6 @@ export default class AudioFragmentPlay {
           this.playNextUrl()
         }
         if (status.isLoaded && status.isPlaying) {
-          // console.log(status.positionMillis, 'loading')
           // -20 防止回不到最初
           if (status.positionMillis > 0 && status.positionMillis < this.totalDurMill - 20) {
             this.addCurrentDurMill(status.positionMillis)
@@ -78,7 +77,6 @@ export default class AudioFragmentPlay {
         .then(async res => {
           this.currentSound = res.sound
           this.getSound(res.sound)
-          console.log(this.soundUrls)
           if (this.soundUrls.length > 1) return
           if (res.status.isLoaded && res.status.durationMillis) {
             this.totalDurMill = res.status.durationMillis
@@ -90,7 +88,6 @@ export default class AudioFragmentPlay {
                 },
                 () => {
                   this.playing = true
-                  console.log('then重新播放')
                 }
               )
               this.playing = true
@@ -100,7 +97,6 @@ export default class AudioFragmentPlay {
         })
         .catch(e => {
           this.isLoading = false
-          console.log('createAsync-error:', e)
         })
     } else {
       if (this.isAddFinish && this.isLoadFinsh) {
@@ -109,9 +105,7 @@ export default class AudioFragmentPlay {
           () => {
             this.playing = false
           },
-          () => {
-            console.log('then重新播放')
-          }
+          () => {}
         )
         this.isLoading = false
         this.playing = playRes
@@ -123,17 +117,13 @@ export default class AudioFragmentPlay {
 
   async playNextUrl() {
     if (this.playing || this.isLoading) {
-      console.log('playNextUrl false', this.soundUrls.length, this.playing, this.isLoading)
       return
     }
     this.isLoading = true
-    console.log('playNextUrl true')
     try {
       await this.currentSound.stopAsync()
       await this.currentSound.unloadAsync()
-    } catch (error) {
-      console.log('stop current error:', error)
-    }
+    } catch (error) {}
 
     this.playing = true
     this.currentSound
@@ -143,6 +133,7 @@ export default class AudioFragmentPlay {
       )
       .then(async res => {
         // 如果当前加载的音频和上次加载的一样返回，说明都加载完了
+        // @ts-ignore
         if (this.totalDurMill === res.durationMillis) {
           // 以防加载完毕没法进行二次播放
           this.isLoading = false
@@ -161,12 +152,8 @@ export default class AudioFragmentPlay {
 
           const playRes = await AudioPayManagerSingle().play(
             this.currentSound,
-            () => {
-              console.log('then被停止')
-            },
-            () => {
-              console.log('then重新播放')
-            }
+            () => {},
+            () => {}
           )
           this.isLoading = false
           this.playing = playRes
@@ -174,7 +161,6 @@ export default class AudioFragmentPlay {
       })
       .catch(e => {
         this.isLoading = false
-        console.log('加载下一个失败：', e)
       })
   }
 

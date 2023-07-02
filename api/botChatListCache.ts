@@ -9,9 +9,7 @@ export const getBotListLocal = async () => {
     if (localStr) {
       localBotList = JSON.parse(localStr)
     }
-  } catch (e) {
-    console.log(e)
-  }
+  } catch (e) {}
 
   return localBotList
 }

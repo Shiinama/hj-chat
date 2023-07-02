@@ -56,7 +56,7 @@ export function Provider(props) {
           setAuth(value)
           useUserStore.setState({ userBaseInfo: value })
           // 有了UserInfo之后再去初始化socket
-          SocketStreamManager()
+          SocketStreamManager().init()
           router.replace('(tabs)')
         },
         signOut: async () => {

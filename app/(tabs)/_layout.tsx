@@ -13,6 +13,7 @@ import { useCallback } from 'react'
 import useUserStore, { getUserEnergyInfo } from '../../store/userStore'
 
 export default function TabLayout() {
+  if (!useUserStore.getState().userBaseInfo) return
   const { userEnergyInfo: energy } = useUserStore()
   useFocusEffect(
     useCallback(() => {

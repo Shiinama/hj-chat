@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, View } from 'react-native'
-import { LegacyRef, useEffect, useState } from 'react'
+import { LegacyRef, memo, useEffect, useState } from 'react'
 import MessagesContainer from './messagesContainer'
 import InputToolsTar, { MTextInputProps } from './inputToolsTar'
 import type { FlatList, StyleProp, ViewStyle } from 'react-native'
@@ -83,4 +83,4 @@ function Container({
   )
 }
 
-export default Container
+export default memo(Container)

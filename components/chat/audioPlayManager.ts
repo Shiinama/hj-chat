@@ -67,9 +67,7 @@ export class AudioPayManager {
         try {
           this.currentSoundRePlayMethod?.()
           await this.currentSound.playAsync()
-        } catch (error) {
-          // console.log('appReActive', error)
-        }
+        } catch (error) {}
       }
     }
   }
@@ -80,9 +78,7 @@ export class AudioPayManager {
       try {
         isCallBack && this.currentSoundStopMethod?.()
         await this.currentSound.pauseAsync()
-      } catch (error) {
-        // console.log('pause', error)
-      }
+      } catch (error) {}
     }
   }
 
@@ -94,9 +90,7 @@ export class AudioPayManager {
         this.pauseAppInBackground = false
         isCallBack && this.currentSoundStopMethod?.()
         await this.currentSound.stopAsync()
-      } catch (error) {
-        console.log('stop', error)
-      }
+      } catch (error) {}
     }
   }
 
@@ -111,14 +105,9 @@ export class AudioPayManager {
     } catch (error) {}
     if (this.currentSound) {
       try {
-        console.log('currentSoundStopMethod 停止当前：')
         this.currentSoundStopMethod?.()
-        await this.currentSound.pauseAsync().catch(e => {
-          console.log('play-pauseAsync-catch', e)
-        })
-      } catch (e) {
-        console.log('play-pauseAsync', e)
-      }
+        await this.currentSound.pauseAsync()
+      } catch (e) {}
     }
     this.isPlay = true
     this.currentSound = sound
@@ -128,7 +117,6 @@ export class AudioPayManager {
       await sound.playAsync()
       return true
     } catch (e) {
-      console.log('playerror', e)
       return false
     }
   }

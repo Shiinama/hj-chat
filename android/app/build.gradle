@@ -120,12 +120,12 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 5
         versionName "1.1.6"
-        manifestPlaceholders["PN_PROJECT_ID"] = "cb5e91db-f37b-4e53-8107-b97e36f78072"
-        manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] = "cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx"
-        manifestPlaceholders["PN_APP_ID"] = "f34c6ee8-a870-447e-aa86-3400c12c8f22"
-        // manifestPlaceholders["PN_PROJECT_ID"] = "c9aa126d-8db2-45cc-8898-60e3a69d5050"
-        // manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] = "cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk"
-        // manifestPlaceholders["PN_APP_ID"] = "6b6a232e-973a-405c-969a-a546189fda16"
+        // manifestPlaceholders["PN_PROJECT_ID"] = "cb5e91db-f37b-4e53-8107-b97e36f78072"
+        // manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] = "cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx"
+        // manifestPlaceholders["PN_APP_ID"] = "f34c6ee8-a870-447e-aa86-3400c12c8f22"
+        manifestPlaceholders["PN_PROJECT_ID"] = "c9aa126d-8db2-45cc-8898-60e3a69d5050"
+        manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] = "cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk"
+        manifestPlaceholders["PN_APP_ID"] = "6b6a232e-973a-405c-969a-a546189fda16"
     }
 
     splits {

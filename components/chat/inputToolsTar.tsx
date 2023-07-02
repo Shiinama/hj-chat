@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Keyboard,
   View,
@@ -21,11 +21,10 @@ import ToolsModal, { ActionType } from './toolsModal'
 import ShareToPopup from './shareToPopup'
 import { ChatContext } from '../../app/(app)/chat/chatContext'
 import { Overlay, Toast } from '@fruits-chain/react-native-xiaoshu'
-import { getUserEnergyInfo, removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
+import { removeBotFromChatList, resetHistory, setBotPinnedStatus } from '../../api'
 import { useBoolean } from 'ahooks'
 import AudioAnimation from './audioAnimation'
 import CallBackManagerSingle from '../../utils/CallBackManager'
-import { checkEnergy } from '../../utils/check'
 
 export interface MTextInputProps extends TextInputProps {
   onEndEditText?: (value: string) => void
@@ -351,4 +350,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default InputToolsTar
+export default memo(InputToolsTar)

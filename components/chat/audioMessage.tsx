@@ -68,9 +68,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
           SoundObj.current.canLoadNextStream = true
         }
         // setLoading(false)
-      } catch (e) {
-        console.log(e)
-      }
+      } catch (e) {}
     }
   }
 
@@ -147,7 +145,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
       if (!SoundObj.current.canLoadNextStream) {
         loadNext()
       } else {
-        console.log('连续触发2次', item.replyUid)
         setIsPlaying(() => false)
         soundManager.current.stop()
         setPositionMillis(0)
@@ -184,7 +181,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
        * 音频解码错误，源于无法创建音轨。手机的音轨资源是有限的，如果每个视频都占用一个音轨并且不释放的话，就会导致上述问题。
        * https://zhuanlan.zhihu.com/p/627702119
        */
-      console.log('load sound fail', e, 'url:', uri)
       setLoading(false)
       setLoadFail(true)
     }
@@ -205,7 +201,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
     opSuccess = await soundManager.current.play(
       SoundObj.current.Sound,
       function () {
-        console.log(1111)
         setIsPlaying(() => false)
       },
       function () {

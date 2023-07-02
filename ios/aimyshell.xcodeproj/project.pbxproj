@@ -375,8 +375,8 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = ai.myshell.app;
-				PRODUCT_NAME = MyShell;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.myshell.app3;
+				PRODUCT_NAME = MyShellTest;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -408,8 +408,8 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = ai.myshell.app;
-				PRODUCT_NAME = MyShell;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.myshell.app3;
+				PRODUCT_NAME = MyShellTest;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

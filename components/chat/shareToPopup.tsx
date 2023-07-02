@@ -19,19 +19,6 @@ type shareAction = 'save' | 'link' | 'twitter'
 const ShareToPopup: FC<ShareToPopupProps> = () => {
   const { value, setValue } = useContext(ChatContext)
   const saveImage = async uri => {
-    // try {
-    //   const asset = await MediaLibrary.createAssetAsync(uri)
-    //   const album = await MediaLibrary.getAlbumAsync('Download')
-    //   if (album == null) {
-    //     await MediaLibrary.createAlbumAsync('Download', asset, false)
-    //     Toast('Image successfully saved')
-    //   } else {
-    //     await MediaLibrary.addAssetsToAlbumAsync([asset], album, false)
-    //     Toast('Image successfully saved')
-    //   }
-    // } catch (e) {
-    //   console.log(e)
-    // }
     const { status } = await MediaLibrary.requestPermissionsAsync()
     if (status != 'granted') {
       return

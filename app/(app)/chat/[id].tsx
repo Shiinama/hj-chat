@@ -54,7 +54,6 @@ function Chat({}) {
     hasMore: true,
   })
 
-  const currentSendMsgInfo = useRef<MesageSucessType>()
   useEffect(() => {
     try {
       Audio.requestPermissionsAsync()
@@ -64,7 +63,6 @@ function Chat({}) {
         playsInSilentModeIOS: true,
       })
     } catch (err) {
-      console.log(err)
       Toast('Failed to start recording')
     }
     loadData()
@@ -129,7 +127,6 @@ function Chat({}) {
         setLoading(false)
       })
       .catch(e => {
-        console.log(e)
         chatDataInfo.current.isTouchList = false
         setShowLoadMoring(false)
         setLoading(false)
@@ -150,14 +147,10 @@ function Chat({}) {
       if (exists) {
         try {
           await FileSystem.deleteAsync(mp3Uri)
-        } catch (error) {
-          console.log(error)
-        }
+        } catch (error) {}
       }
       return uri
-    } catch (err) {
-      console.error('Failed to stop recording', err)
-    }
+    } catch (err) {}
   }
   function setAuInfo() {
     sendAudio()
@@ -251,8 +244,8 @@ function Chat({}) {
   useEffect(() => {
     SocketStreamManager().resetPlayStream()
     SocketStreamManager().onSendMessage = data => {
-      currentSendMsgInfo.current = data
       if (!data?.data) return
+      if (chatData.some(i => i.id === data.data.id)) return
       setChatData(list => {
         // 发送消息成功添加一个待回复的item
         return [
@@ -280,12 +273,13 @@ function Chat({}) {
         if (index < 0) {
           return pre
         }
-        pre[index].text = updateMessage.text
+        pre[index] = { ...pre[index], text: updateMessage.text }
         return [...pre]
       })
     }
     SocketStreamManager().onResMessageCreated = data => {
       if (!data) return
+      if (chatData.some(i => i.id === data.id)) return
       setChatData(list => {
         // 开始接收流 更新或新增一个回复的item
         let have = false
@@ -311,9 +305,7 @@ function Chat({}) {
         return
       }
       loadData(true)
-    } catch (e) {
-      console.log(e || 'loadNextData error')
-    }
+    } catch (e) {}
   }
 
   if (loading) return <ShellLoading></ShellLoading>

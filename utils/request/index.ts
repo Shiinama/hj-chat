@@ -78,7 +78,6 @@ _axios.interceptors.response.use(
         message: errText,
         duration: 2500,
       })
-      console.log(errText)
       return Promise.reject(errText)
     }
     return response

@@ -5,7 +5,6 @@ import { forwardRef } from 'react'
 import { formatTime } from '../../utils/time'
 
 function AudioAnimation(_, ref) {
-  // console.log('aare-render:', 'AudioAnimation')
   const [durMills, setDurMills] = useState(0)
   const animationRef = useRef<Lottie>(null)
   useImperativeHandle(ref, () => ({

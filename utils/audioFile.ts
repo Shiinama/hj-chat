@@ -18,7 +18,6 @@ export const saveAudio = async (params: { audio: string; index?: number; botId: 
     await FileSystem.writeAsStringAsync(audioDir + fileName, params.audio, { encoding: 'base64' })
     return audioDir + fileName
   } catch (e) {
-    console.log('savefail:', params.audio, e)
     return undefined
   }
 }
@@ -44,7 +43,6 @@ export const getStreamAudio = async (botId: number, replyUid: string) => {
   const fileName = `${botId}_${replyUid}.mp3`
   try {
     const res = await FileSystem.getInfoAsync(audioDir + fileName)
-    console.log('getStreamAudio:', res)
     return audioDir + fileName
   } catch (error) {
     return undefined

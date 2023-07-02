@@ -77,17 +77,14 @@ useUserStore.subscribe(
 )
 /** 获取用户信息 */
 export const getProfile = () => {
-  return profile()
-    .then((res: any) => {
-      useUserStore.setState({ profile: res })
-    })
-    .catch(e => {
-      console.log(e)
-    })
+  return profile().then((res: any) => {
+    useUserStore.setState({ profile: res })
+  })
 }
 /** 获取用户电力值 */
 export const getUserEnergyInfo = () => {
   return queryUserEnergyInfo().then(res => {
+    // @ts-ignore
     useUserStore.setState({ userEnergyInfo: res })
   })
 }
@@ -95,6 +92,7 @@ export const getUserEnergyInfo = () => {
 /** 获取用户已连接的app账号 */
 export const getConnections = () => {
   getUserConnectedAccounts().then(res => {
+    // @ts-ignore
     useUserStore.setState({ userConnectedAccounts: res })
   })
 }

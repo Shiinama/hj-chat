@@ -96,7 +96,6 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
             })
         },
         error => {
-          console.log(error)
           setUpdateLoading(false)
         }
       )
@@ -104,9 +103,7 @@ const EditAvatarModal: FC<EditAvatarModalProps> = ({ visible, setVisible, profil
       //   Toast("The image size cannot exceed 1M");
       //   return false;
       // }
-    } catch (error) {
-      console.log({ error })
-    }
+    } catch (error) {}
   }
 
   return (
