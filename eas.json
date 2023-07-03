@@ -45,6 +45,9 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "REACT_APP_ENV": "prod"
+      },
       "android": {
         "gradleCommand": ":app:assembleRelease"
       },

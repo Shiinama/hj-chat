@@ -60,7 +60,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
           {
             positionMillis,
             progressUpdateIntervalMillis: 16,
-            shouldPlay: SocketStreamManager().getCurrentPlayStream() === key ? true : false,
+            shouldPlay: true,
           }
         )
 

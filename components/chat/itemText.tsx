@@ -7,7 +7,6 @@ import { MessageDetail } from '../../types/MessageTyps'
 import { Loading } from '@fruits-chain/react-native-xiaoshu'
 import styles from './styles'
 import { BotInfo } from '../../types/BotTypes'
-import AudioPayManagerSingle from './audioPlayManager'
 import { v4 as uuidv4 } from 'uuid'
 import Svt from '../../assets/images/chat/svt.svg'
 import Blur from '../../assets/images/chat/blur.svg'
@@ -20,9 +19,15 @@ type Props = {
   isDone: boolean
 }
 const MessageText = ({ item, botSetting, isDone }: Props) => {
-  const [viewDisplayState, setViewDisplayState] = useState<number>(botSetting?.textMasking ? 1 : 2)
   const [messageStreamText, setMessageStreamText] = useState<string>()
+  const isFail = useMemo(
+    () =>
+      (isDone && item.text === "I'm too busy, please try again in a few seconds") ||
+      (isDone && !messageStreamText && !item.text),
+    [isDone, messageStreamText, item.text]
+  )
   const [translateMessage, setTranslateMessage] = useState<string>()
+  const [viewDisplayState, setViewDisplayState] = useState<number>(botSetting?.textMasking && !isFail ? 1 : 2)
   const key = item.botId + '&BOT&' + item.replyUid
   const isBlur = botSetting?.textMasking && viewDisplayState === 1
   const renderReply = () => {
@@ -32,11 +37,12 @@ const MessageText = ({ item, botSetting, isDone }: Props) => {
       height: 10,
     }
     const data = [
-      botSetting?.textMasking && {
-        id: 1,
-        dText: 'Blur',
-        Icon: id => <Blur fill={id === viewDisplayState ? '#FFFFFF' : '#6C7275'} {...param} />,
-      },
+      botSetting?.textMasking &&
+        !isFail && {
+          id: 1,
+          dText: 'Blur',
+          Icon: id => <Blur fill={id === viewDisplayState ? '#FFFFFF' : '#6C7275'} {...param} />,
+        },
       {
         id: 2,
         dText: 'Text',
@@ -114,12 +120,14 @@ const MessageText = ({ item, botSetting, isDone }: Props) => {
     }
   }, [])
   const renderText = useMemo(() => {
+    if (isFail) {
+      return "I'm too busy, please try again in a few seconds"
+    }
     return messageStreamText || item.text
-  }, [messageStreamText, item.text, item.type])
+  }, [messageStreamText, item.text, item.type, isDone])
   const caluTranslate = useMemo(() => {
     return translateMessage || item.translation
   }, [translateMessage, item.translation])
-
   if (!renderText) return loadingRender()
   return (
     <>
