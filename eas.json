@@ -1,31 +1,85 @@
 {
   "cli": {
-    "version": ">= 3.10.0"
+    "version": ">= 3.10.0",
+    "promptToConfigurePushNotifications": false
   },
   "build": {
+    "development-simulator": {
+      "android": {
+        "buildType": "apk"
+      },
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "channel": "development-simulator"
+    },
     "development": {
       "distribution": "internal",
+      "env": {
+        "REACT_APP_ENV": "test"
+      },
       "android": {
         "gradleCommand": ":app:assembleDebug"
       },
       "ios": {
         "buildConfiguration": "Debug",
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "development"
+    },
+    "test": {
+      "distribution": "internal",
+      "env": {
+        "REACT_APP_ENV": "test"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "channel": "test"
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "REACT_APP_ENV": "prod"
+      },
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      },
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
+      "env": {
+        "REACT_APP_ENV": "prod"
+      },
+      "android": {
+        "gradleCommand": ":app:bundleRelease"
+      },
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {
-    "production": {}
+    "preview": {
+      "android": {
+        "serviceAccountKeyPath": "./pc-api-6088263975948881360-435-e93a3b280ea2.json",
+        "track": "internal"
+      }
+    },
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./pc-api-6088263975948881360-435-e93a3b280ea2.json"
+      }
+    }
   }
 }
