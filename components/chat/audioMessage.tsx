@@ -105,6 +105,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
       })
     }
     return () => {
+      SoundObj.current.Sound && SoundObj.current.Sound.unloadAsync()
       SocketStreamManager().removeresMessagesCallBack(key)
       SocketStreamManager().removeAudioStreamCallBack(key)
     }
