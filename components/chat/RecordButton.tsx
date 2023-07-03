@@ -12,6 +12,7 @@ import { Toast } from '@fruits-chain/react-native-xiaoshu'
 import AudioPayManagerSingle from './audioPlayManager'
 import { AppState } from 'react-native'
 import CallBackManagerSingle from '../../utils/CallBackManager'
+import SocketStreamManager from './socketManager'
 const RecordButton = ({
   audioFileUri,
   startRecording,
@@ -61,19 +62,13 @@ const RecordButton = ({
           AnimationRef?.current?.updateDurationMillis?.(status.durationMillis)
           AudioPayManagerSingle().stop()
         } catch (error) {}
-        // sound.pauseAsync()
-      } else if (playing.current) {
-        // 播放时间暂时不显示
-        // const offMil = isNaN(status.durationMillis - status.positionMillis)
-        //   ? 0
-        //   : status.durationMillis - status.positionMillis
-        // AnimationRef?.current?.updateDurationMillis?.(offMil < 0 ? 0 : offMil)
       }
     })
     try {
       setSound(sound)
       setAudioFileUri(uri)
       setButtonState('playing')
+      SocketStreamManager().resetPlayStream()
       AnimationRef?.current?.stopAnimation?.()
     } catch (error) {}
   }

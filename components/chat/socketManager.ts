@@ -145,9 +145,9 @@ export class SocketStream {
       // 待回复消息的机器人和哪一条消息
       const msgKey = msg.replyMessage?.botId + '&BOT&' + msg.replyMessage?.replyUid
       if (!msg.isFinal && msg.index === 0) {
-        if (this.playFragment.isPlaying() && this.audioStreamIndex < 0) {
-          AudioPayManagerSingle().stop()
-        }
+        // if (this.playFragment.isPlaying() && this.audioStreamIndex < 0) {
+        //   AudioPayManagerSingle().stop()
+        // }
         if (!this.audioStreamPlayKeys.includes(msgKey)) {
           this.audioStreamPlayKeys.push(msgKey)
         }
@@ -214,7 +214,8 @@ export class SocketStream {
   }
   playStreamNextDouble = debounce(this.playStreamNext, 300)
   playStreamNext() {
-    if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length) {
+    console.log('playStreamNext', this.audioStreamIndex, this.audioStreamPlayKeys)
+    if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length - 1) {
       this.audioStreamIndex += 1
       CallBackManagerSingle().execute('play_' + this.audioStreamPlayKeys[this.audioStreamIndex])
     } else {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback, memo, useMemo } from 'react'
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { Slider } from '@miblanchard/react-native-slider'
-import { Audio, AVPlaybackStatus } from 'expo-av'
+import { Audio } from 'expo-av'
 import MessagePlay from '../../assets/images/chat/message_play.svg'
 import Messagepause from '../../assets/images/chat/message_pause.svg'
 import ShellLoading from '../common/loading'
@@ -134,7 +134,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
       setDurationMillis(status.durationMillis || 0)
       SoundObj.current.durationMillis = status.durationMillis || 0
     }
-    // 100ms执行一次，获取时间也需要加100，遇到一秒钟的录音播放有将近50的误差，再加50
     if (status.isLoaded && status.positionMillis - status.durationMillis >= 0) {
       setPositionMillis(status.positionMillis || 0)
       if (!SoundObj.current.canLoadNextStream) {
@@ -158,6 +157,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
         { uri },
         {
           progressUpdateIntervalMillis: 16,
+          positionMillis: SoundObj.current.positionMillis || 0,
         },
         status => {
           if (item.voiceUrl) {
@@ -192,7 +192,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
     })
-    // 单点播放控制，第二参数是当点击其他的录音播放是把当前状态设置为false
     opSuccess = await soundManager.current.play(
       SoundObj.current.Sound,
       function () {
@@ -214,12 +213,14 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
         })
         soundManager.current.pause()
         // 加个延迟，播放中会设置为true，停止需要一点时间
-        setTimeout(() => {
-          setIsPlaying(() => false)
-        }, 300)
+        setIsPlaying(() => false)
       } else {
-        await playSound()
-        setIsPlaying(() => true)
+        const canPlay = await playSound()
+        if (!canPlay) {
+          setLoadFail(true)
+        } else {
+          setIsPlaying(() => true)
+        }
       }
     }
   }
