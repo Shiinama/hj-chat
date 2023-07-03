@@ -118,7 +118,7 @@ android {
         applicationId 'ai.myshell.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
+        versionCode 6
         versionName "1.1.7"
         manifestPlaceholders["PN_PROJECT_ID"] = "cb5e91db-f37b-4e53-8107-b97e36f78072"
         manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] = "cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx"

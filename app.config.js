@@ -75,7 +75,7 @@ export default {
   },
   android: {
     icon: './assets/Android/Play_Store/App_Icon_512x512.png',
-    versionCode: 5,
+    versionCode: 6,
     adaptiveIcon: {
       foregroundImage: './assets/Android/Adaptive_Icon/Foreground.png',
       backgroundImage: './assets/Android/Adaptive_Icon/Background.png',
