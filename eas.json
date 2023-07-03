@@ -57,6 +57,9 @@
       "channel": "preview"
     },
     "production": {
+      "env": {
+        "REACT_APP_ENV": "prod"
+      },
       "android": {
         "gradleCommand": ":app:bundleRelease"
       },

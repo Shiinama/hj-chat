@@ -48,12 +48,12 @@ export default {
   name: envConfig?.name,
   slug: 'yu-chat',
   scheme: 'myapp',
-  version: '1.1.6',
+  version: '1.1.7',
   orientation: 'portrait',
   updates: {
     url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
   },
-  runtimeVersion: '1.1.6',
+  runtimeVersion: '1.1.7',
   splash: {
     image: './assets/images/inch.png',
     resizeMode: 'contain',
