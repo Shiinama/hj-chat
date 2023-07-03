@@ -180,9 +180,6 @@ export class SocketStream {
         delete this.currentAudioStream[msgKey]
         delete this.onAudioStreamUpdate[msgKey]
       }
-      // if (Object.keys(this.currentAudioStream).length > 0) {
-      //   this.playFragment.addSoundUrl(msg.audio ? uri : undefined, data.data?.isFinal)
-      // }
     } catch (error) {}
   }
   private onMessageReplied({ data }: MesageSucessType) {
@@ -215,11 +212,9 @@ export class SocketStream {
     }
     this.socket.emit(ChatEvent, data)
   }
-
-  playStreamNext1 = debounce(this.playStreamNext, 200)
-
+  playStreamNextDouble = debounce(this.playStreamNext, 300)
   playStreamNext() {
-    if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length - 1) {
+    if (this.audioStreamPlayKeys?.length > 0 && this.audioStreamIndex < this.audioStreamPlayKeys.length) {
       this.audioStreamIndex += 1
       CallBackManagerSingle().execute('play_' + this.audioStreamPlayKeys[this.audioStreamIndex])
     } else {

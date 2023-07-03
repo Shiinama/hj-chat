@@ -96,10 +96,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
           if (!SoundObj.current.Sound) {
             fLoadSteam()
           }
-          // else {
-          //   // setLoading(true)
-          //   debouncedLoadNext()
-          // }
         } else {
           // 超时了就移除
           SocketStreamManager().removeresMessagesCallBack(key)
@@ -124,7 +120,6 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
       setIsPlaying(() => false)
       soundManager.current.stop()
       setPositionMillis(0)
-      SocketStreamManager().playStreamNext()
     } else if (status.isLoaded && status.isPlaying) {
       setPositionMillis(status.positionMillis || 0)
       SoundObj.current.positionMillis = status.positionMillis || 0
@@ -148,7 +143,7 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
         setIsPlaying(() => false)
         soundManager.current.stop()
         setPositionMillis(0)
-        SocketStreamManager().playStreamNext1()
+        SocketStreamManager().playStreamNextDouble()
       }
     } else if (status.isLoaded && status.isPlaying) {
       setPositionMillis(status.positionMillis || 0)
@@ -211,22 +206,20 @@ const AudioMessage = forwardRef(({ item, isDone, showControl = true }: AudioType
   }
 
   const handlePlayPause = async () => {
-    // 为什么这里一定要Reset那？
-    // SocketStreamManager().resetPlayStream()
+    SocketStreamManager().resetPlayStream()
     if (SoundObj.current.Sound !== null) {
       if (isPlaying) {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
         })
-
         soundManager.current.pause()
         // 加个延迟，播放中会设置为true，停止需要一点时间
         setTimeout(() => {
-          setIsPlaying(res => false)
+          setIsPlaying(() => false)
         }, 300)
       } else {
         await playSound()
-        setIsPlaying(res => true)
+        setIsPlaying(() => true)
       }
     }
   }
