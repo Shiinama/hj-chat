@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>MyShellTest</string>
+    <string>MyShell</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -26,7 +26,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>myapp</string>
-          <string>ai.myshell.app3</string>
+          <string>ai.myshell.app</string>
         </array>
       </dict>
       <dict>
@@ -38,7 +38,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>pn6b6a232e-973a-405c-969a-a546189fda16</string>
+          <string>pnf34c6ee8-a870-447e-aa86-3400c12c8f22</string>
         </array>
       </dict>
     </array>
@@ -72,11 +72,11 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>The app accesses your photos to let you share them with your friends.</string>
     <key>PROJECT_APP_UUID</key>
-    <string>6b6a232e-973a-405c-969a-a546189fda16</string>
+    <string>f34c6ee8-a870-447e-aa86-3400c12c8f22</string>
     <key>PROJECT_CLIENT_KEY</key>
-    <string>cOyQSJfazQ5zu32GwvW7AvBz0f7q0RWUIULWMZhk</string>
+    <string>cPllcC2s2NmUZKJLmdzKyJZDIzz70Vasg5kwTsrx</string>
     <key>PROJECT_UUID</key>
-    <string>c9aa126d-8db2-45cc-8898-60e3a69d5050</string>
+    <string>cb5e91db-f37b-4e53-8107-b97e36f78072</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

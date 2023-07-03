@@ -375,14 +375,14 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = ai.myshell.app3;
-				PRODUCT_NAME = MyShellTest;
+				PRODUCT_BUNDLE_IDENTIFIER = "ai.myshell.app";
+				PRODUCT_NAME = "MyShell";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1";
 				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -408,13 +408,13 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = ai.myshell.app3;
-				PRODUCT_NAME = MyShellTest;
+				PRODUCT_BUNDLE_IDENTIFIER = "ai.myshell.app";
+				PRODUCT_NAME = "MyShell";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1";
 				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

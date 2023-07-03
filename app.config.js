@@ -42,7 +42,7 @@ const envConfig = {
     shareLink: 'https://app.myshell.ai/share/',
     avatarImgHost: 'https://d6phagtfbtco7.cloudfront.net/',
   },
-}['test']
+}[process.env.REACT_APP_ENV]
 
 export default {
   name: envConfig?.name,
