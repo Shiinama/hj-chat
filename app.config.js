@@ -52,6 +52,7 @@ export default {
   orientation: 'portrait',
   updates: {
     url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
+    checkAutomatically: 'ON_ERROR_RECOVERY',
   },
   runtimeVersion: '1.1.7',
   splash: {

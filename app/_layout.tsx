@@ -8,6 +8,8 @@ import { CustomStack } from './CustomStack'
 import { customThemeVar } from '../constants/theme'
 import { ensureDirExists } from '../utils/filesystem'
 import AudioPayManagerSingle from '../components/chat/audioPlayManager'
+import * as Updates from 'expo-updates'
+import { Alert } from 'react-native'
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -21,6 +23,29 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SF-Pro.ttf'),
   })
+  const eventListener = async event => {
+    if (event.type === Updates.UpdateEventType.UPDATE_AVAILABLE) {
+      Alert.alert('Update available', 'Keep your app up to date to enjoy the latest features', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Install',
+          onPress: async () => {
+            try {
+              await Updates.fetchUpdateAsync()
+              await Updates.reloadAsync()
+            } catch (error) {
+              alert(`Error fetching latest Expo update: ${error}`)
+            }
+          },
+        },
+      ])
+    }
+  }
+  Updates.useUpdateEvents(eventListener)
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
