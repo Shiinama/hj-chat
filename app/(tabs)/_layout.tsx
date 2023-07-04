@@ -10,11 +10,36 @@ import Bot from '../../assets/images/tabbar/bot.svg'
 import BotAcitve from '../../assets/images/tabbar/bot_active.svg'
 import myshell from '../../assets/images/myshell.png'
 import { useCallback } from 'react'
+import * as Updates from 'expo-updates'
+import { Alert } from 'react-native'
 import useUserStore, { getUserEnergyInfo } from '../../store/userStore'
 
 export default function TabLayout() {
   if (!useUserStore.getState().userBaseInfo) return
   const { userEnergyInfo: energy } = useUserStore()
+  const eventListener = async event => {
+    if (event.type === Updates.UpdateEventType.UPDATE_AVAILABLE) {
+      Alert.alert('Update available', 'Keep your app up to date to enjoy the latest features', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Install',
+          onPress: async () => {
+            try {
+              await Updates.fetchUpdateAsync()
+              await Updates.reloadAsync()
+            } catch (error) {
+              alert(`Error fetching latest Expo update: ${error}`)
+            }
+          },
+        },
+      ])
+    }
+  }
+  Updates.useUpdateEvents(eventListener)
   useFocusEffect(
     useCallback(() => {
       getUserEnergyInfo()

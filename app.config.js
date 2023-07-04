@@ -48,13 +48,13 @@ export default {
   name: envConfig?.name,
   slug: 'yu-chat',
   scheme: 'myapp',
-  version: '1.1.7',
+  version: '1.1.8',
   orientation: 'portrait',
   updates: {
     url: 'https://u.expo.dev/1cabf0b0-1fb1-435a-9c9e-8c1ca5c75c72',
     checkAutomatically: 'ON_ERROR_RECOVERY',
   },
-  runtimeVersion: '1.1.7',
+  runtimeVersion: '1.1.8',
   splash: {
     image: './assets/images/inch.png',
     resizeMode: 'contain',
@@ -76,7 +76,7 @@ export default {
   },
   android: {
     icon: './assets/Android/Play_Store/App_Icon_512x512.png',
-    versionCode: 6,
+    versionCode: 7,
     adaptiveIcon: {
       foregroundImage: './assets/Android/Adaptive_Icon/Foreground.png',
       backgroundImage: './assets/Android/Adaptive_Icon/Background.png',
