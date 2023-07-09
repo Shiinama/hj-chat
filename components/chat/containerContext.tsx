@@ -1,4 +1,4 @@
-import React from 'react'
-export const ContainerChatContext = React.createContext({} as any)
+import React from "react";
+export const ContainerChatContext = React.createContext({} as any);
 
-export const useChatContext = () => React.useContext(ContainerChatContext)
+export const useChatContext = () => React.useContext(ContainerChatContext);

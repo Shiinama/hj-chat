@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from "../utils/request";
 
 /**
  * filter
@@ -6,9 +6,9 @@ import request from '../utils/request'
 export const getFilters = () => {
   return request<any>({
     url: `/bot/filters`,
-    method: 'get',
-  })
-}
+    method: "get",
+  });
+};
 
 /**
  *  我的机器人列表
@@ -16,16 +16,16 @@ export const getFilters = () => {
 export const getUgcOwnList = () => {
   return request({
     url: `/bot/ugc/own`,
-    method: 'get',
-  })
-}
+    method: "get",
+  });
+};
 /**
  *  获得分享码
  */
-export const getBotSharingCode = params => {
+export const getBotSharingCode = (params) => {
   return request({
     url: `/bot/getBotSharingCode`,
-    method: 'get',
+    method: "get",
     params,
-  })
-}
+  });
+};

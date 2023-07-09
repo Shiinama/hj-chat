@@ -1,33 +1,34 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Animated, Keyboard } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Dimensions } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Animated, Dimensions, Keyboard } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 /** 动态移动容器 */
-const ContainerSlider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
-  const insets = useSafeAreaInsets()
-  const AnimatedValue = useRef(new Animated.Value(0)).current
+const ContainerSlider: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
+  const insets = useSafeAreaInsets();
+  const AnimatedValue = useRef(new Animated.Value(0)).current;
   const setScrollY = useCallback(
     (toValue: number, duration: number) => {
       Animated.timing(AnimatedValue, {
         toValue,
         duration: duration,
         useNativeDriver: true,
-      }).start()
+      }).start();
     },
-    [AnimatedValue]
-  )
+    [AnimatedValue],
+  );
   useEffect(() => {
-    const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
-      setScrollY(-e.endCoordinates.height + insets.bottom, e.duration)
-    })
-    const keyboardWillHide = Keyboard.addListener('keyboardWillHide', e => {
-      setScrollY(0, e.duration)
-    })
+    const keyboardWillShow = Keyboard.addListener("keyboardWillShow", (e) => {
+      setScrollY(-e.endCoordinates.height + insets.bottom, e.duration);
+    });
+    const keyboardWillHide = Keyboard.addListener("keyboardWillHide", (e) => {
+      setScrollY(0, e.duration);
+    });
     return () => {
-      keyboardWillShow.remove()
-      keyboardWillHide.remove()
-    }
-  }, [AnimatedValue, insets.bottom, setScrollY])
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, [AnimatedValue, insets.bottom, setScrollY]);
 
   return (
     <Animated.View
@@ -40,7 +41,7 @@ const ContainerSlider: React.FC<React.PropsWithChildren<{}>> = ({ children }) =>
     >
       {children}
     </Animated.View>
-  )
-}
+  );
+};
 
-export default ContainerSlider
+export default ContainerSlider;

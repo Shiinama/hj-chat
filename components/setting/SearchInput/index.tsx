@@ -1,16 +1,17 @@
-import { useControllableValue } from 'ahooks'
-import type { FC } from 'react'
-import { View, TextInput, StyleSheet } from 'react-native'
-import SearchIcon from '../../../assets/images/setting/Search.svg'
-import XIcon from '../../../assets/images/setting/xfill.svg'
+import { useControllableValue } from "ahooks";
+import type { FC } from "react";
+import { StyleSheet, TextInput, View } from "react-native";
+
+import SearchIcon from "../../../assets/images/setting/Search.svg";
+import XIcon from "../../../assets/images/setting/xfill.svg";
 
 export interface SearchInputProps {
-  value?: string
-  onChange?: (val: string) => void
-  defaultValue?: string
+  value?: string;
+  onChange?: (val: string) => void;
+  defaultValue?: string;
 }
-const SearchInput: FC<SearchInputProps> = props => {
-  const [state, setState] = useControllableValue(props)
+const SearchInput: FC<SearchInputProps> = (props) => {
+  const [state, setState] = useControllableValue(props);
   return (
     <View style={styles.inputWrap}>
       <SearchIcon style={styles.icon} />
@@ -25,25 +26,25 @@ const SearchInput: FC<SearchInputProps> = props => {
         <XIcon
           style={styles.xIcon}
           onPress={() => {
-            setState('')
+            setState("");
           }}
         />
       ) : null}
     </View>
-  )
-}
-export default SearchInput
+  );
+};
+export default SearchInput;
 
 const styles = StyleSheet.create({
   inputWrap: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: '#EDEDED',
-    width: '100%',
+    borderColor: "#EDEDED",
+    width: "100%",
     height: 56,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row",
     borderRadius: 12,
     paddingHorizontal: 12,
     marginBottom: 12,
@@ -59,4 +60,4 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexGrow: 1,
   },
-})
+});

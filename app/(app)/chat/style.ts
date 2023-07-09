@@ -1,11 +1,11 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   body: {
     flex: 1,
-    position: 'relative',
-    backgroundColor: 'white',
+    position: "relative",
+    backgroundColor: "white",
   },
   bodyInner: {
     // flex: 1,
@@ -17,15 +17,15 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   footer: {
-    backgroundColor: '#f5f5f5',
-    display: 'flex',
+    backgroundColor: "#f5f5f5",
+    display: "flex",
     paddingVertical: 6,
     paddingHorizontal: 12,
   },
   btnContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginTop: 12,
   },
-})
+});
 
-export { styles }
+export { styles };

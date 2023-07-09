@@ -1,48 +1,51 @@
-import botStore from '../../../store/botStore'
-import { useBoolean } from 'ahooks'
-import { useRouter } from 'expo-router'
-import { FC, useEffect, useState } from 'react'
-import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native'
-import UgcBotCard from '../UgcBotCard'
-import ShellLoading from '../../common/loading'
-import CallBackManagerSingle from '../../../utils/CallBackManager'
-import { getUgcOwnList } from '../../../api/setting'
-import CreateCard from '../CreateCard'
-import { TagFromType } from '../../../constants/TagList'
+import { useBoolean } from "ahooks";
+import { useRouter } from "expo-router";
+import { FC, useEffect, useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+
+import { getUgcOwnList } from "../../../api/setting";
+import { TagFromType } from "../../../constants/TagList";
+import botStore from "../../../store/botStore";
+import CallBackManagerSingle from "../../../utils/CallBackManager";
+import ShellLoading from "../../common/loading";
+import CreateCard from "../CreateCard";
+import UgcBotCard from "../UgcBotCard";
 
 export interface MyRobotListProps {}
 const MyRobotList: FC<MyRobotListProps> = () => {
-  const [myRobotListData, setMyRobotListData] = useState([])
-  const [loading, { setFalse, setTrue }] = useBoolean(true)
-  const [refreshLoading, { set: setRefreshLoading }] = useBoolean(false)
+  const [myRobotListData, setMyRobotListData] = useState([]);
+  const [loading, { setFalse, setTrue }] = useBoolean(true);
+  const [refreshLoading, { set: setRefreshLoading }] = useBoolean(false);
   useEffect(() => {
-    CallBackManagerSingle().add('ugcbotList', botUid => {
-      loadData(botUid)
-    })
-    loadData()
+    CallBackManagerSingle().add("ugcbotList", (botUid) => {
+      loadData(botUid);
+    });
+    loadData();
     return () => {
-      CallBackManagerSingle().remove('ugcbotList')
-    }
-  }, [])
+      CallBackManagerSingle().remove("ugcbotList");
+    };
+  }, []);
   const loadData = (botUid?: string) => {
-    setTrue()
+    setTrue();
 
     getUgcOwnList()
       .then((res: any) => {
         if (botUid) {
-          botStore.setState({ botBaseInfo: res.find(item => item.uid === botUid) })
+          botStore.setState({
+            botBaseInfo: res.find((item) => item.uid === botUid),
+          });
         }
-        setMyRobotListData(res)
+        setMyRobotListData(res);
       })
       .finally(() => {
-        setFalse()
-        setRefreshLoading(false)
-      })
-  }
+        setFalse();
+        setRefreshLoading(false);
+      });
+  };
 
-  const router = useRouter()
-  const onShowDetail = event => {
-    botStore.setState({ botBaseInfo: event })
+  const router = useRouter();
+  const onShowDetail = (event) => {
+    botStore.setState({ botBaseInfo: event });
 
     router.push({
       pathname: `robot/${event.uid}`,
@@ -54,14 +57,14 @@ const MyRobotList: FC<MyRobotListProps> = () => {
         language: event.language,
         uid: event.uid,
       },
-    })
-  }
+    });
+  };
   if (!refreshLoading && loading) {
     return (
-      <View style={{ minHeight: 210, alignItems: 'center' }}>
+      <View style={{ minHeight: 210, alignItems: "center" }}>
         <ShellLoading></ShellLoading>
       </View>
-    )
+    );
   }
   return (
     <ScrollView
@@ -70,8 +73,8 @@ const MyRobotList: FC<MyRobotListProps> = () => {
         <RefreshControl
           refreshing={refreshLoading}
           onRefresh={() => {
-            setRefreshLoading(true)
-            loadData()
+            setRefreshLoading(true);
+            loadData();
           }}
           tintColor="#7A2EF6"
           title="Pull refresh"
@@ -81,19 +84,25 @@ const MyRobotList: FC<MyRobotListProps> = () => {
     >
       <View>
         <CreateCard />
-        {myRobotListData?.map(ld => {
+        {myRobotListData?.map((ld) => {
           return (
-            <UgcBotCard loadData={loadData} onShowDetail={onShowDetail} type={TagFromType.MyBot} key={ld.id} ld={ld} />
-          )
+            <UgcBotCard
+              loadData={loadData}
+              onShowDetail={onShowDetail}
+              type={TagFromType.MyBot}
+              key={ld.id}
+              ld={ld}
+            />
+          );
         })}
       </View>
     </ScrollView>
-  )
-}
-export default MyRobotList
+  );
+};
+export default MyRobotList;
 const styles = StyleSheet.create({
   page: {
-    height: '100%',
+    height: "100%",
     paddingHorizontal: 16,
   },
-})
+});

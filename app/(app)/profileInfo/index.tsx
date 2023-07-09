@@ -1,114 +1,129 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useFocusEffect } from 'expo-router'
-import { useNavigation } from 'expo-router'
-import { Text, View, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
-import { WebView } from 'react-native-webview'
+import { Button, Popup, Toast } from "@fruits-chain/react-native-xiaoshu";
+import { useBoolean, useDebounceEffect, useDeepCompareEffect } from "ahooks";
+import { useFocusEffect, useNavigation } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { WebView } from "react-native-webview";
 
-import { styles } from './style'
-import Camera from '../../../assets/images/profile/camera.svg'
-import ActiveIcon from '../../../assets/images/profile/activeIcon.svg'
-import Telegram from '../../../assets/images/profile/telegram.svg'
-import useUserStore, { getConnections, getProfile } from '../../../store/userStore'
-import { Button, Popup, Toast } from '@fruits-chain/react-native-xiaoshu'
-import { useBoolean, useDebounceEffect, useDeepCompareEffect } from 'ahooks'
-import { getIsUserNameAvailable, postConnectToTelegram, postUpdateUserName } from '../../../api/proofile'
-import EditAvatarModal from '../../../components/profileInfo/EditAvatarModal'
-import { renderImage } from '../../../components/profileInfo/helper'
+import {
+  getIsUserNameAvailable,
+  postConnectToTelegram,
+  postUpdateUserName,
+} from "../../../api/proofile";
+import ActiveIcon from "../../../assets/images/profile/activeIcon.svg";
+import Camera from "../../../assets/images/profile/camera.svg";
+import Telegram from "../../../assets/images/profile/telegram.svg";
+import EditAvatarModal from "../../../components/profileInfo/EditAvatarModal";
+import { renderImage } from "../../../components/profileInfo/helper";
+import useUserStore, {
+  getConnections,
+  getProfile,
+} from "../../../store/userStore";
+import { styles } from "./style";
 
 export default function Profile() {
-  const navigation = useNavigation()
-  const { profile, userConnectedAccounts } = useUserStore()
-  const [pageVisible, setPageVisible] = useState(false)
-  const [name, setName] = useState(profile?.name)
-  const [visible, { set: setVisible }] = useBoolean(false)
-  const [saveLoading, { set: setSaveLoading }] = useBoolean(false)
-  const [btnDisabled, { set: setBtnDisabled }] = useBoolean(true)
+  const navigation = useNavigation();
+  const { profile, userConnectedAccounts } = useUserStore();
+  const [pageVisible, setPageVisible] = useState(false);
+  const [name, setName] = useState(profile?.name);
+  const [visible, { set: setVisible }] = useBoolean(false);
+  const [saveLoading, { set: setSaveLoading }] = useBoolean(false);
+  const [btnDisabled, { set: setBtnDisabled }] = useBoolean(true);
   useDebounceEffect(
     () => {
       // 长度为空就不用去调用接口了，去掉不必要的网络请求
       if (name?.length > 0) {
         getIsUserNameAvailable({ name })
-          .then(res => {
+          .then((res) => {
             if (res) {
-              setBtnDisabled(false)
+              setBtnDisabled(false);
             } else {
-              setBtnDisabled(true)
+              setBtnDisabled(true);
             }
           })
-          .catch(e => {
-            setBtnDisabled(true)
-          })
+          .catch((e) => {
+            setBtnDisabled(true);
+          });
       }
     },
     [name],
-    { wait: 400 }
-  )
+    { wait: 400 },
+  );
   useDeepCompareEffect(() => {
-    setName(profile?.name)
-  }, [profile?.name])
+    setName(profile?.name);
+  }, [profile?.name]);
 
   useFocusEffect(
     useCallback(() => {
-      getProfile()
-      getConnections()
-    }, [])
-  )
+      getProfile();
+      getConnections();
+    }, []),
+  );
   useEffect(() => {
     navigation.setOptions({
-      title: 'Edit Profile',
-    })
-  }, [navigation])
+      title: "Edit Profile",
+    });
+  }, [navigation]);
   const connectionsList = useMemo(() => {
     return [
       // { name: "Twitter", icon: <Twitter />, isAcitve: false },
       // { name: "Discord", icon: <Discord />, isAcitve: false },
       {
-        name: 'Telegram',
+        name: "Telegram",
         icon: <Telegram />,
         isAcitve: userConnectedAccounts?.telegram?.id,
         userName:
           userConnectedAccounts?.telegram?.username ||
-          userConnectedAccounts?.telegram?.firstName + userConnectedAccounts?.telegram?.lastName ||
-          '(Unnamed)',
+          userConnectedAccounts?.telegram?.firstName +
+            userConnectedAccounts?.telegram?.lastName ||
+          "(Unnamed)",
         onPress: () => {
-          setPageVisible(true)
+          setPageVisible(true);
         },
       },
-    ]
-  }, [userConnectedAccounts])
+    ];
+  }, [userConnectedAccounts]);
   const saveAction = () => {
-    setSaveLoading(true)
-    setBtnDisabled(true)
+    setSaveLoading(true);
+    setBtnDisabled(true);
     getIsUserNameAvailable({ name })
-      .then(res => {
+      .then((res) => {
         if (res) {
           postUpdateUserName({ name })
-            .then(res => {
-              Toast('Update successfully!')
-              setSaveLoading(false)
-              getProfile()
+            .then((res) => {
+              Toast("Update successfully!");
+              setSaveLoading(false);
+              getProfile();
             })
-            .catch(e => {
-              setSaveLoading(false)
-            })
+            .catch((e) => {
+              setSaveLoading(false);
+            });
         }
       })
-      .catch(e => {
-        setSaveLoading(false)
-      })
-  }
+      .catch((e) => {
+        setSaveLoading(false);
+      });
+  };
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior="height"
-      keyboardVerticalOffset={Platform.OS === 'android' ? -60 : -70}
+      keyboardVerticalOffset={Platform.OS === "android" ? -60 : -70}
     >
       <ScrollView bounces={false} style={{ flex: 1 }}>
         <View style={styles.main}>
           <TouchableOpacity
             style={styles.avatar}
             onPress={() => {
-              setVisible(true)
+              setVisible(true);
             }}
           >
             {renderImage(profile?.avatar, styles.avatarImg)}
@@ -117,7 +132,11 @@ export default function Profile() {
             </View>
           </TouchableOpacity>
           {/* 编辑头像modal */}
-          <EditAvatarModal visible={visible} setVisible={setVisible} profile={profile} />
+          <EditAvatarModal
+            visible={visible}
+            setVisible={setVisible}
+            profile={profile}
+          />
           <View style={styles.contentWrap}>
             <View>
               <Text style={styles.label}>Name</Text>
@@ -126,18 +145,20 @@ export default function Profile() {
                 value={name}
                 placeholder="Write your name, MAX 32 characters"
                 maxLength={32}
-                onChangeText={nextValue => {
+                onChangeText={(nextValue) => {
                   if (nextValue?.length === 0) {
-                    setBtnDisabled(true)
+                    setBtnDisabled(true);
                   }
-                  setName(nextValue)
+                  setName(nextValue);
                 }}
               />
             </View>
             <View style={styles.br} />
             <View>
               <Text style={styles.label}>Connections</Text>
-              <Text style={styles.tips}>Add accounts to your profile to make more friends</Text>
+              <Text style={styles.tips}>
+                Add accounts to your profile to make more friends
+              </Text>
               {connectionsList?.map((v, i) => {
                 return (
                   <TouchableOpacity
@@ -150,14 +171,16 @@ export default function Profile() {
                     key={i}
                   >
                     <View style={styles.itemBody}>
-                      {v?.isAcitve ? <ActiveIcon style={styles.activeIcon} /> : null}
+                      {v?.isAcitve ? (
+                        <ActiveIcon style={styles.activeIcon} />
+                      ) : null}
                       <Text style={styles.connectionsItemText}>
                         {v?.isAcitve ? v?.userName : `Connect with ${v?.name}`}
                       </Text>
                     </View>
                     {v?.icon}
                   </TouchableOpacity>
-                )
+                );
               })}
             </View>
           </View>
@@ -165,7 +188,12 @@ export default function Profile() {
       </ScrollView>
 
       <View style={styles.action}>
-        <Button style={styles.actionMain} disabled={btnDisabled} loading={saveLoading} onPress={saveAction}>
+        <Button
+          style={styles.actionMain}
+          disabled={btnDisabled}
+          loading={saveLoading}
+          onPress={saveAction}
+        >
           Save Changes
         </Button>
       </View>
@@ -174,21 +202,23 @@ export default function Profile() {
         <Popup.Header
           title="telegram"
           onClose={() => {
-            setPageVisible(false)
+            setPageVisible(false);
           }}
         />
         <WebView
           source={{
-            uri: 'https://app-test.myshell.ai/mobile/connect/tg',
+            uri: "https://app-test.myshell.ai/mobile/connect/tg",
           }}
-          onMessage={e => {
-            setPageVisible(false)
-            postConnectToTelegram(JSON.parse(e.nativeEvent.data)).then(res => {
-              getConnections()
-            })
+          onMessage={(e) => {
+            setPageVisible(false);
+            postConnectToTelegram(JSON.parse(e.nativeEvent.data)).then(
+              (res) => {
+                getConnections();
+              },
+            );
           }}
         />
       </Popup.Page>
     </KeyboardAvoidingView>
-  )
+  );
 }

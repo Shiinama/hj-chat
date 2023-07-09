@@ -1,20 +1,26 @@
-import { LegacyRef, memo } from 'react'
-import { View, StyleSheet, FlatList, StyleProp, ViewStyle, Keyboard } from 'react-native'
-import Message from './message'
+import { LegacyRef, memo } from "react";
+import {
+  FlatList,
+  Keyboard,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 
 const styles = StyleSheet.create({
   container: {
     paddingTop: 15,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   containerAlignTop: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   contentContainerStyle: {
     flexGrow: 1,
     paddingHorizontal: 10,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   emptyChatContainer: {
     flex: 1,
@@ -44,21 +50,26 @@ const styles = StyleSheet.create({
   //   shadowOffset: { width: 0, height: 0 },
   //   shadowRadius: 1,
   // },
-})
+});
 type MessagesContainerProps = {
-  messagesContainerHeight: number
-  messagesContainerStyle: StyleProp<ViewStyle>
+  messagesContainerHeight: number;
+  messagesContainerStyle: StyleProp<ViewStyle>;
   InternalProps: {
-    onKeyboardWillShow: (e: any) => void
-    onKeyboardWillHide: (e: any) => void
-  }
-  flatListProps: FlatList['props']
-  flatListRef: LegacyRef<FlatList> | undefined
-}
+    onKeyboardWillShow: (e: any) => void;
+    onKeyboardWillHide: (e: any) => void;
+  };
+  flatListProps: FlatList["props"];
+  flatListRef: LegacyRef<FlatList> | undefined;
+};
 
 function MessagesContainer(props: MessagesContainerProps) {
-  const { InternalProps, flatListProps, messagesContainerHeight, messagesContainerStyle } = props
-  const { data, renderItem: propsRenderItem, ...flatRest } = flatListProps
+  const {
+    InternalProps,
+    flatListProps,
+    messagesContainerHeight,
+    messagesContainerStyle,
+  } = props;
+  const { data, renderItem: propsRenderItem, ...flatRest } = flatListProps;
 
   // fix 手动颠倒顺序滚动位置无法精准的问题以及其他滚动问题 FlatList设置了inverted(倒置，往上滑就是加载更多了 上变为下，数据也是一样)就无需排序和调用scrollEnd了
   // const scrollToEnd = useCallback(() => {
@@ -72,12 +83,19 @@ function MessagesContainer(props: MessagesContainerProps) {
   //     }, data?.length * 5)
   //   }
   // }
-  const renderItem = ({ item, index, separators }: { item: any; index: number; separators: any }) => {
+  const renderItem = ({
+    item,
+    index,
+    separators,
+  }: {
+    item: any;
+    index: number;
+    separators: any;
+  }) => {
     if (propsRenderItem) {
-      return propsRenderItem({ item, index, separators })
+      return propsRenderItem({ item, index, separators });
     }
-    return <Message></Message>
-  }
+  };
   return (
     <View
       style={[
@@ -91,8 +109,8 @@ function MessagesContainer(props: MessagesContainerProps) {
         <FlatList
           initialNumToRender={5}
           ref={props.flatListRef}
-          keyExtractor={item => item.uid}
-          data={data.length ? data : [{ uid: '1231' }]}
+          keyExtractor={(item) => item.uid}
+          data={data.length ? data : [{ uid: "1231" }]}
           // onLayout={onLayoutList}
           style={styles.listStyle}
           renderItem={renderItem}
@@ -106,11 +124,11 @@ function MessagesContainer(props: MessagesContainerProps) {
       <View
         style={{ flex: 1 }}
         onTouchStart={() => {
-          Keyboard.dismiss()
+          Keyboard.dismiss();
         }}
       />
     </View>
-  )
+  );
 }
 
-export default memo(MessagesContainer)
+export default memo(MessagesContainer);

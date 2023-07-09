@@ -1,24 +1,25 @@
 import Slider, { SliderProps } from "@react-native-community/slider";
 import { useControllableValue } from "ahooks";
 import { FC, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
-import sliderIcon from "../../assets/images/profile/slider.png";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+
 import Enlarge from "../../assets/images/profile/enlarge.svg";
 import Shrink from "../../assets/images/profile/shrink.svg";
+import sliderIcon from "../../assets/images/profile/slider.png";
 
-export interface CustomSliderProps extends SliderProps {}
+export type CustomSliderProps = SliderProps;
 const CustomSlider: FC<CustomSliderProps> = (props) => {
   const ref = useRef(null);
   const addStep = () => {
     const resVal = props?.value + 0.1;
     props?.onValueChange(
-      resVal > props?.maximumValue ? props?.maximumValue : resVal
+      resVal > props?.maximumValue ? props?.maximumValue : resVal,
     );
   };
   const minusStep = () => {
     const resVal = props?.value - 0.1;
     props?.onValueChange(
-      resVal < props?.minimumValue ? props?.minimumValue : resVal
+      resVal < props?.minimumValue ? props?.minimumValue : resVal,
     );
   };
   return (

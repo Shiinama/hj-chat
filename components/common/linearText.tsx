@@ -1,6 +1,6 @@
-import MaskedView from '@react-native-masked-view/masked-view'
-import { LinearGradient } from 'expo-linear-gradient'
-import { Text, View, Dimensions } from 'react-native'
+import MaskedView from "@react-native-masked-view/masked-view";
+import { LinearGradient } from "expo-linear-gradient";
+import { Dimensions, Text, View } from "react-native";
 
 export default function LinearText({ text, styles }) {
   return (
@@ -8,7 +8,11 @@ export default function LinearText({ text, styles }) {
       <Text
         numberOfLines={1}
         ellipsizeMode="tail"
-        style={{ ...styles, maxWidth: Dimensions.get('screen').width - 180, height: 0 }}
+        style={{
+          ...styles,
+          maxWidth: Dimensions.get("screen").width - 180,
+          height: 0,
+        }}
       >
         {text}
       </Text>
@@ -19,9 +23,15 @@ export default function LinearText({ text, styles }) {
           </Text>
         }
       >
-        <View style={{ height: styles.lineHeight, flexDirection: 'row', justifyContent: 'center' }}>
+        <View
+          style={{
+            height: styles.lineHeight,
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
           <LinearGradient
-            colors={['#7a2ef6', '#f62ee2']}
+            colors={["#7a2ef6", "#f62ee2"]}
             start={{ x: 0, y: 1 }}
             end={{ x: 1, y: 0 }}
             style={{ flex: 1 }}
@@ -29,5 +39,5 @@ export default function LinearText({ text, styles }) {
         </View>
       </MaskedView>
     </View>
-  )
+  );
 }

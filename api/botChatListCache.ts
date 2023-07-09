@@ -1,27 +1,27 @@
-import RNStorage from '@react-native-async-storage/async-storage'
+import RNStorage from "@react-native-async-storage/async-storage";
 
-const botListLocalKey = 'BotListLocal'
+const botListLocalKey = "BotListLocal";
 
 export const getBotListLocal = async () => {
-  let localBotList = undefined
+  let localBotList = undefined;
   try {
-    const localStr = await RNStorage.getItem(botListLocalKey)
+    const localStr = await RNStorage.getItem(botListLocalKey);
     if (localStr) {
-      localBotList = JSON.parse(localStr)
+      localBotList = JSON.parse(localStr);
     }
   } catch (e) {}
 
-  return localBotList
-}
+  return localBotList;
+};
 
 export const setBotListLocal = (value: any) => {
   try {
-    RNStorage.setItem(botListLocalKey, JSON.stringify(value))
+    RNStorage.setItem(botListLocalKey, JSON.stringify(value));
   } catch (e) {}
-}
+};
 
 export const removeBotListLocal = async () => {
   try {
-    RNStorage.removeItem(botListLocalKey)
+    RNStorage.removeItem(botListLocalKey);
   } catch (e) {}
-}
+};

@@ -3,9 +3,14 @@
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "baseUrl": "src" /* Base directory to resolve non-absolute module names. */,
+    "baseUrl": "." /* Base directory to resolve non-absolute module names. */,
     "paths": {
-      "@/*": ["./*"]
+      "@assets/*": ["./assets/*"],
+      "@utils/*": ["./utils/*"],
+      "@store/*": ["./store/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@types/*": ["./types/*"],
+      "@constants/*": ["./constants/*"]
     },
     "strictNullChecks": false,
     "noImplicitAny": false,

@@ -1,38 +1,41 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'expo-router'
-import { useSearchParams, useNavigation } from 'expo-router'
-import { Text, View, Image, TouchableOpacity } from 'react-native'
-import { Toast } from '@fruits-chain/react-native-xiaoshu'
-import { postAddBotToChatList, postPublishBot, setBotPrivate } from '../../../api/robot'
-import { styles } from './style'
-import editIcon from '../../../assets/images/setting/edit.png'
-import publishIcon from '../../../assets/images/setting/publish.png'
-import xiajia from '../../../assets/images/setting/xiajia.png'
-import chat from '../../../assets/images/setting/chat.png'
-import share from '../../../assets/images/setting/share.png'
-import usebotStore from '../../../store/botStore'
-import useUserStore from '../../../store/userStore'
-import { renderImage } from '../../../components/profileInfo/helper'
-import CallBackManagerSingle from '../../../utils/CallBackManager'
-import LinearText from '../../../components/common/linearText'
-import Tag from '../../../components/common/tag'
-import { ScrollView } from 'react-native'
-import { getBotSharingCode } from '../../../api/setting'
-import System from '../../../constants/System'
-import Clipboard from '@react-native-clipboard/clipboard'
-import { TagFromType, useTagList } from '../../../constants/TagList'
-import Back from '../../../assets/images/tabbar/back.svg'
+import { Toast } from "@fruits-chain/react-native-xiaoshu";
+import Clipboard from "@react-native-clipboard/clipboard";
+import { useNavigation, useRouter, useSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+import {
+  postAddBotToChatList,
+  postPublishBot,
+  setBotPrivate,
+} from "../../../api/robot";
+import { getBotSharingCode } from "../../../api/setting";
+import chat from "../../../assets/images/setting/chat.png";
+import editIcon from "../../../assets/images/setting/edit.png";
+import publishIcon from "../../../assets/images/setting/publish.png";
+import share from "../../../assets/images/setting/share.png";
+import xiajia from "../../../assets/images/setting/xiajia.png";
+import Back from "../../../assets/images/tabbar/back.svg";
+import LinearText from "../../../components/common/linearText";
+import Tag from "../../../components/common/tag";
+import { renderImage } from "../../../components/profileInfo/helper";
+import System from "../../../constants/System";
+import { TagFromType, useTagList } from "../../../constants/TagList";
+import usebotStore from "../../../store/botStore";
+import useUserStore from "../../../store/userStore";
+import CallBackManagerSingle from "../../../utils/CallBackManager";
+import { styles } from "./style";
 
 export default function Robot() {
-  const router = useRouter()
-  const navigation = useNavigation()
-  const botStore = usebotStore().botBaseInfo
-  const userStore = useUserStore.getState().profile
-  const tags = useTagList(botStore, TagFromType.Robot)
-  const isMinme = userStore?.id === botStore?.userId
+  const router = useRouter();
+  const navigation = useNavigation();
+  const botStore = usebotStore().botBaseInfo;
+  const userStore = useUserStore.getState().profile;
+  const tags = useTagList(botStore, TagFromType.Robot);
+  const isMinme = userStore?.id === botStore?.userId;
   useEffect(() => {
     navigation.setOptions({
-      title: 'Robot',
+      title: "Robot",
       headerLeft: () => {
         return (
           <TouchableOpacity
@@ -40,34 +43,40 @@ export default function Robot() {
             style={{
               width: 24,
               height: 24,
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <Back></Back>
           </TouchableOpacity>
-        )
+        );
       },
-    })
-  }, [])
+    });
+  }, []);
 
   const renderButton = () => {
     if (isMinme) {
       if (botStore?.privateBotId) {
-        if (botStore?.status === 'Public') {
+        if (botStore?.status === "Public") {
           return (
             <TouchableOpacity
               onPress={() => {
-                const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
+                const { close, setMessage } = Toast.loading({
+                  message: "Waiting",
+                  duration: 0,
+                });
                 setBotPrivate({ botUid: botStore?.uid })
                   .then(() => {
-                    setMessage('Unpublished successfully')
-                    CallBackManagerSingle().execute('ugcbotAllList')
-                    CallBackManagerSingle().execute('ugcbotList', botStore?.uid)
+                    setMessage("Unpublished successfully");
+                    CallBackManagerSingle().execute("ugcbotAllList");
+                    CallBackManagerSingle().execute(
+                      "ugcbotList",
+                      botStore?.uid,
+                    );
                   })
                   .finally(() => {
-                    close()
-                  })
+                    close();
+                  });
               }}
               style={styles.actionsItem}
             >
@@ -80,13 +89,15 @@ export default function Robot() {
               />
               <Text style={styles.actionsItemText}>Unpublish</Text>
             </TouchableOpacity>
-          )
+          );
         }
       } else {
         return (
           <>
             <TouchableOpacity
-              onPress={() => Toast('Please use a desktop browser to create a robot')}
+              onPress={() =>
+                Toast("Please use a desktop browser to create a robot")
+              }
               style={{ ...styles.actionsItem }}
             >
               <Image
@@ -100,16 +111,19 @@ export default function Robot() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                const { close, setMessage } = Toast.loading({ message: 'Waiting', duration: 0 })
+                const { close, setMessage } = Toast.loading({
+                  message: "Waiting",
+                  duration: 0,
+                });
                 postPublishBot({ botUid: botStore?.uid })
                   .then(() => {
-                    setMessage('Published successfully')
-                    CallBackManagerSingle().execute('ugcbotAllList')
-                    CallBackManagerSingle().execute('ugcbotList')
+                    setMessage("Published successfully");
+                    CallBackManagerSingle().execute("ugcbotAllList");
+                    CallBackManagerSingle().execute("ugcbotList");
                   })
                   .finally(() => {
-                    close()
-                  })
+                    close();
+                  });
               }}
               style={styles.actionsItem}
             >
@@ -123,10 +137,10 @@ export default function Robot() {
               <Text style={styles.actionsItemText}>Publish</Text>
             </TouchableOpacity>
           </>
-        )
+        );
       }
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -137,29 +151,37 @@ export default function Robot() {
           borderRadius: 100,
         })}
         <View style={styles.user}>
-          <LinearText text={botStore?.name} styles={styles.userName}></LinearText>
+          <LinearText
+            text={botStore?.name}
+            styles={styles.userName}
+          ></LinearText>
         </View>
-        <View style={styles.tagList}>{tags && tags.map(item => <Tag key={item.id} {...item}></Tag>)}</View>
+        <View style={styles.tagList}>
+          {tags && tags.map((item) => <Tag key={item.id} {...item}></Tag>)}
+        </View>
         {
           <View style={styles.actions}>
             <>
               <TouchableOpacity
                 style={styles.actionsItem}
                 onPress={() => {
-                  const { close } = Toast.loading({ message: 'Waiting', duration: 0 })
+                  const { close } = Toast.loading({
+                    message: "Waiting",
+                    duration: 0,
+                  });
                   postAddBotToChatList({ botUid: botStore?.uid })
-                    .then(res => {
+                    .then((res) => {
                       if (res) {
-                        usebotStore.setState({ botBaseInfo: res })
+                        usebotStore.setState({ botBaseInfo: res });
                         router.push({
                           pathname: `chat/${botStore?.id}`,
-                        })
-                        CallBackManagerSingle().execute('botList')
+                        });
+                        CallBackManagerSingle().execute("botList");
                       }
                     })
                     .finally(() => {
-                      close()
-                    })
+                      close();
+                    });
                 }}
               >
                 <Image
@@ -174,10 +196,10 @@ export default function Robot() {
               {renderButton()}
               <TouchableOpacity
                 onPress={() => {
-                  getBotSharingCode({ botUid: botStore?.uid }).then(res => {
-                    Clipboard.setString(`${System.botShareLink}${res}`)
-                    Toast('Copied')
-                  })
+                  getBotSharingCode({ botUid: botStore?.uid }).then((res) => {
+                    Clipboard.setString(`${System.botShareLink}${res}`);
+                    Toast("Copied");
+                  });
                 }}
                 style={styles.actionsItem}
               >
@@ -199,5 +221,5 @@ export default function Robot() {
         </ScrollView>
       </View>
     </View>
-  )
+  );
 }

@@ -1,9 +1,10 @@
 import { forwardRef, useMemo } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import Clear from "../../assets/images/chat/clear.svg";
-import Share from "../../assets/images/chat/share.svg";
 import Pin from "../../assets/images/chat/pin.svg";
 import Remove from "../../assets/images/chat/remove.svg";
+import Share from "../../assets/images/chat/share.svg";
 
 export type ActionType =
   | "ClearMemory"
@@ -24,7 +25,7 @@ const ToolsModal = forwardRef(
       pinned: boolean;
       toolsAction: (val: ActionType) => void;
     },
-    ref
+    ref,
   ) => {
     const actionList = useMemo(() => {
       return [
@@ -70,9 +71,9 @@ const ToolsModal = forwardRef(
         <View style={{ height: 6 }} />
       </View>
     );
-  }
+  },
 );
-
+ToolsModal.displayName = "ToolsModal";
 const styles = StyleSheet.create({
   popupWrap: {
     position: "absolute",

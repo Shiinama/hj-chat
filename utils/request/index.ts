@@ -96,6 +96,7 @@ _axios.interceptors.response.use(
         } else if (status > HttpStatusCode.Ok && status < HttpStatusCode.MultipleChoices) {
           msg = `Invalid server response(${status})`
         } else if (status === HttpStatusCode.BadRequest) {
+          console.log(data.message)
           if (data?.message) {
             if (Array.isArray(data.message)) {
               msg = data.message.join('; ')
@@ -180,5 +181,5 @@ export default async function request<T>(options: RequestOptions) {
       ...newOptions,
       url: newUrl,
     })
-    .then(data => data?.data ?? data)
+    .then(data => data?.data)
 }

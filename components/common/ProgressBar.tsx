@@ -1,33 +1,33 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { View, StyleSheet, Text } from 'react-native'
+import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 interface ProgressBarProps {
-  progressValue: number
-  progressBarColor?: string
-  style?: any
-  maxRange: number
-  size?: 'm' | 's'
+  progressValue: number;
+  progressBarColor?: string;
+  style?: any;
+  maxRange: number;
+  size?: "m" | "s";
 }
 const ProgressBar = ({
   progressValue = 0,
-  progressBarColor = '#FFC03A',
+  progressBarColor = "#FFC03A",
   style,
-  size = 'm',
+  size = "m",
   maxRange = 100,
 }: ProgressBarProps) => {
   const textSizeStyle = {
     m: styles.normalText,
     s: styles.smallText,
-  }
+  };
   const barWidth = useMemo(() => {
     if (progressValue && maxRange) {
-      const percentage = ((progressValue / maxRange) * 100).toFixed(2)
-      return Number(percentage) > 100 ? '100%' : `${percentage}%`
+      const percentage = ((progressValue / maxRange) * 100).toFixed(2);
+      return Number(percentage) > 100 ? "100%" : `${percentage}%`;
     } else {
-      return 0
+      return 0;
     }
-    return
-  }, [progressValue, maxRange])
+    return;
+  }, [progressValue, maxRange]);
   return (
     <View style={[styles.container, style]}>
       <View
@@ -39,22 +39,24 @@ const ProgressBar = ({
           },
         ]}
       ></View>
-      <Text style={[styles.progressText, textSizeStyle?.[size]]}>{progressValue + '/' + maxRange}</Text>
+      <Text style={[styles.progressText, textSizeStyle?.[size]]}>
+        {progressValue + "/" + maxRange}
+      </Text>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     height: 24,
-    position: 'relative',
-    backgroundColor: '#694802',
+    position: "relative",
+    backgroundColor: "#694802",
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressBar: {
-    height: '100%',
+    height: "100%",
   },
   normalText: {
     fontSize: 12,
@@ -63,16 +65,16 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   progressText: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 3,
-    width: '100%',
+    width: "100%",
     lineHeight: 24,
-    textAlign: 'center',
-    color: '#fff',
+    textAlign: "center",
+    color: "#fff",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-})
+});
 
-export default ProgressBar
+export default ProgressBar;

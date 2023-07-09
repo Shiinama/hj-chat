@@ -1,18 +1,18 @@
-import { Loading } from '@fruits-chain/react-native-xiaoshu'
-import React from 'react'
-import { View, Modal, StyleSheet, Dimensions } from 'react-native'
-import { ImageViewer } from 'react-native-image-zoom-viewer'
-import type { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
+import { Loading } from "@fruits-chain/react-native-xiaoshu";
+import React from "react";
+import { Dimensions, Modal, StyleSheet, View } from "react-native";
+import { ImageViewer } from "react-native-image-zoom-viewer";
+import type { IImageInfo } from "react-native-image-zoom-viewer/built/image-viewer.type";
 
-import { loadFailed } from './images'
+import { loadFailed } from "./images";
 
-const screenHeight = Dimensions.get('screen').height
+const screenHeight = Dimensions.get("screen").height;
 
 interface IProps {
-  visible: boolean
-  onVisibleChange: (visible: boolean) => void
-  photos: IImageInfo[]
-  index: number
+  visible: boolean;
+  onVisibleChange: (visible: boolean) => void;
+  photos: IImageInfo[];
+  index: number;
 }
 const ImagePreview: React.FC<IProps> = ({
   visible,
@@ -21,8 +21,8 @@ const ImagePreview: React.FC<IProps> = ({
   index,
 }) => {
   const handleClose = () => {
-    onVisibleChange(false)
-  }
+    onVisibleChange(false);
+  };
   return (
     <Modal visible={visible} transparent statusBarTranslucent>
       <View style={styles.modalView}>
@@ -36,13 +36,13 @@ const ImagePreview: React.FC<IProps> = ({
         />
       </View>
     </Modal>
-  )
-}
+  );
+};
 
-export default ImagePreview
+export default ImagePreview;
 
 const styles = StyleSheet.create({
   modalView: {
     height: screenHeight,
   },
-})
+});

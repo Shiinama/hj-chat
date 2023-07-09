@@ -1,134 +1,134 @@
-import { NetInfoState } from '@react-native-community/netinfo'
-import { Audio } from 'expo-av'
-import { AppState, NativeEventSubscription } from 'react-native'
+import { NetInfoState } from "@react-native-community/netinfo";
+import { Audio } from "expo-av";
+import { AppState, NativeEventSubscription } from "react-native";
 
 export class AudioPayManager {
-  currentSound: Audio.Sound
-  private currentSoundStopMethod
-  private currentSoundRePlayMethod
-  private pauseAppInBackground = false
+  currentSound: Audio.Sound;
+  private currentSoundStopMethod;
+  private currentSoundRePlayMethod;
+  private pauseAppInBackground = false;
 
-  private appStateListener: NativeEventSubscription
-  private appPreState = ''
-  private isPlay = false
+  private appStateListener: NativeEventSubscription;
+  private appPreState = "";
+  private isPlay = false;
 
-  isRecording = false
+  isRecording = false;
 
-  currentAutoPlayUrl = undefined
+  currentAutoPlayUrl = undefined;
 
-  netInfo: NetInfoState
+  netInfo: NetInfoState;
 
   constructor() {
-    this.appStateListener = AppState.addEventListener('change', state => {
-      if (state === 'background') {
-        this.appInBackground()
-      } else if (state === 'active' && this.appPreState === 'background') {
-        this.appReActive()
+    this.appStateListener = AppState.addEventListener("change", (state) => {
+      if (state === "background") {
+        this.appInBackground();
+      } else if (state === "active" && this.appPreState === "background") {
+        this.appReActive();
       }
-      this.appPreState = state
-    })
+      this.appPreState = state;
+    });
   }
 
   setIsPlay(isPlay: boolean) {
-    this.isPlay = isPlay
+    this.isPlay = isPlay;
   }
 
   getIsPlay() {
-    return this.isPlay
+    return this.isPlay;
   }
 
   async destory() {
-    this.isRecording = false
-    this.currentAutoPlayUrl = undefined
+    this.isRecording = false;
+    this.currentAutoPlayUrl = undefined;
     if (this.currentSound) {
       try {
-        await this.currentSound.unloadAsync()
+        await this.currentSound.unloadAsync();
       } catch (error) {}
       try {
-        this.currentSound = undefined
-        this.appStateListener?.remove()
-        this.currentSoundStopMethod = undefined
-        this.currentSoundRePlayMethod = undefined
+        this.currentSound = undefined;
+        this.appStateListener?.remove();
+        this.currentSoundStopMethod = undefined;
+        this.currentSoundRePlayMethod = undefined;
       } catch (error) {}
     }
   }
 
   appInBackground() {
     if (this.isPlay) {
-      this.pauseAppInBackground = true
-      this.pause(true)
+      this.pauseAppInBackground = true;
+      this.pause(true);
     }
   }
 
   async appReActive() {
     if (this.pauseAppInBackground) {
-      this.pauseAppInBackground = false
+      this.pauseAppInBackground = false;
       if (this.currentSound) {
         try {
-          this.currentSoundRePlayMethod?.()
-          await this.currentSound.playAsync()
+          this.currentSoundRePlayMethod?.();
+          await this.currentSound.playAsync();
         } catch (error) {}
       }
     }
   }
 
   async pause(isCallBack?: boolean) {
-    this.isPlay = false
+    this.isPlay = false;
     if (this.currentSound) {
       try {
-        isCallBack && this.currentSoundStopMethod?.()
-        await this.currentSound.pauseAsync()
+        isCallBack && this.currentSoundStopMethod?.();
+        await this.currentSound.pauseAsync();
       } catch (error) {}
     }
   }
 
   async stop(isCallBack?: boolean) {
-    this.isPlay = false
+    this.isPlay = false;
     if (this.currentSound) {
       try {
         // 如果进入后台刚好播放完 再次进入就不再重新播放
-        this.pauseAppInBackground = false
-        isCallBack && this.currentSoundStopMethod?.()
-        await this.currentSound.stopAsync()
+        this.pauseAppInBackground = false;
+        isCallBack && this.currentSoundStopMethod?.();
+        await this.currentSound.stopAsync();
       } catch (error) {}
     }
   }
 
-  async play(sound: Audio.Sound, callBack: Function, rePlay?: Function) {
+  async play(sound: Audio.Sound, callBack: () => void, rePlay?: () => void) {
     if (this.isRecording) {
-      return false
+      return false;
     }
     try {
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
-      })
+      });
     } catch (error) {}
     if (this.currentSound) {
       try {
-        this.currentSoundStopMethod?.()
-        await this.currentSound.pauseAsync()
+        this.currentSoundStopMethod?.();
+        await this.currentSound.pauseAsync();
       } catch (e) {}
     }
-    this.isPlay = true
-    this.currentSound = sound
-    this.currentSoundStopMethod = callBack
-    this.currentSoundRePlayMethod = rePlay
+    this.isPlay = true;
+    this.currentSound = sound;
+    this.currentSoundStopMethod = callBack;
+    this.currentSoundRePlayMethod = rePlay;
     try {
-      await sound.playAsync()
-      return true
+      await sound.playAsync();
+      return true;
     } catch (e) {
-      return false
+      return false;
     }
   }
 }
 
 const AudioPayManagerSingle = (function () {
-  let instance: AudioPayManager
+  let instance: AudioPayManager;
   return function () {
-    if (instance) return instance
-    instance = new AudioPayManager()
-    return instance
-  }
-})()
+    if (instance) return instance;
+    instance = new AudioPayManager();
+    return instance;
+  };
+})();
 
-export default AudioPayManagerSingle
+export default AudioPayManagerSingle;

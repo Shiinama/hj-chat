@@ -1,3 +1,3 @@
-import loadFailed from './icon_failed.png'
+import loadFailed from "./icon_failed.png";
 
-export { loadFailed }
+export { loadFailed };
