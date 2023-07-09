@@ -34,6 +34,21 @@ export const getIsUserNameAvailable = (params) => {
 };
 
 /**
+ * 用户名是否合法
+ */
+export const getUserSettings = () => {
+  return request<
+    {
+      name: string;
+      value: string;
+    }[]
+  >({
+    url: `/user/getUserSettings`,
+    method: "get",
+  });
+};
+
+/**
  * 修改用户名
  */
 export const postUpdateUserName = (data) => {

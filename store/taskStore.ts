@@ -33,9 +33,7 @@ const taskStore = create<TaskState>((set, get) => ({
       .then(({ sound }) => {
         set({ clainSound: sound });
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => e);
   },
 
   setTaskList(taskList: Task[]): void {

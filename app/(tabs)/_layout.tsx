@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import { getUserSettings } from "@api/proofile";
 import { Tabs, useFocusEffect, usePathname } from "expo-router";
-import * as Updates from "expo-updates";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import myshell from "../../assets/images/myshell.png";
 import Gem from "../../assets/images/rewards-center/Gem.svg";
@@ -20,42 +21,16 @@ import useTaskStore from "../../store/taskStore";
 import useUserStore, { getUserEnergyInfo } from "../../store/userStore";
 
 export default function TabLayout() {
-  // if (!useUserStore.getState().userBaseInfo) return
-  const { userEnergyInfo: energy, profile } = useUserStore();
+  if (!useUserStore.getState().userBaseInfo) return;
 
+  const { userEnergyInfo: energy, profile } = useUserStore();
   const { createdClainSound, clearClainSound, hasClaimableTask } =
     useTaskStore();
   const { queryTaskList } = useTaskRequest();
   const [visitorRewardsCenterVisited, setVisitorRewardsCenterVisited] =
     useState<boolean>(false);
-  const eventListener = async (event) => {
-    if (event.type === Updates.UpdateEventType.UPDATE_AVAILABLE) {
-      Alert.alert(
-        "Update available",
-        "Keep your app up to date to enjoy the latest features",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
-          {
-            text: "Install",
-            onPress: async () => {
-              try {
-                await Updates.fetchUpdateAsync();
-                await Updates.reloadAsync();
-              } catch (error) {
-                alert(`Error fetching latest Expo update: ${error}`);
-              }
-            },
-          },
-        ],
-      );
-    }
-  };
-
-  Updates.useUpdateEvents(eventListener);
+  const [rewardsCenterVisited, setRewardsCenterVisited] =
+    useState<boolean>(false);
   useFocusEffect(
     useCallback(() => {
       getUserEnergyInfo();
@@ -71,6 +46,10 @@ export default function TabLayout() {
   useEffect(() => {
     queryTaskList();
     createdClainSound();
+    getUserSettings().then((res) => {
+      console.log(res.some((s) => s.name === "flagIconReward"));
+      setRewardsCenterVisited(res.some((s) => s.name === "flagIconReward"));
+    });
     const interval = setInterval(() => {
       queryTaskList();
     }, 1000 * 60 * 5); // 每 5 分钟查询一次
@@ -79,6 +58,7 @@ export default function TabLayout() {
       clearInterval(interval);
     };
   }, []);
+
   return (
     <Tabs
       screenOptions={{
@@ -208,31 +188,6 @@ export default function TabLayout() {
           headerStyle: {
             backgroundColor: "#F5F7FA",
           },
-          tabBarButton: (props) => {
-            return (
-              <TouchableOpacity {...props}>
-                <>
-                  {props.children}
-                  {/* <Text
-                    style={{
-                      position: 'absolute',
-                      height: 14,
-                      width: 28,
-                      borderRadius: 9999,
-                      backgroundColor: '#3E5CFA',
-                      color: 'white',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      bottom: 30,
-                      right: 20,
-                    }}
-                  >
-                    New
-                  </Text> */}
-                </>
-              </TouchableOpacity>
-            );
-          },
           headerLeft: () => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text
@@ -264,8 +219,8 @@ export default function TabLayout() {
           },
           tabBarBadge:
             profile &&
-            profile.source === "visitor" &&
-            !visitorRewardsCenterVisited
+            ((profile.source === "visitor" && !visitorRewardsCenterVisited) ||
+              (profile.source !== "visitor" && !rewardsCenterVisited))
               ? "New"
               : null,
           tabBarIcon: ({ focused }) =>
